@@ -6,7 +6,7 @@
 This UserScript allowes to parse and mark storys in the list.
 
 
-## Installlation:
+## Installation:
 
 To use this script, you need to install a UserScript-Plugin.
 If you use Chrome, you allready got one.
