@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        3.1
+// @version        3.2
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -45,6 +45,7 @@ function storyParser()
 		color_mouse_over: '#EEF0F4',
 		color_odd_color: '#dfdfdf',
 		hide_images: false,
+		content_width: "90%",
 
         // Do not change below this line:
 		storage_key: 'ffnet-storycache',
@@ -78,6 +79,8 @@ function storyParser()
             color_normal: '#FFFFFF',
             color_mouse_over: '#EEF0F4',
             color_odd_color: '#dfdfdf',
+			hide_images: false,
+			content_width: "90%",
             storage_key: 'ffnet-storycache',
             config_key: 'ffnet-config',
 
@@ -128,8 +131,46 @@ function storyParser()
 		{
 			console.warn(ex);
 		}
+		
+		
+		// Check for Config Values:
+	
+		
+		if (typeof(_config['mark_M_storys']) == "undefined")
+		{
+			_config['mark_M_storys'] = false;
+		}
+		
+		if (typeof(_config['hide_non_english_storys']) == "undefined")
+		{
+			_config['hide_non_english_storys'] = false;
+		}
+		
+		if (typeof(_config['color_normal']) == "undefined")
+		{
+			_config['color_normal'] = '#FFFFFF';
+		}
+		
+		if (typeof(_config['color_mouse_over']) == "undefined")
+		{
+			_config['color_mouse_over'] = '#EEF0F4';
+		}
+		
+		if (typeof(_config['color_odd_color']) == "undefined")
+		{
+			_config['color_odd_color'] = '#dfdfdf';
+		}
 
-
+		if (typeof(_config['hide_images']) == "undefined")
+		{
+			_config['hide_images'] = false;
+		}
+		
+		if (typeof(_config['content_width']) == "undefined")
+		{
+			_config['content_width'] = "90%";
+		}
+		
     }
 
     this.readList = function(__element)
@@ -152,6 +193,9 @@ function storyParser()
 		{
 			$(this).before($(this).text()).remove();
 		});
+	
+		// Updates Content_width
+		$('#content_wrapper').css('width', _config['content_width']);
 	
 		
         _element.each(function(k, e)
@@ -887,6 +931,30 @@ function storyParser()
         // spacer:
 		table.append(spacer.clone());
 		
+		// content_width
+		input = $('<input type="text" id="fflist-content_width">')
+					.attr('value', _config.content_width)
+					.attr('size', '50');
+
+		_settings_elements['content_width'] = input;
+
+		table.append(
+			$('<tr></tr>').append(
+				$('<td width="30%"></td>').append(
+					$('<label for="fflist-content_width">Content Width: </label>')
+					.css('font-weight', 'bold')
+				)
+				.css('border-right', '1px solid gray')
+			).append(
+				$('<td></td>').append(
+					input
+				)
+			)
+		);
+
+        // spacer:
+		table.append(spacer.clone());
+		
 
         // color_normal
 		input = $('<input type="text" id="fflist-color_normal">')
@@ -1011,6 +1079,7 @@ function storyParser()
             _config.mark_M_storys = _settings_elements.mark_M_storys.is(':checked');
             _config.hide_non_english_storys = _settings_elements.hide_non_english_storys.is(':checked');
 			_config.hide_images = _settings_elements.hide_images.is(':checked');
+			_config.content_width = _settings_elements.content_width.attr('value');
             _config.color_normal = _settings_elements.color_normal.attr('value');
             _config.color_odd_color = _settings_elements.color_odd_color.attr('value');
             _config.color_mouse_over = _settings_elements.color_mouse_over.attr('value');
