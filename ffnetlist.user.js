@@ -44,6 +44,7 @@ function storyParser()
 		color_normal: '#FFFFFF',
 		color_mouse_over: '#EEF0F4',
 		color_odd_color: '#dfdfdf',
+		hide_images: false,
 
         // Do not change below this line:
 		storage_key: 'ffnet-storycache',
@@ -163,7 +164,7 @@ function storyParser()
             var link = element.find('a').first().attr('href');
 
             var storyName = _getStoryName(link);
-
+			
 			var requestQueue = [];
 			
             if (_config.hide_non_english_storys && (text.indexOf('english') == -1))
@@ -264,6 +265,11 @@ function storyParser()
                     textEl.html(textEl.html().replace('Rated: M', '<b>Rated: M</b>'));
                 }
             });
+			
+			if (_config['hide_images'])
+			{
+				element.find('img').hide();
+			}
 
 			_doParse(requestQueue);
 			
@@ -841,7 +847,7 @@ function storyParser()
 		table.append(
 			$('<tr></tr>').append(
 				$('<td width="10%"></td>').append(
-					$('<label for="fflist-mark_M_hide_non_english_storysstorys">Hide non English Storys: </label>')
+					$('<label for="fflist-hide_non_english_storys">Hide non English Storys: </label>')
 					.css('font-weight', 'bold')
 				)
 				.css('border-right', '1px solid gray')
@@ -854,6 +860,33 @@ function storyParser()
 
         // spacer:
 		table.append(spacer.clone());
+		
+		// hide_images:
+		checkbox = $('<input type="checkbox" id="fflist-hide_images">');
+		if (_config.hide_images)
+		{
+			checkbox.attr('checked', 'checked');
+		}
+
+		_settings_elements['hide_images'] = checkbox;
+
+		table.append(
+			$('<tr></tr>').append(
+				$('<td width="10%"></td>').append(
+					$('<label for="fflist-hide_images">Hide Story Images: </label>')
+					.css('font-weight', 'bold')
+				)
+				.css('border-right', '1px solid gray')
+			).append(
+				$('<td></td>').append(
+						checkbox
+				)
+			)
+		);
+
+        // spacer:
+		table.append(spacer.clone());
+		
 
         // color_normal
 		input = $('<input type="text" id="fflist-color_normal">')
@@ -977,6 +1010,7 @@ function storyParser()
             _config.story_search_depth = Number(_settings_elements.story_search_depth.attr('value'));
             _config.mark_M_storys = _settings_elements.mark_M_storys.is(':checked');
             _config.hide_non_english_storys = _settings_elements.hide_non_english_storys.is(':checked');
+			_config.hide_images = _settings_elements.hide_images.is(':checked');
             _config.color_normal = _settings_elements.color_normal.attr('value');
             _config.color_odd_color = _settings_elements.color_odd_color.attr('value');
             _config.color_mouse_over = _settings_elements.color_mouse_over.attr('value');
