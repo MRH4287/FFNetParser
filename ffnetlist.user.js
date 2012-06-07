@@ -19,6 +19,7 @@
 // @include        http://www.fanfiction.net/communities/*
 // @include        http://www.fanfiction.net/community/*
 // @include        http://www.fanfiction.net/u/*
+// @include        http://www.fanfiction.net/s/*
 // @include        http://www.fanfiction.net/forums/*
 // @run-at         document-end
 // ==/UserScript==
