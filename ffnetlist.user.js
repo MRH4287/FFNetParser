@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        3.2
+// @version        3.3
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -47,7 +47,9 @@ function storyParser()
 		color_odd_color: '#dfdfdf',
 		hide_images: false,
 		content_width: "90%",
-
+		pocket_user: null,
+		pocket_password: null,
+		
         // Do not change below this line:
 		storage_key: 'ffnet-storycache',
 		config_key: 'ffnet-config',
@@ -82,8 +84,11 @@ function storyParser()
             color_odd_color: '#dfdfdf',
 			hide_images: false,
 			content_width: "90%",
+			pocket_user: null,
+			pocket_password: null,
             storage_key: 'ffnet-storycache',
             config_key: 'ffnet-config',
+
 
             marker:
             {
@@ -171,6 +176,17 @@ function storyParser()
 		{
 			_config['content_width'] = "90%";
 		}
+				
+		if ((typeof(_config['pocket_user']) == "undefined") || (_config['pocket_user'] === ""))
+		{
+			_config['pocket_user'] = null;
+		}
+		
+		if ((typeof(_config['pocket_password']) == "undefined") || (_config['pocket_password'] === ""))
+		{
+			_config['pocket_password'] = null;
+		}
+
 		
     }
 
@@ -719,6 +735,85 @@ function storyParser()
         })
     }
 
+	this.enablePocketSave = function()
+	{	
+		var user = _config['pocket_user'];
+		var password = _config['pocket_password'];
+		
+		var body = $("body");
+		
+		if ((user == null) || (password == null))
+		{
+			return;
+			console.log("Disables Pocket Save Function");
+		}
+	
+		var field = body.find('#gui_table1i').first().find("b").first();
+	
+		field.after(
+			$("<button>Save To Pocket</button>")
+			.click( function()
+			{
+				_parsePocket(document.location.pathname, field.text() + ": ");
+
+			}).css("margin-left", "20px")
+		);
+	}
+	
+	var _parsePocket  = function(url, prefix)
+	{
+		if (typeof prefix == "undefined")
+		{
+			prefix = "";
+		}
+		
+		var user = _config['pocket_user'];
+		var password = _config['pocket_password'];
+		
+		
+		if ((user == null) || (password == null))
+		{
+			return;
+		}
+		
+		var ajax_callback = function(text)
+		{
+			var body = $(text);
+			
+			//var title = prefix + $(body.find('#chap_select')).first().children().filter('[selected="selected"]').html();
+
+			var title = body.find("title").first().text();
+			
+			$("body").append(
+				$("<img>").attr("src", 'https://readitlaterlist.com/v2/add?username='+user+'&password='+password+'&apikey=emIpiQ7cA6fR4u6dr7ga2aXC11dcD58a&url=http://www.fanfiction.net'+url+'&title='+title)
+			);
+			
+			console.log(url+' - '+title+' - Done');
+			
+			var next = body.find('input[type="button"]').filter('[value*="Next"]').first();
+
+
+			if (next.length != 0)
+			{
+				var script = next.attr('onclick');
+				var script_reg = /self\.location=\'([^']+)\'/;
+				var data = script_reg.exec(script);
+
+				if ((data != null) && (data.length > 1))
+				{
+					_parsePocket(data[1], prefix);
+				}
+			}
+
+		};
+
+		$.ajax({
+			url: url,
+			success: ajax_callback
+		});
+	
+	}
+	
 	// --------- GUI -------------
 
     var _settings_elements = {};
@@ -1028,6 +1123,72 @@ function storyParser()
 				)
 			)
 		);
+		
+		
+		// spacer:
+		table.append(spacer.clone());
+
+        // Pocket ---
+		table.append(
+			$('<tr></tr>').append(
+				$('<td width="30%"></td>').append(	)
+				.css('border-right', '1px solid gray')
+			).append(
+				$('<td></td>').append(
+					" ---- Pocket Settings ----"
+				)
+			)
+		);
+		
+		// spacer:
+		table.append(spacer.clone());
+		
+		// pocket_user
+		input = $('<input type="text" id="fflist-pocket_user">')
+					.attr('value', _config.pocket_user)
+					.attr('size', '50');
+
+		_settings_elements['pocket_user'] = input;
+
+		table.append(
+			$('<tr></tr>').append(
+				$('<td width="30%"></td>').append(
+					$('<label for="fflist-pocket_user">Username: </label>')
+					.css('font-weight', 'bold')
+				)
+				.css('border-right', '1px solid gray')
+			).append(
+				$('<td></td>').append(
+					input
+				)
+			)
+		);
+		
+		
+		// spacer:
+		table.append(spacer.clone());
+		
+		// pocket_password
+		input = $('<input type="text" id="fflist-pocket_password">')
+					.attr('value', _config.pocket_password)
+					.attr('size', '50');
+
+		_settings_elements['pocket_password'] = input;
+
+		table.append(
+			$('<tr></tr>').append(
+				$('<td width="30%"></td>').append(
+					$('<label for="fflist-pocket_password">Password: </label>')
+					.css('font-weight', 'bold')
+				)
+				.css('border-right', '1px solid gray')
+			).append(
+				$('<td></td>').append(
+					input
+				)
+			)
+		);
+		
 
         // -------------------------------
 
@@ -1071,6 +1232,7 @@ function storyParser()
 					text_color: (name in _config.marker &&_config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null
 				};
 
+				
 				//console.log(name, config);
 				new_config[name] = config;
 
@@ -1084,8 +1246,10 @@ function storyParser()
             _config.color_normal = _settings_elements.color_normal.attr('value');
             _config.color_odd_color = _settings_elements.color_odd_color.attr('value');
             _config.color_mouse_over = _settings_elements.color_mouse_over.attr('value');
-
-
+			_config.pocket_user = _settings_elements.pocket_user.attr('value');
+			_config.pocket_password = _settings_elements.pocket_password.attr('value');
+			
+			
 			_config.marker = new_config;
 
 			_save_config();
@@ -1599,6 +1763,7 @@ function storyParser()
 
 var parser = new storyParser($('.z-list'));
 parser.readList($('.z-list'));
+parser.enablePocketSave($('#content_wrapper_inner'));
 
 $('.zui').last().append(
 	$('<a></a>').addClass('menu-link').html('Reload Script').attr('href', '#').click(function(e)
@@ -1634,3 +1799,13 @@ $('.zui').first().append(
 
 	}).attr('title', 'Load default Config. By MRH')
 );
+
+// Adds API-Interface:
+$("body").first().append(
+	$("<div></div>").css("display", "none")
+	.attr("id", "ffnetParser-Interface")
+	.data("data", parser)
+);
+
+
+
