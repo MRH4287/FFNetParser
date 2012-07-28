@@ -744,8 +744,8 @@ function storyParser()
 		
 		if ((user == null) || (password == null))
 		{
-			return;
 			console.log("Disables Pocket Save Function");
+			return;		
 		}
 	
 		var field = body.find('#gui_table1i').first().find("b").first();

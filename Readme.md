@@ -78,6 +78,18 @@ The Options are following:
 
     List Marker in the Headline on top of the page
 
+	
+### Pocket 
+
+Pocket is a free Webservice to save your Storys for later.
+
+If a Username and Password is given, the script enables a "Save to Pocket" Option for Storys.
+
+The Story will be saved beginning on the current chapter to the current last chapter.
+
+
+**The Username and Password are being saved in plaintext! This can be a security risk.**  
+
 
 ### Import / Export
 
@@ -89,7 +101,7 @@ This script uses the jQuery Library.
 It shouldn't harm your computer or yourself ( ;-) ), but if they do, you can't blame me.
 
 If this script is against any law, please tell me.
-FanFiction.net disallowes the usement of this kind of script, so use it at your own risk,
+FanFiction.net disallowes the usement of this kind of script, so use it at your own risk.
 
 
 ## License
