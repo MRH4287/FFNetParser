@@ -1144,7 +1144,7 @@ function storyParser()
 		table.append(spacer.clone());
 		
 		// pocket_user
-		input = $('<input type="password" id="fflist-pocket_user">')
+		input = $('<input type="text" id="fflist-pocket_user">')
 					.attr('value', _config.pocket_user)
 					.attr('size', '50');
 
@@ -1169,7 +1169,7 @@ function storyParser()
 		table.append(spacer.clone());
 		
 		// pocket_password
-		input = $('<input type="text" id="fflist-pocket_password">')
+		input = $('<input type="password" id="fflist-pocket_password">')
 					.attr('value', _config.pocket_password)
 					.attr('size', '50');
 
