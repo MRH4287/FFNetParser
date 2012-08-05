@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        3.3
+// @version        3.3.1
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -751,12 +751,13 @@ function storyParser()
 		var field = body.find('#gui_table1i').first().find("b").first();
 	
 		field.after(
-			$("<button>Save To Pocket</button>")
+			$('<button>Save To Pocket</button>')
 			.click( function()
 			{
 				_parsePocket(document.location.pathname, field.text() + ": ");
 
 			}).css("margin-left", "20px")
+			.attr("id", "ffnet-pocket-save-button")
 		);
 	}
 	
@@ -803,6 +804,11 @@ function storyParser()
 				{
 					_parsePocket(data[1], prefix);
 				}
+			
+			} else
+			{
+				$("#ffnet-pocket-save-button").attr("disabled", "disabled")
+				.html("Save done!");
 			}
 
 		};
