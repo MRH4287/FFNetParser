@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        3.4
+// @version        3.4.2
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -358,7 +358,6 @@ function storyParser()
 			);
 			
 			// Open GUI
-			//123456..
 			contextMenu.click(function()
 			{
 				if (_DEBUG)
@@ -803,6 +802,67 @@ function storyParser()
         })
     }
 
+	
+	var _enableInStoryHighlighter = function()
+	{
+		if (_DEBUG)
+		{
+			console.log("Enable In Story Highlighter");
+		}
+
+		var body = $("body");
+		var field = body.find('#gui_table1i').first().find("b").first();
+		
+		var contextMenu = $("<div></div>")
+			.css("width", "20px")
+			.css("height", "20px")
+			.css("float", "right")
+			.addClass("parser-msg")
+			.append(
+				$("<img></img>")
+				.attr("src", "http://private.mrh-development.de/ff/edit.gif")
+				.css("width", "100%")
+				.css("height", "100%")
+			);
+			
+		// Open GUI
+		contextMenu.click(function()
+		{
+		
+			_toggleStoryConfig({
+				url: document.location.pathname,
+				//element: element,
+				name: field.text()
+			});
+		
+		});
+		
+		field.after(contextMenu);
+		
+		// Highlighter found:
+		if (typeof(_config['highlighter'][document.location.pathname]) != "undefined")
+		{
+			if (_DEBUG)
+			{
+				console.info("Highlight Element Found");
+			}
+			
+			var img = $("<img></img>").attr("src", _config['highlighter'][document.location.pathname])
+			.css("width", "20px")
+			.css("height", "20px")
+			.css("margin-left", "15px")
+			.addClass("parser-msg")
+			
+			field.after(img);
+			
+		}
+		
+		
+		
+	}
+	
+	this.enableInStoryHighlighter = _enableInStoryHighlighter;
+	
 	this.enablePocketSave = function()
 	{	
 		var user = _config['pocket_user'];
@@ -1918,6 +1978,7 @@ function storyParser()
 						_gui_container.css("position", "absolute");
 						_gui_hide();
 						_read();
+						_enableInStoryHighlighter();
 					})
 			);
 
@@ -1981,6 +2042,8 @@ function storyParser()
 var parser = new storyParser($('.z-list'));
 parser.readList($('.z-list'));
 parser.enablePocketSave($('#content_wrapper_inner'));
+parser.enableInStoryHighlighter($('#content_wrapper_inner'));
+
 
 $('.zui').last().append(
 	$('<a></a>').addClass('menu-link').html('Reload Script').attr('href', '#').click(function(e)
