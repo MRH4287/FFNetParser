@@ -35,7 +35,7 @@ t[h]}if(f.isEmptyObject(t)){var u=s.handle;u&&(u.elem=null),delete s.events,dele
 
 function storyParser()
 {
-	var _DEBUG = true;
+	var _DEBUG = false;
 
     // Default-Config:
     var _config = {
