@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        3.3.1
+// @version        3.4
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -35,7 +35,7 @@ t[h]}if(f.isEmptyObject(t)){var u=s.handle;u&&(u.elem=null),delete s.events,dele
 
 function storyParser()
 {
-	var _DEBUG = false;
+	var _DEBUG = true;
 
     // Default-Config:
     var _config = {
@@ -54,7 +54,10 @@ function storyParser()
 		storage_key: 'ffnet-storycache',
 		config_key: 'ffnet-config',
 
-
+		highlighter:
+		{
+		},
+		
         marker: {
             // Name displayed in the List
         }
@@ -88,8 +91,10 @@ function storyParser()
 			pocket_password: null,
             storage_key: 'ffnet-storycache',
             config_key: 'ffnet-config',
-
-
+			highlighter:
+			{
+			},
+			
             marker:
             {
 
@@ -187,6 +192,11 @@ function storyParser()
 			_config['pocket_password'] = null;
 		}
 
+		if (typeof(_config['highlighter']) == "undefined")
+		{
+			_config['highlighter'] = {};
+		}
+				
 		
     }
 
@@ -331,7 +341,60 @@ function storyParser()
 			{
 				element.find('img').hide();
 			}
-
+			
+			// Highlighter:
+			// Build Context Menu for Storys:
+			var contextMenu = $("<div></div>")
+			.css("width", "20px")
+			.css("height", "20px")
+			.css("float", "right")
+			.addClass("parser-msg")
+			.addClass("context-menu")
+			.append(
+				$("<img></img>")
+				.attr("src", "http://private.mrh-development.de/ff/edit.gif")
+				.css("width", "100%")
+				.css("height", "100%")
+			);
+			
+			// Open GUI
+			//123456..
+			contextMenu.click(function()
+			{
+				if (_DEBUG)
+				{
+					console.log("Context Menu for ", element, " clicked");
+				}
+			
+				_toggleStoryConfig({
+					url: link,
+					element: element,
+					name: storyName
+				});
+			
+			});
+			
+			element.find("div").first().before(contextMenu);
+			
+			
+			// Highlighter found:
+			if (typeof(_config['highlighter'][link]) != "undefined")
+			{
+				if (_DEBUG)
+				{
+					console.info("Highlight Element Found: ", element);
+				}
+				
+				var img = $("<img></img>").attr("src", _config['highlighter'][link])
+				.css("width", "20px")
+				.css("height", "20px")
+				.css("margin-left", "15px")
+				.addClass("parser-msg");
+				
+				element.find("a").last().after(img);
+				
+			}
+			
 			_doParse(requestQueue);
 			
             if (!marker_exist)
@@ -340,7 +403,12 @@ function storyParser()
             }
 
         });
-
+		
+		if (_DEBUG)
+		{
+			console.info("Current Highlighter Settings: ", _config['highlighter']);
+		}
+		
         _updateList();
     }
 
@@ -880,6 +948,9 @@ function storyParser()
         _settings_elements = {};
 		_gui_container.html('');
 
+		// Reset Position:
+		_gui_container.css("position", "absolute");
+		
 		_add_count = 0;
         
         $('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
@@ -1722,6 +1793,146 @@ function storyParser()
 	}
 	
 	this.configGui = _toggleSaveConfig;
+	
+	
+	var _toggleStoryConfig = function(storyInfo)
+	{
+		if (_gui_container == null)
+		{
+			if (_DEBUG)
+			{
+				console.log("Generate GUI Container");
+			}
+		
+			_gui_create();
+		}
+		
+		if (_gui_container.is(':visible'))
+		{
+			if (_DEBUG)
+			{
+				console.log("Hide GUI Container");
+			}
+		
+			_gui_hide();
+			
+		} else
+		{		
+			if (typeof(storyInfo) == "undefined")
+			{
+				if (_DEBUG)
+				{
+					console.warn("_toggleStoryConfig: No Parameter given!");
+				}
+				
+				return;
+			}
+		
+			if (_DEBUG)
+			{
+				console.log("Starting Content Generation");
+			}
+		
+			_gui_container.html('');
+			
+			
+			// Set Position:
+			_gui_container.css("position", "fixed");
+			
+			$('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
+				$('<input type="button" value="Close"></input>').click(function()
+				{
+					if (confirm("All unsaved changes will be deleted!"))
+					{
+						_gui_container.css("position", "absolute");
+						_gui_hide();
+					}
+
+				})
+			).appendTo(_gui_container);
+			
+			_gui_container.append("<p>This Menu allows you to set story specific options for:</p>");
+			_gui_container.append(storyInfo.name);
+			_gui_container.append("<hr />");
+			_gui_container.append("<p>Highlighter Options:</p>");
+			
+			_gui_container.append('<label for="ffnet-story-highlighter">Highlighter Path: (leave empty to clear)</label><br/>');
+			var highlighter = $('<input type="text"></input>')
+			.appendTo(_gui_container)
+			.css("width", "500px");
+				
+			_gui_container.append("<p></p>");
+			
+			var image_container = $("<div></div>")
+			.css("border", "1px solid black")
+			.css("padding", "2px")
+			.appendTo(_gui_container);
+			
+			var image = $("<img></img>")
+			.css("width", "30px")
+			.css("height", "30px")
+			.css("margin-left", "5px")
+			.css("border", "1px solid black")
+			.css("display", "inline-block");
+			
+			image.clone()
+			.attr("src", "http://private.mrh-development.de/ff/none.gif")
+			.appendTo(image_container)
+			.click(function()
+			{			
+				highlighter.val("");
+			});
+			
+			for (var i = 1; i <= 6; i++)
+			{
+				image.clone()
+				.attr("src", "http://private.mrh-development.de/ff/"+i+".gif")
+				.appendTo(image_container)
+				.click(function()
+				{			
+					highlighter.val($(this).attr("src"));
+				});
+			}
+				
+				
+			if (typeof(_config['highlighter'][storyInfo.url] != "undefined"))
+			{
+				highlighter.val(_config['highlighter'][storyInfo.url]);
+			}
+				
+			_gui_container.append(
+				$('<input type="button" value="Set" />')
+					.click(function()
+					{
+						var newVal = highlighter.val();
+						if (newVal == "")
+						{
+							_config['highlighter'][storyInfo.url] = undefined;
+						} else
+						{
+							_config['highlighter'][storyInfo.url] = newVal;
+						}
+						
+						_save_config();
+						
+						_gui_container.css("position", "absolute");
+						_gui_hide();
+						_read();
+					})
+			);
+
+			
+			if (_DEBUG)
+			{
+				console.log("Display Content");
+			}
+			
+			_gui_show();
+		}
+		
+	}
+	
+	
 	
 	// --------------------------
 
