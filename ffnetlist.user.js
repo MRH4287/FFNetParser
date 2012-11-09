@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        3.4.2
+// @version        4.0.1
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -35,8 +35,10 @@ t[h]}if(f.isEmptyObject(t)){var u=s.handle;u&&(u.elem=null),delete s.events,dele
 
 function storyParser()
 {
-	var _DEBUG = true;
+	var _DEBUG = false;
 
+	var _VERSION = '4.0.1';
+	
     // Default-Config:
     var _config = {
         story_search_depth: 2,                  // The Max depth for a recursive search
@@ -49,6 +51,11 @@ function storyParser()
 		content_width: "90%",
 		pocket_user: null,
 		pocket_password: null,
+		api_url: 'http://www.mrh-development.de/FanFictionUserScript',
+		api_lookupKey: 'ffnet-api-interface',
+		api_timeout: 1000,
+		api_retries: 2,
+		api_checkForUpdates: true,
 		
         // Do not change below this line:
 		storage_key: 'ffnet-storycache',
@@ -93,6 +100,7 @@ function storyParser()
             config_key: 'ffnet-config',
 			api_url: 'http://www.mrh-development.de/FanFictionUserScript',
 			api_lookupKey: 'ffnet-api-interface',
+			api_checkForUpdates: true,
 			api_timeout: 1000,
 			api_retries: 2,
 			
@@ -222,6 +230,12 @@ function storyParser()
 			_config['api_retries'] = 2;
 		}			
 		
+		if (typeof(_config['api_checkForUpdates']) == "undefined")
+		{
+			_config['api_checkForUpdates'] = true;
+		}			
+		
+		_api_checkVersion();
     }
 
     this.readList = function(__element)
@@ -1350,6 +1364,50 @@ function storyParser()
 			)
 		);
 		
+		
+		// spacer:
+		table.append(spacer.clone());
+
+        // API ---
+		table.append(
+			$('<tr></tr>').append(
+				$('<td width="30%"></td>').append(	)
+				.css('border-right', '1px solid gray')
+			).append(
+				$('<td></td>').append(
+					" ---- API Settings ----"
+				)
+			)
+		);
+		
+		// spacer:
+		table.append(spacer.clone());
+		
+		// api_checkForUpdates
+		checkbox = $('<input type="checkbox" id="fflist-api_checkForUpdates">');
+		if (_config.api_checkForUpdates)
+		{
+			checkbox.attr('checked', 'checked');
+		}
+
+		_settings_elements['api_checkForUpdates'] = checkbox;
+
+		table.append(
+			$('<tr></tr>').append(
+				$('<td width="10%"></td>').append(
+					$('<label for="fflist-api_checkForUpdates">Check for Updates: </label>')
+					.css('font-weight', 'bold')
+				)
+				.css('border-right', '1px solid gray')
+			).append(
+				$('<td></td>').append(
+						checkbox
+				)
+			)
+		);
+		
+		
+
 
         // -------------------------------
 
@@ -1409,6 +1467,7 @@ function storyParser()
             _config.color_mouse_over = _settings_elements.color_mouse_over.attr('value');
 			_config.pocket_user = _settings_elements.pocket_user.attr('value');
 			_config.pocket_password = _settings_elements.pocket_password.attr('value');
+			_config.api_checkForUpdates = _settings_elements.api_checkForUpdates.is(':checked');
 			
 			
 			_config.marker = new_config;
@@ -2063,7 +2122,7 @@ function storyParser()
 			{
 				if (_DEBUG)
 				{
-					console.log("API_Request - Result found, exec callback");
+					console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
 				}
 			
 				callback(sessionStorage[apiLookupKey]);
@@ -2085,14 +2144,33 @@ function storyParser()
 	
 	var _api_checkVersion = function()
 	{
-		_apiRequest({command: "getVersion", data: ""}, function(res)
+		if (_config.api_checkForUpdates)
 		{
-			console.log(res);
-		});
+			if (_DEBUG)
+			{
+				console.info("Check for Updates ...");
+			}
+			
+			_apiRequest({command: "getVersion", data: ""}, function(res)
+			{						
+				var version = JSON.parse(res);
+				
+				if (_DEBUG)
+				{
+					console.log("Version Info Recieved: ", version);
+					console.log("Current Version: ", _VERSION);
+				}
+				
+				if (_VERSION != version.version)
+				{
+					$(".menulinks").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser]");
+				}
+				
+			});
+			
+		}
 	}
-	
-	this.checkVersion = _api_checkVersion;
-	
+		
 	// --------------------------
 
 	var _save_config = function()
@@ -2173,13 +2251,6 @@ $('.zui').first().append(
 		{
             parser.defaultConfig();
         }
-		e.preventDefault();
-
-	}).attr('title', 'Load default Config. By MRH')
-).append(
-	$('<a></a>').addClass('menu-link').html('*').attr('href', '#').click(function(e)
-	{
-		parser.checkVersion();
 		e.preventDefault();
 
 	}).attr('title', 'Load default Config. By MRH')
