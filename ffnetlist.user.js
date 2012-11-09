@@ -2091,7 +2091,8 @@ function storyParser()
 			async: false,
 			contentType: "application/json",
 			dataType: 'jsonp',
-			data: data
+			data: data,
+			cache: false
 		});
 		
 		var tries = 0;
