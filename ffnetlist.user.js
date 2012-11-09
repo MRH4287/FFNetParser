@@ -35,7 +35,7 @@ t[h]}if(f.isEmptyObject(t)){var u=s.handle;u&&(u.elem=null),delete s.events,dele
 
 function storyParser()
 {
-	var _DEBUG = false;
+	var _DEBUG = true;
 
     // Default-Config:
     var _config = {
@@ -91,6 +91,11 @@ function storyParser()
 			pocket_password: null,
             storage_key: 'ffnet-storycache',
             config_key: 'ffnet-config',
+			api_url: 'http://www.mrh-development.de/FanFictionUserScript',
+			api_lookupKey: 'ffnet-api-interface',
+			api_timeout: 1000,
+			api_retries: 2,
+			
 			highlighter:
 			{
 			},
@@ -196,7 +201,26 @@ function storyParser()
 		{
 			_config['highlighter'] = {};
 		}
-				
+			
+		if (typeof(_config['api_url']) == "undefined")
+		{
+			_config['api_url'] = 'http://www.mrh-development.de/FanFictionUserScript';
+		}
+		
+		if (typeof(_config['api_lookupKey']) == "undefined")
+		{
+			_config['api_lookupKey'] = 'ffnet-api-interface';
+		}
+		
+		if (typeof(_config['api_timeout']) == "undefined")
+		{
+			_config['api_timeout'] = 1000;
+		}
+		
+		if (typeof(_config['api_retries']) == "undefined")
+		{
+			_config['api_retries'] = 2;
+		}			
 		
     }
 
@@ -1993,7 +2017,81 @@ function storyParser()
 		
 	}
 	
+	// ----- API-Interface ------
 	
+	var _apiRequest = function (data, callback)
+	{		
+		var url = _config.api_url;
+		var apiLookupKey = _config.api_lookupKey;
+		var timeout = _config.api_timeout;
+		var retrys = _config.api_retries;
+			
+		$.ajax({
+		   type: 'GET',
+			url: url,
+			async: false,
+			contentType: "application/json",
+			dataType: 'jsonp',
+			data: data
+		});
+		
+		var tries = 0;
+	
+		var checkFunction = function()
+		{
+			if (_DEBUG)
+			{
+				console.log("API_Request - CheckFor Result");
+			}
+			
+			if (tries >= retrys)
+			{
+				if (_DEBUG)
+				{
+					console.log("API_Request - To many tries, abort");
+				}
+			
+				return;
+			}
+			
+			if ((typeof sessionStorage[apiLookupKey] != "undefined") &&
+				(typeof sessionStorage[apiLookupKey] != "null") &&
+				sessionStorage[apiLookupKey] != "undefined" &&
+				sessionStorage[apiLookupKey] != "null" &&
+				sessionStorage[apiLookupKey] != "" &&
+				sessionStorage[apiLookupKey] != null)
+			{
+				if (_DEBUG)
+				{
+					console.log("API_Request - Result found, exec callback");
+				}
+			
+				callback(sessionStorage[apiLookupKey]);
+			} else
+			{
+				if (_DEBUG)
+				{
+					console.log("API_Request - No Result found, Retry");
+				}
+				tries++;
+				window.setTimeout(checkFunction, timeout);
+			}
+		};
+		
+		window.setTimeout(checkFunction, timeout);
+	
+	}
+	
+	
+	var _api_checkVersion = function()
+	{
+		_apiRequest({command: "getVersion", data: ""}, function(res)
+		{
+			console.log(res);
+		});
+	}
+	
+	this.checkVersion = _api_checkVersion;
 	
 	// --------------------------
 
@@ -2078,14 +2176,11 @@ $('.zui').first().append(
 		e.preventDefault();
 
 	}).attr('title', 'Load default Config. By MRH')
+).append(
+	$('<a></a>').addClass('menu-link').html('*').attr('href', '#').click(function(e)
+	{
+		parser.checkVersion();
+		e.preventDefault();
+
+	}).attr('title', 'Load default Config. By MRH')
 );
-
-// Adds API-Interface:
-$("body").first().append(
-	$("<div></div>").css("display", "none")
-	.attr("id", "ffnetParser-Interface")
-	.data("data", parser)
-);
-
-
-
