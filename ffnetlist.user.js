@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.0.1
+// @version        4.0.2
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -37,7 +37,7 @@ function storyParser()
 {
 	var _DEBUG = false;
 
-	var _VERSION = '4.0.1';
+	var _VERSION = '4.0.2';
 	
     // Default-Config:
     var _config = {
@@ -1051,7 +1051,13 @@ function storyParser()
 		
 		_add_count = 0;
         
-        $('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
+		// Displays current Version:
+		$('<div style="width:70%; display:inline-block; text-align:left; margin-bottom: 5px"></div>').append(
+			$("<span></span>").html("Current Version: <b>" + _VERSION + "</b>")		
+		).appendTo(_gui_container);
+		
+		
+        $('<div style="width:30%; display:inline-block; text-align:right; margin-bottom: 5px"></div>').append(
             $('<input type="button" value="Close"></input>').click(function()
             {
                 if (confirm("All unsaved changes will be deleted!"))
@@ -1062,6 +1068,7 @@ function storyParser()
             })
         ).appendTo(_gui_container);
         
+				
         var radius = 15;
 
         // render Settings Container:
@@ -2164,7 +2171,7 @@ function storyParser()
 				
 				if (_VERSION != version.version)
 				{
-					$(".menulinks").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser]");
+					$(".menulinks").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser ("+ version.version +")]");
 				}
 				
 			});
