@@ -35,36 +35,36 @@ t[h]}if(f.isEmptyObject(t)){var u=s.handle;u&&(u.elem=null),delete s.events,dele
 
 function storyParser()
 {
-	var _DEBUG = false;
+    var _DEBUG = false;
 
-	var _VERSION = '4.0.2';
-	
+    var _VERSION = '4.0.2';
+    
     // Default-Config:
     var _config = {
         story_search_depth: 2,                  // The Max depth for a recursive search
         mark_M_storys: true,                    // Mark every Story Rated as M
         hide_non_english_storys: true,          // Hide all Storys, that are not in english
-		color_normal: '#FFFFFF',
-		color_mouse_over: '#EEF0F4',
-		color_odd_color: '#dfdfdf',
-		hide_images: false,
-		content_width: "90%",
-		pocket_user: null,
-		pocket_password: null,
-		api_url: 'http://www.mrh-development.de/FanFictionUserScript',
-		api_lookupKey: 'ffnet-api-interface',
-		api_timeout: 1000,
-		api_retries: 2,
-		api_checkForUpdates: true,
-		
+        color_normal: '#FFFFFF',
+        color_mouse_over: '#EEF0F4',
+        color_odd_color: '#dfdfdf',
+        hide_images: false,
+        content_width: "90%",
+        pocket_user: null,
+        pocket_password: null,
+        api_url: 'http://www.mrh-development.de/FanFictionUserScript',
+        api_lookupKey: 'ffnet-api-interface',
+        api_timeout: 1000,
+        api_retries: 2,
+        api_checkForUpdates: true,
+        
         // Do not change below this line:
-		storage_key: 'ffnet-storycache',
-		config_key: 'ffnet-config',
+        storage_key: 'ffnet-storycache',
+        config_key: 'ffnet-config',
 
-		highlighter:
-		{
-		},
-		
+        highlighter:
+        {
+        },
+        
         marker: {
             // Name displayed in the List
         }
@@ -78,13 +78,13 @@ function storyParser()
     var _eList = {};
 
     var _found = [];
-	var _storyCache = {};
-	
-	var _gui_container = null;
+    var _storyCache = {};
+    
+    var _gui_container = null;
 
-	this.defaultConfig = function()
-	{
-		_config =
+    this.defaultConfig = function()
+    {
+        _config =
         {
             story_search_depth: 1,                  // The Max depth for a recursive search
             mark_M_storys: false,                    // Mark every Story Rated as M
@@ -92,155 +92,155 @@ function storyParser()
             color_normal: '#FFFFFF',
             color_mouse_over: '#EEF0F4',
             color_odd_color: '#dfdfdf',
-			hide_images: false,
-			content_width: "90%",
-			pocket_user: null,
-			pocket_password: null,
+            hide_images: false,
+            content_width: "90%",
+            pocket_user: null,
+            pocket_password: null,
             storage_key: 'ffnet-storycache',
             config_key: 'ffnet-config',
-			api_url: 'http://www.mrh-development.de/FanFictionUserScript',
-			api_lookupKey: 'ffnet-api-interface',
-			api_checkForUpdates: true,
-			api_timeout: 1000,
-			api_retries: 2,
-			
-			highlighter:
-			{
-			},
-			
+            api_url: 'http://www.mrh-development.de/FanFictionUserScript',
+            api_lookupKey: 'ffnet-api-interface',
+            api_checkForUpdates: true,
+            api_timeout: 1000,
+            api_retries: 2,
+            
+            highlighter:
+            {
+            },
+            
             marker:
             {
 
             }
         }
-	}
+    }
 
 
     var _init = function()
     {
 
-		try
-		{
-			// Checks if sessionStorage entry is valid:
-			// If you know a better solution, please tell me :)
+        try
+        {
+            // Checks if sessionStorage entry is valid:
+            // If you know a better solution, please tell me :)
 
-			if ((typeof sessionStorage[_config.storage_key] != "undefined") &&
-				(typeof sessionStorage[_config.storage_key] != "null") &&
-				sessionStorage[_config.storage_key] != "undefined" &&
-				sessionStorage[_config.storage_key] != "null" &&
-				sessionStorage[_config.storage_key] != "" &&
-				sessionStorage[_config.storage_key] != null)
-			{
-				_storyCache = JSON.parse(sessionStorage[_config.storage_key]);
-			}
+            if ((typeof sessionStorage[_config.storage_key] != "undefined") &&
+                (typeof sessionStorage[_config.storage_key] != "null") &&
+                sessionStorage[_config.storage_key] != "undefined" &&
+                sessionStorage[_config.storage_key] != "null" &&
+                sessionStorage[_config.storage_key] != "" &&
+                sessionStorage[_config.storage_key] != null)
+            {
+                _storyCache = JSON.parse(sessionStorage[_config.storage_key]);
+            }
 
-		} catch (ex)
-		{
-			console.warn(ex);
-		}
-		
-		try
-		{
-			if ((typeof localStorage[_config.config_key] != "undefined") &&
-				(typeof localStorage[_config.config_key] != "null") &&
-				localStorage[_config.config_key] != "undefined" &&
-				localStorage[_config.config_key] != "null" &&
-				localStorage[_config.config_key] != "" &&
-				localStorage[_config.config_key] != null)
-			{
-				_config = JSON.parse(localStorage[_config.config_key]);
-			}
+        } catch (ex)
+        {
+            console.warn(ex);
+        }
+        
+        try
+        {
+            if ((typeof localStorage[_config.config_key] != "undefined") &&
+                (typeof localStorage[_config.config_key] != "null") &&
+                localStorage[_config.config_key] != "undefined" &&
+                localStorage[_config.config_key] != "null" &&
+                localStorage[_config.config_key] != "" &&
+                localStorage[_config.config_key] != null)
+            {
+                _config = JSON.parse(localStorage[_config.config_key]);
+            }
 
-		} catch (ex)
-		{
-			console.warn(ex);
-		}
-		
-		
-		// Check for Config Values:
-	
-		
-		if (typeof(_config['mark_M_storys']) == "undefined")
-		{
-			_config['mark_M_storys'] = false;
-		}
-		
-		if (typeof(_config['hide_non_english_storys']) == "undefined")
-		{
-			_config['hide_non_english_storys'] = false;
-		}
-		
-		if (typeof(_config['color_normal']) == "undefined")
-		{
-			_config['color_normal'] = '#FFFFFF';
-		}
-		
-		if (typeof(_config['color_mouse_over']) == "undefined")
-		{
-			_config['color_mouse_over'] = '#EEF0F4';
-		}
-		
-		if (typeof(_config['color_odd_color']) == "undefined")
-		{
-			_config['color_odd_color'] = '#dfdfdf';
-		}
+        } catch (ex)
+        {
+            console.warn(ex);
+        }
+        
+        
+        // Check for Config Values:
+    
+        
+        if (typeof(_config['mark_M_storys']) == "undefined")
+        {
+            _config['mark_M_storys'] = false;
+        }
+        
+        if (typeof(_config['hide_non_english_storys']) == "undefined")
+        {
+            _config['hide_non_english_storys'] = false;
+        }
+        
+        if (typeof(_config['color_normal']) == "undefined")
+        {
+            _config['color_normal'] = '#FFFFFF';
+        }
+        
+        if (typeof(_config['color_mouse_over']) == "undefined")
+        {
+            _config['color_mouse_over'] = '#EEF0F4';
+        }
+        
+        if (typeof(_config['color_odd_color']) == "undefined")
+        {
+            _config['color_odd_color'] = '#dfdfdf';
+        }
 
-		if (typeof(_config['hide_images']) == "undefined")
-		{
-			_config['hide_images'] = false;
-		}
-		
-		if (typeof(_config['content_width']) == "undefined")
-		{
-			_config['content_width'] = "90%";
-		}
-				
-		if ((typeof(_config['pocket_user']) == "undefined") || (_config['pocket_user'] === ""))
-		{
-			_config['pocket_user'] = null;
-		}
-		
-		if ((typeof(_config['pocket_password']) == "undefined") || (_config['pocket_password'] === ""))
-		{
-			_config['pocket_password'] = null;
-		}
+        if (typeof(_config['hide_images']) == "undefined")
+        {
+            _config['hide_images'] = false;
+        }
+        
+        if (typeof(_config['content_width']) == "undefined")
+        {
+            _config['content_width'] = "90%";
+        }
+                
+        if ((typeof(_config['pocket_user']) == "undefined") || (_config['pocket_user'] === ""))
+        {
+            _config['pocket_user'] = null;
+        }
+        
+        if ((typeof(_config['pocket_password']) == "undefined") || (_config['pocket_password'] === ""))
+        {
+            _config['pocket_password'] = null;
+        }
 
-		if (typeof(_config['highlighter']) == "undefined")
-		{
-			_config['highlighter'] = {};
-		}
-			
-		if (typeof(_config['api_url']) == "undefined")
-		{
-			_config['api_url'] = 'http://www.mrh-development.de/FanFictionUserScript';
-		}
-		
-		if (typeof(_config['api_lookupKey']) == "undefined")
-		{
-			_config['api_lookupKey'] = 'ffnet-api-interface';
-		}
-		
-		if (typeof(_config['api_timeout']) == "undefined")
-		{
-			_config['api_timeout'] = 1000;
-		}
-		
-		if (typeof(_config['api_retries']) == "undefined")
-		{
-			_config['api_retries'] = 2;
-		}			
-		
-		if (typeof(_config['api_checkForUpdates']) == "undefined")
-		{
-			_config['api_checkForUpdates'] = true;
-		}			
-		
-		_api_checkVersion();
+        if (typeof(_config['highlighter']) == "undefined")
+        {
+            _config['highlighter'] = {};
+        }
+            
+        if (typeof(_config['api_url']) == "undefined")
+        {
+            _config['api_url'] = 'http://www.mrh-development.de/FanFictionUserScript';
+        }
+        
+        if (typeof(_config['api_lookupKey']) == "undefined")
+        {
+            _config['api_lookupKey'] = 'ffnet-api-interface';
+        }
+        
+        if (typeof(_config['api_timeout']) == "undefined")
+        {
+            _config['api_timeout'] = 1000;
+        }
+        
+        if (typeof(_config['api_retries']) == "undefined")
+        {
+            _config['api_retries'] = 2;
+        }            
+        
+        if (typeof(_config['api_checkForUpdates']) == "undefined")
+        {
+            _config['api_checkForUpdates'] = true;
+        }            
+        
+        _api_checkVersion();
     }
 
     this.readList = function(__element)
     {
-		_element = __element;
+        _element = __element;
         _read();
     }
 
@@ -248,21 +248,21 @@ function storyParser()
     {
         var odd = false;
 
-		// Clear old Session:
+        // Clear old Session:
         _found = [];
-		_eList = {};
-		_hidden = 0;
-		$('.parser-msg').remove();
+        _eList = {};
+        _hidden = 0;
+        $('.parser-msg').remove();
 
-		$('.ffnet-story-highlighter').each(function()
-		{
-			$(this).before($(this).text()).remove();
-		});
-	
-		// Updates Content_width
-		$('#content_wrapper').css('width', _config['content_width']);
-	
-		
+        $('.ffnet-story-highlighter').each(function()
+        {
+            $(this).before($(this).text()).remove();
+        });
+    
+        // Updates Content_width
+        $('#content_wrapper').css('width', _config['content_width']);
+    
+        
         _element.each(function(k, e)
         {
             var element = $(e)
@@ -273,9 +273,9 @@ function storyParser()
             var link = element.find('a').first().attr('href');
 
             var storyName = _getStoryName(link);
-			
-			var requestQueue = [];
-			
+            
+            var requestQueue = [];
+            
             if (_config.hide_non_english_storys && (text.indexOf('english') == -1))
             {
                 element.slideUp();
@@ -354,14 +354,14 @@ function storyParser()
                     var parseData = {
                         url: link,
                         keywords: config.keywords,
-						headline: headline,
-						config: config,
-						element: element,
-						textEl: textEl,
-						info: info,
-						storyName: storyName
+                        headline: headline,
+                        config: config,
+                        element: element,
+                        textEl: textEl,
+                        info: info,
+                        storyName: storyName
                     };
-					
+                    
                     requestQueue.push(parseData);
 
                 } else if (_found.indexOf(storyName) == -1)
@@ -374,261 +374,261 @@ function storyParser()
                     textEl.html(textEl.html().replace('Rated: M', '<b>Rated: M</b>'));
                 }
             });
-			
-			if (_config['hide_images'])
-			{
-				element.find('img').hide();
-			}
-			
-			// Highlighter:
-			// Build Context Menu for Storys:
-			var contextMenu = $("<div></div>")
-			.css("width", "20px")
-			.css("height", "20px")
-			.css("float", "right")
-			.addClass("parser-msg")
-			.addClass("context-menu")
-			.append(
-				$("<img></img>")
-				.attr("src", "http://private.mrh-development.de/ff/edit.gif")
-				.css("width", "100%")
-				.css("height", "100%")
-			);
-			
-			// Open GUI
-			contextMenu.click(function()
-			{
-				if (_DEBUG)
-				{
-					console.log("Context Menu for ", element, " clicked");
-				}
-			
-				_toggleStoryConfig({
-					url: link,
-					element: element,
-					name: storyName
-				});
-			
-			});
-			
-			element.find("div").first().before(contextMenu);
-			
-			
-			// Highlighter found:
-			if (typeof(_config['highlighter'][link]) != "undefined")
-			{
-				if (_DEBUG)
-				{
-					console.info("Highlight Element Found: ", element);
-				}
-				
-				var img = $("<img></img>").attr("src", _config['highlighter'][link])
-				.css("width", "20px")
-				.css("height", "20px")
-				.css("margin-left", "15px")
-				.addClass("parser-msg");
-				
-				element.find("a").last().after(img);
-				
-			}
-			
-			_doParse(requestQueue);
-			
+            
+            if (_config['hide_images'])
+            {
+                element.find('img').hide();
+            }
+            
+            // Highlighter:
+            // Build Context Menu for Storys:
+            var contextMenu = $("<div></div>")
+            .css("width", "20px")
+            .css("height", "20px")
+            .css("float", "right")
+            .addClass("parser-msg")
+            .addClass("context-menu")
+            .append(
+                $("<img></img>")
+                .attr("src", "http://private.mrh-development.de/ff/edit.gif")
+                .css("width", "100%")
+                .css("height", "100%")
+            );
+            
+            // Open GUI
+            contextMenu.click(function()
+            {
+                if (_DEBUG)
+                {
+                    console.log("Context Menu for ", element, " clicked");
+                }
+            
+                _toggleStoryConfig({
+                    url: link,
+                    element: element,
+                    name: storyName
+                });
+            
+            });
+            
+            element.find("div").first().before(contextMenu);
+            
+            
+            // Highlighter found:
+            if (typeof(_config['highlighter'][link]) != "undefined")
+            {
+                if (_DEBUG)
+                {
+                    console.info("Highlight Element Found: ", element);
+                }
+                
+                var img = $("<img></img>").attr("src", _config['highlighter'][link])
+                .css("width", "20px")
+                .css("height", "20px")
+                .css("margin-left", "15px")
+                .addClass("parser-msg");
+                
+                element.find("a").last().after(img);
+                
+            }
+            
+            _doParse(requestQueue);
+            
             if (!marker_exist)
             {
                 _updateColor(element, color, colorMo);
             }
 
         });
-		
-		if (_DEBUG)
-		{
-			console.info("Current Highlighter Settings: ", _config['highlighter']);
-		}
-		
+        
+        if (_DEBUG)
+        {
+            console.info("Current Highlighter Settings: ", _config['highlighter']);
+        }
+        
         _updateList();
     }
 
-	var _getStoryName = function(link)
+    var _getStoryName = function(link)
     {
-		var storyName_reg = /\/s\/[0-9]+\/[0-9]+\/(.+)/;
-		var result = storyName_reg.exec(link);
+        var storyName_reg = /\/s\/[0-9]+\/[0-9]+\/(.+)/;
+        var result = storyName_reg.exec(link);
 
-		if ((result != null) && (result.length > 1))
-		{
-			return result[1];
-		} else
-		{
-			storyName_reg = /\/[^\/]+\/(.+)/;
-			result = storyName_reg.exec(link);
-			if ((result != null) && (result.length > 1))
-			{
-				return result[1];
-			} else
-			{
-				return "None";
-			}
-		}
+        if ((result != null) && (result.length > 1))
+        {
+            return result[1];
+        } else
+        {
+            storyName_reg = /\/[^\/]+\/(.+)/;
+            result = storyName_reg.exec(link);
+            if ((result != null) && (result.length > 1))
+            {
+                return result[1];
+            } else
+            {
+                return "None";
+            }
+        }
     }
 
     var _doParse = function(queue, i)
-    {	
-		if (typeof i == "undefined")
-		{
-			i = 0;
-		}
-	
-		if (_DEBUG)
-		{
-			console.info('Execute Queue on '+i+': ', queue);
-		}
-			
-		if (i >= queue.length)
-		{
-			return;
-		}
+    {    
+        if (typeof i == "undefined")
+        {
+            i = 0;
+        }
+    
+        if (_DEBUG)
+        {
+            console.info('Execute Queue on '+i+': ', queue);
+        }
+            
+        if (i >= queue.length)
+        {
+            return;
+        }
 
-		var data = queue[i];
-		
-		url = 'http://www.fanfiction.net' + data.url;
-	
+        var data = queue[i];
+        
+        url = 'http://www.fanfiction.net' + data.url;
+    
 
-		keywords = data.keywords;
+        keywords = data.keywords;
 
-		if (typeof keywords == "undefined")
-		{
-			console.warn('No Keywords!');
-		}
-		
-		var executeNext = function()
-		{
-			_doParse(queue, i+1);
-		}
-		
-		callback = function(info)
-		{
-			var el = queue[i];
-			
-			if (_DEBUG)
-			{
-				console.warn('execute Callback Function '+el.headline+' for ', info);
-			}
-			
-			_elementCallback(el.config, el.element, el.textEl, el.headline, info);
-			
-			_found.push(el.storyName);
-			
-			executeNext();
-		}
-		
-		_parse(url, keywords, callback, 0, executeNext);
-		
+        if (typeof keywords == "undefined")
+        {
+            console.warn('No Keywords!');
+        }
+        
+        var executeNext = function()
+        {
+            _doParse(queue, i+1);
+        }
+        
+        callback = function(info)
+        {
+            var el = queue[i];
+            
+            if (_DEBUG)
+            {
+                console.warn('execute Callback Function '+el.headline+' for ', info);
+            }
+            
+            _elementCallback(el.config, el.element, el.textEl, el.headline, info);
+            
+            _found.push(el.storyName);
+            
+            executeNext();
+        }
+        
+        _parse(url, keywords, callback, 0, executeNext);
+        
     }
 
 
     var _parse = function(url, keywords, callback, i, executeNext)
-    {	
-		
+    {    
+        
         if (i >= _config.story_search_depth)
         {
             executeNext();
-			return;
+            return;
         }
 
         //console.log('Open: ',url);
 
-		var ajax_callback = function(text)
-		{
-			if (!(url in _storyCache))
-			{
-				if (_DEBUG)
-				{
-					console.log('Story '+url+' Not in Cache -> save');
-				}
-				
-				_storyCache[url] = text;
+        var ajax_callback = function(text)
+        {
+            if (!(url in _storyCache))
+            {
+                if (_DEBUG)
+                {
+                    console.log('Story '+url+' Not in Cache -> save');
+                }
+                
+                _storyCache[url] = text;
 
-				try
-				{
-					sessionStorage[_config.storage_key] = JSON.stringify(_storyCache);
-				} catch (ex)
-				{
-					try
-					{
-						sessionStorage[_config.storage_key] = '';
+                try
+                {
+                    sessionStorage[_config.storage_key] = JSON.stringify(_storyCache);
+                } catch (ex)
+                {
+                    try
+                    {
+                        sessionStorage[_config.storage_key] = '';
 
-					} catch (e)
-					{
-						console.warn(e);
-					}
-				}
+                    } catch (e)
+                    {
+                        console.warn(e);
+                    }
+                }
 
-			}
+            }
 
-			var body = $(text);
-			
-			if (_parseSite(body, keywords))
-			{
-				var storyName = _getStoryName(url);
-				callback({
-					'name': storyName,
-					'url': url,
-					'chapter': ( i + 1 )
-				});
-				
-			} else
-			{
-				//console.log('find next el');
-				var next = body.find('input[type="button"]').filter('[value*="Next"]').first();
-				//console.log('next: ', next);
+            var body = $(text);
+            
+            if (_parseSite(body, keywords))
+            {
+                var storyName = _getStoryName(url);
+                callback({
+                    'name': storyName,
+                    'url': url,
+                    'chapter': ( i + 1 )
+                });
+                
+            } else
+            {
+                //console.log('find next el');
+                var next = body.find('input[type="button"]').filter('[value*="Next"]').first();
+                //console.log('next: ', next);
 
-				if (next.length != 0)
-				{
-					var script = next.attr('onclick');
-					var script_reg = /self\.location=\'([^']+)\'/;
-					var data = script_reg.exec(script);
+                if (next.length != 0)
+                {
+                    var script = next.attr('onclick');
+                    var script_reg = /self\.location=\'([^']+)\'/;
+                    var data = script_reg.exec(script);
 
-					//console.log('data:', data);
+                    //console.log('data:', data);
 
-					if ((data != null) && (data.length > 1))
-					{
-						_parse(data[1], keywords, callback, i+1, executeNext);
-					}
-				}
-				//console.log('Content not found in: ', url);
-				
-			}
+                    if ((data != null) && (data.length > 1))
+                    {
+                        _parse(data[1], keywords, callback, i+1, executeNext);
+                    }
+                }
+                //console.log('Content not found in: ', url);
+                
+            }
 
-		};
+        };
 
-		if (url in _storyCache)
-		{
-			if (_DEBUG)
-			{
-				console.log('Story '+url+' in Cache -> use Cache');
-			}
-				
-		
-			ajax_callback(_storyCache[url]);
-		} else
-		{
-			if (_DEBUG)
-			{
-				console.log('Story '+url+' not in Cache -> request');
-			}
-		
-			$.ajax({
-				url: url,
-				success: ajax_callback
-			});
-		}
+        if (url in _storyCache)
+        {
+            if (_DEBUG)
+            {
+                console.log('Story '+url+' in Cache -> use Cache');
+            }
+                
+        
+            ajax_callback(_storyCache[url]);
+        } else
+        {
+            if (_DEBUG)
+            {
+                console.log('Story '+url+' not in Cache -> request');
+            }
+        
+            $.ajax({
+                url: url,
+                success: ajax_callback
+            });
+        }
 
         //console.log('reponse revieved');
 
 
     }
-	
-	
+    
+    
     var _parseSite = function(body, keywords)
     {
         var storyEl = body.find('.storytext');
@@ -680,8 +680,8 @@ function storyParser()
         if (!config.display)
         {
             element.slideUp();
-			element.addClass('hidden');
-			_updateListColor();
+            element.addClass('hidden');
+            _updateListColor();
             _hidden += 1;
         } else
         {
@@ -709,7 +709,7 @@ function storyParser()
 
             $.each(config.keywords, function(key, keyword)
             {
-				var el = element.find('div').first();
+                var el = element.find('div').first();
                 var reg = new RegExp(keyword, "i");
                 var text = el.html();
 
@@ -747,7 +747,7 @@ function storyParser()
             });
 
 
-			_updateColor(element, color, colorMo);
+            _updateColor(element, color, colorMo);
 
         }
 
@@ -780,7 +780,7 @@ function storyParser()
             }
 
             if (_config.marker[headline].mention_in_headline)
-			{
+            {
                 text += "<b>"+headline+":</b> "+_eList[headline].length+ " ";
             }
 
@@ -793,21 +793,21 @@ function storyParser()
         .append(headlineContainer));
     }
 
-	var _updateListColor = function()
-	{
-		var odd = false;
-		_element.not('.hidden').each(function(k, el)
-		{
-			var el = $(el);
-			var link = el.find('a').first().attr('href');
-			var storyName = _getStoryName(link);
-			var color = _config.color_normal;
+    var _updateListColor = function()
+    {
+        var odd = false;
+        _element.not('.hidden').each(function(k, el)
+        {
+            var el = $(el);
+            var link = el.find('a').first().attr('href');
+            var storyName = _getStoryName(link);
+            var color = _config.color_normal;
             var colorMo = _config.color_mouse_over;
 
-			if (el.is('.hidden'))
-			{
-				return;
-			}
+            if (el.is('.hidden'))
+            {
+                return;
+            }
 
             if (odd)
             {
@@ -818,18 +818,18 @@ function storyParser()
                 odd = true;
             }
 
-			if (_found.indexOf(storyName) == -1)
-			{
-				_updateColor(el, color, colorMo);
-			}
-		});
+            if (_found.indexOf(storyName) == -1)
+            {
+                _updateColor(el, color, colorMo);
+            }
+        });
 
 
-	}
+    }
 
     var _updateColor = function(element, color, colorMo)
     {
-		element.css('background-color', color);
+        element.css('background-color', color);
 
         element.mouseenter(function()
         {
@@ -840,223 +840,223 @@ function storyParser()
         })
     }
 
-	
-	var _enableInStoryHighlighter = function()
-	{
-		if (_DEBUG)
-		{
-			console.log("Enable In Story Highlighter");
-		}
+    
+    var _enableInStoryHighlighter = function()
+    {
+        if (_DEBUG)
+        {
+            console.log("Enable In Story Highlighter");
+        }
 
-		var body = $("body");
-		var field = body.find('#gui_table1i').first().find("b").first();
-		
-		var contextMenu = $("<div></div>")
-			.css("width", "20px")
-			.css("height", "20px")
-			.css("float", "right")
-			.addClass("parser-msg")
-			.append(
-				$("<img></img>")
-				.attr("src", "http://private.mrh-development.de/ff/edit.gif")
-				.css("width", "100%")
-				.css("height", "100%")
-			);
-			
-		// Open GUI
-		contextMenu.click(function()
-		{
-		
-			_toggleStoryConfig({
-				url: document.location.pathname,
-				//element: element,
-				name: field.text()
-			});
-		
-		});
-		
-		field.after(contextMenu);
-		
-		// Highlighter found:
-		if (typeof(_config['highlighter'][document.location.pathname]) != "undefined")
-		{
-			if (_DEBUG)
-			{
-				console.info("Highlight Element Found");
-			}
-			
-			var img = $("<img></img>").attr("src", _config['highlighter'][document.location.pathname])
-			.css("width", "20px")
-			.css("height", "20px")
-			.css("margin-left", "15px")
-			.addClass("parser-msg")
-			
-			field.after(img);
-			
-		}
-		
-		
-		
-	}
-	
-	this.enableInStoryHighlighter = _enableInStoryHighlighter;
-	
-	this.enablePocketSave = function()
-	{	
-		var user = _config['pocket_user'];
-		var password = _config['pocket_password'];
-		
-		var body = $("body");
-		
-		if ((user == null) || (password == null))
-		{
-			console.log("Disables Pocket Save Function");
-			return;		
-		}
-	
-		var field = body.find('#gui_table1i').first().find("b").first();
-	
-		field.after(
-			$('<button>Save To Pocket</button>')
-			.click( function()
-			{
-				_parsePocket(document.location.pathname, field.text() + ": ");
+        var body = $("body");
+        var field = body.find('#gui_table1i').first().find("b").first();
+        
+        var contextMenu = $("<div></div>")
+            .css("width", "20px")
+            .css("height", "20px")
+            .css("float", "right")
+            .addClass("parser-msg")
+            .append(
+                $("<img></img>")
+                .attr("src", "http://private.mrh-development.de/ff/edit.gif")
+                .css("width", "100%")
+                .css("height", "100%")
+            );
+            
+        // Open GUI
+        contextMenu.click(function()
+        {
+        
+            _toggleStoryConfig({
+                url: document.location.pathname,
+                //element: element,
+                name: field.text()
+            });
+        
+        });
+        
+        field.after(contextMenu);
+        
+        // Highlighter found:
+        if (typeof(_config['highlighter'][document.location.pathname]) != "undefined")
+        {
+            if (_DEBUG)
+            {
+                console.info("Highlight Element Found");
+            }
+            
+            var img = $("<img></img>").attr("src", _config['highlighter'][document.location.pathname])
+            .css("width", "20px")
+            .css("height", "20px")
+            .css("margin-left", "15px")
+            .addClass("parser-msg")
+            
+            field.after(img);
+            
+        }
+        
+        
+        
+    }
+    
+    this.enableInStoryHighlighter = _enableInStoryHighlighter;
+    
+    this.enablePocketSave = function()
+    {    
+        var user = _config['pocket_user'];
+        var password = _config['pocket_password'];
+        
+        var body = $("body");
+        
+        if ((user == null) || (password == null))
+        {
+            console.log("Disables Pocket Save Function");
+            return;        
+        }
+    
+        var field = body.find('#gui_table1i').first().find("b").first();
+    
+        field.after(
+            $('<button>Save To Pocket</button>')
+            .click( function()
+            {
+                _parsePocket(document.location.pathname, field.text() + ": ");
 
-			}).css("margin-left", "20px")
-			.attr("id", "ffnet-pocket-save-button")
-		);
-	}
-	
-	var _parsePocket  = function(url, prefix)
-	{
-		if (typeof prefix == "undefined")
-		{
-			prefix = "";
-		}
-		
-		var user = _config['pocket_user'];
-		var password = _config['pocket_password'];
-		
-		
-		if ((user == null) || (password == null))
-		{
-			return;
-		}
-		
-		var ajax_callback = function(text)
-		{
-			var body = $(text);
-			
-			//var title = prefix + $(body.find('#chap_select')).first().children().filter('[selected="selected"]').html();
+            }).css("margin-left", "20px")
+            .attr("id", "ffnet-pocket-save-button")
+        );
+    }
+    
+    var _parsePocket  = function(url, prefix)
+    {
+        if (typeof prefix == "undefined")
+        {
+            prefix = "";
+        }
+        
+        var user = _config['pocket_user'];
+        var password = _config['pocket_password'];
+        
+        
+        if ((user == null) || (password == null))
+        {
+            return;
+        }
+        
+        var ajax_callback = function(text)
+        {
+            var body = $(text);
+            
+            //var title = prefix + $(body.find('#chap_select')).first().children().filter('[selected="selected"]').html();
 
-			var title = body.find("title").first().text();
-			
-			$("body").append(
-				$("<img>").attr("src", 'https://readitlaterlist.com/v2/add?username='+user+'&password='+password+'&apikey=emIpiQ7cA6fR4u6dr7ga2aXC11dcD58a&url=http://www.fanfiction.net'+url+'&title='+title)
-			);
-			
-			console.log(url+' - '+title+' - Done');
-			
-			var next = body.find('input[type="button"]').filter('[value*="Next"]').first();
+            var title = body.find("title").first().text();
+            
+            $("body").append(
+                $("<img>").attr("src", 'https://readitlaterlist.com/v2/add?username='+user+'&password='+password+'&apikey=emIpiQ7cA6fR4u6dr7ga2aXC11dcD58a&url=http://www.fanfiction.net'+url+'&title='+title)
+            );
+            
+            console.log(url+' - '+title+' - Done');
+            
+            var next = body.find('input[type="button"]').filter('[value*="Next"]').first();
 
 
-			if (next.length != 0)
-			{
-				var script = next.attr('onclick');
-				var script_reg = /self\.location=\'([^']+)\'/;
-				var data = script_reg.exec(script);
+            if (next.length != 0)
+            {
+                var script = next.attr('onclick');
+                var script_reg = /self\.location=\'([^']+)\'/;
+                var data = script_reg.exec(script);
 
-				if ((data != null) && (data.length > 1))
-				{
-					_parsePocket(data[1], prefix);
-				}
-			
-			} else
-			{
-				$("#ffnet-pocket-save-button").attr("disabled", "disabled")
-				.html("Save done!");
-			}
+                if ((data != null) && (data.length > 1))
+                {
+                    _parsePocket(data[1], prefix);
+                }
+            
+            } else
+            {
+                $("#ffnet-pocket-save-button").attr("disabled", "disabled")
+                .html("Save done!");
+            }
 
-		};
+        };
 
-		$.ajax({
-			url: url,
-			success: ajax_callback
-		});
-	
-	}
-	
-	// --------- GUI -------------
+        $.ajax({
+            url: url,
+            success: ajax_callback
+        });
+    
+    }
+    
+    // --------- GUI -------------
 
     var _settings_elements = {};
-	var _gui_elements = {};
-	var _add_count = 0;
+    var _gui_elements = {};
+    var _add_count = 0;
 
-	var _gui_create = function()
-	{
-		var width = 600;
-		var radius = 15;
-		var win_width = window.outerWidth;
+    var _gui_create = function()
+    {
+        var width = 600;
+        var radius = 15;
+        var win_width = window.outerWidth;
 
-		var container = $("<div></div>")
-		.css('position', 'absolute')
-		.css('top', '15px')
-		.css('left', ((win_width - width) / 2) + "px")
-		.css('z-index', '999')
-		.css('background-color', 'white')
-		.css('width', width+ "px")
-		.css('min-height', '500px')
-		.css('overflow', 'auto')
-		.css('padding', '10px 5px 10px 5px')
+        var container = $("<div></div>")
+        .css('position', 'absolute')
+        .css('top', '15px')
+        .css('left', ((win_width - width) / 2) + "px")
+        .css('z-index', '999')
+        .css('background-color', 'white')
+        .css('width', width+ "px")
+        .css('min-height', '500px')
+        .css('overflow', 'auto')
+        .css('padding', '10px 5px 10px 5px')
 
-		// Background
-		.css('background', '-moz-linear-gradient(center top, #CCCCCC, #FFFFFF 300px) repeat scroll 0 0 #CCCCCC')
-		.css('background', '-webkit-gradient( linear, center top, center 300px, from(#CCCCCC), to(#FFFFFF)) repeat scroll 0 0 #CCCCCC')
-		.css('background', '-o-linear-gradient( center top, #CCCCCC, #FFFFFF )')
+        // Background
+        .css('background', '-moz-linear-gradient(center top, #CCCCCC, #FFFFFF 300px) repeat scroll 0 0 #CCCCCC')
+        .css('background', '-webkit-gradient( linear, center top, center 300px, from(#CCCCCC), to(#FFFFFF)) repeat scroll 0 0 #CCCCCC')
+        .css('background', '-o-linear-gradient( center top, #CCCCCC, #FFFFFF )')
 
-		// Border-Radius
-		.css('-moz-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
-		.css('-webkit-border-top-left-radius', radius+'pxpx')
-		.css('-webkit-border-top-right-radius', radius+'px')
-		.css('-webkit-border-bottom-left-radius', radius+'px')
-		.css('-webkit-border-bottom-right-radius', radius+'px')
-		.css('-goog-ms-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
-		.css('border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
-		.css('-khtml-border-radius', radius+'px')
-		.css('-moz-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('-webkit-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('-goog-ms-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('border', '1px black solid')
+        // Border-Radius
+        .css('-moz-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
+        .css('-webkit-border-top-left-radius', radius+'pxpx')
+        .css('-webkit-border-top-right-radius', radius+'px')
+        .css('-webkit-border-bottom-left-radius', radius+'px')
+        .css('-webkit-border-bottom-right-radius', radius+'px')
+        .css('-goog-ms-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
+        .css('border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
+        .css('-khtml-border-radius', radius+'px')
+        .css('-moz-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('-webkit-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('-goog-ms-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('border', '1px black solid')
 
-		.hide()
-		;
+        .hide()
+        ;
 
-		container.html($('#content').hide().html());
+        container.html($('#content').hide().html());
 
-		$("body").append(container);
+        $("body").append(container);
 
-		_gui_container = container;
+        _gui_container = container;
 
-	}
+    }
 
-	var _gui_update = function()
-	{
+    var _gui_update = function()
+    {
         _gui_elements = {};
         _settings_elements = {};
-		_gui_container.html('');
+        _gui_container.html('');
 
-		// Reset Position:
-		_gui_container.css("position", "absolute");
-		
-		_add_count = 0;
+        // Reset Position:
+        _gui_container.css("position", "absolute");
         
-		// Displays current Version:
-		$('<div style="width:70%; display:inline-block; text-align:left; margin-bottom: 5px"></div>').append(
-			$("<span></span>").html("Current Version: <b>" + _VERSION + "</b>")		
-		).appendTo(_gui_container);
-		
-		
+        _add_count = 0;
+        
+        // Displays current Version:
+        $('<div style="width:70%; display:inline-block; text-align:left; margin-bottom: 5px"></div>').append(
+            $("<span></span>").html("Current Version: <b>" + _VERSION + "</b>")        
+        ).appendTo(_gui_container);
+        
+        
         $('<div style="width:30%; display:inline-block; text-align:right; margin-bottom: 5px"></div>').append(
             $('<input type="button" value="Close"></input>').click(function()
             {
@@ -1068,781 +1068,781 @@ function storyParser()
             })
         ).appendTo(_gui_container);
         
-				
+                
         var radius = 15;
 
         // render Settings Container:
         var s_container = $("<div></div>")
-		.css('margin', 'auto')
-		//.css('height', '260px')
-		.css('margin-bottom', '30px')
-		.css('background-color', 'white')
-		.css('padding', '5px')
+        .css('margin', 'auto')
+        //.css('height', '260px')
+        .css('margin-bottom', '30px')
+        .css('background-color', 'white')
+        .css('padding', '5px')
 
-		// Border-Radius
-		.css('-moz-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
-		.css('-webkit-border-top-left-radius', radius+'pxpx')
-		.css('-webkit-border-top-right-radius', radius+'px')
-		.css('-webkit-border-bottom-left-radius', radius+'px')
-		.css('-webkit-border-bottom-right-radius', radius+'px')
-		.css('-goog-ms-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
-		.css('border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
-		.css('-khtml-border-radius', radius+'px')
-		.css('-moz-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('-webkit-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('-goog-ms-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('border', '2px black solid')
+        // Border-Radius
+        .css('-moz-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
+        .css('-webkit-border-top-left-radius', radius+'pxpx')
+        .css('-webkit-border-top-right-radius', radius+'px')
+        .css('-webkit-border-bottom-left-radius', radius+'px')
+        .css('-webkit-border-bottom-right-radius', radius+'px')
+        .css('-goog-ms-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
+        .css('border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
+        .css('-khtml-border-radius', radius+'px')
+        .css('-moz-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('-webkit-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('-goog-ms-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('border', '2px black solid')
 
         .appendTo(_gui_container);
 
 
         var table = $('<table width="100%"></table>').appendTo(s_container);
 
-		var spacer = $('<tr></tr>').append
-			(
-				$('<td width="30%" style="height:10px"></td>')
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>')
-			);
+        var spacer = $('<tr></tr>').append
+            (
+                $('<td width="30%" style="height:10px"></td>')
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>')
+            );
 
-		// story_search_depth
-		var input = $('<input type="text" id="fflist-story_search_depth">')
-					.attr('value', _config.story_search_depth)
-					.attr('size', '50');
+        // story_search_depth
+        var input = $('<input type="text" id="fflist-story_search_depth">')
+                    .attr('value', _config.story_search_depth)
+                    .attr('size', '50');
 
-		_settings_elements['story_search_depth'] = input;
+        _settings_elements['story_search_depth'] = input;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-story_search_depth">Max Search depth: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				)
-			)
-		);
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-story_search_depth">Max Search depth: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                )
+            )
+        );
 
-		// spacer:
-		table.append(spacer.clone());
+        // spacer:
+        table.append(spacer.clone());
 
         // mark_M_storys:
-		var checkbox = $('<input type="checkbox" id="fflist-mark_M_storys">');
-		if (_config.mark_M_storys)
-		{
-			checkbox.attr('checked', 'checked');
-		}
+        var checkbox = $('<input type="checkbox" id="fflist-mark_M_storys">');
+        if (_config.mark_M_storys)
+        {
+            checkbox.attr('checked', 'checked');
+        }
 
-		_settings_elements['mark_M_storys'] = checkbox;
+        _settings_elements['mark_M_storys'] = checkbox;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="10%"></td>').append(
-					$('<label for="fflist-mark_M_storys">Mark "M" rated Storys: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-						checkbox
-				)
-			)
-		);
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-mark_M_storys">Mark "M" rated Storys: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
 
         // spacer:
-		table.append(spacer.clone());
+        table.append(spacer.clone());
 
         // hide_non_english_storys:
-		checkbox = $('<input type="checkbox" id="fflist-hide_non_english_storys">');
-		if (_config.hide_non_english_storys)
-		{
-			checkbox.attr('checked', 'checked');
-		}
+        checkbox = $('<input type="checkbox" id="fflist-hide_non_english_storys">');
+        if (_config.hide_non_english_storys)
+        {
+            checkbox.attr('checked', 'checked');
+        }
 
-		_settings_elements['hide_non_english_storys'] = checkbox;
+        _settings_elements['hide_non_english_storys'] = checkbox;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="10%"></td>').append(
-					$('<label for="fflist-hide_non_english_storys">Hide non English Storys: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-						checkbox
-				)
-			)
-		);
-
-        // spacer:
-		table.append(spacer.clone());
-		
-		// hide_images:
-		checkbox = $('<input type="checkbox" id="fflist-hide_images">');
-		if (_config.hide_images)
-		{
-			checkbox.attr('checked', 'checked');
-		}
-
-		_settings_elements['hide_images'] = checkbox;
-
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="10%"></td>').append(
-					$('<label for="fflist-hide_images">Hide Story Images: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-						checkbox
-				)
-			)
-		);
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-hide_non_english_storys">Hide non English Storys: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
 
         // spacer:
-		table.append(spacer.clone());
-		
-		// content_width
-		input = $('<input type="text" id="fflist-content_width">')
-					.attr('value', _config.content_width)
-					.attr('size', '50');
+        table.append(spacer.clone());
+        
+        // hide_images:
+        checkbox = $('<input type="checkbox" id="fflist-hide_images">');
+        if (_config.hide_images)
+        {
+            checkbox.attr('checked', 'checked');
+        }
 
-		_settings_elements['content_width'] = input;
+        _settings_elements['hide_images'] = checkbox;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-content_width">Content Width: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				)
-			)
-		);
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-hide_images">Hide Story Images: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
 
         // spacer:
-		table.append(spacer.clone());
-		
+        table.append(spacer.clone());
+        
+        // content_width
+        input = $('<input type="text" id="fflist-content_width">')
+                    .attr('value', _config.content_width)
+                    .attr('size', '50');
+
+        _settings_elements['content_width'] = input;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-content_width">Content Width: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                )
+            )
+        );
+
+        // spacer:
+        table.append(spacer.clone());
+        
 
         // color_normal
-		input = $('<input type="text" id="fflist-color_normal">')
-					.attr('value', _config.color_normal)
-					.attr('size', '50');
+        input = $('<input type="text" id="fflist-color_normal">')
+                    .attr('value', _config.color_normal)
+                    .attr('size', '50');
 
-		_settings_elements['color_normal'] = input;
+        _settings_elements['color_normal'] = input;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-color_normal">Normal Background-Color: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				)
-			)
-		);
-
-        // spacer:
-		table.append(spacer.clone());
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-color_normal">Normal Background-Color: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                )
+            )
+        );
 
         // spacer:
-		table.append(spacer.clone());
+        table.append(spacer.clone());
+
+        // spacer:
+        table.append(spacer.clone());
 
         // color_mouse_over
-		input = $('<input type="text" id="fflist-color_mouse_over">')
-					.attr('value', _config.color_mouse_over)
-					.attr('size', '50');
+        input = $('<input type="text" id="fflist-color_mouse_over">')
+                    .attr('value', _config.color_mouse_over)
+                    .attr('size', '50');
 
-		_settings_elements['color_mouse_over'] = input;
+        _settings_elements['color_mouse_over'] = input;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-color_mouse_over">MouseOver Background-Color: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				)
-			)
-		);
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-color_mouse_over">MouseOver Background-Color: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                )
+            )
+        );
 
         // spacer:
-		table.append(spacer.clone());
+        table.append(spacer.clone());
 
         // color_odd_color
-		input = $('<input type="text" id="fflist-color_odd_color">')
-					.attr('value', _config.color_odd_color)
-					.attr('size', '50');
+        input = $('<input type="text" id="fflist-color_odd_color">')
+                    .attr('value', _config.color_odd_color)
+                    .attr('size', '50');
 
-		_settings_elements['color_odd_color'] = input;
+        _settings_elements['color_odd_color'] = input;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-color_odd_color">Odd Background-Color: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				)
-			)
-		);
-		
-		
-		// spacer:
-		table.append(spacer.clone());
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-color_odd_color">Odd Background-Color: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                )
+            )
+        );
+        
+        
+        // spacer:
+        table.append(spacer.clone());
 
         // Pocket ---
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(	)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					" ---- Pocket Settings ----"
-				)
-			)
-		);
-		
-		// spacer:
-		table.append(spacer.clone());
-		
-		// pocket_user
-		input = $('<input type="text" id="fflist-pocket_user">')
-					.attr('value', _config.pocket_user)
-					.attr('size', '50');
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(    )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    " ---- Pocket Settings ----"
+                )
+            )
+        );
+        
+        // spacer:
+        table.append(spacer.clone());
+        
+        // pocket_user
+        input = $('<input type="text" id="fflist-pocket_user">')
+                    .attr('value', _config.pocket_user)
+                    .attr('size', '50');
 
-		_settings_elements['pocket_user'] = input;
+        _settings_elements['pocket_user'] = input;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-pocket_user">Username: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				)
-			)
-		);
-		
-		
-		// spacer:
-		table.append(spacer.clone());
-		
-		// pocket_password
-		input = $('<input type="password" id="fflist-pocket_password">')
-					.attr('value', _config.pocket_password)
-					.attr('size', '50');
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-pocket_user">Username: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                )
+            )
+        );
+        
+        
+        // spacer:
+        table.append(spacer.clone());
+        
+        // pocket_password
+        input = $('<input type="password" id="fflist-pocket_password">')
+                    .attr('value', _config.pocket_password)
+                    .attr('size', '50');
 
-		_settings_elements['pocket_password'] = input;
+        _settings_elements['pocket_password'] = input;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-pocket_password">Password: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				)
-			)
-		);
-		
-		
-		// spacer:
-		table.append(spacer.clone());
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-pocket_password">Password: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                )
+            )
+        );
+        
+        
+        // spacer:
+        table.append(spacer.clone());
 
         // API ---
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(	)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					" ---- API Settings ----"
-				)
-			)
-		);
-		
-		// spacer:
-		table.append(spacer.clone());
-		
-		// api_checkForUpdates
-		checkbox = $('<input type="checkbox" id="fflist-api_checkForUpdates">');
-		if (_config.api_checkForUpdates)
-		{
-			checkbox.attr('checked', 'checked');
-		}
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(    )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    " ---- API Settings ----"
+                )
+            )
+        );
+        
+        // spacer:
+        table.append(spacer.clone());
+        
+        // api_checkForUpdates
+        checkbox = $('<input type="checkbox" id="fflist-api_checkForUpdates">');
+        if (_config.api_checkForUpdates)
+        {
+            checkbox.attr('checked', 'checked');
+        }
 
-		_settings_elements['api_checkForUpdates'] = checkbox;
+        _settings_elements['api_checkForUpdates'] = checkbox;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="10%"></td>').append(
-					$('<label for="fflist-api_checkForUpdates">Check for Updates: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-						checkbox
-				)
-			)
-		);
-		
-		
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-api_checkForUpdates">Check for Updates: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
+        
+        
 
 
         // -------------------------------
 
-		var container = $("<div></div>").appendTo(_gui_container);
+        var container = $("<div></div>").appendTo(_gui_container);
 
-		$.each(_config.marker, function(name, marker)
-		{
-			_gui_add_form(name, marker, container);
-		});
+        $.each(_config.marker, function(name, marker)
+        {
+            _gui_add_form(name, marker, container);
+        });
 
-		$('<input type="button" value="Save"></input>').click(function()
-		{
-			var new_config = {};
+        $('<input type="button" value="Save"></input>').click(function()
+        {
+            var new_config = {};
 
-			$.each(_gui_elements, function(k, data)
-			{
-				if (data == undefined)
-				{
-					return;
-				}
+            $.each(_gui_elements, function(k, data)
+            {
+                if (data == undefined)
+                {
+                    return;
+                }
 
-				var name = data.name.attr('value');
-				if (name == '')
-				{
-					return;
-				}
+                var name = data.name.attr('value');
+                if (name == '')
+                {
+                    return;
+                }
 
-				var config =
-				{
-					name: name,
-					color: data.color.attr('value'),
-					ignore: data.ignore.attr('value').split(', '),
-					keywords: data.keywords.attr('value').split(', '),
-					mark_chapter: data.mark_chapter.is(':checked'),
-					mention_in_headline: data.mention_in_headline.is(':checked'),
-					display: data.display.is(':checked'),
-					mouseOver: data.mouseOver.attr('value'),
-					print_story: data.print_story.is(':checked'),
-					search_story: data.search_story.is(':checked'),
-					background: (name in _config.marker && _config.marker[name].background != null) ? (_config.marker[name].background) : null,
-					text_color: (name in _config.marker &&_config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null
-				};
+                var config =
+                {
+                    name: name,
+                    color: data.color.attr('value'),
+                    ignore: data.ignore.attr('value').split(', '),
+                    keywords: data.keywords.attr('value').split(', '),
+                    mark_chapter: data.mark_chapter.is(':checked'),
+                    mention_in_headline: data.mention_in_headline.is(':checked'),
+                    display: data.display.is(':checked'),
+                    mouseOver: data.mouseOver.attr('value'),
+                    print_story: data.print_story.is(':checked'),
+                    search_story: data.search_story.is(':checked'),
+                    background: (name in _config.marker && _config.marker[name].background != null) ? (_config.marker[name].background) : null,
+                    text_color: (name in _config.marker &&_config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null
+                };
 
-				
-				//console.log(name, config);
-				new_config[name] = config;
+                
+                //console.log(name, config);
+                new_config[name] = config;
 
-			});
+            });
 
             _config.story_search_depth = Number(_settings_elements.story_search_depth.attr('value'));
             _config.mark_M_storys = _settings_elements.mark_M_storys.is(':checked');
             _config.hide_non_english_storys = _settings_elements.hide_non_english_storys.is(':checked');
-			_config.hide_images = _settings_elements.hide_images.is(':checked');
-			_config.content_width = _settings_elements.content_width.attr('value');
+            _config.hide_images = _settings_elements.hide_images.is(':checked');
+            _config.content_width = _settings_elements.content_width.attr('value');
             _config.color_normal = _settings_elements.color_normal.attr('value');
             _config.color_odd_color = _settings_elements.color_odd_color.attr('value');
             _config.color_mouse_over = _settings_elements.color_mouse_over.attr('value');
-			_config.pocket_user = _settings_elements.pocket_user.attr('value');
-			_config.pocket_password = _settings_elements.pocket_password.attr('value');
-			_config.api_checkForUpdates = _settings_elements.api_checkForUpdates.is(':checked');
-			
-			
-			_config.marker = new_config;
+            _config.pocket_user = _settings_elements.pocket_user.attr('value');
+            _config.pocket_password = _settings_elements.pocket_password.attr('value');
+            _config.api_checkForUpdates = _settings_elements.api_checkForUpdates.is(':checked');
+            
+            
+            _config.marker = new_config;
 
-			_save_config();
+            _save_config();
 
-			_gui_hide();
-		}).appendTo(_gui_container);
+            _gui_hide();
+        }).appendTo(_gui_container);
 
 
-		$('<input type="button" value="Add Field"></input>').click(function()
-		{
-			_gui_add_form('New-Form '+(_add_count++),
-				{
-					display: true,
-					keywords: [
+        $('<input type="button" value="Add Field"></input>').click(function()
+        {
+            _gui_add_form('New-Form '+(_add_count++),
+                {
+                    display: true,
+                    keywords: [
 
-					],
-					ignore: [
+                    ],
+                    ignore: [
 
-					],
-					color: '#FFFFFF',
-					mouseOver: '#FFFFFF',
-					background: null,
-					search_story: false,
-					mark_chapter: false,
-					print_story: false,
-					mention_in_headline: true,
-					text_color: null
-				}, container
-			);
+                    ],
+                    color: '#FFFFFF',
+                    mouseOver: '#FFFFFF',
+                    background: null,
+                    search_story: false,
+                    mark_chapter: false,
+                    print_story: false,
+                    mention_in_headline: true,
+                    text_color: null
+                }, container
+            );
 
-		}).appendTo(_gui_container);
+        }).appendTo(_gui_container);
 
-		$('<input type="button" value="Close"></input>').click(function()
-		{
-			if (confirm("All unsaved changes will be deleted!"))
-			{
-				_gui_hide();
-			}
+        $('<input type="button" value="Close"></input>').click(function()
+        {
+            if (confirm("All unsaved changes will be deleted!"))
+            {
+                _gui_hide();
+            }
 
-		}).appendTo(_gui_container);
+        }).appendTo(_gui_container);
 
-		$('<input type="button" value="Reset Config"></input>').click(function()
-		{
-			if (confirm("Do you want to delet your whole config! This can't be undone!"))
-			{
+        $('<input type="button" value="Reset Config"></input>').click(function()
+        {
+            if (confirm("Do you want to delet your whole config! This can't be undone!"))
+            {
                 _gui_elements = {};
-				_reset_config();
-				_gui_hide();
-			}
+                _reset_config();
+                _gui_hide();
+            }
 
-		}).appendTo(_gui_container);
+        }).appendTo(_gui_container);
 
-	}
+    }
 
-	var _gui_add_form = function(name, marker, mainContainer)
-	{
-		_gui_elements[name] = {};
+    var _gui_add_form = function(name, marker, mainContainer)
+    {
+        _gui_elements[name] = {};
 
-		var radius = 10;
+        var radius = 10;
 
-		var container = $('<div class="fflist-filterField"></div>')
+        var container = $('<div class="fflist-filterField"></div>')
 
-		.css('margin', 'auto')
-		.css('height', '500px')
-		.css('margin-bottom', '15px')
-		.css('background-color', 'white')
-		.css('padding', '5px')
+        .css('margin', 'auto')
+        .css('height', '500px')
+        .css('margin-bottom', '15px')
+        .css('background-color', 'white')
+        .css('padding', '5px')
 
-		// Border-Radius
-		.css('-moz-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
-		.css('-webkit-border-top-left-radius', radius+'pxpx')
-		.css('-webkit-border-top-right-radius', radius+'px')
-		.css('-webkit-border-bottom-left-radius', radius+'px')
-		.css('-webkit-border-bottom-right-radius', radius+'px')
-		.css('-goog-ms-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
-		.css('border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
-		.css('-khtml-border-radius', radius+'px')
-		.css('-moz-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('-webkit-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('-goog-ms-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
-		.css('border', '1px black solid')
+        // Border-Radius
+        .css('-moz-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
+        .css('-webkit-border-top-left-radius', radius+'pxpx')
+        .css('-webkit-border-top-right-radius', radius+'px')
+        .css('-webkit-border-bottom-left-radius', radius+'px')
+        .css('-webkit-border-bottom-right-radius', radius+'px')
+        .css('-goog-ms-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
+        .css('border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
+        .css('-khtml-border-radius', radius+'px')
+        .css('-moz-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('-webkit-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('-goog-ms-box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('box-shadow', '0 1px 3px rgba(0, 0, 0, .15)')
+        .css('border', '1px black solid')
 
-		.appendTo(mainContainer)
-		.hide();
+        .appendTo(mainContainer)
+        .hide();
 
-		var table = $('<table width="100%"></table>').appendTo(container);
+        var table = $('<table width="100%"></table>').appendTo(container);
 
-		var spacer = $('<tr></tr>').append
-			(
-				$('<td width="30%" style="height:10px"></td>')
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>')
-			);
+        var spacer = $('<tr></tr>').append
+            (
+                $('<td width="30%" style="height:10px"></td>')
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>')
+            );
 
-		// Name
-		var input = $('<input type="text" id="fflist-'+name+'-name">')
-					.attr('value', name)
-					.attr('size', '50');
+        // Name
+        var input = $('<input type="text" id="fflist-'+name+'-name">')
+                    .attr('value', name)
+                    .attr('size', '50');
 
-		_gui_elements[name]['name'] = input;
+        _gui_elements[name]['name'] = input;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-'+name+'-name">Name: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				)
-			)
-		);
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-'+name+'-name">Name: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                )
+            )
+        );
 
-		// spacer:
-		table.append(spacer.clone());
-
-
-
-		// Display:
-		var checkbox = $('<input type="checkbox" id="fflist-'+name+'-display">');
-		if (marker.display)
-		{
-			checkbox.attr('checked', 'checked');
-		}
-
-		_gui_elements[name]['display'] = checkbox;
-
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="10%"></td>').append(
-					$('<label for="fflist-'+name+'-display">Display Found Entrys: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-						checkbox
-				)
-			)
-		);
-
-		// spacer:
-		table.append(spacer.clone());
-
-		// Keywords:
-		var input = $('<input type="text" id="fflist-'+name+'-keywords">')
-					.attr('value', marker.keywords.join(', '))
-					.attr('size', '50');
-
-		_gui_elements[name]['keywords'] = input;
-
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-'+name+'-keywords">Keywords: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				).append(
-					'<br><span style="font-size: small;">Seperated with ", "</span>'
-				)
-
-			)
-		);
+        // spacer:
+        table.append(spacer.clone());
 
 
-		// spacer:
-		table.append(spacer.clone());
 
-		// Ignore:
-		var input = $('<input type="text" id="fflist-'+name+'-ignore">')
-					.attr('value', marker.ignore.join(', '))
-					.attr('size', '50');
+        // Display:
+        var checkbox = $('<input type="checkbox" id="fflist-'+name+'-display">');
+        if (marker.display)
+        {
+            checkbox.attr('checked', 'checked');
+        }
 
-		_gui_elements[name]['ignore'] = input;
+        _gui_elements[name]['display'] = checkbox;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-'+name+'-ignore">Ignore when: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				).append(
-					'<br><span style="font-size: small;">Seperated with ", "</span>'
-				)
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-'+name+'-display">Display Found Entrys: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
 
-			)
-		);
+        // spacer:
+        table.append(spacer.clone());
 
-		// spacer:
-		table.append(spacer.clone());
+        // Keywords:
+        var input = $('<input type="text" id="fflist-'+name+'-keywords">')
+                    .attr('value', marker.keywords.join(', '))
+                    .attr('size', '50');
 
-		// Color:
-		var input = $('<input type="text" id="fflist-'+name+'-color">')
-					.attr('value', marker.color)
-					.attr('size', '50');
+        _gui_elements[name]['keywords'] = input;
 
-		_gui_elements[name]['color'] = input;
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-'+name+'-keywords">Keywords: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                ).append(
+                    '<br><span style="font-size: small;">Seperated with ", "</span>'
+                )
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-'+name+'-color">Color: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				)
-
-			)
-		);
-
-		// spacer:
-		table.append(spacer.clone());
-
-		// MouseOver:
-		var input = $('<input type="text" id="fflist-'+name+'-mouseOver">')
-					.attr('value', marker.mouseOver)
-					.attr('size', '50');
-
-		_gui_elements[name]['mouseOver'] = input;
-
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="30%"></td>').append(
-					$('<label for="fflist-'+name+'-mouseOver">Mouse Over Color: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-					input
-				)
-
-			)
-		);
-
-		// spacer:
-		table.append(spacer.clone());
-
-		// search_story:
-		checkbox = $('<input type="checkbox" id="fflist-'+name+'-search_story">');
-		if (marker.search_story)
-		{
-			checkbox.attr('checked', 'checked');
-		}
-
-		_gui_elements[name]['search_story'] = checkbox;
-
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="10%"></td>').append(
-					$('<label for="fflist-'+name+'-search_story">Search in Storys: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-						checkbox
-				)
-			)
-		);
+            )
+        );
 
 
-		// spacer:
-		table.append(spacer.clone());
+        // spacer:
+        table.append(spacer.clone());
 
-		// mark_chapter:
-		checkbox = $('<input type="checkbox" id="fflist-'+name+'-mark_chapter">');
-		if (marker.mark_chapter)
-		{
-			checkbox.attr('checked', 'checked');
-		}
+        // Ignore:
+        var input = $('<input type="text" id="fflist-'+name+'-ignore">')
+                    .attr('value', marker.ignore.join(', '))
+                    .attr('size', '50');
 
-		_gui_elements[name]['mark_chapter'] = checkbox;
+        _gui_elements[name]['ignore'] = input;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="10%"></td>').append(
-					$('<label for="fflist-'+name+'-mark_chapter">Mark Chaper: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-						checkbox
-				)
-			)
-		);
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-'+name+'-ignore">Ignore when: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                ).append(
+                    '<br><span style="font-size: small;">Seperated with ", "</span>'
+                )
+
+            )
+        );
+
+        // spacer:
+        table.append(spacer.clone());
+
+        // Color:
+        var input = $('<input type="text" id="fflist-'+name+'-color">')
+                    .attr('value', marker.color)
+                    .attr('size', '50');
+
+        _gui_elements[name]['color'] = input;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-'+name+'-color">Color: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                )
+
+            )
+        );
+
+        // spacer:
+        table.append(spacer.clone());
+
+        // MouseOver:
+        var input = $('<input type="text" id="fflist-'+name+'-mouseOver">')
+                    .attr('value', marker.mouseOver)
+                    .attr('size', '50');
+
+        _gui_elements[name]['mouseOver'] = input;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-'+name+'-mouseOver">Mouse Over Color: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    input
+                )
+
+            )
+        );
+
+        // spacer:
+        table.append(spacer.clone());
+
+        // search_story:
+        checkbox = $('<input type="checkbox" id="fflist-'+name+'-search_story">');
+        if (marker.search_story)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _gui_elements[name]['search_story'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-'+name+'-search_story">Search in Storys: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
 
 
-		// spacer:
-		table.append(spacer.clone());
+        // spacer:
+        table.append(spacer.clone());
 
-		// print_story:
-		checkbox = $('<input type="checkbox" id="fflist-'+name+'-print_story">');
-		if (marker.print_story)
-		{
-			checkbox.attr('checked', 'checked');
-		}
+        // mark_chapter:
+        checkbox = $('<input type="checkbox" id="fflist-'+name+'-mark_chapter">');
+        if (marker.mark_chapter)
+        {
+            checkbox.attr('checked', 'checked');
+        }
 
-		_gui_elements[name]['print_story'] = checkbox;
+        _gui_elements[name]['mark_chapter'] = checkbox;
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="10%"></td>').append(
-					$('<label for="fflist-'+name+'-print_story">List Storys: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-						checkbox
-				)
-			)
-		);
-
-		// spacer:
-		table.append(spacer.clone());
-
-		// mention_in_headline:
-		checkbox = $('<input type="checkbox" id="fflist-'+name+'-mention_in_headline">');
-		if (marker.mention_in_headline)
-		{
-			checkbox.attr('checked', 'checked');
-		}
-
-		_gui_elements[name]['mention_in_headline'] = checkbox;
-
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="10%"></td>').append(
-					$('<label for="fflist-'+name+'-mention_in_headline">Mention in Headline: </label>')
-					.css('font-weight', 'bold')
-				)
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
-						checkbox
-				)
-			)
-		);
-
-		// spacer:
-		table.append(spacer.clone());
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-'+name+'-mark_chapter">Mark Chaper: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
 
 
-		table.append(
-			$('<tr></tr>').append(
-				$('<td width="10%"></td>')
-				.css('border-right', '1px solid gray')
-			).append(
-				$('<td></td>').append(
+        // spacer:
+        table.append(spacer.clone());
+
+        // print_story:
+        checkbox = $('<input type="checkbox" id="fflist-'+name+'-print_story">');
+        if (marker.print_story)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _gui_elements[name]['print_story'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-'+name+'-print_story">List Storys: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
+
+        // spacer:
+        table.append(spacer.clone());
+
+        // mention_in_headline:
+        checkbox = $('<input type="checkbox" id="fflist-'+name+'-mention_in_headline">');
+        if (marker.mention_in_headline)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _gui_elements[name]['mention_in_headline'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-'+name+'-mention_in_headline">Mention in Headline: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
+
+        // spacer:
+        table.append(spacer.clone());
+
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>')
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
                     $('<input type="button" value="Remove">').click(function()
                     {
                         _gui_elements[name] = undefined;
@@ -1853,367 +1853,367 @@ function storyParser()
                         })
 
                     })
-				)
-			)
-		);
+                )
+            )
+        );
 
-		container.fadeIn();
+        container.fadeIn();
 
-	}
+    }
 
-	var _gui_hide = function()
-	{
-		_gui_container.fadeOut();
-	}
+    var _gui_hide = function()
+    {
+        _gui_container.fadeOut();
+    }
 
-	var _gui_show = function()
-	{
-		_gui_container.fadeIn();
-	}
+    var _gui_show = function()
+    {
+        _gui_container.fadeIn();
+    }
 
-	var _reset_config = function()
-	{
-		_config.marker = {};
+    var _reset_config = function()
+    {
+        _config.marker = {};
         _save_config();
-	}
+    }
 
-	this.gui = function()
-	{
-		if (_gui_container == null)
-		{
-			_gui_create();
-		}
+    this.gui = function()
+    {
+        if (_gui_container == null)
+        {
+            _gui_create();
+        }
 
-		_gui_update();
-		_gui_show();
+        _gui_update();
+        _gui_show();
 
-	}
+    }
 
-	var _toggleSaveConfig = function()
-	{
-		if (_gui_container == null)
-		{
-			_gui_create();
-		}
-		
-		if (_gui_container.is(':visible'))
-		{
-			_gui_hide();
-			
-		} else
-		{		
-			_gui_container.html('');
-			
-			$('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
-				$('<input type="button" value="Close"></input>').click(function()
-				{
-					if (confirm("All unsaved changes will be deleted!"))
-					{
-						_gui_hide();
-					}
+    var _toggleSaveConfig = function()
+    {
+        if (_gui_container == null)
+        {
+            _gui_create();
+        }
+        
+        if (_gui_container.is(':visible'))
+        {
+            _gui_hide();
+            
+        } else
+        {        
+            _gui_container.html('');
+            
+            $('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
+                $('<input type="button" value="Close"></input>').click(function()
+                {
+                    if (confirm("All unsaved changes will be deleted!"))
+                    {
+                        _gui_hide();
+                    }
 
-				})
-			).appendTo(_gui_container);
-			
-			_gui_container.append('<label for="ffnet-config-display">Your current Config:</label><br/>');
-			
-			var old = $('<textarea id="ffnet-config-display" rows="5" cols="60"></textarea>')
-				.val(_getConfig())
-				.appendTo(_gui_container);
+                })
+            ).appendTo(_gui_container);
+            
+            _gui_container.append('<label for="ffnet-config-display">Your current Config:</label><br/>');
+            
+            var old = $('<textarea id="ffnet-config-display" rows="5" cols="60"></textarea>')
+                .val(_getConfig())
+                .appendTo(_gui_container);
 
-				
-			_gui_container.append('<br/><label for="ffnet-config-set">Import Config:</label><br/>');
-			
-			var neu = $('<textarea id="ffnet-config-set" rows="5" cols="60"></textarea>')
-				.appendTo(_gui_container);
-				
-			_gui_container.append(
-				$('<input type="button" value="Set" />')
-					.click(function()
-					{
-						_setConfig(neu.val());
-						_gui_hide();
-						_read();
-					})
-			);
-				
-			_gui_show();
-		}
-		
-	}
-	
-	this.configGui = _toggleSaveConfig;
-	
-	
-	var _toggleStoryConfig = function(storyInfo)
-	{
-		if (_gui_container == null)
-		{
-			if (_DEBUG)
-			{
-				console.log("Generate GUI Container");
-			}
-		
-			_gui_create();
-		}
-		
-		if (_gui_container.is(':visible'))
-		{
-			if (_DEBUG)
-			{
-				console.log("Hide GUI Container");
-			}
-		
-			_gui_hide();
-			
-		} else
-		{		
-			if (typeof(storyInfo) == "undefined")
-			{
-				if (_DEBUG)
-				{
-					console.warn("_toggleStoryConfig: No Parameter given!");
-				}
-				
-				return;
-			}
-		
-			if (_DEBUG)
-			{
-				console.log("Starting Content Generation");
-			}
-		
-			_gui_container.html('');
-			
-			
-			// Set Position:
-			_gui_container.css("position", "fixed");
-			
-			$('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
-				$('<input type="button" value="Close"></input>').click(function()
-				{
-					if (confirm("All unsaved changes will be deleted!"))
-					{
-						_gui_container.css("position", "absolute");
-						_gui_hide();
-					}
+                
+            _gui_container.append('<br/><label for="ffnet-config-set">Import Config:</label><br/>');
+            
+            var neu = $('<textarea id="ffnet-config-set" rows="5" cols="60"></textarea>')
+                .appendTo(_gui_container);
+                
+            _gui_container.append(
+                $('<input type="button" value="Set" />')
+                    .click(function()
+                    {
+                        _setConfig(neu.val());
+                        _gui_hide();
+                        _read();
+                    })
+            );
+                
+            _gui_show();
+        }
+        
+    }
+    
+    this.configGui = _toggleSaveConfig;
+    
+    
+    var _toggleStoryConfig = function(storyInfo)
+    {
+        if (_gui_container == null)
+        {
+            if (_DEBUG)
+            {
+                console.log("Generate GUI Container");
+            }
+        
+            _gui_create();
+        }
+        
+        if (_gui_container.is(':visible'))
+        {
+            if (_DEBUG)
+            {
+                console.log("Hide GUI Container");
+            }
+        
+            _gui_hide();
+            
+        } else
+        {        
+            if (typeof(storyInfo) == "undefined")
+            {
+                if (_DEBUG)
+                {
+                    console.warn("_toggleStoryConfig: No Parameter given!");
+                }
+                
+                return;
+            }
+        
+            if (_DEBUG)
+            {
+                console.log("Starting Content Generation");
+            }
+        
+            _gui_container.html('');
+            
+            
+            // Set Position:
+            _gui_container.css("position", "fixed");
+            
+            $('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
+                $('<input type="button" value="Close"></input>').click(function()
+                {
+                    if (confirm("All unsaved changes will be deleted!"))
+                    {
+                        _gui_container.css("position", "absolute");
+                        _gui_hide();
+                    }
 
-				})
-			).appendTo(_gui_container);
-			
-			_gui_container.append("<p>This Menu allows you to set story specific options for:</p>");
-			_gui_container.append(storyInfo.name);
-			_gui_container.append("<hr />");
-			_gui_container.append("<p>Highlighter Options:</p>");
-			
-			_gui_container.append('<label for="ffnet-story-highlighter">Highlighter Path: (leave empty to clear)</label><br/>');
-			var highlighter = $('<input type="text"></input>')
-			.appendTo(_gui_container)
-			.css("width", "500px");
-				
-			_gui_container.append("<p></p>");
-			
-			var image_container = $("<div></div>")
-			.css("border", "1px solid black")
-			.css("padding", "2px")
-			.appendTo(_gui_container);
-			
-			var image = $("<img></img>")
-			.css("width", "30px")
-			.css("height", "30px")
-			.css("margin-left", "5px")
-			.css("border", "1px solid black")
-			.css("display", "inline-block");
-			
-			image.clone()
-			.attr("src", "http://private.mrh-development.de/ff/none.gif")
-			.appendTo(image_container)
-			.click(function()
-			{			
-				highlighter.val("");
-			});
-			
-			for (var i = 1; i <= 6; i++)
-			{
-				image.clone()
-				.attr("src", "http://private.mrh-development.de/ff/"+i+".gif")
-				.appendTo(image_container)
-				.click(function()
-				{			
-					highlighter.val($(this).attr("src"));
-				});
-			}
-				
-				
-			if (typeof(_config['highlighter'][storyInfo.url] != "undefined"))
-			{
-				highlighter.val(_config['highlighter'][storyInfo.url]);
-			}
-				
-			_gui_container.append(
-				$('<input type="button" value="Set" />')
-					.click(function()
-					{
-						var newVal = highlighter.val();
-						if (newVal == "")
-						{
-							_config['highlighter'][storyInfo.url] = undefined;
-						} else
-						{
-							_config['highlighter'][storyInfo.url] = newVal;
-						}
-						
-						_save_config();
-						
-						_gui_container.css("position", "absolute");
-						_gui_hide();
-						_read();
-						_enableInStoryHighlighter();
-					})
-			);
+                })
+            ).appendTo(_gui_container);
+            
+            _gui_container.append("<p>This Menu allows you to set story specific options for:</p>");
+            _gui_container.append(storyInfo.name);
+            _gui_container.append("<hr />");
+            _gui_container.append("<p>Highlighter Options:</p>");
+            
+            _gui_container.append('<label for="ffnet-story-highlighter">Highlighter Path: (leave empty to clear)</label><br/>');
+            var highlighter = $('<input type="text"></input>')
+            .appendTo(_gui_container)
+            .css("width", "500px");
+                
+            _gui_container.append("<p></p>");
+            
+            var image_container = $("<div></div>")
+            .css("border", "1px solid black")
+            .css("padding", "2px")
+            .appendTo(_gui_container);
+            
+            var image = $("<img></img>")
+            .css("width", "30px")
+            .css("height", "30px")
+            .css("margin-left", "5px")
+            .css("border", "1px solid black")
+            .css("display", "inline-block");
+            
+            image.clone()
+            .attr("src", "http://private.mrh-development.de/ff/none.gif")
+            .appendTo(image_container)
+            .click(function()
+            {            
+                highlighter.val("");
+            });
+            
+            for (var i = 1; i <= 6; i++)
+            {
+                image.clone()
+                .attr("src", "http://private.mrh-development.de/ff/"+i+".gif")
+                .appendTo(image_container)
+                .click(function()
+                {            
+                    highlighter.val($(this).attr("src"));
+                });
+            }
+                
+                
+            if (typeof(_config['highlighter'][storyInfo.url] != "undefined"))
+            {
+                highlighter.val(_config['highlighter'][storyInfo.url]);
+            }
+                
+            _gui_container.append(
+                $('<input type="button" value="Set" />')
+                    .click(function()
+                    {
+                        var newVal = highlighter.val();
+                        if (newVal == "")
+                        {
+                            _config['highlighter'][storyInfo.url] = undefined;
+                        } else
+                        {
+                            _config['highlighter'][storyInfo.url] = newVal;
+                        }
+                        
+                        _save_config();
+                        
+                        _gui_container.css("position", "absolute");
+                        _gui_hide();
+                        _read();
+                        _enableInStoryHighlighter();
+                    })
+            );
 
-			
-			if (_DEBUG)
-			{
-				console.log("Display Content");
-			}
-			
-			_gui_show();
-		}
-		
-	}
-	
-	// ----- API-Interface ------
-	
-	var _apiRequest = function (data, callback)
-	{		
-		var url = _config.api_url;
-		var apiLookupKey = _config.api_lookupKey;
-		var timeout = _config.api_timeout;
-		var retrys = _config.api_retries;
-			
-		$.ajax({
-		   type: 'GET',
-			url: url,
-			async: false,
-			contentType: "application/json",
-			dataType: 'jsonp',
-			data: data,
-			cache: false
-		});
-		
-		var tries = 0;
-	
-		var checkFunction = function()
-		{
-			if (_DEBUG)
-			{
-				console.log("API_Request - CheckFor Result");
-			}
-			
-			if (tries >= retrys)
-			{
-				if (_DEBUG)
-				{
-					console.log("API_Request - To many tries, abort");
-				}
-			
-				return;
-			}
-			
-			if ((typeof sessionStorage[apiLookupKey] != "undefined") &&
-				(typeof sessionStorage[apiLookupKey] != "null") &&
-				sessionStorage[apiLookupKey] != "undefined" &&
-				sessionStorage[apiLookupKey] != "null" &&
-				sessionStorage[apiLookupKey] != "" &&
-				sessionStorage[apiLookupKey] != null)
-			{
-				if (_DEBUG)
-				{
-					console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
-				}
-			
-				callback(sessionStorage[apiLookupKey]);
-			} else
-			{
-				if (_DEBUG)
-				{
-					console.log("API_Request - No Result found, Retry");
-				}
-				tries++;
-				window.setTimeout(checkFunction, timeout);
-			}
-		};
-		
-		window.setTimeout(checkFunction, timeout);
-	
-	}
-	
-	
-	var _api_checkVersion = function()
-	{
-		if (_config.api_checkForUpdates)
-		{
-			if (_DEBUG)
-			{
-				console.info("Check for Updates ...");
-			}
-			
-			_apiRequest({command: "getVersion", data: ""}, function(res)
-			{						
-				var version = JSON.parse(res);
-				
-				if (_DEBUG)
-				{
-					console.log("Version Info Recieved: ", version);
-					console.log("Current Version: ", _VERSION);
-				}
-				
-				if (_VERSION != version.version)
-				{
-					$(".menulinks").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser ("+ version.version +")]");
-				}
-				
-			});
-			
-		}
-	}
-		
-	// --------------------------
+            
+            if (_DEBUG)
+            {
+                console.log("Display Content");
+            }
+            
+            _gui_show();
+        }
+        
+    }
+    
+    // ----- API-Interface ------
+    
+    var _apiRequest = function (data, callback)
+    {        
+        var url = _config.api_url;
+        var apiLookupKey = _config.api_lookupKey;
+        var timeout = _config.api_timeout;
+        var retrys = _config.api_retries;
+            
+        $.ajax({
+           type: 'GET',
+            url: url,
+            async: false,
+            contentType: "application/json",
+            dataType: 'jsonp',
+            data: data,
+            cache: false
+        });
+        
+        var tries = 0;
+    
+        var checkFunction = function()
+        {
+            if (_DEBUG)
+            {
+                console.log("API_Request - CheckFor Result");
+            }
+            
+            if (tries >= retrys)
+            {
+                if (_DEBUG)
+                {
+                    console.log("API_Request - To many tries, abort");
+                }
+            
+                return;
+            }
+            
+            if ((typeof sessionStorage[apiLookupKey] != "undefined") &&
+                (typeof sessionStorage[apiLookupKey] != "null") &&
+                sessionStorage[apiLookupKey] != "undefined" &&
+                sessionStorage[apiLookupKey] != "null" &&
+                sessionStorage[apiLookupKey] != "" &&
+                sessionStorage[apiLookupKey] != null)
+            {
+                if (_DEBUG)
+                {
+                    console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
+                }
+            
+                callback(sessionStorage[apiLookupKey]);
+            } else
+            {
+                if (_DEBUG)
+                {
+                    console.log("API_Request - No Result found, Retry");
+                }
+                tries++;
+                window.setTimeout(checkFunction, timeout);
+            }
+        };
+        
+        window.setTimeout(checkFunction, timeout);
+    
+    }
+    
+    
+    var _api_checkVersion = function()
+    {
+        if (_config.api_checkForUpdates)
+        {
+            if (_DEBUG)
+            {
+                console.info("Check for Updates ...");
+            }
+            
+            _apiRequest({command: "getVersion", data: ""}, function(res)
+            {                        
+                var version = JSON.parse(res);
+                
+                if (_DEBUG)
+                {
+                    console.log("Version Info Recieved: ", version);
+                    console.log("Current Version: ", _VERSION);
+                }
+                
+                if (_VERSION != version.version)
+                {
+                    $(".menulinks").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser ("+ version.version +")]");
+                }
+                
+            });
+            
+        }
+    }
+        
+    // --------------------------
 
-	var _save_config = function()
-	{
-		try
-		{
-			localStorage[_config.config_key] = JSON.stringify(_config);
+    var _save_config = function()
+    {
+        try
+        {
+            localStorage[_config.config_key] = JSON.stringify(_config);
 
-		} catch (e)
-		{
-			console.warn(e);
-		}
+        } catch (e)
+        {
+            console.warn(e);
+        }
 
-	}
+    }
 
-	var _getConfig = function()
-	{
-		return JSON.stringify(_config);
-	}
-	
-	this.getConfig = _getConfig;
-	
-	var _setConfig = function(newConfig)
-	{
-		if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
-		{
-			var data = JSON.parse(newConfig);
-			_config = data;
-			
-			_save_config();
-		}
-	}
+    var _getConfig = function()
+    {
+        return JSON.stringify(_config);
+    }
+    
+    this.getConfig = _getConfig;
+    
+    var _setConfig = function(newConfig)
+    {
+        if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
+        {
+            var data = JSON.parse(newConfig);
+            _config = data;
+            
+            _save_config();
+        }
+    }
 
-	this.setConfig = _setConfig;
-	
+    this.setConfig = _setConfig;
+    
 
     this.getList = function()
     {
@@ -2230,36 +2230,36 @@ parser.enableInStoryHighlighter($('#content_wrapper_inner'));
 
 
 $('.zui').last().append(
-	$('<a></a>').addClass('menu-link').html('Reload Script').attr('href', '#').click(function(e)
-	{
-		parser.readList($('.z-list'));
-		e.preventDefault();
+    $('<a></a>').addClass('menu-link').html('Reload Script').attr('href', '#').click(function(e)
+    {
+        parser.readList($('.z-list'));
+        e.preventDefault();
 
-	}).attr('title', 'Reloads the Marking User-Script. By MRH')
+    }).attr('title', 'Reloads the Marking User-Script. By MRH')
 ).append(
-	$('<a></a>').addClass('menu-link').html('Config Editor').attr('href', '#').click(function(e)
-	{
-		parser.gui();
-		e.preventDefault();
+    $('<a></a>').addClass('menu-link').html('Config Editor').attr('href', '#').click(function(e)
+    {
+        parser.gui();
+        e.preventDefault();
 
-	}).attr('title', 'Open Config Editor. By MRH')
+    }).attr('title', 'Open Config Editor. By MRH')
 );
 
 $('.zui').first().append(
-	$('<a></a>').addClass('menu-link').html('?').attr('href', '#').click(function(e)
-	{
-		parser.configGui();
-		e.preventDefault();
+    $('<a></a>').addClass('menu-link').html('?').attr('href', '#').click(function(e)
+    {
+        parser.configGui();
+        e.preventDefault();
 
-	}).attr('title', 'Config Export. By MRH')
+    }).attr('title', 'Config Export. By MRH')
 ).append(
-	$('<a></a>').addClass('menu-link').html('#').attr('href', '#').click(function(e)
-	{
+    $('<a></a>').addClass('menu-link').html('#').attr('href', '#').click(function(e)
+    {
         if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
-		{
+        {
             parser.defaultConfig();
         }
-		e.preventDefault();
+        e.preventDefault();
 
-	}).attr('title', 'Load default Config. By MRH')
+    }).attr('title', 'Load default Config. By MRH')
 );
