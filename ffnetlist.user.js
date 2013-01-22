@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.0.2
+// @version        4.1.0
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -37,7 +37,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.0.2';
+    var _VERSION = '4.1.0';
     
     // Default-Config:
     var _config = {
@@ -347,6 +347,12 @@ function storyParser()
                     }
                     _elementCallback(config, element, textEl, headline, info);
 
+					// Overwrites the Color if the ignoreColor Setting is true
+					if (config.ignoreColor)
+					{
+						marker_exist = false;
+					}
+					
                     _found.push(storyName);
 
                 } else if (config.search_story)
@@ -703,10 +709,7 @@ function storyParser()
             {
                 textEl.css('color', config.text_color);
             }
-
-            color = config.color;
-            colorMo = config.mouseOver;
-
+			
             $.each(config.keywords, function(key, keyword)
             {
                 var el = element.find('div').first();
@@ -718,6 +721,10 @@ function storyParser()
                 var replace = '';
                 var behind = '';
                 
+				color = config.color;
+				colorMo = config.mouseOver;
+
+				
                 if (erg != null)
                 {
                     if (erg.length == 1)
@@ -746,8 +753,10 @@ function storyParser()
 
             });
 
-
-            _updateColor(element, color, colorMo);
+			if (!config.ignoreColor)
+			{
+				_updateColor(element, color, colorMo);
+			}
 
         }
 
@@ -1454,6 +1463,7 @@ function storyParser()
                     mouseOver: data.mouseOver.attr('value'),
                     print_story: data.print_story.is(':checked'),
                     search_story: data.search_story.is(':checked'),
+					ignoreColor: data.ignoreColor.is(':checked'),
                     background: (name in _config.marker && _config.marker[name].background != null) ? (_config.marker[name].background) : null,
                     text_color: (name in _config.marker &&_config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null
                 };
@@ -1540,7 +1550,7 @@ function storyParser()
         var container = $('<div class="fflist-filterField"></div>')
 
         .css('margin', 'auto')
-        .css('height', '500px')
+        .css('height', '550px')
         .css('margin-bottom', '15px')
         .css('background-color', 'white')
         .css('padding', '5px')
@@ -1676,7 +1686,49 @@ function storyParser()
 
             )
         );
+		
+		// spacer:
+        table.append(spacer.clone());
 
+		// Ignore Color:
+        var checkbox = $('<input type="checkbox" id="fflist-'+name+'-ignoreColor">');
+        if (marker.ignoreColor)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+		checkbox.change(function()
+		{
+			if ($('#fflist-'+name+'-ignoreColor').is(":checked"))
+			{
+				$('#fflist-'+name+'-color').add('#fflist-'+name+'-mouseOver').attr("disabled", "disabled");
+			}
+			else
+			{
+				$('#fflist-'+name+'-color').add('#fflist-'+name+'-mouseOver').removeAttr("disabled");
+			}
+		
+		
+		});
+		
+        _gui_elements[name]['ignoreColor'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-'+name+'-display">Ignore Color Settings: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
+
+
+		
         // spacer:
         table.append(spacer.clone());
 
@@ -1687,6 +1739,11 @@ function storyParser()
 
         _gui_elements[name]['color'] = input;
 
+		if (marker.ignoreColor)
+        {
+            input.attr('disabled', 'disabled');
+        }
+		
         table.append(
             $('<tr></tr>').append(
                 $('<td width="30%"></td>').append(
@@ -1712,6 +1769,11 @@ function storyParser()
 
         _gui_elements[name]['mouseOver'] = input;
 
+		if (marker.ignoreColor)
+        {
+            input.attr('disabled', 'disabled');
+        }
+		
         table.append(
             $('<tr></tr>').append(
                 $('<td width="30%"></td>').append(
