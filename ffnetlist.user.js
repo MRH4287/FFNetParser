@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.1.0
+// @version        4.1.1
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -37,7 +37,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.1.0';
+    var _VERSION = '4.1.1';
     
     // Default-Config:
     var _config = {
@@ -292,11 +292,10 @@ function storyParser()
                 odd = true;
             }
 
-            var marker_exist = false;
-
+            var marker_found = false;
+						
             $.each(_config.marker, function(headline, config)
             {
-                marker_exist = true;
 
                 var ignore = false;
                 $.each(config.ignore, function(i, marker)
@@ -321,8 +320,8 @@ function storyParser()
                 {
                     return;
                 }
-
-                var found = false;
+				
+				var found = false;
 
                 $.each(config.keywords, function(i, marker)
                 {
@@ -339,7 +338,15 @@ function storyParser()
 
                 if (found)
                 {
-
+					if (!config.ignoreColor)
+					{
+						marker_found = true;
+					}
+					else if (_DEBUG)
+					{
+						console.log("Ignore Color for ", headline);
+					}
+				
                     var info = {
                         'name': storyName,
                         'url': link,
@@ -347,11 +354,6 @@ function storyParser()
                     }
                     _elementCallback(config, element, textEl, headline, info);
 
-					// Overwrites the Color if the ignoreColor Setting is true
-					if (config.ignoreColor)
-					{
-						marker_exist = false;
-					}
 					
                     _found.push(storyName);
 
@@ -372,6 +374,11 @@ function storyParser()
 
                 } else if (_found.indexOf(storyName) == -1)
                 {
+					if (_DEBUG)
+					{
+						console.log("[_read-1] Change Color of Line: ",element); 
+					}
+				
                     _updateColor(element, color, colorMo);
                 }
 
@@ -438,12 +445,19 @@ function storyParser()
                 
             }
             
-            _doParse(requestQueue);
-            
-            if (!marker_exist)
+			if (!marker_found)
             {
+				if (_DEBUG)
+				{
+					console.log("[_read] Change Color of Line: ",element); 
+				}
+			
                 _updateColor(element, color, colorMo);
             }
+			
+            _doParse(requestQueue);
+            
+
 
         });
         
@@ -755,6 +769,10 @@ function storyParser()
 
 			if (!config.ignoreColor)
 			{
+				if (_DEBUG)
+				{
+					console.log("[ElementCallback] Change Color of Line: ",element); 
+				}
 				_updateColor(element, color, colorMo);
 			}
 
@@ -830,6 +848,11 @@ function storyParser()
             if (_found.indexOf(storyName) == -1)
             {
                 _updateColor(el, color, colorMo);
+				if (_DEBUG)
+				{
+					console.log("[UpdateList] Change Color of Line: ",el); 
+				}
+				
             }
         });
 
