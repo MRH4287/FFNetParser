@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.1.1
+// @version        4.1.2
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -37,7 +37,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.1.1';
+    var _VERSION = '4.1.2';
     
     // Default-Config:
     var _config = {
@@ -1538,6 +1538,7 @@ function storyParser()
                     mention_in_headline: true,
                     text_color: null
                 }, container
+				, true // Display Big
             );
 
         }).appendTo(_gui_container);
@@ -1564,20 +1565,33 @@ function storyParser()
 
     }
 
-    var _gui_add_form = function(name, marker, mainContainer)
+    var _gui_add_form = function(name, marker, mainContainer, displayBig)
     {
         _gui_elements[name] = {};
 
         var radius = 10;
 
+		if (typeof(displayBig) == "undefined")
+		{
+			displayBig = false;
+		}
+		
+		var height = 35;
+		
+		if (displayBig)
+		{
+			height = 550;
+		}
+		
         var container = $('<div class="fflist-filterField"></div>')
 
         .css('margin', 'auto')
-        .css('height', '550px')
+        .css('height', height+'px')
         .css('margin-bottom', '15px')
         .css('background-color', 'white')
         .css('padding', '5px')
-
+		.css('overflow', 'hidden')
+		
         // Border-Radius
         .css('-moz-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
         .css('-webkit-border-top-left-radius', radius+'pxpx')
@@ -1596,6 +1610,23 @@ function storyParser()
         .appendTo(mainContainer)
         .hide();
 
+		if (!displayBig)
+		{
+			container.css("cursor", "pointer")
+			.css("cursor", "hand")
+			.attr('title', "Click to Edit")
+			
+			.click(function()
+			{
+				container.css('height', '550px');
+				container.css("cursor", "auto");
+				container.removeAttr("title");				
+				
+			});
+
+		}
+		
+		
         var table = $('<table width="100%"></table>').appendTo(container);
 
         var spacer = $('<tr></tr>').append
