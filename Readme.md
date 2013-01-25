@@ -51,6 +51,10 @@ The Options are following:
     If any of this Keywords matches, the marker won't be triggered
     **The Keyword will be parsed as RegularExpression!**
 
+* Ignore Color Settings
+
+	Ignores the Color Settings. The color won't be changed through this filter.
+	
 * Color
 
     The Background-Color of this Entry

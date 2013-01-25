@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.1.2
+// @version        4.1.3
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -37,7 +37,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.1.2';
+    var _VERSION = '4.1.3';
     
     // Default-Config:
     var _config = {
@@ -1770,7 +1770,7 @@ function storyParser()
         table.append(
             $('<tr></tr>').append(
                 $('<td width="10%"></td>').append(
-                    $('<label for="fflist-'+name+'-display">Ignore Color Settings: </label>')
+                    $('<label for="fflist-'+name+'-ignoreColor">Ignore Color Settings: </label>')
                     .css('font-weight', 'bold')
                 )
                 .css('border-right', '1px solid gray')
