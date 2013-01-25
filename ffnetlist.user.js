@@ -1345,11 +1345,11 @@ function storyParser()
         // Pocket ---
         table.append(
             $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(    )
+                $('<td width="30%"></td>').append("--------")
                 .css('border-right', '1px solid gray')
             ).append(
                 $('<td></td>').append(
-                    " ---- Pocket Settings ----"
+                    " ---- <a href=\"http://www.getpocket.com\">Pocket</a> Settings ----"
                 )
             )
         );
@@ -1410,7 +1410,7 @@ function storyParser()
         // API ---
         table.append(
             $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(    )
+                $('<td width="30%"></td>').append("--------")
                 .css('border-right', '1px solid gray')
             ).append(
                 $('<td></td>').append(
