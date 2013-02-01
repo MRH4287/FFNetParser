@@ -14,9 +14,9 @@ This UserScript allows to parse and mark stories in the list.
    * Mark Chapters (Add a Tag to the name of the Story)
    * List Stories (Add a list of matching stories on the top of the story list)
    * Mention in Headline (Add a notification to the headline, how many elements of one filter has been found) 
-   * Search for filters within the story (You can define the max depth for search)
-   * [Pocket](http://getpocket.com) Feature:
-     Save an entire story to your Pocket (formally Read It Later) Account
+* Search for filters within the story (You can define the max depth for search)
+* [Pocket](http://getpocket.com) Feature:
+  Save an entire story to your Pocket (formally Read It Later) Account
     
 If you want a feature that isn't listed above, please write an Issue-Report.      
 
