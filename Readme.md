@@ -45,6 +45,8 @@ You no longer have to press `#` if you start your script the first time.
 This Script saves and loads data from your `localStorage` and your `sessionStorage`.
 To configure this script, click on `Config Editor` in the Fanfiction.net GUI.
 
+__[Example Config](https://gist.github.com/4690800)__
+
 ### Options
 
 The Main-Configuration of this script should be self-explaining.
