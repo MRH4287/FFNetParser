@@ -17,7 +17,8 @@ This UserScript allows to parse and mark stories in the list.
 * Search for filters within the story (You can define the max depth for search)
 * [Pocket](http://getpocket.com) Feature:
   Save an entire story to your Pocket (formally Read It Later) Account
-    
+* Color Picker for easy Color selection
+  
 If you want a feature that isn't listed above, please write an Issue-Report.      
 
 
