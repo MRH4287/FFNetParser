@@ -285,9 +285,7 @@ function storyParser()
 				e.preventDefault();
 
 			}).attr('title', 'Open Config Editor')
-		);
-
-		$('.zui').first().append(
+		).append(
 			$('<a></a>').addClass('menu-link').html('Config Import / Export').attr('href', '#').click(function(e)
 			{
 				_toggleSaveConfig();
@@ -305,7 +303,18 @@ function storyParser()
 
 			}).attr('title', 'Load default Config')
 		);
-	
+		
+		if (_DEBUG)
+		{
+			$('.zui').last().append(
+				$('<a></a>').addClass('menu-link').html('Test - Feature').attr('href', '#').click(function(e)
+				{
+					_loadNextPage();
+
+				}).attr('title', 'Test Feature')
+			);
+		
+		}
 		
 		// Add GUI for "Only Mode":
 		var container = $("#myform").first().children().first();
@@ -370,20 +379,10 @@ function storyParser()
 	
     var _read = function()
     {
+
         var odd = false;
 
-        // Clear old Session:
-        _found = [];
-        _eList = {};
-        _hidden = 0;
-        $('.parser-msg').remove();
-
-        $('.ffnet-story-highlighter').each(function()
-        {
-            $(this).before($(this).text()).remove();
-        });
-            
-        _element.each(function(k, e)
+		_element.each(function(k, e)
         {
             var element = $(e)
 			
@@ -1187,6 +1186,100 @@ function storyParser()
     
     }
     
+	// ------- Endless Mode ------
+	
+	var _nextPage = null;
+	
+	var _getNextPageContent = function(base, callback)
+	{
+		var url = _getNextPage(base);
+		
+		if (_DEBUG)
+		{
+			console.log("Requesting next page: ", url);
+		}
+	
+		$.get(url, function(content)
+		{
+		
+			var data = $(content);
+			
+			var elements = data.find(".z-list");
+			
+			if (_DEBUG)
+			{
+				console.log("Elements Found: ", elements);
+			}
+		
+			callback(elements, data);
+		
+		});
+		
+		
+	}
+	
+	var _loadNextPage = function()
+	{
+		var base = null;
+		
+		if (_nextPage == null)
+		{
+			base = $("#myform");
+		}
+		else
+		{
+			base = _nextPage.find("#myform").first();
+		}
+		
+	
+		_getNextPageContent(base, function(elements, data)
+		{		
+			// Add elements to DOM:
+			
+			var last = $(".z-list").last();
+			
+			elements.each(function(k, el)
+			{
+				el = $(el);
+				
+				last.after(el);
+				last = el;
+			});
+			
+			// Only allow 40 entries at all times:
+			var all = $(".z-list");
+			
+			if (all.length > 40)
+			{
+				if (_DEBUG)
+				{
+					console.log("Count greather then 40 entries, remove some ...");
+				}
+			
+				for ($i = 0; $i < all.length - 40; $i++)
+				{
+					$(all[$i]).remove();
+				}
+			}
+			
+			window.setTimeout( _readList($('.z-list')), 200);
+			
+			_nextPage = data;
+		});
+	}
+	
+	
+	var _getNextPage = function(base)
+	{
+		var container = base.find("center").last();
+		
+		var current = container.find("b").first();
+		var next = current.next("a");
+		
+		return next.attr("href");		
+	}
+	
+	
     // --------- GUI -------------
 
     var _settings_elements = {};
