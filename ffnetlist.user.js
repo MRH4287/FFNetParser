@@ -260,6 +260,13 @@ function storyParser()
 		block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://private.mrh-development.de/ff/jquery.colorpicker.css");
 		$("head").append(block);
 		
+		// Check for DEBUG-Mode
+		if (typeof(_config['debug']) != "undefined")
+		{
+			_DEBUG = true;
+		}
+		
+		
 		
 		_updateGUI()
 		
@@ -374,6 +381,11 @@ function storyParser()
 			var current = container.find("b").first();
 			var url = null;
 		
+			if (_DEBUG)
+			{
+				console.log("Keydown-Event: ", event);
+			}
+		
 			// right
 			if (event.keyCode == 39)
 			{
@@ -394,9 +406,15 @@ function storyParser()
 				}
 			}
 			
+			if (_DEBUG)
+			{
+				console.log("Changes to Page: ", url);
+			}
+			
+			
 			if (url != null)
 			{
-				location.href = url;
+				//location.href = url;
 			}
 			
 		
@@ -418,6 +436,12 @@ function storyParser()
 
         var odd = false;
 
+		// Clear old Session:
+        _found = [];
+        _eList = {};
+        _hidden = 0;
+        $('.parser-msg').remove();
+		
 		_element.each(function(k, e)
         {
             var element = $(e)
