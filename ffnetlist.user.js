@@ -380,43 +380,41 @@ function storyParser()
 			var container = $("#myform").find("center").last();
 			var current = container.find("b").first();
 			var url = null;
-		
-			if (_DEBUG)
+				
+			if (event.srcElement.localName == "body")
 			{
-				console.log("Keydown-Event: ", event);
-			}
 		
-			// right
-			if (event.keyCode == 39)
-			{
-				var element = current.next("a");
-				if (element.length != 0)
+				// right
+				if (event.keyCode == 39)
 				{
-					url = element.attr("href");
+					var element = current.next("a");
+					if (element.length != 0)
+					{
+						url = element.attr("href");
+					}
+					
+				}
+				// left
+				else if (event.keyCode == 37)
+				{
+					var element = current.prev("a");
+					if (element.length != 0)
+					{
+						url = element.attr("href");
+					}
 				}
 				
-			}
-			// left
-			else if (event.keyCode == 37)
-			{
-				var element = current.prev("a");
-				if (element.length != 0)
+				if (_DEBUG)
 				{
-					url = element.attr("href");
+					console.log("Changes to Page: ", url);
+				}
+				
+				
+				if (url != null)
+				{
+					location.href = url;
 				}
 			}
-			
-			if (_DEBUG)
-			{
-				console.log("Changes to Page: ", url);
-			}
-			
-			
-			if (url != null)
-			{
-				//location.href = url;
-			}
-			
 		
 		});
 	
