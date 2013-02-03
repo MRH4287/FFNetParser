@@ -18,6 +18,7 @@ This UserScript allows to parse and mark stories in the list.
 * [Pocket](http://getpocket.com) Feature:
   Save an entire story to your Pocket (formally Read It Later) Account
 * Color Picker for easy Color selection
+* Switch pages with the cursor Keys
   
 If you want a feature that isn't listed above, please write an Issue-Report.      
 
@@ -34,12 +35,12 @@ In Chrome you have to drag & drop the .user.js file into your extenions page.
 
 ## First Run
 
-> When you use this script for the first time, click on the `#` on the right side of the Fanfiction.net Website.
+> When you use this script for the first time, click on `Reset Config` on the right side of the Fanfiction.net Website.
 > This installs the default configuration.
 
-The `#` overwrites the current config with an empty one.
+The `Reset Config` overwrites the current config with an empty one.
 
-You no longer have to press `#` if you start your script the first time.
+You no longer have to press `Reset Config` if you start your script the first time.
 
 ## Configuration
 
@@ -121,7 +122,7 @@ The Story will be saved beginning on the current chapter to the current last cha
 
 ### Import / Export
 
-To Import or Export your Config, click on the `?` in the top of the Fanfiction.net Page.
+To Import or Export your Config, click on the `Config Import / Export` in the top of the Fanfiction.net Page.
 
 ## Disclaimer
 

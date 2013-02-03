@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.2.2
+// @version        4.2.3
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -59,7 +59,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.2.2';
+    var _VERSION = '4.2.3';
     
     // Default-Config:
     var _config = {
