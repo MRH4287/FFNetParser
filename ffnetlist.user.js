@@ -398,14 +398,7 @@ function storyParser()
 						element = $('input[value*="Next"]');
 						if (element.length != 0)
 						{
-							var script = element.attr('onclick');
-							var script_reg = /self\.location=\'([^']+)\'/;
-							var data = script_reg.exec(script);
-						
-							if ((data != null) && (data.length > 1))
-							{
-								url = data[1];
-							}
+							url = _getUrlFromButton(element);
 						}
 					}
 					
@@ -424,14 +417,7 @@ function storyParser()
 						element = $('input[value*="Prev"]');
 						if (element.length != 0)
 						{
-							var script = element.attr('onclick');
-							var script_reg = /self\.location=\'([^']+)\'/;
-							var data = script_reg.exec(script);
-						
-							if ((data != null) && (data.length > 1))
-							{
-								url = data[1];
-							}
+							url = _getUrlFromButton(element);
 						}
 					}
 					
@@ -834,15 +820,13 @@ function storyParser()
 
                 if (next.length != 0)
                 {
-                    var script = next.attr('onclick');
-                    var script_reg = /self\.location=\'([^']+)\'/;
-                    var data = script_reg.exec(script);
+                    var data = url = _getUrlFromButton(next);
 
                     //console.log('data:', data);
 
-                    if ((data != null) && (data.length > 1))
+                    if (data != null)
                     {
-                        _parse(data[1], keywords, callback, i+1, executeNext);
+                        _parse(data, keywords, callback, i+1, executeNext);
                     }
                 }
                 //console.log('Content not found in: ', url);
@@ -1253,13 +1237,11 @@ function storyParser()
 
             if (next.length != 0)
             {
-                var script = next.attr('onclick');
-                var script_reg = /self\.location=\'([^']+)\'/;
-                var data = script_reg.exec(script);
-
-                if ((data != null) && (data.length > 1))
+				var data = url = _getUrlFromButton(next);
+			
+                if (data != null)
                 {
-                    _parsePocket(data[1], prefix);
+                    _parsePocket(data, prefix);
                 }
             
             } else
@@ -2740,6 +2722,22 @@ function storyParser()
             console.warn(e);
         }
 	
+	}
+	
+	var _getUrlFromButton = function(button)
+	{
+		var script = button.attr('onclick');
+		var script_reg = /self\.location=\'([^']+)\'/;
+		var data = script_reg.exec(script);
+		
+		if ((data != null) && (data.length > 1))
+		{
+			return data[1];
+		}
+		else
+		{
+			return null
+		}
 	}
 	
 	
