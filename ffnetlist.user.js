@@ -393,6 +393,22 @@ function storyParser()
 						url = element.attr("href");
 					}
 					
+					if (url == null)
+					{
+						element = $('input[value*="Next"]');
+						if (element.length != 0)
+						{
+							var script = element.attr('onclick');
+							var script_reg = /self\.location=\'([^']+)\'/;
+							var data = script_reg.exec(script);
+						
+							if ((data != null) && (data.length > 1))
+							{
+								url = data[1];
+							}
+						}
+					}
+					
 				}
 				// left
 				else if (event.keyCode == 37)
@@ -402,6 +418,23 @@ function storyParser()
 					{
 						url = element.attr("href");
 					}
+					
+					if (url == null)
+					{
+						element = $('input[value*="Prev"]');
+						if (element.length != 0)
+						{
+							var script = element.attr('onclick');
+							var script_reg = /self\.location=\'([^']+)\'/;
+							var data = script_reg.exec(script);
+						
+							if ((data != null) && (data.length > 1))
+							{
+								url = data[1];
+							}
+						}
+					}
+					
 				}
 				
 				if (_DEBUG)
