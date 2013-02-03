@@ -366,6 +366,42 @@ function storyParser()
 		container.find("select").last().after(input);
 		
 	
+		// Key Control for Page:
+		
+		$("body").keydown(function(event)
+		{
+			var container = $("#myform").find("center").last();
+			var current = container.find("b").first();
+			var url = null;
+		
+			// right
+			if (event.keyCode == 39)
+			{
+				var element = current.next("a");
+				if (element.length != 0)
+				{
+					url = element.attr("href");
+				}
+				
+			}
+			// left
+			else if (event.keyCode == 37)
+			{
+				var element = current.prev("a");
+				if (element.length != 0)
+				{
+					url = element.attr("href");
+				}
+			}
+			
+			if (url != null)
+			{
+				location.href = url;
+			}
+			
+		
+		});
+	
 	
 	}
 	
