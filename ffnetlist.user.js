@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.2.0
+// @version        4.2.2
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -59,7 +59,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.2.0';
+    var _VERSION = '4.2.2';
     
     // Default-Config:
     var _config = {
@@ -82,14 +82,10 @@ function storyParser()
         // Do not change below this line:
         storage_key: 'ffnet-storycache',
         config_key: 'ffnet-config',
+		dataStorage_key: 'ffnet-dataStore',
 
-        highlighter:
-        {
-        },
-        
-        marker: {
-            // Name displayed in the List
-        }
+        highlighter: {},   
+        marker: {}
     }
 
     // ..................
@@ -101,10 +97,13 @@ function storyParser()
 
     var _found = [];
     var _storyCache = {};
+	
+	// Config that is only available in this session
+	var _dataConfig = {}; 
     
     var _gui_container = null;
 
-    this.defaultConfig = function()
+    var _defaultConfig = function()
     {
         _config =
         {
@@ -119,6 +118,7 @@ function storyParser()
             pocket_user: null,
             pocket_password: null,
             storage_key: 'ffnet-storycache',
+			dataStorage_key: 'ffnet-dataStore',
             config_key: 'ffnet-config',
             api_url: 'http://www.mrh-development.de/FanFictionUserScript',
             api_lookupKey: 'ffnet-api-interface',
@@ -144,18 +144,9 @@ function storyParser()
         try
         {
             // Checks if sessionStorage entry is valid:
-            // If you know a better solution, please tell me :)
-
-            if ((typeof sessionStorage[_config.storage_key] != "undefined") &&
-                (typeof sessionStorage[_config.storage_key] != "null") &&
-                sessionStorage[_config.storage_key] != "undefined" &&
-                sessionStorage[_config.storage_key] != "null" &&
-                sessionStorage[_config.storage_key] != "" &&
-                sessionStorage[_config.storage_key] != null)
-            {
-                _storyCache = JSON.parse(sessionStorage[_config.storage_key]);
-            }
-
+			_storyCache = _loadFromMemory(sessionStorage, _config.storage_key);
+			_dataConfig = _loadFromMemory(sessionStorage, _config.dataStorage_key);
+			
         } catch (ex)
         {
             console.warn(ex);
@@ -163,15 +154,7 @@ function storyParser()
         
         try
         {
-            if ((typeof localStorage[_config.config_key] != "undefined") &&
-                (typeof localStorage[_config.config_key] != "null") &&
-                localStorage[_config.config_key] != "undefined" &&
-                localStorage[_config.config_key] != "null" &&
-                localStorage[_config.config_key] != "" &&
-                localStorage[_config.config_key] != null)
-            {
-                _config = JSON.parse(localStorage[_config.config_key]);
-            }
+			_config = _loadFromMemory(localStorage, _config.config_key);
 
         } catch (ex)
         {
@@ -257,6 +240,11 @@ function storyParser()
             _config['api_checkForUpdates'] = true;
         }            
         
+		if (typeof(_config['dataStorage_key']) == "undefined")
+		{
+			_config['dataStorage_key'] = 'ffnet-dataStore';
+		}
+		
         _api_checkVersion();
 		
 		// Add jQueryUI to the Page:		
@@ -273,16 +261,113 @@ function storyParser()
 		$("head").append(block);
 		
 		
-		
+		_updateGUI()
 		
     }
 
-    this.readList = function(__element)
+	var _updateGUI = function()
+	{
+		// Updates Content_width
+        $('#content_wrapper').css('width', _config['content_width']);
+    
+		// Add User Interface
+		$('.zui').last().append(
+			$('<a></a>').addClass('menu-link').html('Reparse Stories').attr('href', '#').click(function(e)
+			{
+				_readList($('.z-list'));
+				e.preventDefault();
+
+			}).attr('title', 'Parse the Stories again')
+		).append(
+			$('<a></a>').addClass('menu-link').html('Config Editor').attr('href', '#').click(function(e)
+			{
+				_gui();
+				e.preventDefault();
+
+			}).attr('title', 'Open Config Editor')
+		);
+
+		$('.zui').first().append(
+			$('<a></a>').addClass('menu-link').html('Config Import / Export').attr('href', '#').click(function(e)
+			{
+				_toggleSaveConfig();
+				e.preventDefault();
+
+			}).attr('title', 'Config Export')
+		).append(
+			$('<a></a>').addClass('menu-link').html('Reset Config').attr('href', '#').click(function(e)
+			{
+				if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
+				{
+					_defaultConfig();
+				}
+				e.preventDefault();
+
+			}).attr('title', 'Load default Config')
+		);
+	
+		
+		// Add GUI for "Only Mode":
+		var container = $("#myform").first().children().first();
+		
+		var input = $("<select></select>")
+		.attr("title", "Display Only Elements that match a specific Filter")
+		.change(function()
+		{
+			var selected = input.children().filter(":selected").attr('value');
+			if (_DEBUG)
+			{
+				console.info("Display Only - Element Selected: ", selected);
+			}
+			
+			if (selected != "off")
+			{
+				_dataConfig["displayOnly"] = selected;
+			}
+			else
+			{
+				_dataConfig["displayOnly"] = undefined;
+			}
+			
+			_save_dataStore();
+			_readList($('.z-list'));
+		
+		});
+		
+		var noneEntry = $('<option value="off">Display: Everything</option>').appendTo(input);
+		
+		if (typeof(_dataConfig["displayOnly"]) == "undefined")
+		{
+			noneEntry.attr("selected", "selected");
+		}
+		
+		
+		$.each(_config.marker, function(title, info)
+		{
+			var entry = $('<option></option>').attr('value', title).html(title).appendTo(input);
+			
+			if ((typeof(_dataConfig["displayOnly"]) != "undefined") && (title == _dataConfig["displayOnly"]))
+			{
+				entry.attr("selected", "selected");
+			}
+			
+		});
+		
+		
+		container.find("select").last().after(input);
+		
+	
+	
+	}
+	
+    var _readList = function(__element)
     {
         _element = __element;
         _read();
     }
 
+	this.readList = _readList;
+	
     var _read = function()
     {
         var odd = false;
@@ -297,14 +382,14 @@ function storyParser()
         {
             $(this).before($(this).text()).remove();
         });
-    
-        // Updates Content_width
-        $('#content_wrapper').css('width', _config['content_width']);
-    
-        
+            
         _element.each(function(k, e)
         {
             var element = $(e)
+			
+			// Reset Hide:
+			element.show();
+			
             var textEl = element.find('div').last();
             var text = element.text().toLowerCase();
             var color = _config.color_normal;
@@ -413,10 +498,11 @@ function storyParser()
 
                 } else if (_found.indexOf(storyName) == -1)
                 {
-					if (_DEBUG)
+				
+					/*if (_DEBUG)
 					{
 						console.log("[_read-1] Change Color of Line: ",element); 
-					}
+					}*/
 				
                     _updateColor(element, color, colorMo);
                 }
@@ -486,17 +572,32 @@ function storyParser()
             
 			if (!marker_found)
             {
-				if (_DEBUG)
+				/*if (_DEBUG)
 				{
 					console.log("[_read] Change Color of Line: ",element); 
+				}*/
+			
+				if (typeof(_dataConfig["displayOnly"]) != "undefined")
+				{
+					if (_DEBUG)
+					{
+						console.log("Hide Entry because of Display-Only Mode: ", element);
+					}
+				
+				
+					element.hide();
+					_hidden += 1;
+				}
+				else
+				{
+					_updateColor(element, color, colorMo);
 				}
 			
-                _updateColor(element, color, colorMo);
+                
             }
 			
             _doParse(requestQueue);
             
-
 
         });
         
@@ -570,7 +671,7 @@ function storyParser()
             
             if (_DEBUG)
             {
-                console.warn('execute Callback Function '+el.headline+' for ', info);
+                console.info('execute Callback Function '+el.headline+' for ', info);
             }
             
             _elementCallback(el.config, el.element, el.textEl, el.headline, info);
@@ -736,6 +837,33 @@ function storyParser()
         }
         _eList[headline].push(info);
 
+		if (_DEBUG)
+		{
+			console.info("Element Callback for ", headline, info);
+		}
+		
+		if ((typeof(_dataConfig["displayOnly"]) != "undefined") && (_dataConfig["displayOnly"] == headline))
+		{
+			if (_DEBUG)
+			{
+				console.info("Display Only Mode: Match found for", element);
+			}
+
+			window.setTimeout(function()
+			{
+				element.show();
+			}, 100);
+			
+			_hidden -= 1;
+		}
+		else if (typeof(_dataConfig["displayOnly"]) != "undefined")
+		{
+			// Hide this Element becazse the Only Mode do not match
+			element.hide();
+			_hidden += 1;
+		}
+		
+		
         if (!config.display)
         {
             element.slideUp();
@@ -808,10 +936,11 @@ function storyParser()
 
 			if (!config.ignoreColor)
 			{
-				if (_DEBUG)
+				/*if (_DEBUG)
 				{
 					console.log("[ElementCallback] Change Color of Line: ",element); 
-				}
+				}*/
+				
 				_updateColor(element, color, colorMo);
 			}
 
@@ -887,10 +1016,11 @@ function storyParser()
             if (_found.indexOf(storyName) == -1)
             {
                 _updateColor(el, color, colorMo);
-				if (_DEBUG)
+				
+				/*if (_DEBUG)
 				{
 					console.log("[UpdateList] Change Color of Line: ",el); 
-				}
+				}*/
 				
             }
         });
@@ -2047,7 +2177,7 @@ function storyParser()
         _save_config();
     }
 
-    this.gui = function()
+    var _gui = function()
     {
         if (_gui_container == null)
         {
@@ -2110,10 +2240,7 @@ function storyParser()
             _gui_show();
         }
         
-    }
-    
-    this.configGui = _toggleSaveConfig;
-    
+    } 
     
     var _toggleStoryConfig = function(storyInfo)
     {
@@ -2364,6 +2491,16 @@ function storyParser()
 
     }
 
+	var _save_dataStore = function()
+	{
+		_saveToMemory(sessionStorage, _config.dataStorage_key, _dataConfig);
+		
+		if (_DEBUG)
+		{
+			console.info("Save to Memory: ", _dataConfig);
+		}
+	}
+	
     var _getConfig = function()
     {
         return JSON.stringify(_config);
@@ -2390,6 +2527,40 @@ function storyParser()
         return _eList;
     }
 
+	// -------- Multiuse Functions ---------
+	
+	var _loadFromMemory = function(memory, key)
+	{
+		if ((typeof memory[key] != "undefined") &&
+                (typeof memory[key] != "null") &&
+                memory[key] != "undefined" &&
+                memory[key] != "null" &&
+                memory[key] != "" &&
+                memory[key] != null)
+		{
+			return JSON.parse(memory[key]);
+		}
+		
+		return {};
+	}
+	
+	
+	var _saveToMemory = function(memory, key, object)
+	{
+		try
+        {
+            memory[key] = JSON.stringify(object);
+
+        } catch (e)
+        {
+            console.warn(e);
+        }
+	
+	}
+	
+	
+	// -------------------------------------------
+	
     _init();
 }
 
@@ -2397,39 +2568,3 @@ var parser = new storyParser($('.z-list'));
 parser.readList($('.z-list'));
 parser.enablePocketSave($('#content_wrapper_inner'));
 parser.enableInStoryHighlighter($('#content_wrapper_inner'));
-
-
-$('.zui').last().append(
-    $('<a></a>').addClass('menu-link').html('Reload Script').attr('href', '#').click(function(e)
-    {
-        parser.readList($('.z-list'));
-        e.preventDefault();
-
-    }).attr('title', 'Reloads the Marking User-Script. By MRH')
-).append(
-    $('<a></a>').addClass('menu-link').html('Config Editor').attr('href', '#').click(function(e)
-    {
-        parser.gui();
-        e.preventDefault();
-
-    }).attr('title', 'Open Config Editor. By MRH')
-);
-
-$('.zui').first().append(
-    $('<a></a>').addClass('menu-link').html('?').attr('href', '#').click(function(e)
-    {
-        parser.configGui();
-        e.preventDefault();
-
-    }).attr('title', 'Config Export. By MRH')
-).append(
-    $('<a></a>').addClass('menu-link').html('#').attr('href', '#').click(function(e)
-    {
-        if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
-        {
-            parser.defaultConfig();
-        }
-        e.preventDefault();
-
-    }).attr('title', 'Load default Config. By MRH')
-);
