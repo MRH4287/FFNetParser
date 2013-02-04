@@ -313,6 +313,7 @@ function storyParser()
 		
 		if (_DEBUG)
 		{
+			/*
 			$('.zui').last().append(
 				$('<a></a>').addClass('menu-link').html('Test - Feature').attr('href', '#').click(function(e)
 				{
@@ -320,7 +321,7 @@ function storyParser()
 
 				}).attr('title', 'Test Feature')
 			);
-		
+			*/
 		}
 		
 		// Add GUI for "Only Mode":
@@ -437,6 +438,32 @@ function storyParser()
 		
 		});
 	
+	
+		// Endless Mode --- DEBUG-Mode
+		if (_DEBUG)
+		{
+			$(".z-list").first().before(
+				$("<a></a>").html("LoadPrevPage")
+				.attr("href", "#")
+				.click(function(e)
+				{
+					_loadPrevPage();
+					
+					//e.preventDefault();
+				})
+			);
+			
+			$(".z-list").last().after(
+				$("<a></a>").html("LoadNextPage")
+				.attr("href", "#")
+				.click(function(e)
+				{
+					_loadNextPage();
+					
+					//e.preventDefault();
+				})
+			);
+		}
 	
 	}
 	
@@ -1261,11 +1288,20 @@ function storyParser()
     
 	// ------- Endless Mode ------
 	
-	var _nextPage = null;
+	var _currentPage = null;
 	
-	var _getNextPageContent = function(base, callback)
+	var _getPageContent = function(base, prev, callback)
 	{
-		var url = _getNextPage(base);
+		var url = null;
+		if (prev)
+		{
+			url = _getPrevPage(base);
+		}
+		else
+		{
+			url = _getNextPage(base);
+		}
+		
 		
 		if (_DEBUG)
 		{
@@ -1295,51 +1331,117 @@ function storyParser()
 	{
 		var base = null;
 		
-		if (_nextPage == null)
+		if (_currentPage == null)
 		{
 			base = $("#myform");
 		}
 		else
 		{
-			base = _nextPage.find("#myform").first();
+			base = _currentPage.find("#myform").first();
 		}
 		
 	
-		_getNextPageContent(base, function(elements, data)
+		_getPageContent(base, false, function(elements, data)
 		{		
 			// Add elements to DOM:
-			
-			var last = $(".z-list").last();
-			
-			elements.each(function(k, el)
+			if (elements.length > 0)
 			{
-				el = $(el);
+				var last = $(".z-list").last();
 				
-				last.after(el);
-				last = el;
-			});
-			
-			// Only allow 40 entries at all times:
-			var all = $(".z-list");
-			
-			if (all.length > 40)
-			{
-				if (_DEBUG)
+		
+				
+				elements.each(function(k, el)
 				{
-					console.log("Count greather then 40 entries, remove some ...");
-				}
-			
-				for ($i = 0; $i < all.length - 40; $i++)
+					el = $(el);
+					
+					last.after(el);
+					last = el;
+				});
+				
+				// Only allow 25 entries at all times:
+				var all = $(".z-list");
+				
+				if (all.length > 25)
 				{
-					$(all[$i]).remove();
+					if (_DEBUG)
+					{
+						console.log("Count greather then 40 entries, remove some ...");
+					}
+				
+					for ($i = 0; $i < all.length - 25; $i++)
+					{
+						$(all[$i]).slideUp().remove();
+					}
 				}
+				
+				window.setTimeout( _readList($('.z-list')), 200);
+			
+				$("#myform").find("center").last().html(data.find("#myform").find("center").last().html());
+			
+			
+				_currentPage = data;
 			}
 			
-			window.setTimeout( _readList($('.z-list')), 200);
-			
-			_nextPage = data;
 		});
 	}
+	
+	var _loadPrevPage = function()
+	{
+		var base = null;
+		
+		if (_currentPage == null)
+		{
+			base = $("#myform");
+		}
+		else
+		{
+			base = _currentPage.find("#myform").first();
+		}
+		
+	
+		_getPageContent(base, true, function(elements, data)
+		{		
+			// Add elements to DOM:
+			if (elements.length > 0)
+			{		
+				var last = $(".z-list").first();
+				
+				elements.each(function(k, el)
+				{
+					el = $(el);
+					
+					last.before(el);
+					last = el;
+				});
+				
+				// Only allow 25 entries at all times:
+				var all = $(".z-list");
+				
+				if (all.length > 25)
+				{
+					if (_DEBUG)
+					{
+						console.log("Count greather then 40 entries, remove some ...");
+					}
+				
+					for ($i = 0; $i < all.length - 25; $i++)
+					{
+						$(all[$i]).slideUp().remove();
+					}
+				}
+				
+				window.setTimeout( _readList($('.z-list')), 200);
+				
+				$("#myform").find("center").each(function(k, el)
+				{
+					$(el).html(data.find("#myform").find("center").last().html());
+				});
+				_currentPage = data;
+			}
+			
+		});
+	}
+	
 	
 	
 	var _getNextPage = function(base)
@@ -1349,8 +1451,29 @@ function storyParser()
 		var current = container.find("b").first();
 		var next = current.next("a");
 		
-		return next.attr("href");		
+		if (next.length > 0)
+		{
+			return next.attr("href");	
+		}
+		
+		return null;	
 	}
+	
+	var _getPrevPage = function(base)
+	{
+		var container = base.find("center").last();
+		
+		var current = container.find("b").first();
+		var prev = current.prev("a");
+		
+		if (prev.length > 0)
+		{
+			return prev.attr("href");	
+		}
+		
+		return null;	
+	}
+	
 	
 	
     // --------- GUI -------------
