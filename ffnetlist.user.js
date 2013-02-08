@@ -5,7 +5,7 @@
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
-// @updateURL      http://private.mrh-development.de/ff/ffnetlist.user.js
+// @updateURL      https://github.com/MRH4287/FFNetParser/raw/master/ffnetlist.user.js
 // @include        http://www.fanfiction.net/search.php
 // @include        http://www.fanfiction.net/anime/*
 // @include        http://www.fanfiction.net/book/*
