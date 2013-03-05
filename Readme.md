@@ -8,17 +8,18 @@ This UserScript allows to parse and mark stories in the list.
 ## Feature-List:
 * GUI - Customization (change colors, site width, hide story images)
 * Build filter to search for specific keywords.
-  You can use those filter so:
+  You can use those filter to:
    * Hide specific stories
    * Change Background / Hover Color
    * Mark Chapters (Add a Tag to the name of the Story)
    * List Stories (Add a list of matching stories on the top of the story list)
    * Mention in Headline (Add a notification to the headline, how many elements of one filter has been found) 
-* Search for filters within the story (You can define the max depth for search)
+* Search with filters within the story (You can define the max depth for search)
 * [Pocket](http://getpocket.com) Feature:
   Save an entire story to your Pocket (formally Read It Later) Account
 * Color Picker for easy Color selection
 * Switch pages with the cursor Keys
+* Display only mode (Select a filter, only matching stories will be displayed)
   
 If you want a feature that isn't listed above, please write an Issue-Report.      
 
