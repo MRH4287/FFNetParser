@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.2.5
+// @version        4.2.7
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -59,7 +59,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.2.6';
+    var _VERSION = '4.2.7';
     
     // Default-Config:
     var _config = {
@@ -70,6 +70,7 @@ function storyParser()
         color_mouse_over: '#EEF0F4',
         color_odd_color: '#dfdfdf',
         hide_images: false,
+		hide_lazy_images: false,
 		disable_image_hover: false,
         content_width: "90%",
         pocket_user: null,
@@ -89,6 +90,19 @@ function storyParser()
         marker: {}
     }
 
+	// ----- Styles ------
+	
+	var _styleApply = "									\
+														\
+		abbr[title],									\
+		abbr[data-original-title] {						\
+		  cursor: help;									\
+		  border-bottom: 1px dotted #999999;			\
+		}												\
+														\
+	";
+	
+	
     // ..................
 
     var _element = null;
@@ -116,6 +130,7 @@ function storyParser()
             color_odd_color: '#dfdfdf',
             hide_images: false,
 			disable_image_hover: false,
+			hide_lazy_images: false,
             content_width: "90%",
             pocket_user: null,
             pocket_password: null,
@@ -252,6 +267,11 @@ function storyParser()
             _config['disable_image_hover'] = false;
         }
 		
+		if (typeof(_config['hide_lazy_images']) == "undefined")
+        {
+            _config['hide_lazy_images'] = false;
+        }
+		
         _api_checkVersion();
 		
 		// Add jQueryUI to the Page:		
@@ -317,6 +337,12 @@ function storyParser()
 
 			}).attr('title', 'Load default Config')
 		);
+		
+		// Append Styles
+		$("head").append(
+			$("<style></style>").text(_styleApply)
+		);
+		
 		
 		if (_DEBUG)
 		{
@@ -751,6 +777,11 @@ function storyParser()
 					.css("height", height + "px");
 
 				});
+			}
+			
+			if (_config.hide_lazy_images)
+			{
+				$(".lazy").remove();
 			}
 
 		}, 1000);
@@ -1747,6 +1778,33 @@ function storyParser()
 		// spacer:
         table.append(spacer.clone());
         
+        // hide_lazy_images:
+        checkbox = $('<input type="checkbox" id="fflist-hide_lazy_images">');
+        if (_config.hide_lazy_images)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['hide_lazy_images'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-hide_lazy_images">Hide <abbr title="Images that are loaded after the first run. Mostly Story Images, not User Images">lazy</abbr> images: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
+		
+		
+		// spacer:
+        table.append(spacer.clone());
+        
         // disable_image_hover:
         checkbox = $('<input type="checkbox" id="fflist-disable_image_hover">');
         if (_config.disable_image_hover)
@@ -2042,6 +2100,7 @@ function storyParser()
             _config.mark_M_storys = _settings_elements.mark_M_storys.is(':checked');
             _config.hide_non_english_storys = _settings_elements.hide_non_english_storys.is(':checked');
             _config.hide_images = _settings_elements.hide_images.is(':checked');
+			_config.hide_lazy_images = _settings_elements.hide_lazy_images.is(':checked');
 			_config.disable_image_hover = _settings_elements.disable_image_hover.is(':checked');
             _config.content_width = _settings_elements.content_width.attr('value');
             _config.color_normal = _settings_elements.color_normal.attr('value');
