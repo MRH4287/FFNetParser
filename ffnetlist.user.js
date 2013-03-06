@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.2.4
+// @version        4.2.5
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -59,7 +59,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.2.4';
+    var _VERSION = '4.2.5';
     
     // Default-Config:
     var _config = {
@@ -100,7 +100,7 @@ function storyParser()
 	
 	// Config that is only available in this session
 	var _dataConfig = {}; 
-    
+	
     var _gui_container = null;
 
     var _defaultConfig = function()
@@ -485,6 +485,7 @@ function storyParser()
         _eList = {};
         _hidden = 0;
         $('.parser-msg').remove();
+		$('[data-color]').removeAttr("data-color");
 		
 		_element.each(function(k, e)
         {
@@ -710,6 +711,22 @@ function storyParser()
         }
         
         _updateList();
+		
+		// Update Color
+		setTimeout(function()
+		{
+			_element.filter("[data-color]").each(function(k, el)
+			{
+				el = $(el);
+				var color = el.attr("data-color");
+				
+				el.css("background-color", color);			
+			
+			});
+
+		}, 1000);
+		
+		
     }
 
     var _getStoryName = function(link)
@@ -1131,8 +1148,10 @@ function storyParser()
 
     var _updateColor = function(element, color, colorMo)
     {
-        element.css('background-color', color);
-
+        element.css('background-color', color);	
+		element.attr("data-color", color);
+		element.attr("data-mouseOverColor", colorMo); 
+		
         element.mouseenter(function()
         {
             $(this).css('background-color', colorMo);
