@@ -59,7 +59,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.2.5';
+    var _VERSION = '4.2.6';
     
     // Default-Config:
     var _config = {
@@ -70,6 +70,7 @@ function storyParser()
         color_mouse_over: '#EEF0F4',
         color_odd_color: '#dfdfdf',
         hide_images: false,
+		disable_image_hover: false,
         content_width: "90%",
         pocket_user: null,
         pocket_password: null,
@@ -114,6 +115,7 @@ function storyParser()
             color_mouse_over: '#EEF0F4',
             color_odd_color: '#dfdfdf',
             hide_images: false,
+			disable_image_hover: false,
             content_width: "90%",
             pocket_user: null,
             pocket_password: null,
@@ -244,6 +246,11 @@ function storyParser()
 		{
 			_config['dataStorage_key'] = 'ffnet-dataStore';
 		}
+		
+		if (typeof(_config['disable_image_hover']) == "undefined")
+        {
+            _config['disable_image_hover'] = false;
+        }
 		
         _api_checkVersion();
 		
@@ -712,9 +719,10 @@ function storyParser()
         
         _updateList();
 		
-		// Update Color
+		// Timed Events:
 		setTimeout(function()
 		{
+			// Color corrections
 			_element.filter("[data-color]").each(function(k, el)
 			{
 				el = $(el);
@@ -723,6 +731,27 @@ function storyParser()
 				el.css("background-color", color);			
 			
 			});
+			
+			// Disable Image Hover Effect:
+			if (_config.disable_image_hover)
+			{
+				$("head").append(
+					$("<style></style")
+					.text(".z-list_hover { height: auto !important }")
+					.addClass("parser-msg")
+				);
+				
+				$(".cimage").each(function(k, el)
+				{
+					el = $(el);
+					var width = el.width();
+					var height = el.height();
+					
+					el.css("width", width + "px")
+					.css("height", height + "px");
+
+				});
+			}
 
 		}, 1000);
 		
@@ -1714,6 +1743,32 @@ function storyParser()
                 )
             )
         );
+		
+		// spacer:
+        table.append(spacer.clone());
+        
+        // disable_image_hover:
+        checkbox = $('<input type="checkbox" id="fflist-disable_image_hover">');
+        if (_config.disable_image_hover)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['disable_image_hover'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-disable_image_hover">Disable Image Hover Effect: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                        checkbox
+                )
+            )
+        );
 
         // spacer:
         table.append(spacer.clone());
@@ -1987,6 +2042,7 @@ function storyParser()
             _config.mark_M_storys = _settings_elements.mark_M_storys.is(':checked');
             _config.hide_non_english_storys = _settings_elements.hide_non_english_storys.is(':checked');
             _config.hide_images = _settings_elements.hide_images.is(':checked');
+			_config.disable_image_hover = _settings_elements.disable_image_hover.is(':checked');
             _config.content_width = _settings_elements.content_width.attr('value');
             _config.color_normal = _settings_elements.color_normal.attr('value');
             _config.color_odd_color = _settings_elements.color_odd_color.attr('value');
