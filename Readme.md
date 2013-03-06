@@ -6,7 +6,7 @@ This UserScript allows to parse and mark stories in the list.
 
 
 ## Feature-List:
-* GUI - Customization (change colors, site width, hide story images)
+* GUI - Customization (change colors, site width, hide story images, disable image hover effect)
 * Build filter to search for specific keywords.
   You can use those filter to:
    * Hide specific stories
