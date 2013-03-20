@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.2.7
+// @version        4.2.8
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -59,7 +59,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.2.7';
+    var _VERSION = '4.2.8';
     
     // Default-Config:
     var _config = {
@@ -100,6 +100,16 @@ function storyParser()
 		  border-bottom: 1px dotted #999999;			\
 		}												\
 														\
+		.ffnetparser_InputField							\
+		{												\
+			padding-left: 10px;							\
+		}												\
+														\
+		#mrhOutput > div > ul							\
+		{												\
+			margin-top: 5px;							\
+			margin-bottom: 10px;						\
+		}												\
 	";
 	
 	
@@ -181,6 +191,10 @@ function storyParser()
         
         // Check for Config Values:
     
+		if (typeof(_config['story_search_depth']) == "undefined")
+		{
+			_config['story_search_depth'] = 1;
+		}
         
         if (typeof(_config['mark_M_storys']) == "undefined")
         {
@@ -304,8 +318,10 @@ function storyParser()
 		// Updates Content_width
         $('#content_wrapper').css('width', _config['content_width']);
     
+		var table = $(".zui").find("td").first();
+	
 		// Add User Interface
-		$('.zui').last().append(
+		table.append(
 			$('<a></a>').addClass('menu-link').html('Reparse Stories').attr('href', '#').click(function(e)
 			{
 				_readList($('.z-list'));
@@ -1691,7 +1707,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 )
             )
@@ -1717,7 +1733,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -1743,7 +1759,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -1769,7 +1785,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -1795,7 +1811,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -1822,7 +1838,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -1846,7 +1862,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 )
             )
@@ -1874,7 +1890,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 )
             )
@@ -1904,7 +1920,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 )
             )
@@ -1931,7 +1947,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 )
             )
@@ -1947,7 +1963,7 @@ function storyParser()
                 $('<td width="30%"></td>').append("--------")
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     " ---- <a href=\"http://www.getpocket.com\">Pocket</a> Settings ----"
                 )
             )
@@ -1971,7 +1987,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 )
             )
@@ -1996,7 +2012,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 )
             )
@@ -2012,7 +2028,7 @@ function storyParser()
                 $('<td width="30%"></td>').append("--------")
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     " ---- API Settings ----"
                 )
             )
@@ -2038,7 +2054,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -2253,7 +2269,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 )
             )
@@ -2281,7 +2297,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -2305,7 +2321,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 ).append(
                     '<br><span style="font-size: small;">Seperated with ", "</span>'
@@ -2333,7 +2349,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 ).append(
                     '<br><span style="font-size: small;">Seperated with ", "</span>'
@@ -2376,7 +2392,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -2410,7 +2426,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 )
 
@@ -2443,7 +2459,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                     input
                 )
 
@@ -2470,7 +2486,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -2497,7 +2513,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -2524,7 +2540,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -2550,7 +2566,7 @@ function storyParser()
                 )
                 .css('border-right', '1px solid gray')
             ).append(
-                $('<td></td>').append(
+                $('<td class="ffnetparser_InputField"></td>').append(
                         checkbox
                 )
             )
@@ -2640,14 +2656,14 @@ function storyParser()
             
             _gui_container.append('<label for="ffnet-config-display">Your current Config:</label><br/>');
             
-            var old = $('<textarea id="ffnet-config-display" rows="5" cols="60"></textarea>')
+            var old = $('<textarea id="ffnet-config-display" style="width:90%; height: 100px;"></textarea>')
                 .val(_getConfig())
                 .appendTo(_gui_container);
 
                 
             _gui_container.append('<br/><label for="ffnet-config-set">Import Config:</label><br/>');
             
-            var neu = $('<textarea id="ffnet-config-set" rows="5" cols="60"></textarea>')
+            var neu = $('<textarea id="ffnet-config-set" style="width:90%; height: 100px;"></textarea>')
                 .appendTo(_gui_container);
                 
             _gui_container.append(
