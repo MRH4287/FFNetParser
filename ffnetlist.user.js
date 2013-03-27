@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.2.8
+// @version        4.2.9
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -59,7 +59,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.2.8';
+    var _VERSION = '4.2.9';
     
     // Default-Config:
     var _config = {
@@ -935,7 +935,7 @@ function storyParser()
             } else
             {
                 //console.log('find next el');
-                var next = body.find('input[type="button"]').filter('[value*="Next"]').first();
+				var next = body.find('button:contains(Next)').first();
                 //console.log('next: ', next);
 
                 if (next.length != 0)
@@ -1354,7 +1354,7 @@ function storyParser()
             
             console.log(url+' - '+title+' - Done');
             
-            var next = body.find('input[type="button"]').filter('[value*="Next"]').first();
+            var next = body.find('button:contains(Next)').first();
 
 
             if (next.length != 0)
