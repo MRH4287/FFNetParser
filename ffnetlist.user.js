@@ -1314,7 +1314,7 @@ function storyParser()
         var field = body.find('#gui_table1i').first().find("b").first();
     
         field.after(
-            $('<button>Save To Pocket</button>')
+            $('<button class="btn">Save To Pocket</button>')
             .click( function()
             {
                 _parsePocket(document.location.pathname, field.text() + ": ");
