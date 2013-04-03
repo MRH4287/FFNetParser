@@ -445,7 +445,7 @@ function storyParser()
 					
 					if (url == null)
 					{
-						element = $('input[value*="Next"]');
+						element = $("body").find('button:contains(Next)').first();
 						if (element.length != 0)
 						{
 							url = _getUrlFromButton(element);
@@ -464,7 +464,7 @@ function storyParser()
 					
 					if (url == null)
 					{
-						element = $('input[value*="Prev"]');
+						element = $("body").find('button:contains(Prev)').first();
 						if (element.length != 0)
 						{
 							url = _getUrlFromButton(element);
