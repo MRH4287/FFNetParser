@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.2.9
+// @version        4.3.0
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -59,7 +59,7 @@ function storyParser()
 {
     var _DEBUG = false;
 
-    var _VERSION = '4.2.9';
+    var _VERSION = '4.3.0';
     
     // Default-Config:
     var _config = {
@@ -284,6 +284,12 @@ function storyParser()
 		if (typeof(_config['hide_lazy_images']) == "undefined")
         {
             _config['hide_lazy_images'] = false;
+        }
+		
+		if (typeof(_config['token']) == "undefined")
+        {
+			// Generates Random Token
+            _config['token'] = Math.random().toString().split(".")[1];
         }
 		
         _api_checkVersion();
@@ -2827,7 +2833,7 @@ function storyParser()
         var apiLookupKey = _config.api_lookupKey;
         var timeout = _config.api_timeout;
         var retrys = _config.api_retries;
-            
+            		
         $.ajax({
            type: 'GET',
             url: url,
@@ -2890,12 +2896,21 @@ function storyParser()
     {
         if (_config.api_checkForUpdates)
         {
+			var statisticData =
+			{
+				Version: _VERSION,
+				Token: _config.token
+			}
+		
             if (_DEBUG)
             {
                 console.info("Check for Updates ...");
+				console.log("Sending Statistic Data: ", statisticData);
             }
             
-            _apiRequest({command: "getVersion", data: ""}, function(res)
+			var requestData = JSON.stringify(statisticData);
+			
+            _apiRequest({command: "getVersion", data: requestData}, function(res)
             {                        
                 var version = JSON.parse(res);
                 
