@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.3.1
+// @version        4.3.2
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -60,8 +60,9 @@ y+="</select>"}if(_||(b+=y+(!a&&g&&v?"":"&#xa0;")),!t.yearshtml)if(t.yearshtml="
 function storyParser()
 {
     var _DEBUG = false;
+	var _IGNORE_NEW_VERSION = true;
 	
-    var _VERSION = '4.3.1';
+    var _VERSION = '4.3.2';
     
 	var _LOAD_INTERNAL = false;
 	
@@ -173,7 +174,7 @@ function storyParser()
 
     var _init = function()
     {
-			var isNested = false;
+		var isNested = _IGNORE_NEW_VERSION;
 		
 		if (typeof(sessionStorage["ffnet-mutex"]) != "undefined")
 		{
@@ -928,7 +929,7 @@ function storyParser()
 		// Timed Events:
 		setTimeout(function()
 		{
-			// Color corrections
+			// Color corrections			
 			_element.filter("[data-color]").each(function(k, el)
 			{
 				el = $(el);
@@ -1229,9 +1230,7 @@ function storyParser()
             _updateListColor();
             _hidden += 1;
         } else
-        {
-
-            element.css('background-color', config.color);
+        {			
             if (config.background != null)
             {
                 element.css('background-image', 'url('+config.background+')')
