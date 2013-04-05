@@ -60,7 +60,7 @@ y+="</select>"}if(_||(b+=y+(!a&&g&&v?"":"&#xa0;")),!t.yearshtml)if(t.yearshtml="
 function storyParser()
 {
     var _DEBUG = false;
-    var _IGNORE_NEW_VERSION = true;
+    var _IGNORE_NEW_VERSION = false;
     
     var _VERSION = '4.3.2';
     
