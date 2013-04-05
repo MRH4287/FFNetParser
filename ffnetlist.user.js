@@ -827,7 +827,7 @@ function storyParser()
                         console.log("[_read-1] Change Color of Line: ",element); 
                     }*/
                 
-                    _updateColor(element, color, colorMo);
+                    //_updateColor(element, color, colorMo, true);
                 }
 
                 if (_config.mark_M_storys)
@@ -913,7 +913,7 @@ function storyParser()
                 }
                 else
                 {
-                    _updateColor(element, color, colorMo);
+                    _updateColor(element, color, colorMo, true);
                 }
             
                 
@@ -1386,26 +1386,39 @@ function storyParser()
                 odd = true;
             }
 
+            if (!el.is('[data-color]'))
+            {
+                _updateColor(el, color, colorMo, true);
+            }
+            
+            /*
             if (_found.indexOf(storyName) == -1)
             {
-                _updateColor(el, color, colorMo);
+                //
                 
                 /*if (_DEBUG)
                 {
                     console.log("[UpdateList] Change Color of Line: ",el); 
-                }*/
+                }* /
                 
             }
+            */
         });
 
 
     }
 
-    var _updateColor = function(element, color, colorMo)
-    {
+    var _updateColor = function(element, color, colorMo, notSetAttr)
+    {    
         element.css('background-color', color); 
-        element.attr("data-color", color);
-        element.attr("data-mouseOverColor", colorMo); 
+     
+        if (typeof(notSetAttr) == "undefined")
+        {
+            element.attr("data-color", color);
+            element.attr("data-mouseOverColor", colorMo); 
+        }
+        
+        element.unbind("mouseenter").unbind("mouseleave");
         
         element.mouseenter(function()
         {
