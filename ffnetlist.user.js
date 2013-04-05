@@ -1513,7 +1513,7 @@ function storyParser()
             return;        
         }
     
-        var field = body.find('#gui_table1i').first().find("b").first();
+        var field = body.find("#content_wrapper_inner > table > tbody > tr > td > b");
     
         field.after(
             $('<button class="btn">Save To Pocket</button>')
