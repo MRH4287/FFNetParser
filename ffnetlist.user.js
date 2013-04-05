@@ -720,7 +720,12 @@ function storyParser()
             
             if (_config.hide_non_english_storys && (text.indexOf('english') == -1))
             {
-                element.slideUp();
+                if (_DEBUG)
+                {
+                    console.log("Hide Element because of 'hide_non_english_storys'", link);
+                }
+            
+                element.hide();
                 _hidden += 1;
                 return;
             }
@@ -1218,6 +1223,12 @@ function storyParser()
         else if (typeof(_dataConfig["displayOnly"]) != "undefined")
         {
             // Hide this Element becazse the Only Mode do not match
+            
+            if (_DEBUG)
+            {
+                console.log("Hide Element because of 'displayOnly' ", info);
+            }
+            
             element.hide();
             _hidden += 1;
         }
@@ -1225,7 +1236,12 @@ function storyParser()
         
         if (!config.display)
         {
-            element.slideUp();
+            if (_DEBUG)
+            {
+                console.log("Hide Element because of Filter '"+headline+"'", info);
+            }
+        
+            element.hide();
             element.addClass('hidden');
             _updateListColor();
             _hidden += 1;
