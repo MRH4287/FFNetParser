@@ -60,13 +60,13 @@ y+="</select>"}if(_||(b+=y+(!a&&g&&v?"":"&#xa0;")),!t.yearshtml)if(t.yearshtml="
 function storyParser()
 {
     var _DEBUG = false;
-	var _IGNORE_NEW_VERSION = true;
-	
+    var _IGNORE_NEW_VERSION = true;
+    
     var _VERSION = '4.3.2';
     
-	var _LOAD_INTERNAL = false;
-	
-	
+    var _LOAD_INTERNAL = false;
+    
+    
     // Default-Config:
     var _config = {
         story_search_depth: 2,                  // The Max depth for a recursive search
@@ -76,8 +76,8 @@ function storyParser()
         color_mouse_over: '#EEF0F4',
         color_odd_color: '#dfdfdf',
         hide_images: false,
-		hide_lazy_images: false,
-		disable_image_hover: false,
+        hide_lazy_images: false,
+        disable_image_hover: false,
         content_width: "90%",
         pocket_user: null,
         pocket_password: null,
@@ -90,35 +90,35 @@ function storyParser()
         // Do not change below this line:
         storage_key: 'ffnet-storycache',
         config_key: 'ffnet-config',
-		dataStorage_key: 'ffnet-dataStore',
+        dataStorage_key: 'ffnet-dataStore',
 
         highlighter: {},   
         marker: {}
     }
 
-	// ----- Styles ------
-	
-	var _styleApply = "									\
-														\
-		abbr[title],									\
-		abbr[data-original-title] {						\
-		  cursor: help;									\
-		  border-bottom: 1px dotted #999999;			\
-		}												\
-														\
-		.ffnetparser_InputField							\
-		{												\
-			padding-left: 10px;							\
-		}												\
-														\
-		#mrhOutput > div > ul							\
-		{												\
-			margin-top: 5px;							\
-			margin-bottom: 10px;						\
-		}												\
-	";
-	
-	
+    // ----- Styles ------
+    
+    var _styleApply = "                                 \
+                                                        \
+        abbr[title],                                    \
+        abbr[data-original-title] {                     \
+          cursor: help;                                 \
+          border-bottom: 1px dotted #999999;            \
+        }                                               \
+                                                        \
+        .ffnetparser_InputField                         \
+        {                                               \
+            padding-left: 10px;                         \
+        }                                               \
+                                                        \
+        #mrhOutput > div > ul                           \
+        {                                               \
+            margin-top: 5px;                            \
+            margin-bottom: 10px;                        \
+        }                                               \
+    ";
+    
+    
     // ..................
 
     var _element = null;
@@ -128,10 +128,10 @@ function storyParser()
 
     var _found = [];
     var _storyCache = {};
-	
-	// Config that is only available in this session
-	var _dataConfig = {}; 
-	
+    
+    // Config that is only available in this session
+    var _dataConfig = {}; 
+    
     var _gui_container = null;
 
     var _defaultConfig = function()
@@ -145,20 +145,20 @@ function storyParser()
             color_mouse_over: '#EEF0F4',
             color_odd_color: '#dfdfdf',
             hide_images: false,
-			disable_image_hover: false,
-			hide_lazy_images: false,
+            disable_image_hover: false,
+            hide_lazy_images: false,
             content_width: "90%",
             pocket_user: null,
             pocket_password: null,
             storage_key: 'ffnet-storycache',
-			dataStorage_key: 'ffnet-dataStore',
+            dataStorage_key: 'ffnet-dataStore',
             config_key: 'ffnet-config',
             api_url: 'http://www.mrh-development.de/FanFictionUserScript',
             api_lookupKey: 'ffnet-api-interface',
             api_checkForUpdates: true,
             api_timeout: 3000,
             api_retries: 2,
-			api_autoIncludeNewVersion: false,
+            api_autoIncludeNewVersion: false,
             
             highlighter:
             {
@@ -174,65 +174,65 @@ function storyParser()
 
     var _init = function()
     {
-		var isNested = _IGNORE_NEW_VERSION;
-		
-		if (typeof(sessionStorage["ffnet-mutex"]) != "undefined")
-		{
-			if (_DEBUG)
-			{
-				console.log("Found Mutex!");
-			}
-			
-			isNested = true;
-		}
-	
-		if (!isNested)
-		{
-			// Check for new Version
-			var data = _loadFromMemory(localStorage, "ffnet-Script");
-			if (typeof(data.script) != "undefined")
-			{
-				if (_DEBUG)
-				{
-					console.info("Found External Script! Loading ....");
-				}
-				
-				sessionStorage["ffnet-mutex"] = true;
-				
-				window.setTimeout(function()
-				{
-					delete sessionStorage["ffnet-mutex"];
-					
-					if (_DEBUG)
-					{
-						console.log("Delete Mutex Var");
-					}
-					
-				}, 1000);
-				
-				try
-				{
-					eval(data.script);
-				} 
-				catch(e)
-				{
-					console.error("Invalid Local Script! Deleting");
-					delete localStorage["ffnet-Script"];
-				}
-				
-				_LOAD_INTERNAL = true;
-				
-				// Abort
-				return;
-			}
-		}
-	
+        var isNested = _IGNORE_NEW_VERSION;
+        
+        if (typeof(sessionStorage["ffnet-mutex"]) != "undefined")
+        {
+            if (_DEBUG)
+            {
+                console.log("Found Mutex!");
+            }
+            
+            isNested = true;
+        }
+    
+        if (!isNested)
+        {
+            // Check for new Version
+            var data = _loadFromMemory(localStorage, "ffnet-Script");
+            if (typeof(data.script) != "undefined")
+            {
+                if (_DEBUG)
+                {
+                    console.info("Found External Script! Loading ....");
+                }
+                
+                sessionStorage["ffnet-mutex"] = true;
+                
+                window.setTimeout(function()
+                {
+                    delete sessionStorage["ffnet-mutex"];
+                    
+                    if (_DEBUG)
+                    {
+                        console.log("Delete Mutex Var");
+                    }
+                    
+                }, 1000);
+                
+                try
+                {
+                    eval(data.script);
+                } 
+                catch(e)
+                {
+                    console.error("Invalid Local Script! Deleting");
+                    delete localStorage["ffnet-Script"];
+                }
+                
+                _LOAD_INTERNAL = true;
+                
+                // Abort
+                return;
+            }
+        }
+    
         try
         {
             // Checks if sessionStorage entry is valid:
-			_storyCache = _loadFromMemory(sessionStorage, _config.storage_key);
-			_dataConfig = _loadFromMemory(sessionStorage, _config.dataStorage_key);
-			
+            _storyCache = _loadFromMemory(sessionStorage, _config.storage_key);
+            _dataConfig = _loadFromMemory(sessionStorage, _config.dataStorage_key);
+            
         } catch (ex)
         {
             console.warn(ex);
@@ -240,7 +240,7 @@ function storyParser()
         
         try
         {
-			_config = _loadFromMemory(localStorage, _config.config_key);
+            _config = _loadFromMemory(localStorage, _config.config_key);
 
         } catch (ex)
         {
@@ -250,10 +250,10 @@ function storyParser()
         
         // Check for Config Values:
     
-		if (typeof(_config['story_search_depth']) == "undefined")
-		{
-			_config['story_search_depth'] = 1;
-		}
+        if (typeof(_config['story_search_depth']) == "undefined")
+        {
+            _config['story_search_depth'] = 1;
+        }
         
         if (typeof(_config['mark_M_storys']) == "undefined")
         {
@@ -330,384 +330,384 @@ function storyParser()
             _config['api_checkForUpdates'] = false;
         }            
         
-		if (typeof(_config['dataStorage_key']) == "undefined")
-		{
-			_config['dataStorage_key'] = 'ffnet-dataStore';
-		}
-		
-		if (typeof(_config['disable_image_hover']) == "undefined")
+        if (typeof(_config['dataStorage_key']) == "undefined")
+        {
+            _config['dataStorage_key'] = 'ffnet-dataStore';
+        }
+        
+        if (typeof(_config['disable_image_hover']) == "undefined")
         {
             _config['disable_image_hover'] = false;
         }
-		
-		if (typeof(_config['hide_lazy_images']) == "undefined")
+        
+        if (typeof(_config['hide_lazy_images']) == "undefined")
         {
             _config['hide_lazy_images'] = false;
         }
-		
-		if (typeof(_config['token']) == "undefined")
+        
+        if (typeof(_config['token']) == "undefined")
         {
-			// Generates Random Token
+            // Generates Random Token
             _config['token'] = Math.random().toString().split(".")[1];
-			_save_config();
+            _save_config();
         }
-		
-		if (typeof(_config['api_autoIncludeNewVersion']) == "undefined")
-		{
-			// Updates Timeout Settings
-			_config['api_timeout'] = 3000;
-		
-			// Creates Warning for new Feature:
+        
+        if (typeof(_config['api_autoIncludeNewVersion']) == "undefined")
+        {
+            // Updates Timeout Settings
+            _config['api_timeout'] = 3000;
+        
+            // Creates Warning for new Feature:
 
-			var text = "<b>Please Read!</b><br />";
-			text += "In this Version, a new Feature has been implemented. With this Feature activated, you don't have to manually install new Versions. ";
-			text += "Newer Versions will be saved in your Local Storage and then executed. Because of that, the Version Number displayed in your UserScript Manager ";
-			text += "can be wrong. To Display the Version Number, check your Config Editor.";
-			text += "<br /><br /><b>Newer Versions will be saved in your Local Memory. Attackers could modify this data! This is unrealistic, but possible</b><br /><br />";
-			text += "Do you want to activate this Feature?";
-			
-			var dialog = $('<div title="Fanfiction Story Parser"><p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>'+text+'</p></div>')
-			.appendTo($("body"));
-			
-			window.setTimeout(function()
-			{
-				dialog.dialog({
-					resizable: true,
-					height:140,
-					modal: true,
-					buttons: 
-					{
-						"Enable Feature": function() 
-						{
-							$( this ).dialog( "close" );
-							
-							_config['api_autoIncludeNewVersion'] = true;
-							_save_config();
-							
-						},
-						Cancel: function() 
-						{
-							$( this ).dialog( "close" );
-							
-							_config['api_autoIncludeNewVersion'] = false;
-							_save_config();
-						}
-					}
-				});
-			}, 1000);
-		}
-		
-		
-		if (_DEBUG)
-		{
-			console.info("Loading User Script...");
-		}
-		
+            var text = "<b>Please Read!</b><br />";
+            text += "In this Version, a new Feature has been implemented. With this Feature activated, you don't have to manually install new Versions. ";
+            text += "Newer Versions will be saved in your Local Storage and then executed. Because of that, the Version Number displayed in your UserScript Manager ";
+            text += "can be wrong. To Display the Version Number, check your Config Editor.";
+            text += "<br /><br /><b>Newer Versions will be saved in your Local Memory. Attackers could modify this data! This is unrealistic, but possible</b><br /><br />";
+            text += "Do you want to activate this Feature?";
+            
+            var dialog = $('<div title="Fanfiction Story Parser"><p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>'+text+'</p></div>')
+            .appendTo($("body"));
+            
+            window.setTimeout(function()
+            {
+                dialog.dialog({
+                    resizable: true,
+                    height:140,
+                    modal: true,
+                    buttons: 
+                    {
+                        "Enable Feature": function() 
+                        {
+                            $( this ).dialog( "close" );
+                            
+                            _config['api_autoIncludeNewVersion'] = true;
+                            _save_config();
+                            
+                        },
+                        Cancel: function() 
+                        {
+                            $( this ).dialog( "close" );
+                            
+                            _config['api_autoIncludeNewVersion'] = false;
+                            _save_config();
+                        }
+                    }
+                });
+            }, 1000);
+        }
+        
+        
+        if (_DEBUG)
+        {
+            console.info("Loading User Script...");
+        }
+        
         _api_checkVersion();
-		
-		if (_DEBUG)
-		{
-			console.log("Update Check done.");
-			console.log("Pre GUI Update");
-		}
-		
-		// Add jQueryUI to the Page:		
-		var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css");
-		$("head").append(block);
+        
+        if (_DEBUG)
+        {
+            console.log("Update Check done.");
+            console.log("Pre GUI Update");
+        }
+        
+        // Add jQueryUI to the Page:        
+        var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css");
+        $("head").append(block);
 
-		if (typeof($.ui) == "undefined")
-		{
-			console.error("Can't include jQuery UI!");
-		}
-		
-		
-		// Add jQuery Color Picker to the Page:		
-		block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://private.mrh-development.de/ff/jquery.colorpicker.css");
-		$("head").append(block);
-		
-		// Check for DEBUG-Mode
-		if (typeof(_config['debug']) != "undefined")
-		{
-			_DEBUG = true;
-		}
-		
-		
-		if (_DEBUG)
-		{
-			console.log("Pre GUI Update done.");
-			console.log("Starts GUI Update");
-		}
-		
-		_updateGUI();
-		
-		if (_DEBUG)
-		{
-			console.log("GUI Update done.");
-		}
-		
-		
+        if (typeof($.ui) == "undefined")
+        {
+            console.error("Can't include jQuery UI!");
+        }
+        
+        
+        // Add jQuery Color Picker to the Page:     
+        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://private.mrh-development.de/ff/jquery.colorpicker.css");
+        $("head").append(block);
+        
+        // Check for DEBUG-Mode
+        if (typeof(_config['debug']) != "undefined")
+        {
+            _DEBUG = true;
+        }
+        
+        
+        if (_DEBUG)
+        {
+            console.log("Pre GUI Update done.");
+            console.log("Starts GUI Update");
+        }
+        
+        _updateGUI();
+        
+        if (_DEBUG)
+        {
+            console.log("GUI Update done.");
+        }
+        
+        
     }
 
-	var _updateGUI = function()
-	{
-		// Updates Content_width
+    var _updateGUI = function()
+    {
+        // Updates Content_width
         $('#content_wrapper').css('width', _config['content_width']);
     
-		var table = $(".zui").find("td").first();
-	
-		if (table.length > 0)
-		{
-			if (_DEBUG)
-			{
-				console.log("Adds User Interface");
-			}
-		
-			// Add User Interface
-			table.append(
-				$('<a></a>').addClass('menu-link').html('Reparse Stories').attr('href', '#').click(function(e)
-				{
-					_readList($('.z-list'));
-					e.preventDefault();
+        var table = $(".zui").find("td").first();
+    
+        if (table.length > 0)
+        {
+            if (_DEBUG)
+            {
+                console.log("Adds User Interface");
+            }
+        
+            // Add User Interface
+            table.append(
+                $('<a></a>').addClass('menu-link').html('Reparse Stories').attr('href', '#').click(function(e)
+                {
+                    _readList($('.z-list'));
+                    e.preventDefault();
 
-				}).attr('title', 'Parse the Stories again')
-			).append(
-				$('<a></a>').addClass('menu-link').html('Config Editor').attr('href', '#').click(function(e)
-				{
-					_gui();
-					e.preventDefault();
+                }).attr('title', 'Parse the Stories again')
+            ).append(
+                $('<a></a>').addClass('menu-link').html('Config Editor').attr('href', '#').click(function(e)
+                {
+                    _gui();
+                    e.preventDefault();
 
-				}).attr('title', 'Open Config Editor')
-			).append(
-				$('<a></a>').addClass('menu-link').html('Config Import / Export').attr('href', '#').click(function(e)
-				{
-					_toggleSaveConfig();
-					e.preventDefault();
+                }).attr('title', 'Open Config Editor')
+            ).append(
+                $('<a></a>').addClass('menu-link').html('Config Import / Export').attr('href', '#').click(function(e)
+                {
+                    _toggleSaveConfig();
+                    e.preventDefault();
 
-				}).attr('title', 'Config Export')
-			).append(
-				$('<a></a>').addClass('menu-link').html('Reset Config').attr('href', '#').click(function(e)
-				{
-					if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
-					{
-						_defaultConfig();
-					}
-					e.preventDefault();
+                }).attr('title', 'Config Export')
+            ).append(
+                $('<a></a>').addClass('menu-link').html('Reset Config').attr('href', '#').click(function(e)
+                {
+                    if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
+                    {
+                        _defaultConfig();
+                    }
+                    e.preventDefault();
 
-				}).attr('title', 'Load default Config')
-			);
-		
-		}
-		
-		if (_DEBUG)
-		{
-			console.log("Append Styles");
-		}
-		
-		// Append Styles
-		$("head").append(
-			$("<style></style>").text(_styleApply)
-		);
-		
-		
-		if (_DEBUG)
-		{
-			/*
-			$('.zui').last().append(
-				$('<a></a>').addClass('menu-link').html('Test - Feature').attr('href', '#').click(function(e)
-				{
-					_loadNextPage();
+                }).attr('title', 'Load default Config')
+            );
+        
+        }
+        
+        if (_DEBUG)
+        {
+            console.log("Append Styles");
+        }
+        
+        // Append Styles
+        $("head").append(
+            $("<style></style>").text(_styleApply)
+        );
+        
+        
+        if (_DEBUG)
+        {
+            /*
+            $('.zui').last().append(
+                $('<a></a>').addClass('menu-link').html('Test - Feature').attr('href', '#').click(function(e)
+                {
+                    _loadNextPage();
 
-				}).attr('title', 'Test Feature')
-			);
-			*/
-		}
-		
-		// Add GUI for "Only Mode":
-		var container = $("#myform").first().children().first();
-		
-		if (container.length > 0)
-		{
-			if (_DEBUG)
-			{
-				console.log('Add GUI for "Only Mode"');
-			}
-		
-			var input = $("<select></select>")
-			.attr("title", "Display Only Elements that match a specific Filter")
-			.change(function()
-			{
-				var selected = input.children().filter(":selected").attr('value');
-				if (_DEBUG)
-				{
-					console.info("Display Only - Element Selected: ", selected);
-				}
-				
-				if (selected != "off")
-				{
-					_dataConfig["displayOnly"] = selected;
-				}
-				else
-				{
-					_dataConfig["displayOnly"] = undefined;
-				}
-				
-				_save_dataStore();
-				_readList($('.z-list'));
-			
-			});
-			
-			var noneEntry = $('<option value="off">Display: Everything</option>').appendTo(input);
-			
-			if (typeof(_dataConfig["displayOnly"]) == "undefined")
-			{
-				noneEntry.attr("selected", "selected");
-			}
-			
-			
-			$.each(_config.marker, function(title, info)
-			{
-				var entry = $('<option></option>').attr('value', title).html(title).appendTo(input);
-				
-				if ((typeof(_dataConfig["displayOnly"]) != "undefined") && (title == _dataConfig["displayOnly"]))
-				{
-					entry.attr("selected", "selected");
-				}
-				
-			});
-			
-			
-			container.find("select").last().after(input);
-		}
-	
-		// Key Control for Page:
-		
-		$("body").keydown(function(event)
-		{
-			var container = $("#myform").find("center").last();
-			var current = container.find("b").first();
-			var url = null;
+                }).attr('title', 'Test Feature')
+            );
+            */
+        }
+        
+        // Add GUI for "Only Mode":
+        var container = $("#myform").first().children().first();
+        
+        if (container.length > 0)
+        {
+            if (_DEBUG)
+            {
+                console.log('Add GUI for "Only Mode"');
+            }
+        
+            var input = $("<select></select>")
+            .attr("title", "Display Only Elements that match a specific Filter")
+            .change(function()
+            {
+                var selected = input.children().filter(":selected").attr('value');
+                if (_DEBUG)
+                {
+                    console.info("Display Only - Element Selected: ", selected);
+                }
+                
+                if (selected != "off")
+                {
+                    _dataConfig["displayOnly"] = selected;
+                }
+                else
+                {
+                    _dataConfig["displayOnly"] = undefined;
+                }
+                
+                _save_dataStore();
+                _readList($('.z-list'));
+            
+            });
+            
+            var noneEntry = $('<option value="off">Display: Everything</option>').appendTo(input);
+            
+            if (typeof(_dataConfig["displayOnly"]) == "undefined")
+            {
+                noneEntry.attr("selected", "selected");
+            }
+            
+            
+            $.each(_config.marker, function(title, info)
+            {
+                var entry = $('<option></option>').attr('value', title).html(title).appendTo(input);
+                
+                if ((typeof(_dataConfig["displayOnly"]) != "undefined") && (title == _dataConfig["displayOnly"]))
+                {
+                    entry.attr("selected", "selected");
+                }
+                
+            });
+            
+            
+            container.find("select").last().after(input);
+        }
+    
+        // Key Control for Page:
+        
+        $("body").keydown(function(event)
+        {
+            var container = $("#myform").find("center").last();
+            var current = container.find("b").first();
+            var url = null;
 
-			if ($(event.target).is("body"))
-			{
-		
-				// right
-				if (event.keyCode == 39)
-				{
-					var element = current.next("a");
-					if (element.length != 0)
-					{
-						url = element.attr("href");
-					}
-					
-					if (url == null)
-					{
-						element = $("body").find('button:contains(Next)').first();
-						if (element.length != 0)
-						{
-							url = _getUrlFromButton(element);
-						}
-					}
-					
-				}
-				// left
-				else if (event.keyCode == 37)
-				{
-					var element = current.prev("a");
-					if (element.length != 0)
-					{
-						url = element.attr("href");
-					}
-					
-					if (url == null)
-					{
-						element = $("body").find('button:contains(Prev)').first();
-						if (element.length != 0)
-						{
-							url = _getUrlFromButton(element);
-						}
-					}
-					
-				}
-				
-				if (_DEBUG)
-				{
-					console.log("Changes to Page: ", url);
-				}
-				
-				
-				if (url != null)
-				{
-					location.href = url;
-				}
-			}
-		
-		});
-	
-	
-		// Endless Mode --- DEBUG-Mode
-		if (_DEBUG)
-		{
-			if ($(".z-list").length > 0)
-			{
-		
-				$(".z-list").first().before(
-					$("<a></a>").html("LoadPrevPage")
-					.attr("href", "#")
-					.click(function(e)
-					{
-						_loadPrevPage();
-						
-						//e.preventDefault();
-					})
-				);
-				
-				$(".z-list").last().after(
-					$("<a></a>").html("LoadNextPage")
-					.attr("href", "#")
-					.click(function(e)
-					{
-						_loadNextPage();
-						
-						//e.preventDefault();
-					})
-				);
-			}
-		}
-	
-	}
-	
+            if ($(event.target).is("body"))
+            {
+        
+                // right
+                if (event.keyCode == 39)
+                {
+                    var element = current.next("a");
+                    if (element.length != 0)
+                    {
+                        url = element.attr("href");
+                    }
+                    
+                    if (url == null)
+                    {
+                        element = $("body").find('button:contains(Next)').first();
+                        if (element.length != 0)
+                        {
+                            url = _getUrlFromButton(element);
+                        }
+                    }
+                    
+                }
+                // left
+                else if (event.keyCode == 37)
+                {
+                    var element = current.prev("a");
+                    if (element.length != 0)
+                    {
+                        url = element.attr("href");
+                    }
+                    
+                    if (url == null)
+                    {
+                        element = $("body").find('button:contains(Prev)').first();
+                        if (element.length != 0)
+                        {
+                            url = _getUrlFromButton(element);
+                        }
+                    }
+                    
+                }
+                
+                if (_DEBUG)
+                {
+                    console.log("Changes to Page: ", url);
+                }
+                
+                
+                if (url != null)
+                {
+                    location.href = url;
+                }
+            }
+        
+        });
+    
+    
+        // Endless Mode --- DEBUG-Mode
+        if (_DEBUG)
+        {
+            if ($(".z-list").length > 0)
+            {
+        
+                $(".z-list").first().before(
+                    $("<a></a>").html("LoadPrevPage")
+                    .attr("href", "#")
+                    .click(function(e)
+                    {
+                        _loadPrevPage();
+                        
+                        //e.preventDefault();
+                    })
+                );
+                
+                $(".z-list").last().after(
+                    $("<a></a>").html("LoadNextPage")
+                    .attr("href", "#")
+                    .click(function(e)
+                    {
+                        _loadNextPage();
+                        
+                        //e.preventDefault();
+                    })
+                );
+            }
+        }
+    
+    }
+    
     var _readList = function(__element)
     {
-		if (_LOAD_INTERNAL)
-		{
-			return;
-		}
+        if (_LOAD_INTERNAL)
+        {
+            return;
+        }
 
         _element = __element;
         _read();
     }
 
-	this.readList = _readList;
-	
+    this.readList = _readList;
+    
     var _read = function()
     {
 
         var odd = false;
 
-		// Clear old Session:
+        // Clear old Session:
         _found = [];
         _eList = {};
         _hidden = 0;
         $('.parser-msg').remove();
-		$('[data-color]').removeAttr("data-color");
-		
-		_element.each(function(k, e)
+        $('[data-color]').removeAttr("data-color");
+        
+        _element.each(function(k, e)
         {
             var element = $(e)
-			
-			// Reset Hide:
-			element.show();
-			
+            
+            // Reset Hide:
+            element.show();
+            
             var textEl = element.find('div').last();
             var text = element.text().toLowerCase();
             var color = _config.color_normal;
@@ -735,7 +735,7 @@ function storyParser()
             }
 
             var marker_found = false;
-						
+                        
             $.each(_config.marker, function(headline, config)
             {
 
@@ -762,8 +762,8 @@ function storyParser()
                 {
                     return;
                 }
-				
-				var found = false;
+                
+                var found = false;
 
                 $.each(config.keywords, function(i, marker)
                 {
@@ -780,15 +780,15 @@ function storyParser()
 
                 if (found)
                 {
-					if (!config.ignoreColor)
-					{
-						marker_found = true;
-					}
-					else if (_DEBUG)
-					{
-						console.log("Ignore Color for ", headline);
-					}
-				
+                    if (!config.ignoreColor)
+                    {
+                        marker_found = true;
+                    }
+                    else if (_DEBUG)
+                    {
+                        console.log("Ignore Color for ", headline);
+                    }
+                
                     var info = {
                         'name': storyName,
                         'url': link,
@@ -796,7 +796,7 @@ function storyParser()
                     }
                     _elementCallback(config, element, textEl, headline, info);
 
-					
+                    
                     _found.push(storyName);
 
                 } else if (config.search_story)
@@ -816,12 +816,12 @@ function storyParser()
 
                 } else if (_found.indexOf(storyName) == -1)
                 {
-				
-					/*if (_DEBUG)
-					{
-						console.log("[_read-1] Change Color of Line: ",element); 
-					}*/
-				
+                
+                    /*if (_DEBUG)
+                    {
+                        console.log("[_read-1] Change Color of Line: ",element); 
+                    }*/
+                
                     _updateColor(element, color, colorMo);
                 }
 
@@ -888,32 +888,32 @@ function storyParser()
                 
             }
             
-			if (!marker_found)
+            if (!marker_found)
             {
-				/*if (_DEBUG)
-				{
-					console.log("[_read] Change Color of Line: ",element); 
-				}*/
-			
-				if (typeof(_dataConfig["displayOnly"]) != "undefined")
-				{
-					if (_DEBUG)
-					{
-						console.log("Hide Entry because of Display-Only Mode: ", element);
-					}
-				
-				
-					element.hide();
-					_hidden += 1;
-				}
-				else
-				{
-					_updateColor(element, color, colorMo);
-				}
-			
+                /*if (_DEBUG)
+                {
+                    console.log("[_read] Change Color of Line: ",element); 
+                }*/
+            
+                if (typeof(_dataConfig["displayOnly"]) != "undefined")
+                {
+                    if (_DEBUG)
+                    {
+                        console.log("Hide Entry because of Display-Only Mode: ", element);
+                    }
+                
+                
+                    element.hide();
+                    _hidden += 1;
+                }
+                else
+                {
+                    _updateColor(element, color, colorMo);
+                }
+            
                 
             }
-			
+            
             _doParse(requestQueue);
             
 
@@ -925,49 +925,49 @@ function storyParser()
         }
         
         _updateList();
-		
-		// Timed Events:
-		setTimeout(function()
-		{
-			// Color corrections			
-			_element.filter("[data-color]").each(function(k, el)
-			{
-				el = $(el);
-				var color = el.attr("data-color");
-				
-				el.css("background-color", color);			
-			
-			});
-			
-			// Disable Image Hover Effect:
-			if (_config.disable_image_hover)
-			{
-				$("head").append(
-					$("<style></style")
-					.text(".z-list_hover { height: auto !important }")
-					.addClass("parser-msg")
-				);
-				
-				$(".cimage").each(function(k, el)
-				{
-					el = $(el);
-					var width = el.width();
-					var height = el.height();
-					
-					el.css("width", width + "px")
-					.css("height", height + "px");
+        
+        // Timed Events:
+        setTimeout(function()
+        {
+            // Color corrections            
+            _element.filter("[data-color]").each(function(k, el)
+            {
+                el = $(el);
+                var color = el.attr("data-color");
+                
+                el.css("background-color", color);          
+            
+            });
+            
+            // Disable Image Hover Effect:
+            if (_config.disable_image_hover)
+            {
+                $("head").append(
+                    $("<style></style")
+                    .text(".z-list_hover { height: auto !important }")
+                    .addClass("parser-msg")
+                );
+                
+                $(".cimage").each(function(k, el)
+                {
+                    el = $(el);
+                    var width = el.width();
+                    var height = el.height();
+                    
+                    el.css("width", width + "px")
+                    .css("height", height + "px");
 
-				});
-			}
-			
-			if (_config.hide_lazy_images)
-			{
-				$(".lazy").remove();
-			}
+                });
+            }
+            
+            if (_config.hide_lazy_images)
+            {
+                $(".lazy").remove();
+            }
 
-		}, 1000);
-		
-		
+        }, 1000);
+        
+        
     }
 
     var _getStoryName = function(link)
@@ -1100,7 +1100,7 @@ function storyParser()
             } else
             {
                 //console.log('find next el');
-				var next = body.find('button:contains(Next)').first();
+                var next = body.find('button:contains(Next)').first();
                 //console.log('next: ', next);
 
                 if (next.length != 0)
@@ -1196,33 +1196,33 @@ function storyParser()
         }
         _eList[headline].push(info);
 
-		if (_DEBUG)
-		{
-			console.info("Element Callback for ", headline, info);
-		}
-		
-		if ((typeof(_dataConfig["displayOnly"]) != "undefined") && (_dataConfig["displayOnly"] == headline))
-		{
-			if (_DEBUG)
-			{
-				console.info("Display Only Mode: Match found for", element);
-			}
+        if (_DEBUG)
+        {
+            console.info("Element Callback for ", headline, info);
+        }
+        
+        if ((typeof(_dataConfig["displayOnly"]) != "undefined") && (_dataConfig["displayOnly"] == headline))
+        {
+            if (_DEBUG)
+            {
+                console.info("Display Only Mode: Match found for", element);
+            }
 
-			window.setTimeout(function()
-			{
-				element.show();
-			}, 100);
-			
-			_hidden -= 1;
-		}
-		else if (typeof(_dataConfig["displayOnly"]) != "undefined")
-		{
-			// Hide this Element becazse the Only Mode do not match
-			element.hide();
-			_hidden += 1;
-		}
-		
-		
+            window.setTimeout(function()
+            {
+                element.show();
+            }, 100);
+            
+            _hidden -= 1;
+        }
+        else if (typeof(_dataConfig["displayOnly"]) != "undefined")
+        {
+            // Hide this Element becazse the Only Mode do not match
+            element.hide();
+            _hidden += 1;
+        }
+        
+        
         if (!config.display)
         {
             element.slideUp();
@@ -1230,7 +1230,7 @@ function storyParser()
             _updateListColor();
             _hidden += 1;
         } else
-        {			
+        {           
             if (config.background != null)
             {
                 element.css('background-image', 'url('+config.background+')')
@@ -1247,7 +1247,7 @@ function storyParser()
             {
                 textEl.css('color', config.text_color);
             }
-			
+            
             $.each(config.keywords, function(key, keyword)
             {
                 var el = element.find('div').first();
@@ -1259,10 +1259,10 @@ function storyParser()
                 var replace = '';
                 var behind = '';
                 
-				color = config.color;
-				colorMo = config.mouseOver;
+                color = config.color;
+                colorMo = config.mouseOver;
 
-				
+                
                 if (erg != null)
                 {
                     if (erg.length == 1)
@@ -1291,15 +1291,15 @@ function storyParser()
 
             });
 
-			if (!config.ignoreColor)
-			{
-				/*if (_DEBUG)
-				{
-					console.log("[ElementCallback] Change Color of Line: ",element); 
-				}*/
-				
-				_updateColor(element, color, colorMo);
-			}
+            if (!config.ignoreColor)
+            {
+                /*if (_DEBUG)
+                {
+                    console.log("[ElementCallback] Change Color of Line: ",element); 
+                }*/
+                
+                _updateColor(element, color, colorMo);
+            }
 
         }
 
@@ -1373,12 +1373,12 @@ function storyParser()
             if (_found.indexOf(storyName) == -1)
             {
                 _updateColor(el, color, colorMo);
-				
-				/*if (_DEBUG)
-				{
-					console.log("[UpdateList] Change Color of Line: ",el); 
-				}*/
-				
+                
+                /*if (_DEBUG)
+                {
+                    console.log("[UpdateList] Change Color of Line: ",el); 
+                }*/
+                
             }
         });
 
@@ -1387,10 +1387,10 @@ function storyParser()
 
     var _updateColor = function(element, color, colorMo)
     {
-        element.css('background-color', color);	
-		element.attr("data-color", color);
-		element.attr("data-mouseOverColor", colorMo); 
-		
+        element.css('background-color', color); 
+        element.attr("data-color", color);
+        element.attr("data-mouseOverColor", colorMo); 
+        
         element.mouseenter(function()
         {
             $(this).css('background-color', colorMo);
@@ -1403,11 +1403,11 @@ function storyParser()
     
     var _enableInStoryHighlighter = function()
     {
-		if (_LOAD_INTERNAL)
-		{
-			return;
-		}
-	
+        if (_LOAD_INTERNAL)
+        {
+            return;
+        }
+    
         if (_DEBUG)
         {
             console.log("Enable In Story Highlighter");
@@ -1468,11 +1468,11 @@ function storyParser()
     
     this.enablePocketSave = function()
     {    
-		if (_LOAD_INTERNAL)
-		{
-			return;
-		}
-	
+        if (_LOAD_INTERNAL)
+        {
+            return;
+        }
+    
         var user = _config['pocket_user'];
         var password = _config['pocket_password'];
         
@@ -1532,8 +1532,8 @@ function storyParser()
 
             if (next.length != 0)
             {
-				var data = url = _getUrlFromButton(next);
-			
+                var data = url = _getUrlFromButton(next);
+            
                 if (data != null)
                 {
                     _parsePocket(data, prefix);
@@ -1554,196 +1554,196 @@ function storyParser()
     
     }
     
-	// ------- Endless Mode ------
-	
-	var _currentPage = null;
-	
-	var _getPageContent = function(base, prev, callback)
-	{
-		var url = null;
-		if (prev)
-		{
-			url = _getPrevPage(base);
-		}
-		else
-		{
-			url = _getNextPage(base);
-		}
-		
-		
-		if (_DEBUG)
-		{
-			console.log("Requesting next page: ", url);
-		}
-	
-		$.get(url, function(content)
-		{
-		
-			var data = $(content);
-			
-			var elements = data.find(".z-list");
-			
-			if (_DEBUG)
-			{
-				console.log("Elements Found: ", elements);
-			}
-		
-			callback(elements, data);
-		
-		});
-		
-		
-	}
-	
-	var _loadNextPage = function()
-	{
-		var base = null;
-		
-		if (_currentPage == null)
-		{
-			base = $("#myform");
-		}
-		else
-		{
-			base = _currentPage.find("#myform").first();
-		}
-		
-	
-		_getPageContent(base, false, function(elements, data)
-		{		
-			// Add elements to DOM:
-			if (elements.length > 0)
-			{
-				var last = $(".z-list").last();
-				
-		
-				
-				elements.each(function(k, el)
-				{
-					el = $(el);
-					
-					last.after(el);
-					last = el;
-				});
-				
-				// Only allow 25 entries at all times:
-				var all = $(".z-list");
-				
-				if (all.length > 25)
-				{
-					if (_DEBUG)
-					{
-						console.log("Count greather then 40 entries, remove some ...");
-					}
-				
-					for ($i = 0; $i < all.length - 25; $i++)
-					{
-						$(all[$i]).slideUp().remove();
-					}
-				}
-				
-				window.setTimeout( _readList($('.z-list')), 200);
-			
-				$("#myform").find("center").last().html(data.find("#myform").find("center").last().html());
-			
-			
-				_currentPage = data;
-			}
-			
-		});
-	}
-	
-	var _loadPrevPage = function()
-	{
-		var base = null;
-		
-		if (_currentPage == null)
-		{
-			base = $("#myform");
-		}
-		else
-		{
-			base = _currentPage.find("#myform").first();
-		}
-		
-	
-		_getPageContent(base, true, function(elements, data)
-		{		
-			// Add elements to DOM:
-			if (elements.length > 0)
-			{		
-				var last = $(".z-list").first();
-				
-				elements.each(function(k, el)
-				{
-					el = $(el);
-					
-					last.before(el);
-					last = el;
-				});
-				
-				// Only allow 25 entries at all times:
-				var all = $(".z-list");
-				
-				if (all.length > 25)
-				{
-					if (_DEBUG)
-					{
-						console.log("Count greather then 40 entries, remove some ...");
-					}
-				
-					for ($i = 0; $i < all.length - 25; $i++)
-					{
-						$(all[$i]).slideUp().remove();
-					}
-				}
-				
-				window.setTimeout( _readList($('.z-list')), 200);
-				
-				$("#myform").find("center").each(function(k, el)
-				{
-					$(el).html(data.find("#myform").find("center").last().html());
-				});
-				_currentPage = data;
-			}
-			
-		});
-	}
-	
-	
-	
-	var _getNextPage = function(base)
-	{
-		var container = base.find("center").last();
-		
-		var current = container.find("b").first();
-		var next = current.next("a");
-		
-		if (next.length > 0)
-		{
-			return next.attr("href");	
-		}
-		
-		return null;	
-	}
-	
-	var _getPrevPage = function(base)
-	{
-		var container = base.find("center").last();
-		
-		var current = container.find("b").first();
-		var prev = current.prev("a");
-		
-		if (prev.length > 0)
-		{
-			return prev.attr("href");	
-		}
-		
-		return null;	
-	}
-	
-	
-	
+    // ------- Endless Mode ------
+    
+    var _currentPage = null;
+    
+    var _getPageContent = function(base, prev, callback)
+    {
+        var url = null;
+        if (prev)
+        {
+            url = _getPrevPage(base);
+        }
+        else
+        {
+            url = _getNextPage(base);
+        }
+        
+        
+        if (_DEBUG)
+        {
+            console.log("Requesting next page: ", url);
+        }
+    
+        $.get(url, function(content)
+        {
+        
+            var data = $(content);
+            
+            var elements = data.find(".z-list");
+            
+            if (_DEBUG)
+            {
+                console.log("Elements Found: ", elements);
+            }
+        
+            callback(elements, data);
+        
+        });
+        
+        
+    }
+    
+    var _loadNextPage = function()
+    {
+        var base = null;
+        
+        if (_currentPage == null)
+        {
+            base = $("#myform");
+        }
+        else
+        {
+            base = _currentPage.find("#myform").first();
+        }
+        
+    
+        _getPageContent(base, false, function(elements, data)
+        {       
+            // Add elements to DOM:
+            if (elements.length > 0)
+            {
+                var last = $(".z-list").last();
+                
+        
+                
+                elements.each(function(k, el)
+                {
+                    el = $(el);
+                    
+                    last.after(el);
+                    last = el;
+                });
+                
+                // Only allow 25 entries at all times:
+                var all = $(".z-list");
+                
+                if (all.length > 25)
+                {
+                    if (_DEBUG)
+                    {
+                        console.log("Count greather then 40 entries, remove some ...");
+                    }
+                
+                    for ($i = 0; $i < all.length - 25; $i++)
+                    {
+                        $(all[$i]).slideUp().remove();
+                    }
+                }
+                
+                window.setTimeout( _readList($('.z-list')), 200);
+            
+                $("#myform").find("center").last().html(data.find("#myform").find("center").last().html());
+            
+            
+                _currentPage = data;
+            }
+            
+        });
+    }
+    
+    var _loadPrevPage = function()
+    {
+        var base = null;
+        
+        if (_currentPage == null)
+        {
+            base = $("#myform");
+        }
+        else
+        {
+            base = _currentPage.find("#myform").first();
+        }
+        
+    
+        _getPageContent(base, true, function(elements, data)
+        {       
+            // Add elements to DOM:
+            if (elements.length > 0)
+            {       
+                var last = $(".z-list").first();
+                
+                elements.each(function(k, el)
+                {
+                    el = $(el);
+                    
+                    last.before(el);
+                    last = el;
+                });
+                
+                // Only allow 25 entries at all times:
+                var all = $(".z-list");
+                
+                if (all.length > 25)
+                {
+                    if (_DEBUG)
+                    {
+                        console.log("Count greather then 40 entries, remove some ...");
+                    }
+                
+                    for ($i = 0; $i < all.length - 25; $i++)
+                    {
+                        $(all[$i]).slideUp().remove();
+                    }
+                }
+                
+                window.setTimeout( _readList($('.z-list')), 200);
+                
+                $("#myform").find("center").each(function(k, el)
+                {
+                    $(el).html(data.find("#myform").find("center").last().html());
+                });
+                _currentPage = data;
+            }
+            
+        });
+    }
+    
+    
+    
+    var _getNextPage = function(base)
+    {
+        var container = base.find("center").last();
+        
+        var current = container.find("b").first();
+        var next = current.next("a");
+        
+        if (next.length > 0)
+        {
+            return next.attr("href");   
+        }
+        
+        return null;    
+    }
+    
+    var _getPrevPage = function(base)
+    {
+        var container = base.find("center").last();
+        
+        var current = container.find("b").first();
+        var prev = current.prev("a");
+        
+        if (prev.length > 0)
+        {
+            return prev.attr("href");   
+        }
+        
+        return null;    
+    }
+    
+    
+    
     // --------- GUI -------------
 
     var _settings_elements = {};
@@ -1963,8 +1963,8 @@ function storyParser()
                 )
             )
         );
-		
-		// spacer:
+        
+        // spacer:
         table.append(spacer.clone());
         
         // hide_lazy_images:
@@ -1989,9 +1989,9 @@ function storyParser()
                 )
             )
         );
-		
-		
-		// spacer:
+        
+        
+        // spacer:
         table.append(spacer.clone());
         
         // disable_image_hover:
@@ -2049,9 +2049,9 @@ function storyParser()
         input = $('<input type="text" id="fflist-color_normal">')
                     .attr('value', _config.color_normal)
                     .attr('size', '50')
-					.colorpicker({
-						colorFormat: "#HEX"
-					});
+                    .colorpicker({
+                        colorFormat: "#HEX"
+                    });
 
         _settings_elements['color_normal'] = input;
 
@@ -2079,9 +2079,9 @@ function storyParser()
         input = $('<input type="text" id="fflist-color_mouse_over">')
                     .attr('value', _config.color_mouse_over)
                     .attr('size', '50')
-					.colorpicker({
-						colorFormat: "#HEX"
-					});
+                    .colorpicker({
+                        colorFormat: "#HEX"
+                    });
 
         _settings_elements['color_mouse_over'] = input;
 
@@ -2106,9 +2106,9 @@ function storyParser()
         input = $('<input type="text" id="fflist-color_odd_color">')
                     .attr('value', _config.color_odd_color)
                     .attr('size', '50')
-					.colorpicker({
-						colorFormat: "#HEX"
-					});
+                    .colorpicker({
+                        colorFormat: "#HEX"
+                    });
 
         _settings_elements['color_odd_color'] = input;
 
@@ -2216,24 +2216,24 @@ function storyParser()
         {
             checkbox.attr('checked', 'checked');
         }
-		else
-		{
-			$("#api_autoIncludeNewVersion").attr("disabled", "disabled");
-		}
-		
+        else
+        {
+            $("#api_autoIncludeNewVersion").attr("disabled", "disabled");
+        }
+        
 
-		checkbox.change(function()
-		{
-			if (!$("#fflist-api_checkForUpdates").is(":checked"))
-			{
-				$("#fflist-api_autoIncludeNewVersion").attr("disabled", "disabled");
-			}
-			else
-			{
-				$("#fflist-api_autoIncludeNewVersion").removeAttr("disabled", "disabled");
-			}
-		
-		});
+        checkbox.change(function()
+        {
+            if (!$("#fflist-api_checkForUpdates").is(":checked"))
+            {
+                $("#fflist-api_autoIncludeNewVersion").attr("disabled", "disabled");
+            }
+            else
+            {
+                $("#fflist-api_autoIncludeNewVersion").removeAttr("disabled", "disabled");
+            }
+        
+        });
 
         _settings_elements['api_checkForUpdates'] = checkbox;
 
@@ -2250,9 +2250,9 @@ function storyParser()
                 )
             )
         );
-		
-		
-		// api_autoIncludeNewVersion
+        
+        
+        // api_autoIncludeNewVersion
         checkbox = $('<input type="checkbox" id="fflist-api_autoIncludeNewVersion">');
         if (_config.api_autoIncludeNewVersion)
         {
@@ -2316,7 +2316,7 @@ function storyParser()
                     mouseOver: data.mouseOver.attr('value'),
                     print_story: data.print_story.is(':checked'),
                     search_story: data.search_story.is(':checked'),
-					ignoreColor: data.ignoreColor.is(':checked'),
+                    ignoreColor: data.ignoreColor.is(':checked'),
                     background: (name in _config.marker && _config.marker[name].background != null) ? (_config.marker[name].background) : null,
                     text_color: (name in _config.marker &&_config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null
                 };
@@ -2331,8 +2331,8 @@ function storyParser()
             _config.mark_M_storys = _settings_elements.mark_M_storys.is(':checked');
             _config.hide_non_english_storys = _settings_elements.hide_non_english_storys.is(':checked');
             _config.hide_images = _settings_elements.hide_images.is(':checked');
-			_config.hide_lazy_images = _settings_elements.hide_lazy_images.is(':checked');
-			_config.disable_image_hover = _settings_elements.disable_image_hover.is(':checked');
+            _config.hide_lazy_images = _settings_elements.hide_lazy_images.is(':checked');
+            _config.disable_image_hover = _settings_elements.disable_image_hover.is(':checked');
             _config.content_width = _settings_elements.content_width.attr('value');
             _config.color_normal = _settings_elements.color_normal.attr('value');
             _config.color_odd_color = _settings_elements.color_odd_color.attr('value');
@@ -2340,7 +2340,7 @@ function storyParser()
             _config.pocket_user = _settings_elements.pocket_user.attr('value');
             _config.pocket_password = _settings_elements.pocket_password.attr('value');
             _config.api_checkForUpdates = _settings_elements.api_checkForUpdates.is(':checked');
-			_config.api_autoIncludeNewVersion = _settings_elements.api_autoIncludeNewVersion.is(':checked');
+            _config.api_autoIncludeNewVersion = _settings_elements.api_autoIncludeNewVersion.is(':checked');
             
             
             _config.marker = new_config;
@@ -2371,7 +2371,7 @@ function storyParser()
                     mention_in_headline: true,
                     text_color: null
                 }, container
-				, true // Display Big
+                , true // Display Big
             );
 
         }).appendTo(_gui_container);
@@ -2404,18 +2404,18 @@ function storyParser()
 
         var radius = 10;
 
-		if (typeof(displayBig) == "undefined")
-		{
-			displayBig = false;
-		}
-		
-		var height = 35;
-		
-		if (displayBig)
-		{
-			height = 550;
-		}
-		
+        if (typeof(displayBig) == "undefined")
+        {
+            displayBig = false;
+        }
+        
+        var height = 35;
+        
+        if (displayBig)
+        {
+            height = 550;
+        }
+        
         var container = $('<div class="fflist-filterField"></div>')
 
         .css('margin', 'auto')
@@ -2423,8 +2423,8 @@ function storyParser()
         .css('margin-bottom', '15px')
         .css('background-color', 'white')
         .css('padding', '5px')
-		.css('overflow', 'hidden')
-		
+        .css('overflow', 'hidden')
+        
         // Border-Radius
         .css('-moz-border-radius', radius+'px '+radius+'px '+radius+'px '+radius+'px')
         .css('-webkit-border-top-left-radius', radius+'pxpx')
@@ -2443,23 +2443,23 @@ function storyParser()
         .appendTo(mainContainer)
         .hide();
 
-		if (!displayBig)
-		{
-			container.css("cursor", "pointer")
-			.css("cursor", "hand")
-			.attr('title', "Click to Edit")
-			
-			.click(function()
-			{
-				container.css('height', '550px');
-				container.css("cursor", "auto");
-				container.removeAttr("title");				
-				
-			});
+        if (!displayBig)
+        {
+            container.css("cursor", "pointer")
+            .css("cursor", "hand")
+            .attr('title', "Click to Edit")
+            
+            .click(function()
+            {
+                container.css('height', '550px');
+                container.css("cursor", "auto");
+                container.removeAttr("title");              
+                
+            });
 
-		}
-		
-		
+        }
+        
+        
         var table = $('<table width="100%"></table>').appendTo(container);
 
         var spacer = $('<tr></tr>').append
@@ -2573,31 +2573,31 @@ function storyParser()
 
             )
         );
-		
-		// spacer:
+        
+        // spacer:
         table.append(spacer.clone());
 
-		// Ignore Color:
+        // Ignore Color:
         var checkbox = $('<input type="checkbox" id="fflist-'+name+'-ignoreColor">');
         if (marker.ignoreColor)
         {
             checkbox.attr('checked', 'checked');
         }
 
-		checkbox.change(function()
-		{
-			if ($('#fflist-'+name+'-ignoreColor').is(":checked"))
-			{
-				$('#fflist-'+name+'-color').add('#fflist-'+name+'-mouseOver').attr("disabled", "disabled");
-			}
-			else
-			{
-				$('#fflist-'+name+'-color').add('#fflist-'+name+'-mouseOver').removeAttr("disabled");
-			}
-		
-		
-		});
-		
+        checkbox.change(function()
+        {
+            if ($('#fflist-'+name+'-ignoreColor').is(":checked"))
+            {
+                $('#fflist-'+name+'-color').add('#fflist-'+name+'-mouseOver').attr("disabled", "disabled");
+            }
+            else
+            {
+                $('#fflist-'+name+'-color').add('#fflist-'+name+'-mouseOver').removeAttr("disabled");
+            }
+        
+        
+        });
+        
         _gui_elements[name]['ignoreColor'] = checkbox;
 
         table.append(
@@ -2615,7 +2615,7 @@ function storyParser()
         );
 
 
-		
+        
         // spacer:
         table.append(spacer.clone());
 
@@ -2623,17 +2623,17 @@ function storyParser()
         var input = $('<input type="text" id="fflist-'+name+'-color">')
                     .attr('value', marker.color)
                     .attr('size', '50')
-					.colorpicker({
-						colorFormat: "#HEX"
-					});
+                    .colorpicker({
+                        colorFormat: "#HEX"
+                    });
 
         _gui_elements[name]['color'] = input;
 
-		if (marker.ignoreColor)
+        if (marker.ignoreColor)
         {
             input.attr('disabled', 'disabled');
         }
-		
+        
         table.append(
             $('<tr></tr>').append(
                 $('<td width="30%"></td>').append(
@@ -2656,17 +2656,17 @@ function storyParser()
         var input = $('<input type="text" id="fflist-'+name+'-mouseOver">')
                     .attr('value', marker.mouseOver)
                     .attr('size', '50')
-					.colorpicker({
-						colorFormat: "#HEX"
-					});
+                    .colorpicker({
+                        colorFormat: "#HEX"
+                    });
 
         _gui_elements[name]['mouseOver'] = input;
 
-		if (marker.ignoreColor)
+        if (marker.ignoreColor)
         {
             input.attr('disabled', 'disabled');
         }
-		
+        
         table.append(
             $('<tr></tr>').append(
                 $('<td width="30%"></td>').append(
@@ -3043,7 +3043,7 @@ function storyParser()
         var apiLookupKey = _config.api_lookupKey;
         var timeout = _config.api_timeout;
         var retrys = _config.api_retries;
-            		
+                    
         $.ajax({
            type: 'GET',
             url: url,
@@ -3085,11 +3085,11 @@ function storyParser()
                     //console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
                 }
             
-				var result = sessionStorage[apiLookupKey];
-			
-				// Clear last Result
-				delete sessionStorage[apiLookupKey];
-			
+                var result = sessionStorage[apiLookupKey];
+            
+                // Clear last Result
+                delete sessionStorage[apiLookupKey];
+            
                 callback(result);
 
             } else
@@ -3112,27 +3112,27 @@ function storyParser()
     {
         if (_config.api_checkForUpdates)
         {
-			var statisticData =
-			{
-				Version: _VERSION,
-				Token: _config.token
-			}
-		
+            var statisticData =
+            {
+                Version: _VERSION,
+                Token: _config.token
+            }
+        
             if (_DEBUG)
             {
                 console.info("Check for Updates ...");
-				console.log("Sending Statistic Data: ", statisticData);
+                console.log("Sending Statistic Data: ", statisticData);
             }
             
-			var requestData = JSON.stringify(statisticData);
-			
+            var requestData = JSON.stringify(statisticData);
+            
             _apiRequest({command: "getVersion", data: requestData}, function(res)
             {
-				if (_DEBUG)
-				{
-					console.log("Version Received: ", res);
-				}
-				
+                if (_DEBUG)
+                {
+                    console.log("Version Received: ", res);
+                }
+                
                 var version = JSON.parse(res);
                 
                 if (_DEBUG)
@@ -3143,14 +3143,14 @@ function storyParser()
                 
                 if (_VERSION != version.version)
                 {
-					if (!_config.api_autoIncludeNewVersion)
-					{				
-						$(".menulinks").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser ("+ version.version +")]");
-					}
-					else
-					{
-						_api_updateScript();
-					}
+                    if (!_config.api_autoIncludeNewVersion)
+                    {               
+                        $(".menulinks").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser ("+ version.version +")]");
+                    }
+                    else
+                    {
+                        _api_updateScript();
+                    }
                 }
                 
             });
@@ -3158,30 +3158,30 @@ function storyParser()
         }
     }
         
-	var _api_updateScript = function()
-	{
-		if (_config.api_autoIncludeNewVersion)
-		{
-			if (_DEBUG)
-			{
-				console.log("Loading new Version from Server");
-			}
-		
-			_apiRequest({command: "getCurrent", data: ""}, function(res)
+    var _api_updateScript = function()
+    {
+        if (_config.api_autoIncludeNewVersion)
+        {
+            if (_DEBUG)
             {
-				//console.log("Script: ", res);
-			
+                console.log("Loading new Version from Server");
+            }
+        
+            _apiRequest({command: "getCurrent", data: ""}, function(res)
+            {
+                //console.log("Script: ", res);
+            
                 _saveToMemory(localStorage, "ffnet-Script", { script: res });    
 
-				if (_DEBUG)
+                if (_DEBUG)
                 {
                     console.log("New Version Recieved");
                 }
                 
             });
-		}
-	}
-		
+        }
+    }
+        
     // --------------------------
 
     var _save_config = function()
@@ -3192,24 +3192,24 @@ function storyParser()
 
         } catch (e)
         {
-			
-		
+            
+        
             console.warn(e);
-			console.log("Current Config: ", _config);
+            console.log("Current Config: ", _config);
         }
 
     }
 
-	var _save_dataStore = function()
-	{
-		_saveToMemory(sessionStorage, _config.dataStorage_key, _dataConfig);
-		
-		if (_DEBUG)
-		{
-			console.info("Save to Memory: ", _dataConfig);
-		}
-	}
-	
+    var _save_dataStore = function()
+    {
+        _saveToMemory(sessionStorage, _config.dataStorage_key, _dataConfig);
+        
+        if (_DEBUG)
+        {
+            console.info("Save to Memory: ", _dataConfig);
+        }
+    }
+    
     var _getConfig = function()
     {
         return JSON.stringify(_config);
@@ -3236,27 +3236,27 @@ function storyParser()
         return _eList;
     }
 
-	// -------- Multiuse Functions ---------
-	
-	var _loadFromMemory = function(memory, key)
-	{
-		if ((typeof memory[key] != "undefined") &&
+    // -------- Multiuse Functions ---------
+    
+    var _loadFromMemory = function(memory, key)
+    {
+        if ((typeof memory[key] != "undefined") &&
                 (typeof memory[key] != "null") &&
                 memory[key] != "undefined" &&
                 memory[key] != "null" &&
                 memory[key] != "" &&
                 memory[key] != null)
-		{
-			return JSON.parse(memory[key]);
-		}
-		
-		return {};
-	}
-	
-	
-	var _saveToMemory = function(memory, key, object)
-	{
-		try
+        {
+            return JSON.parse(memory[key]);
+        }
+        
+        return {};
+    }
+    
+    
+    var _saveToMemory = function(memory, key, object)
+    {
+        try
         {
             memory[key] = JSON.stringify(object);
 
@@ -3264,28 +3264,28 @@ function storyParser()
         {
             console.warn(e);
         }
-	
-	}
-	
-	var _getUrlFromButton = function(button)
-	{
-		var script = button.attr('onclick');
-		var script_reg = /self\.location=\'([^']+)\'/;
-		var data = script_reg.exec(script);
-		
-		if ((data != null) && (data.length > 1))
-		{
-			return data[1];
-		}
-		else
-		{
-			return null
-		}
-	}
-	
-	
-	// -------------------------------------------
-	
+    
+    }
+    
+    var _getUrlFromButton = function(button)
+    {
+        var script = button.attr('onclick');
+        var script_reg = /self\.location=\'([^']+)\'/;
+        var data = script_reg.exec(script);
+        
+        if ((data != null) && (data.length > 1))
+        {
+            return data[1];
+        }
+        else
+        {
+            return null
+        }
+    }
+    
+    
+    // -------------------------------------------
+    
     _init();
 }
 
