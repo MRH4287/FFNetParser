@@ -15,11 +15,13 @@ This UserScript allows to parse and mark stories in the list.
    * List Stories (Add a list of matching stories on the top of the story list)
    * Mention in Headline (Add a notification to the headline, how many elements of one filter has been found) 
 * Search with filters within the story (You can define the max depth for search)
+* Add Config Options for specific Stories (set Marker or Hide Story)
 * [Pocket](http://getpocket.com) Feature:
   Save an entire story to your Pocket (formally Read It Later) Account
 * Color Picker for easy Color selection
 * Switch pages with the cursor Keys
 * Display only mode (Select a filter, only matching stories will be displayed)
+* Auto Updater
   
 If you want a feature that isn't listed above, please write an Issue-Report.      
 
