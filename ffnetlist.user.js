@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.3.3
+// @version        4.3.4
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -62,7 +62,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
     
-    var _VERSION = '4.3.3';
+    var _VERSION = '4.3.4';
     
     var _LOAD_INTERNAL = false;
     
@@ -2370,10 +2370,25 @@ function storyParser()
             _gui_add_form(name, marker, container);
         });
 
+        if (_DEBUG)
+        {
+            console.log("Config elements: ", _gui_elements);
+        }
+        
         $('<input type="button" value="Save"></input>').click(function()
         {
             var new_config = {};
 
+            if (_DEBUG)
+            {
+                console.log("Save Config");
+            }
+            
+            if (_DEBUG)
+            {
+                console.log("Parsing Config elements: ", _gui_elements);
+            }
+            
             $.each(_gui_elements, function(k, data)
             {
                 if (data == undefined)
@@ -2381,7 +2396,7 @@ function storyParser()
                     return;
                 }
 
-                var name = data.name.attr('value');
+                var name = data.name.val();
                 if (name == '')
                 {
                     return;
@@ -2390,13 +2405,13 @@ function storyParser()
                 var config =
                 {
                     name: name,
-                    color: data.color.attr('value'),
-                    ignore: data.ignore.attr('value').split(', '),
-                    keywords: data.keywords.attr('value').split(', '),
+                    color: data.color.val(),
+                    ignore: data.ignore.val().split(', '),
+                    keywords: data.keywords.val().split(', '),
                     mark_chapter: data.mark_chapter.is(':checked'),
                     mention_in_headline: data.mention_in_headline.is(':checked'),
                     display: data.display.is(':checked'),
-                    mouseOver: data.mouseOver.attr('value'),
+                    mouseOver: data.mouseOver.val(),
                     print_story: data.print_story.is(':checked'),
                     search_story: data.search_story.is(':checked'),
                     ignoreColor: data.ignoreColor.is(':checked'),
@@ -2404,24 +2419,29 @@ function storyParser()
                     text_color: (name in _config.marker &&_config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null
                 };
 
+                if (_DEBUG)
+                {
+                    console.log("Filter '"+name+"' saved: ", config);
+                }
+                
                 
                 //console.log(name, config);
                 new_config[name] = config;
 
             });
 
-            _config.story_search_depth = Number(_settings_elements.story_search_depth.attr('value'));
+            _config.story_search_depth = Number(_settings_elements.story_search_depth.val());
             _config.mark_M_storys = _settings_elements.mark_M_storys.is(':checked');
             _config.hide_non_english_storys = _settings_elements.hide_non_english_storys.is(':checked');
             _config.hide_images = _settings_elements.hide_images.is(':checked');
             _config.hide_lazy_images = _settings_elements.hide_lazy_images.is(':checked');
             _config.disable_image_hover = _settings_elements.disable_image_hover.is(':checked');
-            _config.content_width = _settings_elements.content_width.attr('value');
-            _config.color_normal = _settings_elements.color_normal.attr('value');
-            _config.color_odd_color = _settings_elements.color_odd_color.attr('value');
-            _config.color_mouse_over = _settings_elements.color_mouse_over.attr('value');
-            _config.pocket_user = _settings_elements.pocket_user.attr('value');
-            _config.pocket_password = _settings_elements.pocket_password.attr('value');
+            _config.content_width = _settings_elements.content_width.val();
+            _config.color_normal = _settings_elements.color_normal.val();
+            _config.color_odd_color = _settings_elements.color_odd_color.val();
+            _config.color_mouse_over = _settings_elements.color_mouse_over.val();
+            _config.pocket_user = _settings_elements.pocket_user.val();
+            _config.pocket_password = _settings_elements.pocket_password.val();
             _config.api_checkForUpdates = _settings_elements.api_checkForUpdates.is(':checked');
             _config.api_autoIncludeNewVersion = _settings_elements.api_autoIncludeNewVersion.is(':checked');
             
@@ -2429,6 +2449,12 @@ function storyParser()
             _config.marker = new_config;
 
             _save_config();
+            
+            if (_DEBUG)
+            {
+                console.log("Config Saved Successfully");
+            }
+            
 
             _gui_hide();
         }).appendTo(_gui_container);
