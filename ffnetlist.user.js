@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.3.2
+// @version        4.3.3
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -62,7 +62,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
     
-    var _VERSION = '4.3.2';
+    var _VERSION = '4.3.3';
     
     var _LOAD_INTERNAL = false;
     
@@ -883,7 +883,32 @@ function storyParser()
                     console.info("Highlight Element Found: ", element);
                 }
                 
-                var img = $("<img></img>").attr("src", _config['highlighter'][link])
+                // Update old Format
+                if (typeof(_config['highlighter'][link]) != "object")
+                {
+                    if (_DEBUG)
+                    {
+                        console.log("Updated old Highlighter Object");
+                    }
+                
+                    _config['highlighter'][link] = {image: _config['highlighter'][link], hide: false };
+                }
+                
+                if (_config['highlighter'][link].hide)
+                {
+                    if (_DEBUG)
+                    {
+                        console.log("Hide Entry because of Story Config: ", link);
+                    }
+                
+                    element.attr("data-hiddenBy", "storyConfig");
+                
+                    element.hide();
+                    _hidden++;
+                }
+                
+                
+                var img = $("<img></img>").attr("src", _config['highlighter'][link].image)
                 .css("width", "20px")
                 .css("height", "20px")
                 .css("margin-left", "15px")
@@ -1356,9 +1381,27 @@ function storyParser()
 
         $('#mrhOutput').remove();
 
-        _element.first().before($('<div id=\'mrhOutput\'>'+text+' <i>All hidden elements:</i> '+_hidden+'<br></div>')
+        var hiddenByStoryConfig = $('div[data-hiddenBy="storyConfig"]');
+        
+        if (hiddenByStoryConfig.length > 0)
+        {
+            text += "<i>Hidden by StoryConfig</i>: "+hiddenByStoryConfig.length+ " ";
+        }
+        
+        var list = $('<div id=\'mrhOutput\'>'+text+' <i>All hidden elements:</i> '+_hidden+'<br></div>')
         .css('margin-bottom', '10px')
-        .append(headlineContainer));
+        .append(headlineContainer);
+        
+        if (hiddenByStoryConfig.length > 0)
+        {
+            list.append($('<a href="#">Show Elements hidden by Story Config</a>').click(function(e)
+            {
+                hiddenByStoryConfig.slideDown();
+                e.preventDefault();
+            }));
+        }
+        
+        _element.first().before(list);
     }
 
     var _updateListColor = function()
@@ -1479,7 +1522,18 @@ function storyParser()
                 console.info("Highlight Element Found");
             }
             
-            var img = $("<img></img>").attr("src", _config['highlighter'][document.location.pathname])
+            // Update old Format
+            if (typeof(_config['highlighter'][link]) != "object")
+            {
+                if (_DEBUG)
+                {
+                    console.log("Updated old Highlighter Object");
+                }
+            
+                _config['highlighter'][link] = {image: _config['highlighter'][link], hide: false };
+            }
+            
+            var img = $("<img></img>").attr("src", _config['highlighter'][document.location.pathname].image)
             .css("width", "20px")
             .css("height", "20px")
             .css("margin-left", "15px")
@@ -2987,8 +3041,20 @@ function storyParser()
             _gui_container.append("<hr />");
             _gui_container.append("<p>Highlighter Options:</p>");
             
+            _gui_container.append($('<label for="ffnet-story-highlighter-hide">Hide Story</label>').css("display", "inline-block"));
+            var hide = $('<input type="checkbox" id="ffnet-story-highlighter-hide">')
+            .css("display", "inline-block").css("margin-left", "15px")
+            .appendTo(_gui_container);
+            
+            if ((typeof(_config['highlighter'][storyInfo.url]) != "undefined") && (_config['highlighter'][storyInfo.url].hide))
+            {
+                hide.attr('checked', 'checked');
+            }
+            
+            _gui_container.append("<hr />");
+            
             _gui_container.append('<label for="ffnet-story-highlighter">Highlighter Path: (leave empty to clear)</label><br/>');
-            var highlighter = $('<input type="text"></input>')
+            var highlighter = $('<input id="ffnet-story-highlighter" type="text"></input>')
             .appendTo(_gui_container)
             .css("width", "500px");
                 
@@ -3026,22 +3092,32 @@ function storyParser()
             }
                 
                 
-            if (typeof(_config['highlighter'][storyInfo.url] != "undefined"))
+            if (typeof(_config['highlighter'][storyInfo.url]) != "undefined")
             {
-                highlighter.val(_config['highlighter'][storyInfo.url]);
+                highlighter.val(_config['highlighter'][storyInfo.url].image);
             }
                 
+            _gui_container.append("<p></p>");
+                
+
+             
             _gui_container.append(
                 $('<input type="button" value="Set" />')
                     .click(function()
                     {
                         var newVal = highlighter.val();
-                        if (newVal == "")
+                        var hidden = hide.is(":checked");
+                        
+                        if ((newVal == "") && (!hidden))
                         {
                             _config['highlighter'][storyInfo.url] = undefined;
-                        } else
+                        }
+                        else
                         {
-                            _config['highlighter'][storyInfo.url] = newVal;
+                            _config['highlighter'][storyInfo.url] = {
+                                image: newVal,
+                                hide: hidden
+                            };
                         }
                         
                         _save_config();
