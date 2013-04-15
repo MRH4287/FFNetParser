@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.3.4
+// @version        4.3.5
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -62,7 +62,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
     
-    var _VERSION = '4.3.4';
+    var _VERSION = '4.3.5';
     
     var _LOAD_INTERNAL = false;
     
@@ -1851,8 +1851,9 @@ function storyParser()
         .css('padding', '10px 5px 10px 5px')
 
         // Background
+        
+        .css('background', '-webkit-gradient(linear, left top, left bottom, color-stop(0%,#CCCCCC), color-stop(10%,#FFFFFF))')
         .css('background', '-moz-linear-gradient(center top, #CCCCCC, #FFFFFF 300px) repeat scroll 0 0 #CCCCCC')
-        .css('background', '-webkit-gradient( linear, center top, center 300px, from(#CCCCCC), to(#FFFFFF)) repeat scroll 0 0 #CCCCCC')
         .css('background', '-o-linear-gradient( center top, #CCCCCC, #FFFFFF )')
 
         // Border-Radius
