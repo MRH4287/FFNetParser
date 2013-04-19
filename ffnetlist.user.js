@@ -1,26 +1,12 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.3.5
+// @version        4.3.5.1
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
 // @updateURL      https://github.com/MRH4287/FFNetParser/raw/master/ffnetlist.user.js
-// @include        http://www.fanfiction.net/search.php
-// @include        http://www.fanfiction.net/anime/*
-// @include        http://www.fanfiction.net/book/*
-// @include        http://www.fanfiction.net/cartoon/*
-// @include        http://www.fanfiction.net/comic/*
-// @include        http://www.fanfiction.net/game/*
-// @include        http://www.fanfiction.net/misc/*
-// @include        http://www.fanfiction.net/movie/*
-// @include        http://www.fanfiction.net/crossovers/play/*
-// @include        http://www.fanfiction.net/tv/*
-// @include        http://www.fanfiction.net/communities/*
-// @include        http://www.fanfiction.net/community/*
-// @include        http://www.fanfiction.net/u/*
-// @include        http://www.fanfiction.net/s/*
-// @include        http://www.fanfiction.net/forums/*
+// @include        http://www.fanfiction.net/*
 // @run-at         document-end
 // ==/UserScript==
 
@@ -62,7 +48,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
     
-    var _VERSION = '4.3.5';
+    var _VERSION = '4.3.5.1';
     
     var _LOAD_INTERNAL = false;
     
