@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.3.5.1
+// @version        4.3.6
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -48,7 +48,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
     
-    var _VERSION = '4.3.5.1';
+    var _VERSION = '4.3.6';
     
     var _LOAD_INTERNAL = false;
     
@@ -102,6 +102,12 @@ function storyParser()
             margin-top: 5px;                            \
             margin-bottom: 10px;                        \
         }                                               \
+                                                        \
+        .clickable                                      \
+        {                                               \
+            cursor:pointer;                             \
+            cursor:hand;                                \
+        }                                               \
     ";
     
     
@@ -109,6 +115,7 @@ function storyParser()
 
     var _element = null;
     var _hidden = 0;
+    var _hidden_elements = {};
 
     var _eList = {};
 
@@ -684,6 +691,7 @@ function storyParser()
         _found = [];
         _eList = {};
         _hidden = 0;
+        _hidden_elements = {};
         $('.parser-msg').remove();
         $('[data-color]').removeAttr("data-color");
         
@@ -710,6 +718,8 @@ function storyParser()
                 {
                     console.log("Hide Element because of 'hide_non_english_storys'", link);
                 }
+            
+                _hidden_elements[link] = "hide_non_english_storys";
             
                 element.hide();
                 _hidden += 1;
@@ -918,6 +928,8 @@ function storyParser()
                         console.log("Hide Entry because of Display-Only Mode: ", element);
                     }
                 
+                    _hidden_elements[link] = "Display-Only Mode";
+                    
                 
                     element.hide();
                     _hidden += 1;
@@ -1233,12 +1245,14 @@ function storyParser()
         }
         else if (typeof(_dataConfig["displayOnly"]) != "undefined")
         {
-            // Hide this Element becazse the Only Mode do not match
+            // Hide this Element because the Only Mode do not match
             
             if (_DEBUG)
             {
                 console.log("Hide Element because of 'displayOnly' ", info);
             }
+            
+            _hidden_elements[info.url] = "displayOnly";
             
             element.hide();
             _hidden += 1;
@@ -1251,6 +1265,8 @@ function storyParser()
             {
                 console.log("Hide Element because of Filter '"+headline+"'", info);
             }
+        
+            _hidden_elements[info.url] = "Filter '"+headline+"'";
         
             element.hide();
             element.addClass('hidden');
@@ -1374,7 +1390,43 @@ function storyParser()
             text += "<i>Hidden by StoryConfig</i>: "+hiddenByStoryConfig.length+ " ";
         }
         
-        var list = $('<div id=\'mrhOutput\'>'+text+' <i>All hidden elements:</i> '+_hidden+'<br></div>')
+        var list = $('<div id=\'mrhOutput\'></div>')
+        .html(text+' <i>All hidden elements:</i> ').append(
+            $("<u></u>").text(_hidden).click(
+                function(e)
+                {
+                    // Build Dialog
+                    var dialog = $('<div title="Hidden Elements"></div>');
+                    var table = $("<table></table>").appendTo(dialog);
+                    
+                    $.each(_hidden_elements, function(key, value)
+                    {
+                        table.append(
+                            $("<tr></tr>").append(
+                                $("<th></th>").append(
+                                    $("<a></a>").text(_getStoryName(key))
+                                    .attr("href", key)
+                                )
+                            )
+                            .append
+                            (
+                                $("<td></td>").text(value)
+                            )
+                        )
+                                            
+                    });
+                    
+                    
+                    // Show Dialog:
+                    dialog.dialog();
+                
+                    e.preventDefault();
+                }
+            
+            )
+            .attr("title", "Show the reasons for hiding")
+            .addClass("clickable")
+        )
         .css('margin-bottom', '10px')
         .append(headlineContainer);
         
