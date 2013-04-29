@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.3.6
+// @version        4.3.6.1
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -48,7 +48,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
     
-    var _VERSION = '4.3.6';
+    var _VERSION = '4.3.6.1';
     
     var _LOAD_INTERNAL = false;
     
@@ -1351,8 +1351,17 @@ function storyParser()
 
     var _updateList = function()
     {
+        // Wrap Content:
+        _createPageWrapper();
+    
+    
         var text = "";
 
+        if (_DEBUG)
+        {
+            console.log("Headline-List = ", _eList);
+        }
+        
         var headlineContainer = $("<div></div>");
         $.each(_eList, function(headline, elements)
         {
@@ -1439,7 +1448,7 @@ function storyParser()
             }));
         }
         
-        _element.first().before(list);
+        $(".ffNetPageWrapper").first().before(list);
     }
 
     var _updateListColor = function()
@@ -1716,8 +1725,50 @@ function storyParser()
         
     }
     
-    var _loadNextPage = function()
+    var _createWrapper = function(page)
     {
+        return $("<div></div>").addClass("ffNetPageWrapper")
+                .attr("data-page", page);
+    }
+    
+    var _createPageWrapper = function()
+    {
+        // Wrap the current Page into a PageWrapper
+        var currentPage = _getCurrentPage($("body"));
+        
+        if (_DEBUG)
+        {
+            console.log("Current Page: ", currentPage);
+        }
+    
+        var wrapper = _createWrapper(currentPage);
+        
+        var notWrapped = $('.z-list[data-wrapped!="wrapped"]');
+        
+        if (notWrapped.length != 0)
+        {
+            if (_DEBUG)
+            {
+                console.log("Not Wrapped Elements found");
+            }
+        
+        
+            notWrapped.last().after(wrapper);
+            
+            notWrapped.detach().appendTo(wrapper)
+            .attr("data-wrapped", "wrapped")
+            .attr("data-page", currentPage);        
+        }
+    }
+    
+    
+    var _loadPage = function(loadPrev)
+    {
+        if (typeof(loadPrev) == "undefined")
+        {
+            loadPrev = false;
+        }
+        
         var base = null;
         
         if (_currentPage == null)
@@ -1729,109 +1780,59 @@ function storyParser()
             base = _currentPage.find("#myform").first();
         }
         
+
+        
+        // Wrapper moved to _createPageWrapper
     
-        _getPageContent(base, false, function(elements, data)
+        _getPageContent(base, loadPrev, function(elements, data)
         {       
             // Add elements to DOM:
             if (elements.length > 0)
             {
-                var last = $(".z-list").last();
+                var last = $(".ffNetPageWrapper").last();
                 
-        
+                var page = _getCurrentPage(data);
+                var wrapper = _createWrapper(page);
                 
-                elements.each(function(k, el)
+                last.after(wrapper);
+                
+                _element = elements;
+                
+                elements.appendTo(wrapper);
+
+                window.setTimeout(function()
                 {
-                    el = $(el);
+                    _readList(wrapper.children())
                     
-                    last.after(el);
-                    last = el;
-                });
-                
-                // Only allow 25 entries at all times:
-                var all = $(".z-list");
-                
-                if (all.length > 25)
-                {
-                    if (_DEBUG)
-                    {
-                        console.log("Count greather then 40 entries, remove some ...");
-                    }
-                
-                    for ($i = 0; $i < all.length - 25; $i++)
-                    {
-                        $(all[$i]).slideUp().remove();
-                    }
-                }
-                
-                window.setTimeout( _readList($('.z-list')), 200);
+                }, 200);
             
-                $("#myform").find("center").last().html(data.find("#myform").find("center").last().html());
+                $("#myform").find("center").html(data.find("#myform").find("center").last().html());
+            
+                // Hide last Page: 
+                last.slideUp();
             
             
                 _currentPage = data;
             }
             
         });
+    }
+    
+    var _getCurrentPage = function(content)
+    {
+        return content.find("center > b").first().text()
+    }
+    
+    
+    var _loadNextPage = function()
+    {
+        _loadPage(false);
     }
     
     var _loadPrevPage = function()
     {
-        var base = null;
-        
-        if (_currentPage == null)
-        {
-            base = $("#myform");
-        }
-        else
-        {
-            base = _currentPage.find("#myform").first();
-        }
-        
-    
-        _getPageContent(base, true, function(elements, data)
-        {       
-            // Add elements to DOM:
-            if (elements.length > 0)
-            {       
-                var last = $(".z-list").first();
-                
-                elements.each(function(k, el)
-                {
-                    el = $(el);
-                    
-                    last.before(el);
-                    last = el;
-                });
-                
-                // Only allow 25 entries at all times:
-                var all = $(".z-list");
-                
-                if (all.length > 25)
-                {
-                    if (_DEBUG)
-                    {
-                        console.log("Count greather then 40 entries, remove some ...");
-                    }
-                
-                    for ($i = 0; $i < all.length - 25; $i++)
-                    {
-                        $(all[$i]).slideUp().remove();
-                    }
-                }
-                
-                window.setTimeout( _readList($('.z-list')), 200);
-                
-                $("#myform").find("center").each(function(k, el)
-                {
-                    $(el).html(data.find("#myform").find("center").last().html());
-                });
-                _currentPage = data;
-            }
-            
-        });
+        _loadPage(true);
     }
-    
-    
     
     var _getNextPage = function(base)
     {
