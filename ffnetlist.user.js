@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.3.6.1
+// @version        4.3.6.2
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -48,7 +48,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
     
-    var _VERSION = '4.3.6.1';
+    var _VERSION = '4.3.6.2';
     
     var _LOAD_INTERNAL = false;
     
@@ -896,7 +896,8 @@ function storyParser()
                     {
                         console.log("Hide Entry because of Story Config: ", link);
                     }
-                
+                    _hidden_elements[link] = "storyConfig";
+
                     element.attr("data-hiddenBy", "storyConfig");
                 
                     element.hide();
