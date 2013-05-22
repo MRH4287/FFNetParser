@@ -2658,7 +2658,7 @@ function storyParser()
         table.append(
             $('<tr></tr>').append(
                 $('<td width="10%"></td>').append(
-                    $('<label for="fflist-'+name+'-display">Display Found Entrys: </label>')
+                    $('<label for="fflist-'+name+'-display">Display Found Entries: </label>')
                     .css('font-weight', 'bold')
                 )
                 .css('border-right', '1px solid gray')
@@ -3353,6 +3353,93 @@ function storyParser()
             });
         }
     }
+    
+    
+    var _api_sendMarker = function(data, callback)
+    {
+        _apiRequest({command: "sendFilter", data: JSON.stringify(data)}, function(result)
+        {
+            
+            if (typeof(callback) == "function")
+            {
+                callback(result);
+            }
+            
+        });
+    
+    
+    }
+    
+    
+    
+    
+    
+    this.debugOptions = function()
+    {
+        if (_DEBUG)
+        {
+            
+            var table = $(".zui").find("td").first();
+        
+            if (table.length > 0)
+            {
+
+            
+                // Add User Interface
+                table.append(
+                    $('<a></a>').addClass('menu-link').html('Debug').attr('href', '#').click(function(e)
+                    {
+                        var abort = false;
+                    
+                        $.each(_config.marker, function(key, el)
+                        {
+                            if (abort)
+                            {
+                                return;
+                            }
+                            abort = true;
+                            
+                            
+                            console.log(el);
+
+                            var data = {
+                                Name: el.name,
+                                User: _config.token,
+                                Display: _config.display,
+                                Keywords: "",
+                                Ignore: "",
+                                IgnoreColor: el.ignoreColor,
+                                Color: el.color,
+                                MouseOver: el.mouseOver,
+                                SearchStory: el.search_story,
+                                MarkChapter: el.mark_chapter,
+                                PrintStory: el.print_story,
+                                MentionInHeadline: el.mention_in_headline,
+                                Background: el.background,
+                                TextColor: el.text_color,
+                           
+                            };
+                            
+                            console.log("Send: ", data);
+                            
+                            _api_sendMarker(data);
+                            
+                            
+                            
+                        });
+
+                    }).attr('title', 'DEBUG Options')
+                );
+                
+            }
+            
+    
+        }
+    }
+    
+    
+    
+    
         
     // --------------------------
 
@@ -3465,3 +3552,5 @@ var parser = new storyParser($('.z-list'));
 parser.readList($('.z-list'));
 parser.enablePocketSave($('#content_wrapper_inner'));
 parser.enableInStoryHighlighter($('#content_wrapper_inner'));
+
+parser.debugOptions();
