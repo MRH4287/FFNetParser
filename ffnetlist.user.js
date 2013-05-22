@@ -2457,14 +2457,15 @@ function storyParser()
                     search_story: data.search_story.is(':checked'),
                     ignoreColor: data.ignoreColor.is(':checked'),
                     background: (name in _config.marker && _config.marker[name].background != null) ? (_config.marker[name].background) : null,
-                    text_color: (name in _config.marker &&_config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null
+                    text_color: (name in _config.marker &&_config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null,
+                    revision: (typeof(config.marker[name].revision) == "undefined") ? 0 : config.marker[name].revision + 1
                 };
 
                 if (_DEBUG)
                 {
                     console.log("Filter '"+name+"' saved: ", config);
                 }
-                
+
                 
                 //console.log(name, config);
                 new_config[name] = config;
@@ -3362,7 +3363,7 @@ function storyParser()
             
             if (typeof(callback) == "function")
             {
-                callback(result);
+                callback(JSON.parse(result));
             }
             
         });
@@ -3371,7 +3372,192 @@ function storyParser()
     }
     
     
+    var _api_sendMarkers = function(keys, onFinish)
+    {        
+        var index = 1;
+        
+        var next = function()
+        {
+            if (index >= keys.length)
+            {
+            
+                _save_config();
+            
+                if (typeof(onFinish) == "function")
+                {
+                    onFinish();
+                }
+            
+                return;
+            }
+        
+        
+            var el = _config.marker[keys[index]];
+            
+            
+            console.log(el);
+
+            var data = {
+                Name: el.name,
+                User: _config.token,
+                Display: el.display,
+                Keywords: el.keywords.join(", "),
+                Ignore: el.ignore.join(", "),
+                IgnoreColor: el.ignoreColor,
+                Color: el.color,
+                MouseOver: el.mouseOver,
+                SearchStory: el.search_story,
+                MarkChapter: el.mark_chapter,
+                PrintStory: el.print_story,
+                MentionInHeadline: el.mention_in_headline,
+                Background: el.background,
+                TextColor: el.text_color,
+                Revision: 0
+           
+            };
+            
+            console.log("Send: ", data);
+            
+            _api_sendMarker(data, function(response)
+            {
+                console.log("Error: ", response.Error);
+                console.log("New Revision", response.Revision);
+                
+                if (!response.Error)
+                {   
+                    // Save Revision into internal Data-Structure
+                    _config.marker[keys[index]].revision = response.Revision;
+                 
+                }
+                    
+                next();
+            });
+            
+        
+            index ++;
+        };
+        
+        next();
+    }
     
+    
+   
+    
+    
+    var _api_getRevisions = function(callback)
+    {
+        _apiRequest({command: "getNewestRevisions", data: _config.token}, function(result)
+        {
+            
+            if (typeof(callback) == "function")
+            {
+                callback(JSON.parse(result));
+            }
+            
+        });
+    
+    
+    }
+    
+    
+    var _api_getNeedUpdate = function(callback)
+    {
+        _log("API - Checking for Filter Changes");
+        
+        var upload = [];
+        var download = [];
+        var checked = [];
+    
+        // Get the current saved Revisions:
+        _api_getRevisions(function(revisions)
+        {
+            _log("Got Server Revisions: ", revisions);
+        
+            $.each(revisions.Revisions, function(key, el)
+            {
+                var marker = _config.marker[el.Key];
+                
+                checked.push(el.Key);
+                
+                _log("Check Element: ", el);
+                
+                if (typeof(marker) != "undefined")
+                {
+                    _log("Local Marker Found - Version: ", marker.revision);
+                
+                    // Marker exists -> check Revision
+                    if (typeof(marker.revision) == "undefined")
+                    {
+                        marker.revision = 0;
+                    }
+                    
+                    var revision = Number(el.Value);
+                
+                
+                    if (marker.revision > revision)
+                    {
+                        _log("Our Marker is newer -> Upload");
+                        upload.push(marker.name);
+                    }
+                    else if (marker.revision < revision)
+                    {
+                        _log("Our Marker is older -> Download");
+                        download.push(marker.name);
+                    }
+                    else
+                    {
+                        _log("Marker Up to date");
+                    }
+                
+                }
+                else
+                {
+                    _log("We don't have this Marker -> Download");
+                    download.push(el.Key);
+                }
+            
+            });
+            
+            // Check for Filter, that are not on the Server
+            $.each(_config.marker, function(key, el)
+            {
+                if (checked.indexOf(key) == -1)
+                {
+                    _log("Filter ", el.name, " not on the Server -> upload");
+                    
+                    upload.push(el.name);
+                }
+            
+            });
+            
+            
+            
+            callback({upload: upload, download: download});
+        });
+
+    }
+    
+    
+    var _api_getMarker = function(user, marker, callback)
+    {
+        var data =
+        {
+            User: user,
+            Marker, marker
+        };
+    
+        _apiRequest({command: "sendFilter", data: JSON.stringify(data)}, function(result)
+        {
+            
+            if (typeof(callback) == "function")
+            {
+                callback(JSON.parse(result));
+            }
+            
+        });
+    
+    
+    }
     
     
     this.debugOptions = function()
@@ -3389,44 +3575,12 @@ function storyParser()
                 table.append(
                     $('<a></a>').addClass('menu-link').html('Debug').attr('href', '#').click(function(e)
                     {
-                        var abort = false;
-                    
-                        $.each(_config.marker, function(key, el)
+                        _api_getNeedUpdate(function(response)
                         {
-                            if (abort)
-                            {
-                                return;
-                            }
-                            abort = true;
-                            
-                            
-                            console.log(el);
-
-                            var data = {
-                                Name: el.name,
-                                User: _config.token,
-                                Display: _config.display,
-                                Keywords: "",
-                                Ignore: "",
-                                IgnoreColor: el.ignoreColor,
-                                Color: el.color,
-                                MouseOver: el.mouseOver,
-                                SearchStory: el.search_story,
-                                MarkChapter: el.mark_chapter,
-                                PrintStory: el.print_story,
-                                MentionInHeadline: el.mention_in_headline,
-                                Background: el.background,
-                                TextColor: el.text_color,
-                           
-                            };
-                            
-                            console.log("Send: ", data);
-                            
-                            _api_sendMarker(data);
-                            
-                            
-                            
+                            console.log(response);
                         });
+                        
+                        
 
                     }).attr('title', 'DEBUG Options')
                 );
@@ -3539,6 +3693,45 @@ function storyParser()
         else
         {
             return null
+        }
+    }
+    
+    
+    var _log = function(a, b, c)
+    {
+        if (_DEBUG)
+        {
+            if (typeof(b) == "undefined")
+            {
+                console.log(a);
+            }
+            else if (typeof(c) == "undefined")
+            {
+                console.log(a, b);
+            }
+            else
+            {
+                console.log(a, b, c);
+            }
+        }
+    }
+    
+    var _info = function(a, b, c)
+    {
+        if (_DEBUG)
+        {
+            if (typeof(b) == "undefined")
+            {
+                console.info(a);
+            }
+            else if (typeof(c) == "undefined")
+            {
+                console.info(a, b);
+            }
+            else
+            {
+                console.info(a, b, c);
+            }
         }
     }
     
