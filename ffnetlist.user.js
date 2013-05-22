@@ -2458,7 +2458,7 @@ function storyParser()
                     ignoreColor: data.ignoreColor.is(':checked'),
                     background: (name in _config.marker && _config.marker[name].background != null) ? (_config.marker[name].background) : null,
                     text_color: (name in _config.marker &&_config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null,
-                    revision: (typeof(config.marker[name].revision) == "undefined") ? 0 : config.marker[name].revision + 1
+                    revision: (typeof(_config.marker[name].revision) == "undefined") ? 0 : _config.marker[name].revision + 1
                 };
 
                 if (_DEBUG)
@@ -3374,13 +3374,15 @@ function storyParser()
     
     var _api_sendMarkers = function(keys, onFinish)
     {        
-        var index = 1;
+        _log("Send Markers to Server: ", keys);
+    
+        var index = 0;
         
         var next = function()
         {
-            if (index >= keys.length)
+            if (index > keys.length -1)
             {
-            
+                _log("Upload Finished");
                 _save_config();
             
                 if (typeof(onFinish) == "function")
@@ -3395,7 +3397,6 @@ function storyParser()
             var el = _config.marker[keys[index]];
             
             
-            console.log(el);
 
             var data = {
                 Name: el.name,
@@ -3412,22 +3413,37 @@ function storyParser()
                 MentionInHeadline: el.mention_in_headline,
                 Background: el.background,
                 TextColor: el.text_color,
-                Revision: 0
-           
+                Revision: el.revision
             };
             
-            console.log("Send: ", data);
+            _log("Upload Element: ", data);
             
             _api_sendMarker(data, function(response)
             {
-                console.log("Error: ", response.Error);
-                console.log("New Revision", response.Revision);
+               _log("Error: ", response.Error);
+               _log("New Revision", response.Revision);
                 
                 if (!response.Error)
                 {   
                     // Save Revision into internal Data-Structure
-                    _config.marker[keys[index]].revision = response.Revision;
-                 
+                    if (typeof(keys[index]) == "undefined")
+                    {
+                        _log("Error keys[", index, "] is undefined");
+                        _log("keys : ", keys);
+                    }
+                    else if (typeof(_config.marker[keys[index]]) == "undefined")
+                    {
+                        _log("Error _config.marker[", keys[index], "] is undefined");
+                        _log("_config.marker : ", _config.marker);
+                    }
+                    else
+                    {
+                        _config.marker[keys[index]].revision = response.Revision;
+                    }
+                }
+                else
+                {
+                    console.error("Error while uploading Filter to server: ", response.Message);
                 }
                     
                 next();
@@ -3538,15 +3554,28 @@ function storyParser()
     }
     
     
-    var _api_getMarker = function(user, marker, callback)
+    var _api_getMarker = function(marker, callback)
     {
+        _log("Get Marker from Server: ", marker);
+    
+        if (marker.length == 0)
+        {
+            callback({
+                Error: false,
+                Marker: [],
+                Revision: 0
+            });
+            
+            return;
+        }
+    
         var data =
         {
-            User: user,
-            Marker, marker
+            User: _config.token,
+            Marker: marker
         };
     
-        _apiRequest({command: "sendFilter", data: JSON.stringify(data)}, function(result)
+        _apiRequest({command: "getFilter", data: JSON.stringify(data)}, function(result)
         {
             
             if (typeof(callback) == "function")
@@ -3575,12 +3604,61 @@ function storyParser()
                 table.append(
                     $('<a></a>').addClass('menu-link').html('Debug').attr('href', '#').click(function(e)
                     {
-                        _api_getNeedUpdate(function(response)
+                    
+                        _api_getNeedUpdate(function(elements)
                         {
-                            console.log(response);
+                            // Upload Markers:
+                            _api_sendMarkers(elements.upload, function()
+                            {
+                                _api_getMarker(elements.download, function(result)
+                                {
+                                    if (!result.Error)
+                                    {
+                                
+                                        _log("Apply Filters to local Config: ", result);
+                                        
+                                        $.each(result.Marker, function(k, el)
+                                        {
+                                            _log("Apply changes to ", el.name);
+                                            
+                                            var data = {
+                                                name: el.Name,
+                                                display: el.Display,
+                                                keywords: el.Keywords.split(", "),
+                                                ignore: el.Ignore.split(", "),
+                                                ignoreColor: el.IgnoreColor,
+                                                color: el.Color,
+                                                mouseOver: el.MouseOver,
+                                                search_story: el.SearchStroy,
+                                                mark_chapter: el.MarkChapter,
+                                                print_story: el.PrintStory,
+                                                mention_in_headline: el.MentionInHeadline,
+                                                background: el.Background,
+                                                text_color: el.TextColor,
+                                                revision: el.Revision
+                                            };
+                                            
+                                            _config.marker[el.Name] = data;
+                                            
+                                        
+                                        });
+                                    
+                                        _save_config();
+                                        
+                                        _log("Sync Finished");
+                                    
+                                    
+                                    }
+                                    else
+                                    {
+                                        console.error("Can't retrieve Filters from Server: ", result.Message);
+                                    }
+                                
+                                });
+                        
+                            });
+                        
                         });
-                        
-                        
 
                     }).attr('title', 'DEBUG Options')
                 );
