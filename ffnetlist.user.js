@@ -2392,6 +2392,9 @@ function storyParser()
         );
         
         
+        // spacer:
+        table.append(spacer.clone());
+        
         // api_autoIncludeNewVersion
         checkbox = $('<input type="checkbox" id="fflist-api_autoIncludeNewVersion">');
         if (_config.api_autoIncludeNewVersion)
@@ -2416,6 +2419,30 @@ function storyParser()
         );
         
 
+        // spacer:
+        table.append(spacer.clone());
+        
+        // token
+        input = $('<input type="text" id="fflist-token">')
+            .attr('value', _config.token)
+            .attr('size', '50');
+
+        _settings_elements['token'] = input;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-token"><abbr title="Used for identification on the Web-Service (e.g. Synchronization)">Token</abbr>: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                    input
+                )
+            )
+        );
+        
 
 
         // -------------------------------
@@ -2502,6 +2529,7 @@ function storyParser()
             _config.pocket_password = _settings_elements.pocket_password.val();
             _config.api_checkForUpdates = _settings_elements.api_checkForUpdates.is(':checked');
             _config.api_autoIncludeNewVersion = _settings_elements.api_autoIncludeNewVersion.is(':checked');
+            _config.token = _settings_elements.token.val();
             
             
             _config.marker = new_config;
