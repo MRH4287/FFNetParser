@@ -3288,6 +3288,8 @@ function storyParser()
             .append(
                 "<b>Synchronization</b><br/>This System synchronizes the local Filter Settings with the Web Service.<br />"+
                 "This data can be retrieved from every Machine, that has the same Token.<br />"+
+                "<b>If you use this, you agree, that the data transfered is saved on the web service!</b><br />"+
+                "<b>Use at own risk! Make backups if possible.</b><br />"+
                 "<br /><b>Your Token: "+ _config.token +"</b><br/><b>Progress:</b><br />"
             
             ).append(progressBar)
@@ -3750,6 +3752,9 @@ function storyParser()
                 {
                     if (!result.Error)
                     {
+                
+                        _log("Create Backup of Filters ... just in case ;)");
+                        _config.markerBackup = _config.marker;
                 
                         _log("Apply Filters to local Config: ", result);
                         

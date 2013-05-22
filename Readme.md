@@ -22,6 +22,7 @@ This UserScript allows to parse and mark stories in the list.
 * Switch pages with the cursor Keys
 * Display only mode (Select a filter, only matching stories will be displayed)
 * Auto Updater
+* Synchronizsation
   
 If you want a feature that isn't listed above, please write an Issue-Report.      
 
@@ -127,9 +128,22 @@ The Story will be saved beginning on the current chapter to the current last cha
 
 To Import or Export your Config, click on the `Config Import / Export` in the top of the Fanfiction.net Page.
 
+
+### Synchronization
+
+This allows the user to upload their filter settings to the web service.
+
+The Data is Synchronized between the clients. To identify a specific user, a user specific token is used, that is generated at first run.
+
+_Warning: The Data is transferred unencrypted!_ 
+
+__I would change that if i could, but HTTPS do not work so well with my API Calls__
+
+
+
 ## Disclaimer
 
-This script uses the jQuery Library.
+This script uses jQuery, jQuery UI and the ColorPicker Addon from Martijn W. van der Lee.
 It shouldn't harm your computer or yourself ( ;-) ), but if they do, you can't blame me.
 
 If this script is against any law, please tell me.
