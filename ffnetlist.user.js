@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.4.0
+// @version        4.4.1
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -49,7 +49,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
     
-    var _VERSION = '4.4.0';
+    var _VERSION = '4.4.1';
     
     var _LOAD_INTERNAL = false;
     
@@ -243,7 +243,12 @@ function storyParser()
         
         
         // Check for Config Values:
-    
+	
+		if (typeof(_config['marker']) == "undefined")
+        {
+            _config['marker'] = {};
+        }
+	
         if (typeof(_config['story_search_depth']) == "undefined")
         {
             _config['story_search_depth'] = 1;
@@ -308,7 +313,12 @@ function storyParser()
         {
             _config['api_lookupKey'] = 'ffnet-api-interface';
         }
-        
+				
+		if (typeof(_config['config_key']) == "undefined")
+        {
+            _config['config_key'] = 'ffnet-config';
+        }
+
         if (typeof(_config['api_timeout']) == "undefined")
         {
             _config['api_timeout'] = 3000;
@@ -1876,6 +1886,8 @@ function storyParser()
 
     var _gui_create = function()
     {
+		_log("Creating GUI ");
+
         var width = 600;
         var radius = 15;
         var win_width = window.outerWidth;
@@ -1920,11 +1932,15 @@ function storyParser()
         $("body").append(container);
 
         _gui_container = container;
+		
+		_log("GUI Created");
 
     }
 
     var _gui_update = function()
     {
+		_log("Update GUI");
+	
         _gui_elements = {};
         _settings_elements = {};
         _gui_container.html('');
@@ -1939,8 +1955,10 @@ function storyParser()
             $("<span></span>").html("Current Version: <b>" + _VERSION + "</b>")        
         ).appendTo(_gui_container);
         
+		
         // Add Sync Button
-        $('<div style="width:40%; display:inline-block; text-align:left; margin-bottom: 5px;"></div>').append(
+        _log("Gui - Adding Sync Button");
+		$('<div style="width:40%; display:inline-block; text-align:left; margin-bottom: 5px;"></div>').append(
             $('<input class="btn" type="button" value="Synchronization"></input>').click(function()
             {
                 if (confirm("All unsaved changes will be deleted!"))
@@ -1994,6 +2012,7 @@ function storyParser()
 
         .appendTo(_gui_container);
 
+		_log("Container rendered");
 
         var table = $('<table width="100%"></table>').appendTo(s_container);
 
@@ -2006,6 +2025,8 @@ function storyParser()
             );
 
         // story_search_depth
+		_log("GUI - story_search_depth");
+		
         var input = $('<input type="text" id="fflist-story_search_depth">')
                     .attr('value', _config.story_search_depth)
                     .attr('size', '50');
@@ -2030,6 +2051,8 @@ function storyParser()
         table.append(spacer.clone());
 
         // mark_M_storys:
+		_log("GUI - mark_M_storys");
+		
         var checkbox = $('<input type="checkbox" id="fflist-mark_M_storys">');
         if (_config.mark_M_storys)
         {
@@ -2056,6 +2079,8 @@ function storyParser()
         table.append(spacer.clone());
 
         // hide_non_english_storys:
+		_log("GUI - hide_non_english_storys");
+		
         checkbox = $('<input type="checkbox" id="fflist-hide_non_english_storys">');
         if (_config.hide_non_english_storys)
         {
@@ -2082,6 +2107,8 @@ function storyParser()
         table.append(spacer.clone());
         
         // hide_images:
+		_log("GUI - hide_images");
+		
         checkbox = $('<input type="checkbox" id="fflist-hide_images">');
         if (_config.hide_images)
         {
@@ -2108,6 +2135,8 @@ function storyParser()
         table.append(spacer.clone());
         
         // hide_lazy_images:
+		_log("GUI - hide_lazy_images");
+		
         checkbox = $('<input type="checkbox" id="fflist-hide_lazy_images">');
         if (_config.hide_lazy_images)
         {
@@ -2135,6 +2164,8 @@ function storyParser()
         table.append(spacer.clone());
         
         // disable_image_hover:
+		_log("GUI - disable_image_hover");
+		
         checkbox = $('<input type="checkbox" id="fflist-disable_image_hover">');
         if (_config.disable_image_hover)
         {
@@ -2161,6 +2192,8 @@ function storyParser()
         table.append(spacer.clone());
         
         // content_width
+		_log("GUI - content_width");
+		
         input = $('<input type="text" id="fflist-content_width">')
                     .attr('value', _config.content_width)
                     .attr('size', '50');
@@ -2186,6 +2219,8 @@ function storyParser()
         
 
         // color_normal
+		_log("GUI - color_normal");
+		
         input = $('<input type="text" id="fflist-color_normal">')
                     .attr('value', _config.color_normal)
                     .attr('size', '50')
@@ -2216,6 +2251,8 @@ function storyParser()
         table.append(spacer.clone());
 
         // color_mouse_over
+		_log("GUI - color_mouse_over");
+		
         input = $('<input type="text" id="fflist-color_mouse_over">')
                     .attr('value', _config.color_mouse_over)
                     .attr('size', '50')
@@ -2243,6 +2280,8 @@ function storyParser()
         table.append(spacer.clone());
 
         // color_odd_color
+		_log("GUI - color_odd_color");
+		
         input = $('<input type="text" id="fflist-color_odd_color">')
                     .attr('value', _config.color_odd_color)
                     .attr('size', '50')
@@ -2286,6 +2325,8 @@ function storyParser()
         table.append(spacer.clone());
         
         // pocket_user
+		_log("GUI - pocket_user");
+		
         input = $('<input type="text" id="fflist-pocket_user">')
                     .attr('value', _config.pocket_user)
                     .attr('size', '50');
@@ -2311,6 +2352,8 @@ function storyParser()
         table.append(spacer.clone());
         
         // pocket_password
+		_log("GUI - pocket_password");
+		
         input = $('<input type="password" id="fflist-pocket_password">')
                     .attr('value', _config.pocket_password)
                     .attr('size', '50');
@@ -2351,6 +2394,8 @@ function storyParser()
         table.append(spacer.clone());
         
         // api_checkForUpdates
+		_log("GUI - api_checkForUpdates");
+		
         checkbox = $('<input type="checkbox" id="fflist-api_checkForUpdates">');
         if (_config.api_checkForUpdates)
         {
@@ -2396,6 +2441,8 @@ function storyParser()
         table.append(spacer.clone());
         
         // api_autoIncludeNewVersion
+		_log("GUI - api_autoIncludeNewVersion");
+		
         checkbox = $('<input type="checkbox" id="fflist-api_autoIncludeNewVersion">');
         if (_config.api_autoIncludeNewVersion)
         {
@@ -2423,6 +2470,8 @@ function storyParser()
         table.append(spacer.clone());
         
         // token
+		_log("GUI - token");
+		
         input = $('<input type="text" id="fflist-token">')
             .attr('value', _config.token)
             .attr('size', '50');
@@ -2447,12 +2496,16 @@ function storyParser()
 
         // -------------------------------
 
+		_log("GUI - Add Markers: ", _config.marker);
+		
         var container = $("<div></div>").appendTo(_gui_container);
 
         $.each(_config.marker, function(name, marker)
-        {
+        {		
             _gui_add_form(name, marker, container);
         });
+		
+		_log("GUI - Markers added");
 
         if (_DEBUG)
         {
@@ -2501,7 +2554,7 @@ function storyParser()
                     ignoreColor: data.ignoreColor.is(':checked'),
                     background: (name in _config.marker && _config.marker[name].background != null) ? (_config.marker[name].background) : null,
                     text_color: (name in _config.marker &&_config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null,
-                    revision: (typeof(_config.marker[name].revision) == "undefined") ? 0 : _config.marker[name].revision + 1
+                    revision: ((typeof(_config.marker[name]) == "undefined") || (typeof(_config.marker[name].revision) == "undefined")) ? 0 : _config.marker[name].revision + 1
                 };
 
                 if (_DEBUG)
@@ -2564,7 +2617,8 @@ function storyParser()
                     mark_chapter: false,
                     print_story: false,
                     mention_in_headline: true,
-                    text_color: null
+                    text_color: null,
+					revision: -1
                 }, container
                 , true // Display Big
             );
@@ -2591,10 +2645,14 @@ function storyParser()
 
         }).appendTo(_gui_container);
 
+		
+		_log("GUI Update Complete");
     }
 
     var _gui_add_form = function(name, marker, mainContainer, displayBig)
     {
+		_log("GUI Add Form: ", name);
+	
         _gui_elements[name] = {};
 
         var radius = 10;
@@ -3009,6 +3067,7 @@ function storyParser()
 
         container.fadeIn();
 
+		_log("Form added");
     }
 
     var _gui_hide = function()
