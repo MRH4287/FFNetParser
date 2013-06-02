@@ -1051,8 +1051,15 @@ function storyParser()
 
         var data = queue[i];
         
-        url = 'http://www.fanfiction.net' + data.url;
-    
+        // Check for ScriptInsert Page:
+        if (data.url.indexOf("?url=") == -1)
+        {
+            url = 'http://www.fanfiction.net' + data.url;
+        }
+        else
+        {
+            url = data.url;
+        }
 
         keywords = data.keywords;
 
