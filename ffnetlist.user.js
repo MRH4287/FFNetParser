@@ -625,7 +625,7 @@ function storyParser()
             innerContainer.append(
                 $('<div><span class="ffnet-messageCount">' + count + "</span> Message(s)</div>")
                 .addClass("menuItem")
-                .click(function()
+                .click(function ()
                 {
                     messageContainer.hide();
 
@@ -637,6 +637,12 @@ function storyParser()
             innerContainer.append(
                 $("<div>Give Feedback</div>")
                 .addClass("menuItem")
+                .click(function()
+                {
+                    messageContainer.hide();
+
+                    _feedbackGUI();
+                })
             );
 
 
@@ -3551,7 +3557,7 @@ function storyParser()
             modal: true,
             buttons:
             {
-                 Close: function ()
+                Close: function ()
                 {
                     $(this).dialog("close");
                 }
@@ -3559,7 +3565,70 @@ function storyParser()
         });
     }
 
-    
+    var _feedbackGUI = function ()
+    {
+        var types = ["Bug", "Feature Request", "Question", "Other"];
+
+        var input_type = $("<select></select>");
+        $.each(types, function (_, type)
+        {
+            $("<option></option>").text(type)
+            .appendTo(input_type);
+        });
+
+        var input_title = $('<input type="text" required />');
+        var input_message = $('<textarea style="width:90%; height: 100px;" required></textarea>');
+
+
+        var element = $('<div title="Fanfiction Story Parser"></div>')
+       .append(
+           $('<p></p>')
+           .append($('<span class="" style="float: left; margin: 0 7px 20px 0;"></span>'))
+           .append(
+               "<b>Feedback:</b><br /><br />"
+           )
+           .append("<b>Type:</b><br />")
+           .append(input_type)
+
+            .append("<br /><b>Title:</b><br />")
+           .append(input_title)
+
+           .append("<br /><b>Message:</b><br />")
+           .append(input_message)
+
+       ).appendTo($("body"));
+
+        element.dialog({
+            resizable: true,
+            height: 500,
+            modal: true,
+            buttons:
+            {
+                Send: function()
+                {
+                    var data = {
+                        Token: _config.token,
+                        Type: input_type.val(),
+                        Title: input_title.val(),
+                        Message: input_message.val(),
+                        Version: _VERSION
+                    };
+
+
+                    _apiRequest({ command: "postFeedback", data: JSON.stringify(data) }, function () { });
+
+                    alert("Message sent ...");
+
+                    $(this).dialog("close");
+                },
+
+                Close: function ()
+                {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    }
 
 
     // ----- API-Interface ------
