@@ -468,7 +468,7 @@ function storyParser()
 
                 });
 
-            }, 5000);
+            }, 10);
 
 
         }
@@ -1145,8 +1145,14 @@ function storyParser()
             }
 
 
-            // Get Messages from Server:
+           
 
+        }, 1000);
+
+
+        setTimeout(function ()
+        {
+            // Get Messages from Server:
             if (typeof (_dataConfig['styleCache']) != "undefined")
             {
                 // Only Check if the Style is allready loaded!
@@ -1177,8 +1183,7 @@ function storyParser()
                     $('.ffnet-messageCount').text(_dataConfig['messages'].length);
                 }
             }
-
-        }, 1000);
+        }, 5000);
 
 
     }
