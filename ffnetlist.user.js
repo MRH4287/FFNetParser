@@ -468,7 +468,7 @@ function storyParser()
 
                 });
 
-            }, 10);
+            }, 5000);
 
 
         }
