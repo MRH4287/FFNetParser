@@ -614,9 +614,24 @@ function storyParser()
                 .css("margin-bottom", "10px")
             );
 
+            var count = 0;
+
+            if (typeof (_dataConfig['messages']) != "undefined")
+            {
+                count = _dataConfig['messages'].length;
+            }
+
+
             innerContainer.append(
-                $("<div>0 Messages</div>")
+                $('<div><span class="ffnet-messageCount">' + count + "</span> Message(s)</div>")
                 .addClass("menuItem")
+                .click(function()
+                {
+                    messageContainer.hide();
+
+                    _messagesGUI();
+
+                })
             );
 
             innerContainer.append(
@@ -1121,6 +1136,40 @@ function storyParser()
             if (_config.hide_lazy_images)
             {
                 $(".lazy").remove();
+            }
+
+
+            // Get Messages from Server:
+
+            if (typeof (_dataConfig['styleCache']) != "undefined")
+            {
+                // Only Check if the Style is allready loaded!
+
+                if (typeof (_dataConfig['messages']) == "undefined")
+                {
+                    _apiGetMessages(function (messages)
+                    {
+                        if ((typeof (messages.Messages) != "undefined") && (messages.Messages.length > 0))
+                        {
+                            // New Messages:
+                            _dataConfig['messages'] = messages.Messages;
+
+                            // Update Icon:
+                            $(".ffnetMessageContainer img").attr("src", "http://private.mrh-development.de/ff/message_new-white.png");
+
+                            $('.ffnet-messageCount').text(messages.Messages.length);
+
+                            _save_dataStore();
+                        }
+                    });
+
+                }
+                else
+                {
+                    // Update Icon:
+                    $(".ffnetMessageContainer img").attr("src", "http://private.mrh-development.de/ff/message_new-white.png");
+                    $('.ffnet-messageCount').text(_dataConfig['messages'].length);
+                }
             }
 
         }, 1000);
@@ -3459,6 +3508,59 @@ function storyParser()
     }
 
 
+    var _messagesGUI = function ()
+    {
+        // Mark Messages as read:
+        var localMessages = _dataConfig['messages'];
+
+        var messages = $("<div></div>");
+
+        if (typeof (localMessages) != "undefined")
+        {
+            _apiMarkMessages();
+
+            $.each(localMessages, function (k, el)
+            {
+                messages.append(
+                    $("<b></b>")
+                    .text(el.Title)
+                )
+                .append(
+                    $("<p></p>")
+                    .text(el.Content)
+                )
+                .append("<hr />");
+            });
+        }
+
+
+
+        var element = $('<div title="Fanfiction Story Parser"></div>')
+       .append(
+           $('<p></p>')
+           .append($('<span class="" style="float: left; margin: 0 7px 20px 0;"></span>'))
+           .append(
+               "<b>Messages:</b><br/><br />"
+           )
+           .append(messages)
+       ).appendTo($("body"));
+
+        element.dialog({
+            resizable: true,
+            height: 500,
+            modal: true,
+            buttons:
+            {
+                 Close: function ()
+                {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    }
+
+    
+
 
     // ----- API-Interface ------
 
@@ -3920,6 +4022,34 @@ function storyParser()
 
     }
 
+    var _apiGetMessages = function (callback)
+    {
+        _apiRequest({ command: "getMessages", data: _config.token }, function (result)
+        {
+            var response = JSON.parse(result);
+
+            callback(response);
+
+        });
+
+    }
+
+    var _apiMarkMessages = function ()
+    {
+        delete _dataConfig['messages'];
+        _save_dataStore();
+
+        $(".ffnetMessageContainer img").attr("src", "http://private.mrh-development.de/ff/message-white.png");
+        $(".ffnet-messageCount").text("0");
+
+
+        _apiRequest({ command: "readMessages", data: _config.token }, function (result)
+        {
+        });
+
+    }
+
+
 
     this.debugOptions = function ()
     {
@@ -3937,7 +4067,7 @@ function storyParser()
                     $('<a></a>').addClass('menu-link').html('Debug').attr('href', '#').click(function (e)
                     {
 
-                        _syncGUI();
+                        _messagesGUI();
 
                     }).attr('title', 'DEBUG Options')
                 );
