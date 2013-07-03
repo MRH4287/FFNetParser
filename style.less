@@ -1,0 +1,180 @@
+/* Variables: */
+
+
+
+
+/* Main Styles: */
+
+abbr[title],                                    
+abbr[data-original-title] 
+{                     
+    cursor: help;                                 
+    border-bottom: 1px dotted #999999;            
+}                                               
+                                                        
+.ffnetparser_InputField                         
+{                                               
+    padding-left: 10px;                         
+}                                               
+                                                        
+#mrhOutput > div > ul                           
+{                                               
+    margin-top: 5px;                            
+    margin-bottom: 10px;                        
+}                                               
+                                                        
+.clickable                                      
+{                                               
+    cursor:pointer;                                                           
+}
+
+/* GUI */
+@guiContainer_width: 600px;
+
+
+.ffnet_guiContainer
+{
+    position: absolute;
+    top: 15px;
+    background-color: white;
+    width: @guiContainer_width;
+    min-height: 500px;
+    overflow: auto;
+    padding: 10px 5px 10px 5px;
+
+    .gradient(#CCCCCC, #ffffff, 0px, 10%);
+    .border_radius(15px);
+
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    -goog-ms-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    border: 1px solid black;
+    
+}
+
+
+.ffnet_settingsContainer
+{
+    margin: auto;
+    margin-bottom: 30px;
+    background-color: white;
+    padding: 5px;
+
+    .border_radius(15px);
+
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    -goog-ms-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    border: 2px solid black;
+
+}
+
+
+.fflist-filterField
+{
+    margin: auto;
+    margin-bottom: 15px;
+    background-color: white;
+    padding: 5px;
+    overflow: hidden;
+
+    .border_radius(10px);
+
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    -goog-ms-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+
+    border: 1px solid black;
+}
+
+
+
+/* MessageContainer */
+
+@messageContainer_radius: 15px;
+@messageContainer_width: 260px;
+@messageContainer_height: 120px;
+
+.ffnet_messageContainer
+{
+    background-color: #333399;
+    width: @messageContainer_width;
+    height: @messageContainer_height;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    display: none;
+    .border_radius(@messageContainer_radius);
+
+    .innerContainer
+    {
+        background-color: #F6F7EE;
+        width: @messageContainer_width - (@messageContainer_radius * 3);
+        height: @messageContainer_height - (@messageContainer_radius * 3);
+        margin: auto;
+        margin-top: 10px;
+        padding: 15px;
+        
+
+        .border_radius(@messageContainer_radius);
+    }
+}
+
+
+
+
+/*  Common  */
+.gradient(@from, @to, @start: 0.0, @end: 1.0) when (isnumber(@start)) and (isnumber(@end))
+{
+
+    background-image: linear-gradient(@from, @to);
+    background-image: linear-gradient(center top, @from percentage(@start), @to percentage(@end));
+    background-image: -o-linear-gradient(center top, @from percentage(@start), @to percentage(@end));
+    background-image: -moz-linear-gradient(center top, @from percentage(@start), @to percentage(@end));
+    background-image: -webkit-linear-gradient(center top, @from percentage(@start), @to percentage(@end));
+    background-image: -ms-linear-gradient(center top, @from percentage(@start), @to percentage(@end));
+    
+    background-image: -webkit-gradient(
+        linear,
+        center top,
+        center bottom,
+        color-stop(@start, @from),
+        color-stop(@end, @to)
+    );
+	
+}
+
+.gradient(@from, @to, @start: 0px, @end: 100%)
+{
+    background-image: linear-gradient(center top, @from @start, @to @end);
+    background-image: -o-linear-gradient(center top, @from @start, @to @end);
+    background-image: -moz-linear-gradient(center top, @from @start, @to @end);
+    background-image: -webkit-linear-gradient(center top, @from @start, @to @end);
+    background-image: -ms-linear-gradient(center top, @from @start, @to @end);
+ 
+}
+
+.border_radius(@size1, @size2, @size3, @size4)
+{
+    -webkit-border-top-left-radius: @size1;
+    -webkit-border-top-right-radius: @size2;
+    -webkit-border-bottom-right-radius: @size3;
+    -webkit-border-bottom-left-radius: @size4;
+    -moz-border-radius-topleft: @size1;
+    -moz-border-radius-topright: @size2;
+    -moz-border-radius-bottomright: @size3;
+    -moz-border-radius-bottomleft: @size4;
+    border-top-left-radius: @size1;
+    border-top-right-radius: @size2;
+    border-bottom-right-radius: @size3;
+    border-bottom-left-radius: @size4;
+}
+
+.border_radius(@size)
+{
+    .border_radius(@size, @size, @size, @size);
+}
+
