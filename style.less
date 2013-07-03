@@ -98,9 +98,12 @@ abbr[data-original-title]
 @messageContainer_width: 260px;
 @messageContainer_height: 120px;
 
+@messageContainer_outerColor: #333399;
+@messageContainer_innerColor: #F6F7EE;
+
 .ffnet_messageContainer
 {
-    background-color: #333399;
+    background-color: @messageContainer_outerColor;
     width: @messageContainer_width;
     height: @messageContainer_height;
     position: absolute;
@@ -111,15 +114,31 @@ abbr[data-original-title]
 
     .innerContainer
     {
-        background-color: #F6F7EE;
+        background-color: @messageContainer_innerColor;
         width: @messageContainer_width - (@messageContainer_radius * 3);
         height: @messageContainer_height - (@messageContainer_radius * 3);
         margin: auto;
         margin-top: 10px;
         padding: 15px;
-        
-
         .border_radius(@messageContainer_radius);
+
+
+        .menuItem
+        {
+            width: 100%;
+            background-color: darken(@messageContainer_innerColor, 10%);
+            .border_radius(10px);
+            text-align: center;
+
+            margin-bottom: 10px;
+
+            &:hover
+            {
+                background-color: darken(@messageContainer_innerColor, 5%);
+            }
+
+            .clickable;
+        }
     }
 }
 

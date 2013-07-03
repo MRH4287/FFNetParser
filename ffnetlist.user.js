@@ -640,8 +640,13 @@ function storyParser()
             );
 
             innerContainer.append(
+                $("<div>0 Messages</div>")
+                .addClass("menuItem")
+            );
+
+            innerContainer.append(
                 $("<div>Give Feedback</div>")
-                .css("text-align", "center")
+                .addClass("menuItem")
             );
 
 
