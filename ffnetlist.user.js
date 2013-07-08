@@ -2816,14 +2816,14 @@ function storyParser()
         if (!displayBig)
         {
             container.css("cursor", "pointer")
-            .css("cursor", "hand")
             .attr('title', "Click to Edit")
 
             .click(function ()
             {
                 container.css('height', '550px');
                 container.css("cursor", "auto");
-                container.removeAttr("title");
+                container.removeAttr("title")
+                .unbind();
 
             });
 
@@ -3182,6 +3182,46 @@ function storyParser()
             )
         );
 
+        
+        //Spacer:
+        table.append(spacer.clone());
+        
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>')
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td></td>').append(
+                    $('<img src="http://private.mrh-development.de/ff/glyphicons_369_collapse_top.png" alt="Minimize"></img>').click(function ()
+                    {       
+                      
+                        container
+                        .unbind()
+                        .css("cursor", "pointer")
+                        .css("height", "35px")
+                        .attr('title', "Click to Edit");
+                        
+                        setTimeout(function()
+                        {
+                            container.click(function ()
+                            {                            
+                                container.css('height', '550px');
+                                container.css("cursor", "auto");
+                                container.removeAttr("title");
+
+                            }); 
+                            
+                        }, 100);
+                    })
+                    .css("cursor", "pointer")
+                )
+            )
+        );
+        
+         
+        
+        
+        
         container.fadeIn();
 
         _log("Form added");
