@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.4.3
+// @version        4.4.3.2
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -85,7 +85,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.4.3';
+    var _VERSION = '4.4.3.2';
 
     var _LOAD_INTERNAL = false;
 
@@ -436,43 +436,11 @@ function storyParser()
         block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://private.mrh-development.de/ff/jquery.colorpicker.css");
         $("head").append(block);
 
-
-        // Check for Less-Style and Append:
-        if (typeof (_dataConfig["styleCache"]) != "undefined")
-        {
-            _log("Use Styles from Cache");
-
-            var styleBlock = $("<style></style")
-            .text(_dataConfig["styleCache"])
-            .appendTo("head");
-        }
-        else
-        {
-            setTimeout(function ()
-            {
-                // Request Styles:
-                _log("Request Styles from Server ...");
-
-                _apiRequest({ command: "getStyles", data: "" }, function (data)
-                {
-                    _log("Style Loaded from Server");
-
-
-                    _dataConfig["styleCache"] = data;
-                    var styleBlock = $("<style></style")
-                    .text(data)
-                    .appendTo("head");
-
-                    _save_dataStore();
-
-
-                });
-
-            }, 10);
-
-
-        }
-
+        
+        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://www.mrh-development.de/FanFictionUserScript/Css");
+        $("head").append(block);
+        
+        
         // Check for DEBUG-Mode
         if (typeof (_config['debug']) != "undefined")
         {
@@ -1152,37 +1120,33 @@ function storyParser()
 
         setTimeout(function ()
         {
-            // Get Messages from Server:
-            if (typeof (_dataConfig['styleCache']) != "undefined")
+            // Get Messages from Server:  
+            if (typeof (_dataConfig['messages']) == "undefined")
             {
-                // Only Check if the Style is allready loaded!
-
-                if (typeof (_dataConfig['messages']) == "undefined")
+                _apiGetMessages(function (messages)
                 {
-                    _apiGetMessages(function (messages)
+                    if ((typeof (messages.Messages) != "undefined") && (messages.Messages.length > 0))
                     {
-                        if ((typeof (messages.Messages) != "undefined") && (messages.Messages.length > 0))
-                        {
-                            // New Messages:
-                            _dataConfig['messages'] = messages.Messages;
+                        // New Messages:
+                        _dataConfig['messages'] = messages.Messages;
 
-                            // Update Icon:
-                            $(".ffnetMessageContainer img").attr("src", "http://private.mrh-development.de/ff/message_new-white.png");
+                        // Update Icon:
+                        $(".ffnetMessageContainer img").attr("src", "http://private.mrh-development.de/ff/message_new-white.png");
 
-                            $('.ffnet-messageCount').text(messages.Messages.length);
+                        $('.ffnet-messageCount').text(messages.Messages.length);
 
-                            _save_dataStore();
-                        }
-                    });
+                        _save_dataStore();
+                    }
+                });
 
-                }
-                else
-                {
-                    // Update Icon:
-                    $(".ffnetMessageContainer img").attr("src", "http://private.mrh-development.de/ff/message_new-white.png");
-                    $('.ffnet-messageCount').text(_dataConfig['messages'].length);
-                }
             }
+            else
+            {
+                // Update Icon:
+                $(".ffnetMessageContainer img").attr("src", "http://private.mrh-development.de/ff/message_new-white.png");
+                $('.ffnet-messageCount').text(_dataConfig['messages'].length);
+            }
+            
         }, 5000);
 
 
@@ -3751,7 +3715,7 @@ function storyParser()
 
     var _api_checkVersion = function ()
     {
-        if ((_config.api_checkForUpdates) && (typeof(_dataConfig['styleCache']) != "undefined"))
+        if ((_config.api_checkForUpdates))
         {
             var statisticData =
             {
@@ -4162,8 +4126,6 @@ function storyParser()
         });
 
     }
-
-
 
     this.debugOptions = function ()
     {
