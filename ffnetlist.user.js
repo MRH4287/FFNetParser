@@ -585,7 +585,7 @@ function storyParser()
             });
 
             innerContainer.append(
-                $("<div>FFNetParser - Message Menu</div>")
+                $("<div>Message Menu (Script)</div>")
                 .css("font-weight", "bold")
                 .css("margin-bottom", "10px")
             );
