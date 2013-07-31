@@ -3552,7 +3552,7 @@ function storyParser()
                 )
                 .append(
                     $("<p></p>")
-                    .text(el.Content)
+                    .html(el.Content)
                 )
                 .append("<hr />");
             });
