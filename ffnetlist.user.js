@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.4.4
+// @version        4.4.5
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -93,7 +93,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.4.4';
+    var _VERSION = '4.4.5';
 
     var _LOAD_INTERNAL = false;
 
@@ -1287,13 +1287,16 @@ function storyParser()
 
             var body = $(text);
 
-            if (_parseSite(body, keywords))
+            var sentence = null;
+
+            if ((sentence = _parseSite(body, keywords)) != null)
             {
                 var storyName = _getStoryName(url);
                 callback({
                     'name': storyName,
                     'url': url,
-                    'chapter': (i + 1)
+                    'chapter': (i + 1),
+                    'sentence': sentence
                 });
 
             } else
@@ -1357,7 +1360,7 @@ function storyParser()
         {
             var storyText = storyEl.html().toLowerCase();
 
-            var result = false;
+            var result = null;
 
             $.each(keywords, function (k, word)
             {
@@ -1368,7 +1371,27 @@ function storyParser()
                         var reg = new RegExp(word, "i");
                         if (reg.test(storyText))
                         {
-                            result = true;
+
+                            var append = "([a-zA-Z0-9, :-_\*]+)?";
+                            var regEx = "[^|\.]?" + append + word + append + "[\.|$]?";
+                            _log("Use RegExp for InStory Search: ", regEx);
+
+                            var reg = new RegExp(regEx, "i");
+                            var data = reg.exec(storyText);
+
+                            var sentence = "";
+                            for (i = 1; i < data.length; i++)
+                            {
+                                if (typeof (data[i]) != "undefined")
+                                {
+                                    sentence += data[i];
+                                }
+                            }
+
+                            _log("Found Sentence: ", sentence);
+
+
+                            result = sentence;
 
                             return;
                         }
@@ -1381,7 +1404,7 @@ function storyParser()
             return result;
         }
 
-        return false;
+        return null;
 
     }
 
@@ -1454,7 +1477,10 @@ function storyParser()
 
             if (config.mark_chapter)
             {
-                element.find('a').first().after("<span class=\"parser-msg\"> <b>[" + headline + "-" + found_where + "]</b></span>");
+                element.find('a').first().after(
+                    $("<span class=\"parser-msg\"> <b>[" + headline + "-" + found_where + "]</b></span>")
+                        .attr("title", info.sentence)
+                    );
             }
 
             if (config.text_color != null)
@@ -1548,6 +1574,7 @@ function storyParser()
                         $("<li></li>").append(
                             $("<a></a>").attr('href', value.url).html(value.name)
                         ).append(" - " + value.chapter)
+                        .attr("title", value.sentence)
                     )
                 });
 
