@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.4.5
+// @version        4.4.6
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -93,7 +93,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.4.5';
+    var _VERSION = '4.4.6';
 
     var _LOAD_INTERNAL = false;
 
@@ -704,7 +704,7 @@ function storyParser()
 
         $("body").keydown(function (event)
         {
-            var container = $("#myform").find("center").last();
+            var container = $("#content_wrapper_inner").find("center").last();
             var current = container.find("b").first();
             var url = null;
 
@@ -1841,6 +1841,8 @@ function storyParser()
             return;
         }
 
+        $("#ffnet-pocket-save-button").attr("disabled", "disabled").html("Working ...");
+
         var ajax_callback = function (text)
         {
             var body = $(text);
@@ -1864,7 +1866,10 @@ function storyParser()
 
                 if (data != null)
                 {
-                    _parsePocket(data, prefix);
+                    setTimeout(function ()
+                    {
+                        _parsePocket(data, prefix);
+                    }, 500);
                 }
 
             } else
