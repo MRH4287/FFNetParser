@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.4.6
+// @version        4.4.7
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -93,7 +93,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.4.6';
+    var _VERSION = '4.4.7';
 
     var _LOAD_INTERNAL = false;
 
@@ -2083,13 +2083,13 @@ function storyParser()
         var radius = 15;
         var win_width = window.outerWidth;
 
-        var container = $("<div></div>")
-        .addClass("ffnet_guiContainer")
-        .css('left', ((win_width - width) / 2) + "px")
-        .hide()
-        ;
+        var container = $('<div title="Fanfiction Story Parser"></div>')
+        //.addClass("ffnet_guiContainer")
+        //.css('left', ((win_width - width) / 2) + "px")
+        .hide();
 
-        container.html($('#content').hide().html());
+        //TODO: Check what this was for ...
+        //container.html($('#content').hide().html());
 
         $("body").append(container);
 
