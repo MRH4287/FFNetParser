@@ -2629,7 +2629,13 @@ function storyParser()
 
         var buttonContainer = $('<div class="fflist-buttonContainer"></div>').appendTo(_gui_container);
 
-        $('<input class="btn" type="button" value="Save"></input>').click(function ()
+        $('<input class="btn" type="button" value="Save"></input>')
+            .button({
+                icons: {
+                    primary: "ui-icon-check"
+                }
+            })
+            .click(function ()
         {
             var new_config = {};
 
@@ -2708,7 +2714,13 @@ function storyParser()
         }).appendTo(buttonContainer);
 
 
-        $('<input class="btn" type="button" value="Add Field"></input>').click(function ()
+        $('<input class="btn" type="button" value="Add Field"></input>')
+             .button({
+                 icons: {
+                     primary: "ui-icon-plusthick"
+                 }
+             })
+            .click(function ()
         {
             _gui_add_form('New-Form ' + (_add_count++),
                 {
