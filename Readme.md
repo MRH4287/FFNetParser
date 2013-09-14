@@ -10,7 +10,7 @@ This UserScript allows to parse and mark stories in the list.
 * Build filter to search for specific keywords.
   You can use those filter to:
    * Hide specific stories
-   * Change Background / Hover Color
+   * Change Background / Hover / Info Text Color
    * Mark Chapters (Add a Tag to the name of the Story)
    * List Stories (Add a list of matching stories on the top of the story list)
    * Mention in Headline (Add a notification to the headline, how many elements of one filter has been found) 
@@ -23,6 +23,7 @@ This UserScript allows to parse and mark stories in the list.
 * Display only mode (Select a filter, only matching stories will be displayed)
 * Auto Updater
 * Synchronization 
+* Messaging System / Feedback Button
   
 If you want a feature that isn't listed above, please write an Issue-Report.      
 
@@ -39,17 +40,13 @@ In Chrome you have to drag & drop the .user.js file into your extenions page.
 
 ## First Run
 
-> When you use this script for the first time, click on `Reset Config` on the right side of the Fanfiction.net Website.
-> This installs the default configuration.
+Just install the Script and you are good to go!
 
-The `Reset Config` overwrites the current config with an empty one.
-
-You no longer have to press `Reset Config` if you start your script the first time.
 
 ## Configuration
 
 This Script saves and loads data from your `localStorage` and your `sessionStorage`.
-To configure this script, click on `Config Editor` in the Fanfiction.net GUI.
+To configure this script, click on `Menu` in the Fanfiction.net GUI.
 
 __[Example Config](https://gist.github.com/4690800)__
 
@@ -92,6 +89,10 @@ The Options are following:
 
     The Mouse-Over Color of this Entry
 
+* Info Text Color
+
+	The Color of the Info Text of this Entry
+
 * Search in Stories
 
     This Option allows you to search these Keywords within the stories.
@@ -126,7 +127,7 @@ The Story will be saved beginning on the current chapter to the current last cha
 
 ### Import / Export
 
-To Import or Export your Config, click on the `Config Import / Export` in the top of the Fanfiction.net Page.
+To Import or Export your Config, click on the `Config Import / Export` in the Menu.
 
 
 ### Synchronization 
