@@ -147,6 +147,16 @@ function storyParser()
 
     var _defaultConfig = function ()
     {
+
+        if (typeof (_config['token']) == "undefined")
+        {
+            // Generates Random Token
+            _config['token'] = Math.random().toString().split(".")[1];
+            _save_config();
+        }
+
+        var token = _config.token;
+
         _config =
         {
             story_search_depth: 2,                  // The Max depth for a recursive search
@@ -166,6 +176,7 @@ function storyParser()
             api_timeout: 3000,
             api_retries: 2,
             api_checkForUpdates: true,
+            token: token,
 
             // Do not change below this line:
             storage_key: 'ffnet-storycache',
@@ -2588,7 +2599,8 @@ function storyParser()
 
         input = $('<input type="text" id="fflist-token">')
             .attr('value', _config.token)
-            .attr('size', '50');
+            .attr('size', '50')
+            .attr("pattern", "[0-9a-zA-Z]+");
 
         _settings_elements['token'] = input;
 
