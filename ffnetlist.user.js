@@ -2688,7 +2688,7 @@ function storyParser()
 
                 if (config.text_color == "")
                 {
-                    config.text_color = "#000000";
+                    config.text_color = "#686868";
                 }
 
                 if (_DEBUG)
@@ -2755,7 +2755,7 @@ function storyParser()
                     mark_chapter: false,
                     print_story: false,
                     mention_in_headline: true,
-                    text_color: '#FFFFFF',
+                    text_color: '#686868',
                     revision: -1
                 }, container
                 , true // Display Big
