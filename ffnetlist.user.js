@@ -1496,7 +1496,7 @@ function storyParser()
                     );
             }
 
-            if (config.text_color != null)
+            if (!config.ignoreColor && config.text_color != null)
             {
                 textEl.css('color', config.text_color);
             }
@@ -2682,9 +2682,14 @@ function storyParser()
                     search_story: data.search_story.is(':checked'),
                     ignoreColor: data.ignoreColor.is(':checked'),
                     background: (name in _config.marker && _config.marker[name].background != null) ? (_config.marker[name].background) : null,
-                    text_color: (name in _config.marker && _config.marker[name].text_color != null) ? (_config.marker[name].text_color) : null,
+                    text_color: data.text_color.val(),
                     revision: ((typeof (_config.marker[name]) == "undefined") || (typeof (_config.marker[name].revision) == "undefined")) ? 0 : _config.marker[name].revision + 1
                 };
+
+                if (config.text_color == "")
+                {
+                    config.text_color = "#000000";
+                }
 
                 if (_DEBUG)
                 {
@@ -2750,7 +2755,7 @@ function storyParser()
                     mark_chapter: false,
                     print_story: false,
                     mention_in_headline: true,
-                    text_color: null,
+                    text_color: '#FFFFFF',
                     revision: -1
                 }, container
                 , true // Display Big
@@ -2950,11 +2955,17 @@ function storyParser()
         {
             if ($('#fflist-' + name + '-ignoreColor').is(":checked"))
             {
-                $('#fflist-' + name + '-color').add('#fflist-' + name + '-mouseOver').attr("disabled", "disabled");
+                $('#fflist-' + name + '-color')
+                .add('#fflist-' + name + '-mouseOver')
+                .add('#fflist-' + name + '-text_color')
+                .attr("disabled", "disabled");
             }
             else
             {
-                $('#fflist-' + name + '-color').add('#fflist-' + name + '-mouseOver').removeAttr("disabled");
+                $('#fflist-' + name + '-color')
+                .add('#fflist-' + name + '-mouseOver')
+                .add('#fflist-' + name + '-text_color')
+                .removeAttr("disabled");
             }
 
 
@@ -3033,6 +3044,39 @@ function storyParser()
             $('<tr></tr>').append(
                 $('<td width="30%"></td>').append(
                     $('<label for="fflist-' + name + '-mouseOver">Mouse Over Color: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                    input
+                )
+
+            )
+        );
+
+        // spacer:
+        table.append(spacer.clone());
+
+        //  text_color:
+        var input = $('<input type="text" id="fflist-' + name + '-text_color">')
+                    .attr('value', marker.text_color)
+                    .attr('size', '50')
+                    .colorpicker({
+                        colorFormat: "#HEX"
+                    });
+
+        _gui_elements[name]['text_color'] = input;
+
+        if (marker.ignoreColor)
+        {
+            input.attr('disabled', 'disabled');
+        }
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append(
+                    $('<label for="fflist-' + name + '-text_color">Info Text Color: </label>')
                     .css('font-weight', 'bold')
                 )
                 .css('border-right', '1px solid gray')
