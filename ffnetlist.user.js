@@ -3690,7 +3690,8 @@ function storyParser()
                         Type: input_type.val(),
                         Title: input_title.val(),
                         Message: input_message.val(),
-                        Version: _VERSION
+                        Version: _VERSION,
+                        Branch: _BRANCH
                     };
 
 
@@ -3791,7 +3792,8 @@ function storyParser()
             {
                 Version: _VERSION,
                 Token: _config.token,
-                Nested: (typeof (sessionStorage["ffnet-mutex"]) != "undefined") ? true : false
+                Nested: (typeof (sessionStorage["ffnet-mutex"]) != "undefined") ? true : false,
+                Branch: _BRANCH
             }
 
             if (_DEBUG)
@@ -3858,7 +3860,6 @@ function storyParser()
         }
     }
 
-
     var _api_sendMarker = function (data, callback)
     {
         _apiRequest({ command: "sendFilter", data: JSON.stringify(data) }, function (result)
@@ -3873,7 +3874,6 @@ function storyParser()
 
 
     }
-
 
     var _api_sendMarkers = function (keys, onFinish, progress)
     {
@@ -3961,10 +3961,6 @@ function storyParser()
         next();
     }
 
-
-
-
-
     var _api_getRevisions = function (callback)
     {
         _apiRequest({ command: "getNewestRevisions", data: _config.token }, function (result)
@@ -3979,7 +3975,6 @@ function storyParser()
 
 
     }
-
 
     var _api_getNeedUpdate = function (callback)
     {
@@ -4058,7 +4053,6 @@ function storyParser()
 
     }
 
-
     var _api_getMarker = function (marker, callback, progress)
     {
         _log("Get Marker from Server: ", marker);
@@ -4092,7 +4086,6 @@ function storyParser()
 
 
     }
-
 
     var _api_syncFilter = function (progress_callback)
     {
