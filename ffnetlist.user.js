@@ -2787,7 +2787,7 @@ function storyParser()
 
         if (displayBig)
         {
-            height = 550;
+            height = 580;
         }
 
         var container = $('<div class="fflist-filterField"></div>')
@@ -2814,7 +2814,7 @@ function storyParser()
                 _log("Scroll Offset: ", offset);
                 */
 
-                container.css('height', '550px');
+                container.css('height', '580px');
                 container.css("cursor", "auto");
                 container.removeAttr("title")
                 .unbind();
