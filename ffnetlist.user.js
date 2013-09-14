@@ -149,37 +149,35 @@ function storyParser()
     {
         _config =
         {
-            story_search_depth: 1,                  // The Max depth for a recursive search
-            mark_M_storys: false,                    // Mark every Story Rated as M
+            story_search_depth: 2,                  // The Max depth for a recursive search
+            mark_M_storys: true,                    // Mark every Story Rated as M
             hide_non_english_storys: true,          // Hide all Storys, that are not in english
             color_normal: '#FFFFFF',
             color_mouse_over: '#EEF0F4',
             color_odd_color: '#dfdfdf',
             hide_images: false,
-            disable_image_hover: false,
             hide_lazy_images: false,
+            disable_image_hover: false,
             content_width: "90%",
             pocket_user: null,
             pocket_password: null,
-            storage_key: 'ffnet-storycache',
-            dataStorage_key: 'ffnet-dataStore',
-            config_key: 'ffnet-config',
             api_url: 'http://www.mrh-development.de/FanFictionUserScript',
             api_lookupKey: 'ffnet-api-interface',
-            api_checkForUpdates: true,
             api_timeout: 3000,
             api_retries: 2,
-            api_autoIncludeNewVersion: false,
+            api_checkForUpdates: true,
 
-            highlighter:
-            {
-            },
+            // Do not change below this line:
+            storage_key: 'ffnet-storycache',
+            config_key: 'ffnet-config',
+            dataStorage_key: 'ffnet-dataStore',
 
-            marker:
-            {
-
-            }
+            highlighter: {},
+            marker: {}
         }
+
+        _save_config();
+
     }
 
 
@@ -496,16 +494,18 @@ function storyParser()
 
                 }).attr('title', 'Parse the Stories again')
             ).append(
-                $('<a></a>').addClass('menu-link').html('Config Editor').attr('href', '#').click(function (e)
+                $('<a></a>').addClass('menu-link').html('Menu').attr('href', '#').click(function (e)
                 {
                     _gui();
                     e.preventDefault();
 
-                }).attr('title', 'Open Config Editor')
-            ).append(
+                }).attr('title', 'Open Config Menu')
+            );
+            /*
+                .append(
                 $('<a></a>').addClass('menu-link').html('Config Import / Export').attr('href', '#').click(function (e)
                 {
-                    _toggleSaveConfig();
+                    _openSaveConfig();
                     e.preventDefault();
 
                 }).attr('title', 'Config Export')
@@ -520,6 +520,7 @@ function storyParser()
 
                 }).attr('title', 'Load default Config')
             );
+            */
 
         }
 
@@ -1618,7 +1619,7 @@ function storyParser()
                             )
                             .append
                             (
-                                $("<td></td>").text(value)
+                                $('<td style="padding-left: 15px"></td>').text(value)
                             )
                         )
 
@@ -1626,7 +1627,10 @@ function storyParser()
 
 
                     // Show Dialog:
-                    dialog.dialog();
+                    dialog.dialog(
+                        {
+                            width: 668
+                        });
 
                     e.preventDefault();
                 }
@@ -2081,7 +2085,6 @@ function storyParser()
         _log("Creating GUI ");
 
         var width = 600;
-        var radius = 15;
         var win_width = window.outerWidth;
 
         var container = $('<div title="Fanfiction Story Parser"></div>')
@@ -2114,43 +2117,7 @@ function storyParser()
         _add_count = 0;
 
         // Displays current Version:
-        _gui_container.attr("title", "Fanfiction Story Parser - Version: " + _VERSION);
-
-        /*
-        $('<div style="width:30%; display:inline-block; text-align:left; margin-bottom: 5px"></div>').append(
-            $("<span></span>").html("Current Version: <b>" + _VERSION + "</b>")
-        ).appendTo(_gui_container);
-        */
-
-        // Add Sync Button
-        /*
-        _log("Gui - Adding Sync Button");
-        $('<div style="width:40%; display:inline-block; text-align:left; margin-bottom: 5px;"></div>').append(
-            $('<input class="btn" type="button" value="Synchronization"></input>').click(function ()
-            {
-                if (confirm("All unsaved changes will be deleted!"))
-                {
-                    _gui_hide();
-
-                    _syncGUI();
-                }
-
-            })
-        ).appendTo(_gui_container);
-        */
-
-        /*
-        $('<div style="width:30%; display:inline-block; text-align:right; margin-bottom: 5px"></div>').append(
-            $('<input class="btn" type="button" value="Close"></input>').click(function ()
-            {
-                if (confirm("All unsaved changes will be deleted!"))
-                {
-                    _gui_hide();
-                }
-
-            })
-        ).appendTo(_gui_container);
-        */
+        _gui_container.attr("title", "Fanfiction Story Parser - Version: " + _VERSION + " - Branch: " + _BRANCH);
 
 
         // render Settings Container:
@@ -2772,25 +2739,8 @@ function storyParser()
 
         }).appendTo(_gui_container);
 
-        $('<input class="btn" type="button" value="Close"></input>').click(function ()
-        {
-            if (confirm("All unsaved changes will be deleted!"))
-            {
-                _gui_hide();
-            }
 
-        }).appendTo(_gui_container);
 
-        $('<input class="btn" type="button" value="Reset Config"></input>').click(function ()
-        {
-            if (confirm("Do you want to delet your whole config! This can't be undone!"))
-            {
-                _gui_elements = {};
-                _reset_config();
-                _gui_hide();
-            }
-
-        }).appendTo(_gui_container);
 
 
         _log("GUI Update Complete");
@@ -2830,10 +2780,23 @@ function storyParser()
 
             .click(function ()
             {
+                /*
+                // Get the element, for the scrolling
+                parent = container.offsetParent();
+                var offset = container.offset().top - 10;
+
+                _log("Current ScrollTop: ", parent.scrollTop());
+                parent.scrollTop(parent.scrollTop() + offset);
+                _log("Scroll Offset: ", offset);
+                */
+
                 container.css('height', '550px');
                 container.css("cursor", "auto");
                 container.removeAttr("title")
                 .unbind();
+
+
+
 
             });
 
@@ -3239,42 +3202,74 @@ function storyParser()
 
     var _gui_hide = function ()
     {
-        _gui_container.fadeOut();
+        _gui_container.dialog("close");
+        //_gui_container.fadeOut();
     }
 
     var _gui_show = function ()
     {
 
-        var height = _gui_container.height();
-        var width = _gui_container.width();
-
-        _log("Need Height for GUI: ", height);
-        _log("Need Width for GUI: ", width);
-
-
-
         _gui_container.dialog({
             resizable: true,
             modal: true,
-            height: height,
-            width: width,
+            height: 900,
+            width: 664,
             buttons:
             {
+                "Synchronization": function ()
+                {
+                    if (confirm("All unsaved changes will be deleted!"))
+                    {
+                        _gui_hide();
+
+                        _syncGUI();
+                    }
+                },
+
+                "Config Import / Export": function ()
+                {
+                    if (confirm("All unsaved changes will be deleted!"))
+                    {
+                        _openSaveConfig();
+                    }
+                },
+
+                "Menu": function ()
+                {
+                    // Reopen:
+                    if (confirm("All unsaved changes will be deleted!"))
+                    {
+                        _gui_hide();
+
+                        _gui();
+
+                    }
+
+                },
+
+                "Reset Config": function ()
+                {
+                    if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
+                    {
+                        $(this).dialog("close");
+
+                        _defaultConfig();
+                    }
+
+                },
+
                 Close: function ()
                 {
-                    $(this).dialog("close");
+                    if (confirm("All unsaved changes will be deleted!"))
+                    {
+                        $(this).dialog("close");
+                    }
                 }
             }
         });
 
 
-       // _gui_container.fadeIn();
-    }
-
-    var _reset_config = function ()
-    {
-        _config.marker = {};
-        _save_config();
+        // _gui_container.fadeIn();
     }
 
     var _gui = function ()
@@ -3289,7 +3284,7 @@ function storyParser()
 
     }
 
-    var _toggleSaveConfig = function ()
+    var _openSaveConfig = function ()
     {
         if (_gui_container == null)
         {
@@ -3298,12 +3293,16 @@ function storyParser()
 
         if (_gui_container.is(':visible'))
         {
+            // Currently Visible, reopen
             _gui_hide();
+
+            _openSaveConfig();
 
         } else
         {
             _gui_container.html('');
 
+            /*
             $('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
                 $('<input class="btn" type="button" value="Close"></input>').click(function ()
                 {
@@ -3314,6 +3313,7 @@ function storyParser()
 
                 })
             ).appendTo(_gui_container);
+            */
 
             _gui_container.append('<label for="ffnet-config-display">Your current Config:</label><br/>');
 
@@ -3384,8 +3384,9 @@ function storyParser()
 
 
             // Set Position:
-            _gui_container.css("position", "fixed");
+            //_gui_container.css("position", "fixed");
 
+            /*
             $('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
                 $('<input class="btn" type="button" value="Close"></input>').click(function ()
                 {
@@ -3397,6 +3398,7 @@ function storyParser()
 
                 })
             ).appendTo(_gui_container);
+            */
 
             _gui_container.append("<p>This Menu allows you to set story specific options for:</p>");
             _gui_container.append(storyInfo.name);
