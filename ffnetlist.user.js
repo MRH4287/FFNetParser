@@ -3854,7 +3854,7 @@ function storyParser()
                 console.log("Loading new Version from Server");
             }
 
-            _apiRequest({ command: "getCurrent", data: "" }, function (res)
+            _apiRequest({ command: "getCurrent", data: _BRANCH }, function (res)
             {
                 //console.log("Script: ", res);
 
