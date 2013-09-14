@@ -2626,19 +2626,16 @@ function storyParser()
             console.log("Config elements: ", _gui_elements);
         }
 
+
+        var buttonContainer = $('<div class="fflist-buttonContainer"></div>').appendTo(_gui_container);
+
         $('<input class="btn" type="button" value="Save"></input>').click(function ()
         {
             var new_config = {};
 
-            if (_DEBUG)
-            {
-                console.log("Save Config");
-            }
-
-            if (_DEBUG)
-            {
-                console.log("Parsing Config elements: ", _gui_elements);
-            }
+            _log("Save Config");
+            _log("Parsing Config elements: ", _gui_elements);
+            
 
             $.each(_gui_elements, function (k, data)
             {
@@ -2703,14 +2700,12 @@ function storyParser()
 
             _save_config();
 
-            if (_DEBUG)
-            {
-                console.log("Config Saved Successfully");
-            }
+            _log("Config Saved Successfully");
+            
 
 
             _gui_hide();
-        }).appendTo(_gui_container);
+        }).appendTo(buttonContainer);
 
 
         $('<input class="btn" type="button" value="Add Field"></input>').click(function ()
@@ -2737,7 +2732,7 @@ function storyParser()
                 , true // Display Big
             );
 
-        }).appendTo(_gui_container);
+        }).appendTo(buttonContainer);
 
 
 
