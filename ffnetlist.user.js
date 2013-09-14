@@ -94,6 +94,7 @@ function storyParser()
     var _IGNORE_NEW_VERSION = false;
 
     var _VERSION = '4.4.7';
+    var _BRANCH = 'dev';
 
     var _LOAD_INTERNAL = false;
 
@@ -445,7 +446,7 @@ function storyParser()
         $("head").append(block);
 
 
-        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://www.mrh-development.de/FanFictionUserScript/Css");
+        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://www.mrh-development.de/FanFictionUserScript/Css?branch=" + _BRANCH);
         $("head").append(block);
 
 
@@ -2108,17 +2109,21 @@ function storyParser()
         _gui_container.html('');
 
         // Reset Position:
-        _gui_container.css("position", "absolute");
+        //_gui_container.css("position", "absolute");
 
         _add_count = 0;
 
         // Displays current Version:
+        _gui_container.attr("title", "Fanfiction Story Parser - Version: " + _VERSION);
+
+        /*
         $('<div style="width:30%; display:inline-block; text-align:left; margin-bottom: 5px"></div>').append(
             $("<span></span>").html("Current Version: <b>" + _VERSION + "</b>")
         ).appendTo(_gui_container);
-
+        */
 
         // Add Sync Button
+        /*
         _log("Gui - Adding Sync Button");
         $('<div style="width:40%; display:inline-block; text-align:left; margin-bottom: 5px;"></div>').append(
             $('<input class="btn" type="button" value="Synchronization"></input>').click(function ()
@@ -2132,9 +2137,9 @@ function storyParser()
 
             })
         ).appendTo(_gui_container);
+        */
 
-
-
+        /*
         $('<div style="width:30%; display:inline-block; text-align:right; margin-bottom: 5px"></div>').append(
             $('<input class="btn" type="button" value="Close"></input>').click(function ()
             {
@@ -2145,9 +2150,8 @@ function storyParser()
 
             })
         ).appendTo(_gui_container);
+        */
 
-
-        var radius = 15;
 
         // render Settings Container:
         var s_container = $("<div></div>")
@@ -3240,7 +3244,31 @@ function storyParser()
 
     var _gui_show = function ()
     {
-        _gui_container.fadeIn();
+
+        var height = _gui_container.height();
+        var width = _gui_container.width();
+
+        _log("Need Height for GUI: ", height);
+        _log("Need Width for GUI: ", width);
+
+
+
+        _gui_container.dialog({
+            resizable: true,
+            modal: true,
+            height: height,
+            width: width,
+            buttons:
+            {
+                Close: function ()
+                {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+
+       // _gui_container.fadeIn();
     }
 
     var _reset_config = function ()
@@ -4301,7 +4329,9 @@ function storyParser()
         }
     }
 
-
+    /**
+    *   Log to the Debug-Console
+    */
     var _log = function (a, b, c)
     {
         if (_DEBUG)
