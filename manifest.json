@@ -1,0 +1,9 @@
+{
+     "name": "Fanfiction.net Story Parser",
+     "version": "{VERSION}",
+     "manifest_version": 2,
+     "content_scripts": [{
+         "js": ["ffnetlist.user.js"],
+         "matches": ["http://www.fanfiction.net/*"]
+      }]
+}
