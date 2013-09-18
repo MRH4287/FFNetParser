@@ -7,6 +7,7 @@
 // @description    www.fanfiction.net story parser
 // @updateURL      https://github.com/MRH4287/FFNetParser/raw/master/ffnetlist.user.js
 // @include        http://www.fanfiction.net/*
+// @include        http://www.fictionpress.com/*
 // @run-at         document-end
 // ==/UserScript==
 
