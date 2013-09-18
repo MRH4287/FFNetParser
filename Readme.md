@@ -3,6 +3,7 @@
 ## Description:
 
 This UserScript allows to parse and mark stories in the list.
+
 **Note: This Userscript *should* work with www.fictionpress.com, but i only concentrate on fanfiction.net.
 If there is an problem with fictionpress.com, please report that to me.**
 
