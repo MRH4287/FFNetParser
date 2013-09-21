@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.4.7
+// @version        4.4.8
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -94,7 +94,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.4.7';
+    var _VERSION = '4.4.8';
     var _BRANCH = 'dev';
 
     var _LOAD_INTERNAL = false;
@@ -1831,22 +1831,72 @@ function storyParser()
 
         var field = body.find("#content_wrapper_inner > table > tbody > tr > td > b");
 
+
+        var options = {
+            'all': "From this chapter to the End",
+            '1': "One Chapter",
+            '2': "Two Chapters",
+            '5': "Five Chapters",
+            '10': "Ten Chapters"
+        };
+
+        var select = $("<select></select>")
+        .css("margin-left", "20px")
+        .change(function()
+        {
+            $("#ffnet-pocket-save-button").removeAttr("disabled")
+                  .html("Save To Pocket");
+            
+        });
+
+        $.each(options, function(key, value) 
+        {
+            select.append(
+                $("<option></option>")
+                .text(value)
+                .attr("value", key)
+            );
+
+        });
+
+
+
         field.after(
             $('<button class="btn">Save To Pocket</button>')
             .click(function ()
             {
-                _parsePocket(document.location.pathname, field.text() + ": ");
+                var option = select.children().filter(":selected").first().attr("value");
 
-            }).css("margin-left", "20px")
+                _log("Selected Option: ", option);
+
+
+               _parsePocket(document.location.pathname, field.text() + ": ", option);
+
+            }).css("margin-left", "10px")
             .attr("id", "ffnet-pocket-save-button")
         );
+
+       
+
+        field.after(select);
+
     }
 
-    var _parsePocket = function (url, prefix)
+    var _parsePocket = function (url, prefix, length, currentDepth)
     {
         if (typeof prefix == "undefined")
         {
             prefix = "";
+        }
+
+        if ((typeof length == "undefined") || (length == "all"))
+        {
+            length = 100;
+        }
+
+        if (typeof currentDepth == "undefined")
+        {
+            currentDepth = 1;
         }
 
         var user = _config['pocket_user'];
@@ -1877,7 +1927,7 @@ function storyParser()
             var next = body.find('button:contains(Next)').first();
 
 
-            if (next.length != 0)
+            if ((next.length != 0) && (currentDepth + 1 <= length))
             {
                 var data = url = _getUrlFromButton(next);
 
@@ -1885,7 +1935,7 @@ function storyParser()
                 {
                     setTimeout(function ()
                     {
-                        _parsePocket(data, prefix);
+                        _parsePocket(data, prefix, length, currentDepth + 1);
                     }, 500);
                 }
 
