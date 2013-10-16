@@ -146,6 +146,9 @@ function storyParser()
 
     var _gui_container = null;
 
+    /**
+    *   Resets Config to the default setting
+    */
     var _defaultConfig = function ()
     {
 
@@ -192,7 +195,9 @@ function storyParser()
 
     }
 
-
+    /**
+    *   Initializes System
+    */
     var _init = function ()
     {
         var isNested = _IGNORE_NEW_VERSION;
@@ -461,7 +466,7 @@ function storyParser()
 
 
         // Check for DEBUG-Mode
-        if (typeof (_config['debug']) != "undefined")
+        if ((typeof (_config['debug']) != "undefined") || (_BRANCH == "dev"))
         {
             _DEBUG = true;
         }
@@ -483,6 +488,9 @@ function storyParser()
 
     }
 
+    /**
+    *   Adds GUI Elements like Menu Link
+    */
     var _updateGUI = function ()
     {
         // Updates Content_width
@@ -811,19 +819,26 @@ function storyParser()
 
     }
 
+    /**
+    *   Start parsing story List
+    *   @param __element Base Element to start parsing
+    */
     var _readList = function (__element)
     {
         if (_LOAD_INTERNAL)
         {
             return;
-        }
-
+        }     
         _element = __element;
         _read();
     }
 
     this.readList = _readList;
 
+    /**
+    *   Parses the elements in the specified Container
+    *   @remark Use readList for initial parsing
+    */
     var _read = function ()
     {
 
@@ -1176,6 +1191,11 @@ function storyParser()
 
     }
 
+    /**
+    *   Gets the name of a story from a Link
+    *   @param link Link to story
+    *   @result Name of Story
+    */
     var _getStoryName = function (link)
     {
         var storyName_reg = /\/s\/[0-9]+\/[0-9]+\/(.+)/;
@@ -1198,6 +1218,12 @@ function storyParser()
         }
     }
 
+    /**
+    *   Starts Recursive Parsing of stories
+    *   @param queue List of Stories to parse
+    *   @param i What element in the queue should be parsed
+    *   @remark Don't specify the second Argument for initial parsing
+    */
     var _doParse = function (queue, i)
     {
         if (typeof i == "undefined")
@@ -1259,7 +1285,14 @@ function storyParser()
 
     }
 
-
+    /**
+    *   Recursive Parsing function
+    *   @param url URL to Story
+    *   @param keyword  Keywords for parsing
+    *   @param callback Callback in case of a found entry
+    *   @param i Recursive Depth
+    *   @param executeNext Callback for executing next element in the queue
+    */
     var _parse = function (url, keywords, callback, i, executeNext)
     {
 
@@ -1364,6 +1397,13 @@ function storyParser()
     }
 
 
+    /**
+    *   Parses a story page for recursive search.
+    *   @see _parse
+    *   @param body Body Element of the loaded page
+    *   @param keywords What Keywords to look for
+    *   @result Matching Sentence or null
+    */
     var _parseSite = function (body, keywords)
     {
         var storyEl = body.find('.storytext');
@@ -1422,6 +1462,14 @@ function storyParser()
 
     }
 
+    /**
+    *   Callback triggered, if an element was found
+    *   @param config Element Config, as specified by the user
+    *   @param element The instance of the HTML-Entity containing the match
+    *   @param textEl The HTML-Instance containing the Text
+    *   @param headline  The Headline of the Found story
+    *   @param info The Info to the found element
+    */
     var _elementCallback = function (config, element, textEl, headline, info)
     {
         var found_where = info.chapter;
@@ -1560,6 +1608,9 @@ function storyParser()
         _updateList();
     }
 
+    /**
+    *   Updates the List of found elements
+    */
     var _updateList = function ()
     {
         // Wrap Content:
@@ -1666,6 +1717,9 @@ function storyParser()
         $(".ffNetPageWrapper").first().before(list);
     }
 
+    /**
+    *   Updates the colors of the elements in the story list
+    */
     var _updateListColor = function ()
     {
         var odd = false;
@@ -1713,6 +1767,13 @@ function storyParser()
 
     }
 
+    /**
+    *   Updates the Color of a specifiy Element in the list
+    *   @param element HTML-Instance of found element
+    *   @param color The Color to set the Element to
+    *   @param colorMo The color used for the Mouse Over effect
+    *   @param notSetAttr Don't set the HTML-Attribute
+    */
     var _updateColor = function (element, color, colorMo, notSetAttr)
     {
         element.css('background-color', color);
@@ -1735,6 +1796,9 @@ function storyParser()
     }
 
 
+    /**
+    *   Enables the In Story Highlighter (Story View)
+    */
     var _enableInStoryHighlighter = function ()
     {
         if (_LOAD_INTERNAL)
@@ -1811,6 +1875,9 @@ function storyParser()
 
     this.enableInStoryHighlighter = _enableInStoryHighlighter;
 
+    /**
+    *   Enables the Pocket Save Feature (Story View)
+    */
     this.enablePocketSave = function ()
     {
         if (_LOAD_INTERNAL)
@@ -1882,6 +1949,14 @@ function storyParser()
 
     }
 
+    /**
+    *   Recursive Function for Pocket Saving
+    *   @param url Url of first story
+    *   @param prefix Prefix used for the story
+    *   @param length The max length for the recusion
+    *   @param currentDepth The current depth of the recusion
+    *   @remark Leave the Arguments length and currentDepth away, to achive default behavior
+    */
     var _parsePocket = function (url, prefix, length, currentDepth)
     {
         if (typeof prefix == "undefined")
@@ -2142,6 +2217,9 @@ function storyParser()
     var _gui_elements = {};
     var _add_count = 0;
 
+    /*
+    *   Creates the GUI used for the Menus
+    */
     var _gui_create = function ()
     {
         _log("Creating GUI ");
@@ -2165,6 +2243,9 @@ function storyParser()
 
     }
 
+    /**
+    *   Renders GUI for the Config-Menu
+    */
     var _gui_update = function ()
     {
         _log("Update GUI");
@@ -2821,6 +2902,13 @@ function storyParser()
         _log("GUI Update Complete");
     }
 
+    /**
+    *   Add a form for filter input
+    *   @param name Name of the Input field
+    *   @param marker Marker Config
+    *   @param mainContainer Container for addition
+    *   @param displayBig Don't minimize Element after adding
+    */
     var _gui_add_form = function (name, marker, mainContainer, displayBig)
     {
         _log("GUI Add Form: ", name);
@@ -3314,12 +3402,18 @@ function storyParser()
         _log("Form added");
     }
 
+    /**
+    *   Hides the GUI
+    */
     var _gui_hide = function ()
     {
         _gui_container.dialog("close");
         //_gui_container.fadeOut();
     }
 
+    /**
+    *   Displays the GUI
+    */
     var _gui_show = function ()
     {
 
@@ -3386,6 +3480,9 @@ function storyParser()
         // _gui_container.fadeIn();
     }
 
+    /**
+    *   Creates and displays the GUI
+    */
     var _gui = function ()
     {
         if (_gui_container == null)
@@ -3398,6 +3495,9 @@ function storyParser()
 
     }
 
+    /**
+    *   Open "Save Config" Submenu
+    */
     var _openSaveConfig = function ()
     {
         if (_gui_container == null)
@@ -3456,6 +3556,10 @@ function storyParser()
 
     }
 
+    /**
+    *   Open or closes the GUI for the Story Config
+    *   @param storyInfo Infos about the story
+    */
     var _toggleStoryConfig = function (storyInfo)
     {
         if (_gui_container == null)
@@ -3618,6 +3722,9 @@ function storyParser()
 
     }
 
+    /**
+    *   Open or closes the GUI for the Synchronize Feature 
+    */
     var _syncGUI = function ()
     {
 
@@ -3708,7 +3815,9 @@ function storyParser()
 
     }
 
-
+    /**
+    *   Open or closes the GUI for the Messaging GUI
+    */
     var _messagesGUI = function ()
     {
         // Mark Messages as read:
@@ -3760,6 +3869,9 @@ function storyParser()
         });
     }
 
+    /**
+    *   Open or closes the GUI for the Feedback Function
+    */
     var _feedbackGUI = function ()
     {
         var types = ["Bug", "Feature Request", "Question", "Other"];
@@ -3829,6 +3941,11 @@ function storyParser()
 
     // ----- API-Interface ------
 
+    /**
+    *   Generic API-Request
+    *   @param data Request Options
+    *   @param callback Function executed after result was found
+    */
     var _apiRequest = function (data, callback)
     {
         var url = _config.api_url;
@@ -3899,7 +4016,9 @@ function storyParser()
 
     }
 
-
+    /**
+    *   Checks the current Version
+    */
     var _api_checkVersion = function ()
     {
         if ((_config.api_checkForUpdates))
@@ -3952,6 +4071,9 @@ function storyParser()
         }
     }
 
+    /**
+    *   Updates the current script to the newest Version
+    */
     var _api_updateScript = function ()
     {
         if (_config.api_autoIncludeNewVersion)
@@ -3976,6 +4098,11 @@ function storyParser()
         }
     }
 
+    /**
+    *   Synchronize - Send Marker Config
+    *   @param data Marker Config
+    *   @param callback Executed after transfer
+    */
     var _api_sendMarker = function (data, callback)
     {
         _apiRequest({ command: "sendFilter", data: JSON.stringify(data) }, function (result)
@@ -3991,6 +4118,12 @@ function storyParser()
 
     }
 
+    /**
+    *   Synchronize - Send all markers
+    *   @param keys List of all Markers
+    *   @param onFinish Callback after the transfer
+    *   @param progress Callback after every step
+    */
     var _api_sendMarkers = function (keys, onFinish, progress)
     {
         _log("Send Markers to Server: ", keys);
@@ -4077,6 +4210,10 @@ function storyParser()
         next();
     }
 
+    /**
+    *   Synchronize - Get the Versions of the marker on the remote Server
+    *   @param callback Callback Function
+    */
     var _api_getRevisions = function (callback)
     {
         _apiRequest({ command: "getNewestRevisions", data: _config.token }, function (result)
@@ -4092,6 +4229,10 @@ function storyParser()
 
     }
 
+    /**
+    *   Synchronize - Checks if all marker are up to date
+    *   @param callback Callback after success
+    */
     var _api_getNeedUpdate = function (callback)
     {
         _log("API - Checking for Filter Changes");
@@ -4169,6 +4310,12 @@ function storyParser()
 
     }
 
+    /**
+    *   Synchronize - Get a specific marker from the remote Server
+    *   @param marker Name of the Marker
+    *   @param callback Callback after success
+    *   @param progress Callback after every step
+    */
     var _api_getMarker = function (marker, callback, progress)
     {
         _log("Get Marker from Server: ", marker);
@@ -4203,6 +4350,10 @@ function storyParser()
 
     }
 
+    /**
+    *   Synchronize - Starts the synchronization
+    *   @param progress_callback Callback with progress information
+    */
     var _api_syncFilter = function (progress_callback)
     {
         progress_callback(false);
@@ -4279,6 +4430,10 @@ function storyParser()
 
     }
 
+    /**
+    *   Get all new Messages from the Server
+    *   @param callback Callback after success
+    */
     var _apiGetMessages = function (callback)
     {
         _apiRequest({ command: "getMessages", data: _config.token }, function (result)
@@ -4291,6 +4446,9 @@ function storyParser()
 
     }
 
+    /**
+    *   Tell the remote Server, that all new messages have been read
+    */
     var _apiMarkMessages = function ()
     {
         delete _dataConfig['messages'];
@@ -4306,11 +4464,15 @@ function storyParser()
 
     }
 
+    /**
+    *   Activates Debug Options
+    */
     this.debugOptions = function ()
     {
         if (_DEBUG)
         {
 
+            /*
             var table = $(".zui").find("td").first();
 
             if (table.length > 0)
@@ -4328,7 +4490,8 @@ function storyParser()
                 );
 
             }
-
+            */
+            alert("Currently not used")
 
         }
     }
@@ -4339,6 +4502,9 @@ function storyParser()
 
     // --------------------------
 
+    /**
+    *   Save Config
+    */
     var _save_config = function ()
     {
         try
@@ -4355,6 +4521,9 @@ function storyParser()
 
     }
 
+    /**
+    *   Save to the session storage
+    */
     var _save_dataStore = function ()
     {
         _saveToMemory(sessionStorage, _config.dataStorage_key, _dataConfig);
@@ -4365,6 +4534,9 @@ function storyParser()
         }
     }
 
+    /**
+    *   Loads Config from Memory
+    */
     var _getConfig = function ()
     {
         return JSON.stringify(_config);
@@ -4372,6 +4544,10 @@ function storyParser()
 
     this.getConfig = _getConfig;
 
+    /**
+    *   Overwrites the config with a new one
+    *   @param newConfig New Config
+    */
     var _setConfig = function (newConfig)
     {
         if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
@@ -4385,7 +4561,10 @@ function storyParser()
 
     this.setConfig = _setConfig;
 
-
+    /**
+    *   Returns the List of found Story Elements
+    *   @returns List of found Elements
+    */
     this.getList = function ()
     {
         return _eList;
@@ -4393,6 +4572,12 @@ function storyParser()
 
     // -------- Multiuse Functions ---------
 
+    /**
+    *   Load a JSON-Text from Memory
+    *   @param memory Memory to load from
+    *   @param key Key of element
+    *   @result desearialized Object
+    */
     var _loadFromMemory = function (memory, key)
     {
         if ((typeof memory[key] != "undefined") &&
@@ -4408,7 +4593,12 @@ function storyParser()
         return {};
     }
 
-
+    /**
+    *   Save an object to an JSON File
+    *   @param memory Memory to save to
+    *   @param key Key of Element
+    *   @param object Object File
+    */
     var _saveToMemory = function (memory, key, object)
     {
         try
@@ -4422,6 +4612,10 @@ function storyParser()
 
     }
 
+    /**
+    *   Gets the URL from a Button
+    *   @param button Button Instance
+    */
     var _getUrlFromButton = function (button)
     {
         var script = button.attr('onclick');
@@ -4440,6 +4634,9 @@ function storyParser()
 
     /**
     *   Log to the Debug-Console
+    *   @param a Parameter A
+    *   @param b Parameter B
+    *   @param c Paramater C
     */
     var _log = function (a, b, c)
     {
@@ -4460,6 +4657,12 @@ function storyParser()
         }
     }
 
+    /**
+    *   Creates an Info Message
+    *   @param a Parameter A
+    *   @param b Parameter B
+    *   @param c Parameter C
+    */
     var _info = function (a, b, c)
     {
         if (_DEBUG)
