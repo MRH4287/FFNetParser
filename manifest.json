@@ -12,6 +12,7 @@
       }],
       "web_accessible_resources":
         [
-            "jquery-1.10.2.min.map"
+            "jquery-1.10.2.min.map",
+            "jquery-1.10.2.js"
         ]
 }
