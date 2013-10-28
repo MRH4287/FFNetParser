@@ -102,6 +102,7 @@ function storyParser()
         hide_images: false,
         hide_lazy_images: false,
         disable_image_hover: false,
+        allow_copy: false,
         content_width: "90%",
         pocket_user: null,
         pocket_password: null,
@@ -163,6 +164,7 @@ function storyParser()
             hide_images: false,
             hide_lazy_images: false,
             disable_image_hover: false,
+            allow_copy: false,
             content_width: "90%",
             pocket_user: null,
             pocket_password: null,
@@ -305,6 +307,11 @@ function storyParser()
         if (typeof (_config['hide_images']) == "undefined")
         {
             _config['hide_images'] = false;
+        }
+
+        if (typeof (_config['allow_copy']) == "undefined")
+        {
+            _config['allow_copy'] = false;
         }
 
         if (typeof (_config['content_width']) == "undefined")
@@ -1142,6 +1149,11 @@ function storyParser()
                 $(".lazy").remove();
             }
 
+            if (_config.allow_copy)
+            {
+                _log("Allow Selection of Text");
+                $(".nocopy").removeClass("nocopy").parent().attr("style", "padding: 0px 0.5em;");
+            }
 
 
 
@@ -2439,6 +2451,34 @@ function storyParser()
         // spacer:
         table.append(spacer.clone());
 
+        // allow_copy
+        _log("GUI - allow_copy");
+
+        checkbox = $('<input type="checkbox" id="fflist-allow_copy">');
+        if (_config.allow_copy)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['allow_copy'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-allow_copy">Allow the selection of Text: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                        checkbox
+                )
+            )
+        );
+
+        // spacer:
+        table.append(spacer.clone());
+
         // content_width
         _log("GUI - content_width");
 
@@ -2831,6 +2871,7 @@ function storyParser()
             _config.hide_images = _settings_elements.hide_images.is(':checked');
             _config.hide_lazy_images = _settings_elements.hide_lazy_images.is(':checked');
             _config.disable_image_hover = _settings_elements.disable_image_hover.is(':checked');
+            _config.allow_copy = _settings_elements.allow_copy.is(':checked');
             _config.content_width = _settings_elements.content_width.val();
             _config.color_normal = _settings_elements.color_normal.val();
             _config.color_odd_color = _settings_elements.color_odd_color.val();
