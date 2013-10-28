@@ -23,6 +23,7 @@ If there is an problem with fictionpress.com, please report that to me.**
   Save an entire story to your Pocket (formally Read It Later) Account
 * Color Picker for easy Color selection
 * Switch pages with the cursor Keys
+* Allow text selection
 * Display only mode (Select a filter, only matching stories will be displayed)
 * Auto Updater
 * Synchronization 
