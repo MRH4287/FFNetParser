@@ -152,29 +152,34 @@ abbr[data-original-title]
     }
 }
 
-@config_button_width: 20px;
-@config_button_height: 20px;
+@config_button_width: 300px;
+@config_button_height: 50px;
 @config_button_radius: 5px;
 @config_button_textSize: 12px;
 
+@config_button_color_begin: #f5e1e1;
+@config_button_color_end: #ffffff;
 
 .ffnet_Config_Button
 {
     width: @config_button_width;
     height: @config_button_height;
     display: inline-block;
+    margin:auto;
     margin-bottom: 10px;
     margin-right: 10px;
-    
     font-size: @config_button_textSize;
-    padding: @config_button_radius; 
+    padding: @config_button_radius;
     padding-top: @config_button_height / 2 - @config_button_textSize;
-    
     text-align: center;
     .border_radius(@config_button_radius);
+    border: 2px solid black;
+    .gradient(@config_button_color_begin, @config_button_color_end);
 
-
-
+    &:hover
+    {
+         .gradient(@config_button_color_end, @config_button_color_begin);
+    }
 }
 
 
