@@ -93,17 +93,23 @@ function storyParser()
 
     // Default-Config:
     var _config = {
+
+        // Story:
         story_search_depth: 2,                  // The Max depth for a recursive search
         mark_M_storys: true,                    // Mark every Story Rated as M
         hide_non_english_storys: true,          // Hide all Storys, that are not in english
+        allow_copy: false,
+
+        // Layout:
         color_normal: '#FFFFFF',
         color_mouse_over: '#EEF0F4',
         color_odd_color: '#dfdfdf',
         hide_images: false,
         hide_lazy_images: false,
         disable_image_hover: false,
-        allow_copy: false,
         content_width: "90%",
+
+        // API:
         pocket_user: null,
         pocket_password: null,
         api_url: 'http://www.mrh-development.de/FanFictionUserScript',
@@ -111,7 +117,11 @@ function storyParser()
         api_timeout: 3000,
         api_retries: 2,
         api_checkForUpdates: true,
+
+        // advanced Features:
         disable_cache: false,
+        disable_highlighter: false,
+
 
         // Do not change below this line:
         storage_key: 'ffnet-storycache',
@@ -122,6 +132,8 @@ function storyParser()
         marker: {}
     }
 
+
+    var _baseConfig = _config;
 
     // ..................
 
@@ -154,37 +166,7 @@ function storyParser()
 
         var token = _config.token;
 
-        _config =
-        {
-            story_search_depth: 2,                  // The Max depth for a recursive search
-            mark_M_storys: true,                    // Mark every Story Rated as M
-            hide_non_english_storys: true,          // Hide all Storys, that are not in english
-            color_normal: '#FFFFFF',
-            color_mouse_over: '#EEF0F4',
-            color_odd_color: '#dfdfdf',
-            hide_images: false,
-            hide_lazy_images: false,
-            disable_image_hover: false,
-            allow_copy: false,
-            content_width: "90%",
-            pocket_user: null,
-            pocket_password: null,
-            api_url: 'http://www.mrh-development.de/FanFictionUserScript',
-            api_lookupKey: 'ffnet-api-interface',
-            api_timeout: 3000,
-            api_retries: 2,
-            api_checkForUpdates: true,
-            disable_cache: false,
-            token: token,
-
-            // Do not change below this line:
-            storage_key: 'ffnet-storycache',
-            config_key: 'ffnet-config',
-            dataStorage_key: 'ffnet-dataStore',
-
-            highlighter: {},
-            marker: {}
-        }
+        _config = _baseConfig;
 
         _save_config();
 
@@ -908,81 +890,85 @@ function storyParser()
             }
 
             // Highlighter:
-            // Build Context Menu for Storys:
-            var contextMenu = $("<div></div>")
-            .css("width", "20px")
-            .css("height", "20px")
-            .css("float", "right")
-            .addClass("parser-msg")
-            .addClass("context-menu")
-            .append(
-                $("<img></img>")
-                .attr("src", "http://private.mrh-development.de/ff/edit.gif")
-                .css("width", "100%")
-                .css("height", "100%")
-            );
 
-            // Open GUI
-            contextMenu.click(function ()
+            if (!_config.disable_highlighter)
             {
-                if (_DEBUG)
-                {
-                    console.log("Context Menu for ", element, " clicked");
-                }
-
-                _toggleStoryConfig({
-                    url: link,
-                    element: element,
-                    name: storyName
-                });
-
-            });
-
-            element.find("div").first().before(contextMenu);
-
-
-            // Highlighter found:
-            if (typeof (_config['highlighter'][link]) != "undefined")
-            {
-                if (_DEBUG)
-                {
-                    console.info("Highlight Element Found: ", element);
-                }
-
-                // Update old Format
-                if (typeof (_config['highlighter'][link]) != "object")
-                {
-                    if (_DEBUG)
-                    {
-                        console.log("Updated old Highlighter Object");
-                    }
-
-                    _config['highlighter'][link] = { image: _config['highlighter'][link], hide: false };
-                }
-
-                if (_config['highlighter'][link].hide)
-                {
-                    if (_DEBUG)
-                    {
-                        console.log("Hide Entry because of Story Config: ", link);
-                    }
-                    _hidden_elements[link] = "storyConfig";
-
-                    element.attr("data-hiddenBy", "storyConfig");
-
-                    element.hide();
-                    _hidden++;
-                }
-
-
-                var img = $("<img></img>").attr("src", _config['highlighter'][link].image)
+                // Build Context Menu for Storys:
+                var contextMenu = $("<div></div>")
                 .css("width", "20px")
                 .css("height", "20px")
-                .css("margin-left", "15px")
-                .addClass("parser-msg");
+                .css("float", "right")
+                .addClass("parser-msg")
+                .addClass("context-menu")
+                .append(
+                    $("<img></img>")
+                    .attr("src", "http://private.mrh-development.de/ff/edit.gif")
+                    .css("width", "100%")
+                    .css("height", "100%")
+                );
 
-                element.find("a").last().after(img);
+                // Open GUI
+                contextMenu.click(function ()
+                {
+                    if (_DEBUG)
+                    {
+                        console.log("Context Menu for ", element, " clicked");
+                    }
 
+                    _toggleStoryConfig({
+                        url: link,
+                        element: element,
+                        name: storyName
+                    });
+
+                });
+
+                element.find("div").first().before(contextMenu);
+
+
+                // Highlighter found:
+                if (typeof (_config['highlighter'][link]) != "undefined")
+                {
+                    if (_DEBUG)
+                    {
+                        console.info("Highlight Element Found: ", element);
+                    }
+
+                    // Update old Format
+                    if (typeof (_config['highlighter'][link]) != "object")
+                    {
+                        if (_DEBUG)
+                        {
+                            console.log("Updated old Highlighter Object");
+                        }
+
+                        _config['highlighter'][link] = { image: _config['highlighter'][link], hide: false };
+                    }
+
+                    if (_config['highlighter'][link].hide)
+                    {
+                        if (_DEBUG)
+                        {
+                            console.log("Hide Entry because of Story Config: ", link);
+                        }
+                        _hidden_elements[link] = "storyConfig";
+
+                        element.attr("data-hiddenBy", "storyConfig");
+
+                        element.hide();
+                        _hidden++;
+                    }
+
+
+                    var img = $("<img></img>").attr("src", _config['highlighter'][link].image)
+                    .css("width", "20px")
+                    .css("height", "20px")
+                    .css("margin-left", "15px")
+                    .addClass("parser-msg");
+
+                    element.find("a").last().after(img);
+
+                }
             }
 
             if (!marker_found)
@@ -2330,6 +2316,34 @@ function storyParser()
         );
 
 
+        // spacer:
+        table.append(spacer.clone());
+
+
+        // hide_non_english_storys:
+        _log("GUI - hide_non_english_storys");
+
+        checkbox = $('<input type="checkbox" id="fflist-hide_non_english_storys">');
+        if (_config.hide_non_english_storys)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['hide_non_english_storys'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-hide_non_english_storys">Hide non English Storys: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                        checkbox
+                )
+            )
+        );
 
         // spacer:
         table.append(spacer.clone());
@@ -2365,37 +2379,6 @@ function storyParser()
         cat = __getCategory("Layout Settings", "ffnetConfig-Layout", s_container);
         table = cat.table;
 
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // hide_non_english_storys:
-        _log("GUI - hide_non_english_storys");
-
-        checkbox = $('<input type="checkbox" id="fflist-hide_non_english_storys">');
-        if (_config.hide_non_english_storys)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        _settings_elements['hide_non_english_storys'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-hide_non_english_storys">Hide non English Storys: </label>')
-                    .css('font-weight', 'bold')
-                )
-                .css('border-right', '1px solid gray')
-            ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                        checkbox
-                )
-            )
-        );
-
-        // spacer:
-        table.append(spacer.clone());
 
         // hide_images:
         _log("GUI - hide_images");
@@ -2798,6 +2781,36 @@ function storyParser()
         table = cat.table;
 
 
+        // disable_highlighter
+        _log("GUI - disable_highlighter");
+
+        checkbox = $('<input type="checkbox" id="fflist-disable_highlighter">');
+        if (_config.disable_highlighter)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['disable_highlighter'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-disable_highlighter"><abbr title="Disable the Story Highlighter Feature.">Disable Highlighter</abbr>: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                        checkbox
+                )
+            )
+        );
+
+
+        // spacer:
+        table.append(spacer.clone());
+
+
         // disable_cache
         _log("GUI - disable_cache");
 
@@ -2943,6 +2956,7 @@ function storyParser()
             _config.hide_lazy_images = _settings_elements.hide_lazy_images.is(':checked');
             _config.disable_image_hover = _settings_elements.disable_image_hover.is(':checked');
             _config.allow_copy = _settings_elements.allow_copy.is(':checked');
+            _config.disable_highlighter = _settings_elements.disable_highlighter.is(':checked');         
             _config.content_width = _settings_elements.content_width.val();
             _config.color_normal = _settings_elements.color_normal.val();
             _config.color_odd_color = _settings_elements.color_odd_color.val();
