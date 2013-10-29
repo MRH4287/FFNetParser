@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.4.9
+// @version        4.4.10
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -85,7 +85,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.4.9';
+    var _VERSION = '4.4.10';
     var _BRANCH = 'dev';
 
     var _LOAD_INTERNAL = false;
@@ -111,6 +111,7 @@ function storyParser()
         api_timeout: 3000,
         api_retries: 2,
         api_checkForUpdates: true,
+        disable_cache: false,
 
         // Do not change below this line:
         storage_key: 'ffnet-storycache',
@@ -173,6 +174,7 @@ function storyParser()
             api_timeout: 3000,
             api_retries: 2,
             api_checkForUpdates: true,
+            disable_cache: false,
             token: token,
 
             // Do not change below this line:
@@ -1309,7 +1311,7 @@ function storyParser()
 
         var ajax_callback = function (text)
         {
-            if (!(url in _storyCache))
+            if (!(url in _storyCache) && _config.disable_cache)
             {
                 if (_DEBUG)
                 {
@@ -2780,6 +2782,51 @@ function storyParser()
                 )
             )
         );
+
+        // spacer:
+        table.append(spacer.clone());
+
+        // Advanced ---
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="30%"></td>').append("--------")
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                    " ---- Advanced Settings ----"
+                )
+            )
+        );
+
+
+        // spacer:
+        table.append(spacer.clone());
+
+        // disable_cache
+        _log("GUI - disable_cache");
+
+        checkbox = $('<input type="checkbox" id="fflist-disable_cache">');
+        if (_config.disable_cache)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['disable_cache'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-disable_cache"><abbr title="Disable the Caching function used for the in Story search.">Disable Cache</abbr>: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                        checkbox
+                )
+            )
+        );
+
 
 
 
