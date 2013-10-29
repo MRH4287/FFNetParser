@@ -259,6 +259,8 @@ function storyParser()
             console.warn(ex);
         }
 
+        var defaultConfig = _config;
+
         try
         {
             _config = _loadFromMemory(localStorage, _config.config_key);
@@ -271,56 +273,6 @@ function storyParser()
 
         // Check for Config Values:
 
-        if (typeof (_config['marker']) == "undefined")
-        {
-            _config['marker'] = {};
-        }
-
-        if (typeof (_config['story_search_depth']) == "undefined")
-        {
-            _config['story_search_depth'] = 1;
-        }
-
-        if (typeof (_config['mark_M_storys']) == "undefined")
-        {
-            _config['mark_M_storys'] = false;
-        }
-
-        if (typeof (_config['hide_non_english_storys']) == "undefined")
-        {
-            _config['hide_non_english_storys'] = false;
-        }
-
-        if (typeof (_config['color_normal']) == "undefined")
-        {
-            _config['color_normal'] = '#FFFFFF';
-        }
-
-        if (typeof (_config['color_mouse_over']) == "undefined")
-        {
-            _config['color_mouse_over'] = '#EEF0F4';
-        }
-
-        if (typeof (_config['color_odd_color']) == "undefined")
-        {
-            _config['color_odd_color'] = '#dfdfdf';
-        }
-
-        if (typeof (_config['hide_images']) == "undefined")
-        {
-            _config['hide_images'] = false;
-        }
-
-        if (typeof (_config['allow_copy']) == "undefined")
-        {
-            _config['allow_copy'] = false;
-        }
-
-        if (typeof (_config['content_width']) == "undefined")
-        {
-            _config['content_width'] = "90%";
-        }
-
         if ((typeof (_config['pocket_user']) == "undefined") || (_config['pocket_user'] === ""))
         {
             _config['pocket_user'] = null;
@@ -330,57 +282,7 @@ function storyParser()
         {
             _config['pocket_password'] = null;
         }
-
-        if (typeof (_config['highlighter']) == "undefined")
-        {
-            _config['highlighter'] = {};
-        }
-
-        if (typeof (_config['api_url']) == "undefined")
-        {
-            _config['api_url'] = 'http://www.mrh-development.de/FanFictionUserScript';
-        }
-
-        if (typeof (_config['api_lookupKey']) == "undefined")
-        {
-            _config['api_lookupKey'] = 'ffnet-api-interface';
-        }
-
-        if (typeof (_config['config_key']) == "undefined")
-        {
-            _config['config_key'] = 'ffnet-config';
-        }
-
-        if (typeof (_config['api_timeout']) == "undefined")
-        {
-            _config['api_timeout'] = 3000;
-        }
-
-        if (typeof (_config['api_retries']) == "undefined")
-        {
-            _config['api_retries'] = 2;
-        }
-
-        if (typeof (_config['api_checkForUpdates']) == "undefined")
-        {
-            _config['api_checkForUpdates'] = false;
-        }
-
-        if (typeof (_config['dataStorage_key']) == "undefined")
-        {
-            _config['dataStorage_key'] = 'ffnet-dataStore';
-        }
-
-        if (typeof (_config['disable_image_hover']) == "undefined")
-        {
-            _config['disable_image_hover'] = false;
-        }
-
-        if (typeof (_config['hide_lazy_images']) == "undefined")
-        {
-            _config['hide_lazy_images'] = false;
-        }
-
+        
         if (typeof (_config['token']) == "undefined")
         {
             // Generates Random Token
@@ -432,6 +334,17 @@ function storyParser()
                 });
             }, 1000);
         }
+
+
+        // Load all the config Values that are listed in the _config Array at startup
+        $.each(defaultConfig, function (name, defaultValue)
+        {
+            if (typeof (_config[name]) == "undefined")
+            {
+                _config[name] = defaultValue;
+            }
+        });
+
 
 
         if (_DEBUG)
@@ -2091,7 +2004,11 @@ function storyParser()
             console.log("Current Page: ", currentPage);
         }
 
-        var wrapper = _createWrapper(currentPage);
+        var wrapper = $(".ffNetPageWrapper");
+        if (wrapper.length == 0)
+        {
+            wrapper = _createWrapper(currentPage);
+        }
 
         var notWrapped = $('.z-list[data-wrapped!="wrapped"]');
 
