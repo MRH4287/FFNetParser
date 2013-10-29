@@ -282,7 +282,7 @@ function storyParser()
         {
             _config['pocket_password'] = null;
         }
-        
+
         if (typeof (_config['token']) == "undefined")
         {
             // Generates Random Token
@@ -741,7 +741,7 @@ function storyParser()
         if (_LOAD_INTERNAL)
         {
             return;
-        }     
+        }
         _element = __element;
         _read();
     }
@@ -1827,14 +1827,14 @@ function storyParser()
 
         var select = $("<select></select>")
         .css("margin-left", "20px")
-        .change(function()
+        .change(function ()
         {
             $("#ffnet-pocket-save-button").removeAttr("disabled")
                   .html("Save To Pocket");
-            
+
         });
 
-        $.each(options, function(key, value) 
+        $.each(options, function (key, value)
         {
             select.append(
                 $("<option></option>")
@@ -1855,13 +1855,13 @@ function storyParser()
                 _log("Selected Option: ", option);
 
 
-               _parsePocket(document.location.pathname, field.text() + ": ", option);
+                _parsePocket(document.location.pathname, field.text() + ": ", option);
 
             }).css("margin-left", "10px")
             .attr("id", "ffnet-pocket-save-button")
         );
 
-       
+
 
         field.after(select);
 
@@ -2196,25 +2196,40 @@ function storyParser()
 
         // Buttons
 
+        var saveButtonContainer = $('<div class="fflist-buttonContainer"></div>');
+
+        $('<input class="btn" type="button" value="Save"></input>')
+            .button({
+                icons: {
+                    primary: "ui-icon-check"
+                }
+            }).addClass("ffnetSaveButton").appendTo(saveButtonContainer);
+
+
+
         // Button Logic:
         var __buttonLogic = function ()
         {
             var target = $(this).attr("data-target");
 
-            $(".ffnet_Config_Button_Container").fadeOut();
-            $("." + target).fadeIn();
+            $(".ffnet_Config_Button_Container").fadeOut(400, function ()
+            {
+                $("." + target).fadeIn();
+            });
 
         }
 
         var __backLogic = function ()
         {
-            $(".ffnet_Config_Category:visible").fadeOut();
-            $(".ffnet_Config_Button_Container").fadeIn();
+            $(".ffnet_Config_Category:visible").fadeOut(400, function ()
+            {
+                $(".ffnet_Config_Button_Container").fadeIn();
+            });
         }
 
         // Render SubLogic:
 
-        var __getButton = function(name, target, container)
+        var __getButton = function (name, target, container)
         {
             return $("<div></div>").addClass("ffnet_Config_Button").text(name)
                 .attr("data-target", target).click(__buttonLogic).appendTo(container);
@@ -2243,28 +2258,6 @@ function storyParser()
 
         // ----------- GUI -------------------------
 
-        var buttonContainer = $('<div class="ffnet_Config_Button_Container"></div>').appendTo(s_container);
-
-        __getButton("Story Settings", "ffnetConfig-Settings", buttonContainer);
-        __getButton("Layout Settings", "ffnetConfig-Layout", buttonContainer);
-        __getButton("API Settings", "ffnetConfig-API", buttonContainer);
-        __getButton("Advanced", "ffnetConfig-Andvanced", buttonContainer);
-
-
-        var cat = __getCategory("Story Settings", "ffnetConfig-Settings", s_container);
-
-        cat = __getCategory("Layout Settings", "ffnetConfig-Layout", s_container);
-
-        cat = __getCategory("API Settings", "ffnetConfig-API", s_container);
-
-        cat = __getCategory("Advanced", "ffnetConfig-Andvanced", s_container);
-
-
-
-
-        /*
-        var table = $('<table width="100%"></table>').appendTo(s_container);
-
         var spacer = $('<tr></tr>').append
             (
                 $('<td width="30%" style="height:10px"></td>')
@@ -2272,6 +2265,18 @@ function storyParser()
             ).append(
                 $('<td></td>')
             );
+
+
+        var buttonContainer = $('<div class="ffnet_Config_Button_Container"></div>').appendTo(s_container);
+
+        __getButton("Story Settings", "ffnetConfig-Settings", buttonContainer);
+        __getButton("Layout Settings", "ffnetConfig-Layout", buttonContainer);
+        __getButton("API Settings", "ffnetConfig-API", buttonContainer);
+        __getButton("Advanced", "ffnetConfig-Andvanced", buttonContainer);
+
+        // --------------------------------------------------------------------------------------------------------------------------
+        var cat = __getCategory("Story Settings", "ffnetConfig-Settings", s_container);
+        var table = cat.table;
 
         // story_search_depth
         _log("GUI - story_search_depth");
@@ -2323,6 +2328,43 @@ function storyParser()
                 )
             )
         );
+
+
+
+        // spacer:
+        table.append(spacer.clone());
+
+        // allow_copy
+        _log("GUI - allow_copy");
+
+        checkbox = $('<input type="checkbox" id="fflist-allow_copy">');
+        if (_config.allow_copy)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['allow_copy'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-allow_copy">Allow the selection of Text: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                        checkbox
+                )
+            )
+        );
+
+        cat.category.append(saveButtonContainer.clone());
+
+        // --------------------------------------------------------------------------------------------------------------------------
+        cat = __getCategory("Layout Settings", "ffnetConfig-Layout", s_container);
+        table = cat.table;
+
 
         // spacer:
         table.append(spacer.clone());
@@ -2437,36 +2479,10 @@ function storyParser()
             )
         );
 
-        // spacer:
-        table.append(spacer.clone());
-
-        // allow_copy
-        _log("GUI - allow_copy");
-
-        checkbox = $('<input type="checkbox" id="fflist-allow_copy">');
-        if (_config.allow_copy)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        _settings_elements['allow_copy'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-allow_copy">Allow the selection of Text: </label>')
-                    .css('font-weight', 'bold')
-                )
-                .css('border-right', '1px solid gray')
-            ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                        checkbox
-                )
-            )
-        );
 
         // spacer:
         table.append(spacer.clone());
+
 
         // content_width
         _log("GUI - content_width");
@@ -2583,8 +2599,12 @@ function storyParser()
         );
 
 
-        // spacer:
-        table.append(spacer.clone());
+        cat.category.append(saveButtonContainer.clone());
+
+        // --------------------------------------------------------------------------------------------------------------------------
+        cat = __getCategory("API Settings", "ffnetConfig-API", s_container);
+        table = cat.table;
+
 
         // Pocket ---
         table.append(
@@ -2770,24 +2790,13 @@ function storyParser()
             )
         );
 
-        // spacer:
-        table.append(spacer.clone());
 
-        // Advanced ---
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append("--------")
-                .css('border-right', '1px solid gray')
-            ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    " ---- Advanced Settings ----"
-                )
-            )
-        );
+        cat.category.append(saveButtonContainer.clone());
 
+        // --------------------------------------------------------------------------------------------------------------------------
+        cat = __getCategory("Advanced", "ffnetConfig-Andvanced", s_container);
+        table = cat.table;
 
-        // spacer:
-        table.append(spacer.clone());
 
         // disable_cache
         _log("GUI - disable_cache");
@@ -2814,10 +2823,9 @@ function storyParser()
             )
         );
 
-        */
+        cat.category.append(saveButtonContainer.clone());
 
-
-        // -------------------------------
+        // --------------------------------------------------------------------------------------------------------------------------
 
         _log("GUI - Add Markers: ", _config.marker);
 
@@ -2836,21 +2844,50 @@ function storyParser()
         }
 
 
-        var buttonContainer = $('<div class="fflist-buttonContainer"></div>').appendTo(_gui_container);
+        var filterButtonContainer = saveButtonContainer.clone();
+        filterButtonContainer.appendTo(_gui_container);
 
-        $('<input class="btn" type="button" value="Save"></input>')
-            .button({
-                icons: {
-                    primary: "ui-icon-check"
-                }
-            })
+        $('<input class="btn" type="button" value="Add Field"></input>')
+             .button({
+                 icons: {
+                     primary: "ui-icon-plusthick"
+                 }
+             })
             .click(function ()
+            {
+                _gui_add_form('New-Form ' + (_add_count++),
+                    {
+                        display: true,
+                        keywords: [
+
+                        ],
+                        ignore: [
+
+                        ],
+                        color: '#FFFFFF',
+                        mouseOver: '#FFFFFF',
+                        background: null,
+                        search_story: false,
+                        mark_chapter: false,
+                        print_story: false,
+                        mention_in_headline: true,
+                        text_color: '#686868',
+                        revision: -1
+                    }, container
+                    , true // Display Big
+                );
+
+            }).appendTo(filterButtonContainer);
+
+
+        // Save Logic
+        $(".ffnetSaveButton").click(function ()
         {
             var new_config = {};
 
             _log("Save Config");
             _log("Parsing Config elements: ", _gui_elements);
-            
+
 
             $.each(_gui_elements, function (k, data)
             {
@@ -2922,45 +2959,11 @@ function storyParser()
             _save_config();
 
             _log("Config Saved Successfully");
-            
+
 
 
             _gui_hide();
-        }).appendTo(buttonContainer);
-
-
-        $('<input class="btn" type="button" value="Add Field"></input>')
-             .button({
-                 icons: {
-                     primary: "ui-icon-plusthick"
-                 }
-             })
-            .click(function ()
-        {
-            _gui_add_form('New-Form ' + (_add_count++),
-                {
-                    display: true,
-                    keywords: [
-
-                    ],
-                    ignore: [
-
-                    ],
-                    color: '#FFFFFF',
-                    mouseOver: '#FFFFFF',
-                    background: null,
-                    search_story: false,
-                    mark_chapter: false,
-                    print_story: false,
-                    mention_in_headline: true,
-                    text_color: '#686868',
-                    revision: -1
-                }, container
-                , true // Display Big
-            );
-
-        }).appendTo(buttonContainer);
-
+        });
 
 
 
