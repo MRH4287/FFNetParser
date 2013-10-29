@@ -2193,6 +2193,76 @@ function storyParser()
 
         _log("Container rendered");
 
+
+        // Buttons
+
+        // Button Logic:
+        var __buttonLogic = function ()
+        {
+            var target = $(this).attr("data-target");
+
+            $(".ffnet_Config_Button_Container").fadeOut();
+            $("." + target).fadeIn();
+
+        }
+
+        var __backLogic = function ()
+        {
+            $(".ffnet_Config_Category:visible").fadeOut();
+            $(".ffnet_Config_Button_Container").fadeIn();
+        }
+
+        // Render SubLogic:
+
+        var __getButton = function(name, target, container)
+        {
+            return $("<div></div>").addClass("ffnet_Config_Button").text(name)
+                .attr("data-target", target).click(__buttonLogic).appendTo(container);
+        }
+
+        var __getCategory = function (name, id, container)
+        {
+            var cat = $("<div></div>").addClass("ffnet_Config_Category").addClass(id).appendTo(container);
+            var headline = $("<div></div>").addClass("headline").appendTo(cat);
+            var backField = $("<div></div>").addClass("back").appendTo(headline);
+            var backButton = $('<button class="btn">Back</back>').click(__backLogic).appendTo(backField);
+            var textField = $("<div></div>").appendTo(headline).text(name);
+
+            var table = $('<table width="100%"></table>').appendTo(cat);
+
+
+            var result =
+            {
+                category: cat,
+                headline: headline,
+                table: table
+            };
+
+            return result;
+        }
+
+        // ----------- GUI -------------------------
+
+        var buttonContainer = $('<div class="ffnet_Config_Button_Container"></div>').appendTo(s_container);
+
+        __getButton("Story Settings", "ffnetConfig-Settings", buttonContainer);
+        __getButton("Layout Settings", "ffnetConfig-Layout", buttonContainer);
+        __getButton("API Settings", "ffnetConfig-API", buttonContainer);
+        __getButton("Advanced", "ffnetConfig-Andvanced", buttonContainer);
+
+
+        var cat = __getCategory("Story Settings", "ffnetConfig-Settings", s_container);
+
+        cat = __getCategory("Layout Settings", "ffnetConfig-Layout", s_container);
+
+        cat = __getCategory("API Settings", "ffnetConfig-API", s_container);
+
+        cat = __getCategory("Advanced", "ffnetConfig-Andvanced", s_container);
+
+
+
+
+        /*
         var table = $('<table width="100%"></table>').appendTo(s_container);
 
         var spacer = $('<tr></tr>').append
@@ -2744,7 +2814,7 @@ function storyParser()
             )
         );
 
-
+        */
 
 
         // -------------------------------
