@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.4.9
+// @version        4.5.0
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -85,7 +85,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.4.9';
+    var _VERSION = '4.5.0';
     var _BRANCH = 'master';
 
     var _LOAD_INTERNAL = false;
@@ -93,17 +93,23 @@ function storyParser()
 
     // Default-Config:
     var _config = {
+
+        // Story:
         story_search_depth: 2,                  // The Max depth for a recursive search
         mark_M_storys: true,                    // Mark every Story Rated as M
         hide_non_english_storys: true,          // Hide all Storys, that are not in english
+        allow_copy: false,
+
+        // Layout:
         color_normal: '#FFFFFF',
         color_mouse_over: '#EEF0F4',
         color_odd_color: '#dfdfdf',
         hide_images: false,
         hide_lazy_images: false,
         disable_image_hover: false,
-        allow_copy: false,
         content_width: "90%",
+
+        // API:
         pocket_user: null,
         pocket_password: null,
         api_url: 'http://www.mrh-development.de/FanFictionUserScript',
@@ -111,6 +117,11 @@ function storyParser()
         api_timeout: 3000,
         api_retries: 2,
         api_checkForUpdates: true,
+
+        // advanced Features:
+        disable_cache: false,
+        disable_highlighter: false,
+
 
         // Do not change below this line:
         storage_key: 'ffnet-storycache',
@@ -121,6 +132,8 @@ function storyParser()
         marker: {}
     }
 
+
+    var _baseConfig = _config;
 
     // ..................
 
@@ -153,36 +166,7 @@ function storyParser()
 
         var token = _config.token;
 
-        _config =
-        {
-            story_search_depth: 2,                  // The Max depth for a recursive search
-            mark_M_storys: true,                    // Mark every Story Rated as M
-            hide_non_english_storys: true,          // Hide all Storys, that are not in english
-            color_normal: '#FFFFFF',
-            color_mouse_over: '#EEF0F4',
-            color_odd_color: '#dfdfdf',
-            hide_images: false,
-            hide_lazy_images: false,
-            disable_image_hover: false,
-            allow_copy: false,
-            content_width: "90%",
-            pocket_user: null,
-            pocket_password: null,
-            api_url: 'http://www.mrh-development.de/FanFictionUserScript',
-            api_lookupKey: 'ffnet-api-interface',
-            api_timeout: 3000,
-            api_retries: 2,
-            api_checkForUpdates: true,
-            token: token,
-
-            // Do not change below this line:
-            storage_key: 'ffnet-storycache',
-            config_key: 'ffnet-config',
-            dataStorage_key: 'ffnet-dataStore',
-
-            highlighter: {},
-            marker: {}
-        }
+        _config = _baseConfig;
 
         _save_config();
 
@@ -257,6 +241,8 @@ function storyParser()
             console.warn(ex);
         }
 
+        var defaultConfig = _config;
+
         try
         {
             _config = _loadFromMemory(localStorage, _config.config_key);
@@ -269,56 +255,6 @@ function storyParser()
 
         // Check for Config Values:
 
-        if (typeof (_config['marker']) == "undefined")
-        {
-            _config['marker'] = {};
-        }
-
-        if (typeof (_config['story_search_depth']) == "undefined")
-        {
-            _config['story_search_depth'] = 1;
-        }
-
-        if (typeof (_config['mark_M_storys']) == "undefined")
-        {
-            _config['mark_M_storys'] = false;
-        }
-
-        if (typeof (_config['hide_non_english_storys']) == "undefined")
-        {
-            _config['hide_non_english_storys'] = false;
-        }
-
-        if (typeof (_config['color_normal']) == "undefined")
-        {
-            _config['color_normal'] = '#FFFFFF';
-        }
-
-        if (typeof (_config['color_mouse_over']) == "undefined")
-        {
-            _config['color_mouse_over'] = '#EEF0F4';
-        }
-
-        if (typeof (_config['color_odd_color']) == "undefined")
-        {
-            _config['color_odd_color'] = '#dfdfdf';
-        }
-
-        if (typeof (_config['hide_images']) == "undefined")
-        {
-            _config['hide_images'] = false;
-        }
-
-        if (typeof (_config['allow_copy']) == "undefined")
-        {
-            _config['allow_copy'] = false;
-        }
-
-        if (typeof (_config['content_width']) == "undefined")
-        {
-            _config['content_width'] = "90%";
-        }
-
         if ((typeof (_config['pocket_user']) == "undefined") || (_config['pocket_user'] === ""))
         {
             _config['pocket_user'] = null;
@@ -327,56 +263,6 @@ function storyParser()
         if ((typeof (_config['pocket_password']) == "undefined") || (_config['pocket_password'] === ""))
         {
             _config['pocket_password'] = null;
-        }
-
-        if (typeof (_config['highlighter']) == "undefined")
-        {
-            _config['highlighter'] = {};
-        }
-
-        if (typeof (_config['api_url']) == "undefined")
-        {
-            _config['api_url'] = 'http://www.mrh-development.de/FanFictionUserScript';
-        }
-
-        if (typeof (_config['api_lookupKey']) == "undefined")
-        {
-            _config['api_lookupKey'] = 'ffnet-api-interface';
-        }
-
-        if (typeof (_config['config_key']) == "undefined")
-        {
-            _config['config_key'] = 'ffnet-config';
-        }
-
-        if (typeof (_config['api_timeout']) == "undefined")
-        {
-            _config['api_timeout'] = 3000;
-        }
-
-        if (typeof (_config['api_retries']) == "undefined")
-        {
-            _config['api_retries'] = 2;
-        }
-
-        if (typeof (_config['api_checkForUpdates']) == "undefined")
-        {
-            _config['api_checkForUpdates'] = false;
-        }
-
-        if (typeof (_config['dataStorage_key']) == "undefined")
-        {
-            _config['dataStorage_key'] = 'ffnet-dataStore';
-        }
-
-        if (typeof (_config['disable_image_hover']) == "undefined")
-        {
-            _config['disable_image_hover'] = false;
-        }
-
-        if (typeof (_config['hide_lazy_images']) == "undefined")
-        {
-            _config['hide_lazy_images'] = false;
         }
 
         if (typeof (_config['token']) == "undefined")
@@ -430,6 +316,17 @@ function storyParser()
                 });
             }, 1000);
         }
+
+
+        // Load all the config Values that are listed in the _config Array at startup
+        $.each(defaultConfig, function (name, defaultValue)
+        {
+            if (typeof (_config[name]) == "undefined")
+            {
+                _config[name] = defaultValue;
+            }
+        });
+
 
 
         if (_DEBUG)
@@ -826,7 +723,7 @@ function storyParser()
         if (_LOAD_INTERNAL)
         {
             return;
-        }     
+        }
         _element = __element;
         _read();
     }
@@ -993,81 +890,85 @@ function storyParser()
             }
 
             // Highlighter:
-            // Build Context Menu for Storys:
-            var contextMenu = $("<div></div>")
-            .css("width", "20px")
-            .css("height", "20px")
-            .css("float", "right")
-            .addClass("parser-msg")
-            .addClass("context-menu")
-            .append(
-                $("<img></img>")
-                .attr("src", "http://private.mrh-development.de/ff/edit.gif")
-                .css("width", "100%")
-                .css("height", "100%")
-            );
 
-            // Open GUI
-            contextMenu.click(function ()
+            if (!_config.disable_highlighter)
             {
-                if (_DEBUG)
-                {
-                    console.log("Context Menu for ", element, " clicked");
-                }
-
-                _toggleStoryConfig({
-                    url: link,
-                    element: element,
-                    name: storyName
-                });
-
-            });
-
-            element.find("div").first().before(contextMenu);
-
-
-            // Highlighter found:
-            if (typeof (_config['highlighter'][link]) != "undefined")
-            {
-                if (_DEBUG)
-                {
-                    console.info("Highlight Element Found: ", element);
-                }
-
-                // Update old Format
-                if (typeof (_config['highlighter'][link]) != "object")
-                {
-                    if (_DEBUG)
-                    {
-                        console.log("Updated old Highlighter Object");
-                    }
-
-                    _config['highlighter'][link] = { image: _config['highlighter'][link], hide: false };
-                }
-
-                if (_config['highlighter'][link].hide)
-                {
-                    if (_DEBUG)
-                    {
-                        console.log("Hide Entry because of Story Config: ", link);
-                    }
-                    _hidden_elements[link] = "storyConfig";
-
-                    element.attr("data-hiddenBy", "storyConfig");
-
-                    element.hide();
-                    _hidden++;
-                }
-
-
-                var img = $("<img></img>").attr("src", _config['highlighter'][link].image)
+                // Build Context Menu for Storys:
+                var contextMenu = $("<div></div>")
                 .css("width", "20px")
                 .css("height", "20px")
-                .css("margin-left", "15px")
-                .addClass("parser-msg");
+                .css("float", "right")
+                .addClass("parser-msg")
+                .addClass("context-menu")
+                .append(
+                    $("<img></img>")
+                    .attr("src", "http://private.mrh-development.de/ff/edit.gif")
+                    .css("width", "100%")
+                    .css("height", "100%")
+                );
 
-                element.find("a").last().after(img);
+                // Open GUI
+                contextMenu.click(function ()
+                {
+                    if (_DEBUG)
+                    {
+                        console.log("Context Menu for ", element, " clicked");
+                    }
 
+                    _toggleStoryConfig({
+                        url: link,
+                        element: element,
+                        name: storyName
+                    });
+
+                });
+
+                element.find("div").first().before(contextMenu);
+
+
+                // Highlighter found:
+                if (typeof (_config['highlighter'][link]) != "undefined")
+                {
+                    if (_DEBUG)
+                    {
+                        console.info("Highlight Element Found: ", element);
+                    }
+
+                    // Update old Format
+                    if (typeof (_config['highlighter'][link]) != "object")
+                    {
+                        if (_DEBUG)
+                        {
+                            console.log("Updated old Highlighter Object");
+                        }
+
+                        _config['highlighter'][link] = { image: _config['highlighter'][link], hide: false };
+                    }
+
+                    if (_config['highlighter'][link].hide)
+                    {
+                        if (_DEBUG)
+                        {
+                            console.log("Hide Entry because of Story Config: ", link);
+                        }
+                        _hidden_elements[link] = "storyConfig";
+
+                        element.attr("data-hiddenBy", "storyConfig");
+
+                        element.hide();
+                        _hidden++;
+                    }
+
+
+                    var img = $("<img></img>").attr("src", _config['highlighter'][link].image)
+                    .css("width", "20px")
+                    .css("height", "20px")
+                    .css("margin-left", "15px")
+                    .addClass("parser-msg");
+
+                    element.find("a").last().after(img);
+
+                }
             }
 
             if (!marker_found)
@@ -1309,7 +1210,7 @@ function storyParser()
 
         var ajax_callback = function (text)
         {
-            if (!(url in _storyCache))
+            if (!(url in _storyCache) && _config.disable_cache)
             {
                 if (_DEBUG)
                 {
@@ -1912,14 +1813,14 @@ function storyParser()
 
         var select = $("<select></select>")
         .css("margin-left", "20px")
-        .change(function()
+        .change(function ()
         {
             $("#ffnet-pocket-save-button").removeAttr("disabled")
                   .html("Save To Pocket");
-            
+
         });
 
-        $.each(options, function(key, value) 
+        $.each(options, function (key, value)
         {
             select.append(
                 $("<option></option>")
@@ -1940,13 +1841,13 @@ function storyParser()
                 _log("Selected Option: ", option);
 
 
-               _parsePocket(document.location.pathname, field.text() + ": ", option);
+                _parsePocket(document.location.pathname, field.text() + ": ", option);
 
             }).css("margin-left", "10px")
             .attr("id", "ffnet-pocket-save-button")
         );
 
-       
+
 
         field.after(select);
 
@@ -2089,7 +1990,11 @@ function storyParser()
             console.log("Current Page: ", currentPage);
         }
 
-        var wrapper = _createWrapper(currentPage);
+        var wrapper = $(".ffNetPageWrapper");
+        if (wrapper.length == 0)
+        {
+            wrapper = _createWrapper(currentPage);
+        }
 
         var notWrapped = $('.z-list[data-wrapped!="wrapped"]');
 
@@ -2274,7 +2179,70 @@ function storyParser()
 
         _log("Container rendered");
 
-        var table = $('<table width="100%"></table>').appendTo(s_container);
+
+        // Buttons
+
+        var saveButtonContainer = $('<div class="fflist-buttonContainer"></div>');
+
+        $('<input class="btn" type="button" value="Save"></input>')
+            .button({
+                icons: {
+                    primary: "ui-icon-check"
+                }
+            }).addClass("ffnetSaveButton").appendTo(saveButtonContainer);
+
+
+
+        // Button Logic:
+        var __buttonLogic = function ()
+        {
+            var target = $(this).attr("data-target");
+
+            $(".ffnet_Config_Button_Container").fadeOut(400, function ()
+            {
+                $("." + target).fadeIn();
+            });
+
+        }
+
+        var __backLogic = function ()
+        {
+            $(".ffnet_Config_Category:visible").fadeOut(400, function ()
+            {
+                $(".ffnet_Config_Button_Container").fadeIn();
+            });
+        }
+
+        // Render SubLogic:
+
+        var __getButton = function (name, target, container)
+        {
+            return $("<div></div>").addClass("ffnet_Config_Button").text(name)
+                .attr("data-target", target).click(__buttonLogic).appendTo(container);
+        }
+
+        var __getCategory = function (name, id, container)
+        {
+            var cat = $("<div></div>").addClass("ffnet_Config_Category").addClass(id).appendTo(container);
+            var headline = $("<div></div>").addClass("headline").appendTo(cat);
+            var backField = $("<div></div>").addClass("back").appendTo(headline);
+            var backButton = $('<button class="btn">Back</back>').click(__backLogic).appendTo(backField);
+            var textField = $("<div></div>").appendTo(headline).text(name);
+
+            var table = $('<table width="100%"></table>').appendTo(cat);
+
+
+            var result =
+            {
+                category: cat,
+                headline: headline,
+                table: table
+            };
+
+            return result;
+        }
+
+        // ----------- GUI -------------------------
 
         var spacer = $('<tr></tr>').append
             (
@@ -2283,6 +2251,18 @@ function storyParser()
             ).append(
                 $('<td></td>')
             );
+
+
+        var buttonContainer = $('<div class="ffnet_Config_Button_Container"></div>').appendTo(s_container);
+
+        __getButton("Story Settings", "ffnetConfig-Settings", buttonContainer);
+        __getButton("Layout Settings", "ffnetConfig-Layout", buttonContainer);
+        __getButton("API Settings", "ffnetConfig-API", buttonContainer);
+        __getButton("Advanced", "ffnetConfig-Andvanced", buttonContainer);
+
+        // --------------------------------------------------------------------------------------------------------------------------
+        var cat = __getCategory("Story Settings", "ffnetConfig-Settings", s_container);
+        var table = cat.table;
 
         // story_search_depth
         _log("GUI - story_search_depth");
@@ -2335,8 +2315,10 @@ function storyParser()
             )
         );
 
+
         // spacer:
         table.append(spacer.clone());
+
 
         // hide_non_english_storys:
         _log("GUI - hide_non_english_storys");
@@ -2365,6 +2347,38 @@ function storyParser()
 
         // spacer:
         table.append(spacer.clone());
+
+        // allow_copy
+        _log("GUI - allow_copy");
+
+        checkbox = $('<input type="checkbox" id="fflist-allow_copy">');
+        if (_config.allow_copy)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['allow_copy'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-allow_copy">Allow the selection of Text: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                        checkbox
+                )
+            )
+        );
+
+        cat.category.append(saveButtonContainer.clone());
+
+        // --------------------------------------------------------------------------------------------------------------------------
+        cat = __getCategory("Layout Settings", "ffnetConfig-Layout", s_container);
+        table = cat.table;
+
 
         // hide_images:
         _log("GUI - hide_images");
@@ -2448,36 +2462,10 @@ function storyParser()
             )
         );
 
-        // spacer:
-        table.append(spacer.clone());
-
-        // allow_copy
-        _log("GUI - allow_copy");
-
-        checkbox = $('<input type="checkbox" id="fflist-allow_copy">');
-        if (_config.allow_copy)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        _settings_elements['allow_copy'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-allow_copy">Allow the selection of Text: </label>')
-                    .css('font-weight', 'bold')
-                )
-                .css('border-right', '1px solid gray')
-            ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                        checkbox
-                )
-            )
-        );
 
         // spacer:
         table.append(spacer.clone());
+
 
         // content_width
         _log("GUI - content_width");
@@ -2594,8 +2582,12 @@ function storyParser()
         );
 
 
-        // spacer:
-        table.append(spacer.clone());
+        cat.category.append(saveButtonContainer.clone());
+
+        // --------------------------------------------------------------------------------------------------------------------------
+        cat = __getCategory("API Settings", "ffnetConfig-API", s_container);
+        table = cat.table;
+
 
         // Pocket ---
         table.append(
@@ -2782,8 +2774,71 @@ function storyParser()
         );
 
 
+        cat.category.append(saveButtonContainer.clone());
 
-        // -------------------------------
+        // --------------------------------------------------------------------------------------------------------------------------
+        cat = __getCategory("Advanced", "ffnetConfig-Andvanced", s_container);
+        table = cat.table;
+
+
+        // disable_highlighter
+        _log("GUI - disable_highlighter");
+
+        checkbox = $('<input type="checkbox" id="fflist-disable_highlighter">');
+        if (_config.disable_highlighter)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['disable_highlighter'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-disable_highlighter"><abbr title="Disable the Story Highlighter Feature.">Disable Highlighter</abbr>: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                        checkbox
+                )
+            )
+        );
+
+
+        // spacer:
+        table.append(spacer.clone());
+
+
+        // disable_cache
+        _log("GUI - disable_cache");
+
+        checkbox = $('<input type="checkbox" id="fflist-disable_cache">');
+        if (_config.disable_cache)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['disable_cache'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-disable_cache"><abbr title="Disable the Caching function used for the in Story search.">Disable Cache</abbr>: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                        checkbox
+                )
+            )
+        );
+
+        cat.category.append(saveButtonContainer.clone());
+
+        // --------------------------------------------------------------------------------------------------------------------------
 
         _log("GUI - Add Markers: ", _config.marker);
 
@@ -2802,21 +2857,50 @@ function storyParser()
         }
 
 
-        var buttonContainer = $('<div class="fflist-buttonContainer"></div>').appendTo(_gui_container);
+        var filterButtonContainer = saveButtonContainer.clone();
+        filterButtonContainer.appendTo(_gui_container);
 
-        $('<input class="btn" type="button" value="Save"></input>')
-            .button({
-                icons: {
-                    primary: "ui-icon-check"
-                }
-            })
+        $('<input class="btn" type="button" value="Add Field"></input>')
+             .button({
+                 icons: {
+                     primary: "ui-icon-plusthick"
+                 }
+             })
             .click(function ()
+            {
+                _gui_add_form('New-Form ' + (_add_count++),
+                    {
+                        display: true,
+                        keywords: [
+
+                        ],
+                        ignore: [
+
+                        ],
+                        color: '#FFFFFF',
+                        mouseOver: '#FFFFFF',
+                        background: null,
+                        search_story: false,
+                        mark_chapter: false,
+                        print_story: false,
+                        mention_in_headline: true,
+                        text_color: '#686868',
+                        revision: -1
+                    }, container
+                    , true // Display Big
+                );
+
+            }).appendTo(filterButtonContainer);
+
+
+        // Save Logic
+        $(".ffnetSaveButton").click(function ()
         {
             var new_config = {};
 
             _log("Save Config");
             _log("Parsing Config elements: ", _gui_elements);
-            
+
 
             $.each(_gui_elements, function (k, data)
             {
@@ -2872,6 +2956,7 @@ function storyParser()
             _config.hide_lazy_images = _settings_elements.hide_lazy_images.is(':checked');
             _config.disable_image_hover = _settings_elements.disable_image_hover.is(':checked');
             _config.allow_copy = _settings_elements.allow_copy.is(':checked');
+            _config.disable_highlighter = _settings_elements.disable_highlighter.is(':checked');         
             _config.content_width = _settings_elements.content_width.val();
             _config.color_normal = _settings_elements.color_normal.val();
             _config.color_odd_color = _settings_elements.color_odd_color.val();
@@ -2888,45 +2973,11 @@ function storyParser()
             _save_config();
 
             _log("Config Saved Successfully");
-            
+
 
 
             _gui_hide();
-        }).appendTo(buttonContainer);
-
-
-        $('<input class="btn" type="button" value="Add Field"></input>')
-             .button({
-                 icons: {
-                     primary: "ui-icon-plusthick"
-                 }
-             })
-            .click(function ()
-        {
-            _gui_add_form('New-Form ' + (_add_count++),
-                {
-                    display: true,
-                    keywords: [
-
-                    ],
-                    ignore: [
-
-                    ],
-                    color: '#FFFFFF',
-                    mouseOver: '#FFFFFF',
-                    background: null,
-                    search_story: false,
-                    mark_chapter: false,
-                    print_story: false,
-                    mention_in_headline: true,
-                    text_color: '#686868',
-                    revision: -1
-                }, container
-                , true // Display Big
-            );
-
-        }).appendTo(buttonContainer);
-
+        });
 
 
 
