@@ -152,7 +152,30 @@ abbr[data-original-title]
     }
 }
 
+@config_button_width: 20px;
+@config_button_height: 20px;
+@config_button_radius: 5px;
+@config_button_textSize: 12px;
 
+
+.ffnet_Config_Button
+{
+    width: @config_button_width;
+    height: @config_button_height;
+    display: inline-block;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    
+    font-size: @config_button_textSize;
+    padding: @config_button_radius; 
+    padding-top: @config_button_height / 2 - @config_button_textSize;
+    
+    text-align: center;
+    .border_radius(@config_button_radius);
+
+
+
+}
 
 
 /*  Common  */
