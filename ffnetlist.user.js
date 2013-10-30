@@ -2956,7 +2956,8 @@ function storyParser()
             _config.hide_lazy_images = _settings_elements.hide_lazy_images.is(':checked');
             _config.disable_image_hover = _settings_elements.disable_image_hover.is(':checked');
             _config.allow_copy = _settings_elements.allow_copy.is(':checked');
-            _config.disable_highlighter = _settings_elements.disable_highlighter.is(':checked');         
+            _config.disable_highlighter = _settings_elements.disable_highlighter.is(':checked'); 
+			_config.disable_cache = _settings_elements.disable_cache.is(':checked'); 
             _config.content_width = _settings_elements.content_width.val();
             _config.color_normal = _settings_elements.color_normal.val();
             _config.color_odd_color = _settings_elements.color_odd_color.val();
