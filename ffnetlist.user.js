@@ -2730,7 +2730,7 @@ function storyParser()
             table.append(
                 $('<tr></tr>').append(
                     $('<td width="30%"></td>').append(
-                        $('<label for="fflist-api_url">Server Backend Adress: </label>')
+                        $('<label for="fflist-api_url">Server Backend Address: </label>')
                         .css('font-weight', 'bold')
                     )
                     .css('border-right', '1px solid gray')
