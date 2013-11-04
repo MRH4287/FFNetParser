@@ -187,6 +187,36 @@ function storyParser()
             }
 
             isNested = true;
+
+            if (typeof (localStorage["ffnet-Script-VersionID"]) != "undefined")
+            {
+                var newVersionID = Number(localStorage["ffnet-Script-VersionID"]);
+                var currentID = _getVersionId(_VERSION);
+
+                _log("Current Version ID: ", currentID);
+                _log("Cached Version ID: ", newVersionID);
+
+                if (newVersionID > currentID)
+                {
+                    _log("New Version in Storage found ...");
+                }
+                else
+                {
+                    try
+                    {
+                        _log("The cached Version is older or the same as the current -> delete");
+                        delete (localStorage["ffnet-Script-VersionID"]);
+                        delete (localStorage["ffnet-Script"]);
+                    }
+                    catch (e)
+                    {
+                        console.error("Couldn't delete cached Version", e);
+                    }
+
+                }
+
+            }
+
         }
 
         if (!isNested)
@@ -228,6 +258,19 @@ function storyParser()
                 // Abort
                 return;
             }
+        }
+        else
+        {
+            try
+            {
+                // Load Version Infos into the Local Storage:
+                localStorage["ffnet-Script-VersionID"] = _getVersionId(_VERSION);
+            }
+            catch (e)
+            {
+                console.error("Can't save Version id: ", e);
+            }
+
         }
 
         try
@@ -2673,6 +2716,45 @@ function storyParser()
         // spacer:
         table.append(spacer.clone());
 
+        if (_DEBUG)
+        {
+
+            // api_url
+            _log("GUI - api_url");
+
+            var input = $('<input type="text" id="fflist-api_url">')
+                        .attr('value', _config.api_url);
+
+            _settings_elements['api_url'] = input;
+
+            table.append(
+                $('<tr></tr>').append(
+                    $('<td width="30%"></td>').append(
+                        $('<label for="fflist-api_url">Server Backend Adress: </label>')
+                        .css('font-weight', 'bold')
+                    )
+                    .css('border-right', '1px solid gray')
+                ).append(
+                    $('<td class="ffnetparser_InputField"></td>').append(
+                        input
+                    ).append(
+                        $("<button>Default</button>").click(function()
+                        {
+                            $('#fflist-api_url').val("http://www.mrh-development.de/FanFictionUserScript");
+                        })
+                    ).append(
+                        $("<button>Local</button>").click(function ()
+                        {
+                            $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
+                        })
+                    )
+                )
+            );
+
+            // spacer:
+            table.append(spacer.clone());
+        }
+
         // api_checkForUpdates
         _log("GUI - api_checkForUpdates");
 
@@ -2967,6 +3049,11 @@ function storyParser()
             _config.api_checkForUpdates = _settings_elements.api_checkForUpdates.is(':checked');
             _config.api_autoIncludeNewVersion = _settings_elements.api_autoIncludeNewVersion.is(':checked');
             _config.token = _settings_elements.token.val();
+
+            if (_DEBUG)
+            {
+                _config.api_url = _settings_elements.api_url.val();
+            }
 
 
             _config.marker = new_config;
@@ -4037,6 +4124,9 @@ function storyParser()
         var timeout = _config.api_timeout;
         var retrys = _config.api_retries;
 
+        var messageID = Math.random().toString().split(".")[1];
+        data.adress = apiLookupKey + messageID;
+
         $.ajax({
             type: 'GET',
             url: url,
@@ -4046,6 +4136,8 @@ function storyParser()
             data: data,
             cache: false
         });
+
+        
 
         var tries = 0;
 
@@ -4066,22 +4158,22 @@ function storyParser()
                 return;
             }
 
-            if ((typeof sessionStorage[apiLookupKey] != "undefined") &&
-                (typeof sessionStorage[apiLookupKey] != "null") &&
-                sessionStorage[apiLookupKey] != "undefined" &&
-                sessionStorage[apiLookupKey] != "null" &&
-                sessionStorage[apiLookupKey] != "" &&
-                sessionStorage[apiLookupKey] != null)
+            if ((typeof sessionStorage[apiLookupKey + messageID] != "undefined") &&
+                (typeof sessionStorage[apiLookupKey + messageID] != "null") &&
+                sessionStorage[apiLookupKey + messageID] != "undefined" &&
+                sessionStorage[apiLookupKey + messageID] != "null" &&
+                sessionStorage[apiLookupKey + messageID] != "" &&
+                sessionStorage[apiLookupKey + messageID] != null)
             {
                 if (_DEBUG)
                 {
                     //console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
                 }
 
-                var result = sessionStorage[apiLookupKey];
+                var result = sessionStorage[apiLookupKey + messageID];
 
                 // Clear last Result
-                delete sessionStorage[apiLookupKey];
+                delete sessionStorage[apiLookupKey + messageID];
 
                 callback(result);
 
@@ -4138,7 +4230,10 @@ function storyParser()
                     console.log("Current Version: ", _VERSION);
                 }
 
-                if (_VERSION != version.version)
+                var versionID = _getVersionId(_VERSION);
+                var removeVersionID = _getVersionId(version.version);
+
+                if (removeVersionID > versionID)
                 {
                     if (!_config.api_autoIncludeNewVersion)
                     {
@@ -4148,6 +4243,10 @@ function storyParser()
                     {
                         _api_updateScript();
                     }
+                }
+                else
+                {
+                    _log("No new Version found ...");
                 }
 
             });
@@ -4547,6 +4646,25 @@ function storyParser()
         });
 
     }
+
+    /**
+    *   Gets the Version Ident Number
+    *   @param name Name of the Version
+    *   @result Version Ident Number
+    */
+    var _getVersionId = function (name)
+    {
+        var parts = name.split(".");
+        var version = 0;
+
+        for (i = 0; i < parts.length; i++)
+        {
+            version += Number(parts[i]) * Math.pow(100, (parts.length - i -1));
+        }
+
+        return version;
+    }
+
 
     /**
     *   Activates Debug Options
