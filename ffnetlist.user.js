@@ -486,107 +486,121 @@ function storyParser()
 
         // Add Messages Menu:
 
-        var menulinks = $(".menulink").first();
-
-
-        if (menulinks.length > 0)
+        window.setTimeout(function ()
         {
-            var imageContainer = $("<div></div>")
-            .css("display", "inline-block")
-            .css("margin-left", "10px")
-            .css("height", "100%")
-            .addClass("ffnetMessageContainer")
-            .addClass("clickable")
-            .attr("title", "Advanced Messaging Features. Sorry, this is not a PM Button :-(")
-            .appendTo(menulinks);
+
+            _log("Add Messages Menu")
+
+            var menulinks = $(".menulink").first();
 
 
-            imageContainer.append(
-
-                $("<img></img>")
-                .attr("src", "http://private.mrh-development.de/ff/message-white.png")
-                .css("width", "20px")
-                .css("margin-bottom", "4px")
-            );
-
-
-            var radius = 15;
-            var height = 120;
-            var width = 260;
-
-
-            var messageContainer = $("<div></div>")
-            .addClass("ffnet_messageContainer")
-            .appendTo("body");
-
-
-
-
-            var innerContainer = $("<div></div>")
-            .addClass("innerContainer")
-            .appendTo(messageContainer);
-
-            imageContainer.click(function ()
+            if (menulinks.length > 0)
             {
-                if (messageContainer.is(":hidden"))
-                {
-                    //Set Position of Element:
-                    var pos = imageContainer.position();
+                var imageContainer = $("<div></div>")
+                .css("display", "inline-block")
+                .css("margin-left", "10px")
+                .css("height", "100%")
+                .addClass("ffnetMessageContainer")
+                .addClass("clickable")
+                .attr("title", "Advanced Messaging Features. Sorry, this is not a PM Button :-(")
+                .appendTo(menulinks);
 
-                    messageContainer
-                    .css("top", (pos.top + 20) + "px")
-                    .css("left", (pos.left - 100) + "px")
-                    .show();
+
+                imageContainer.append(
+
+                    $("<img></img>")
+                    .attr("src", "http://private.mrh-development.de/ff/message-white.png")
+                    .css("width", "20px")
+                    .css("margin-bottom", "4px")
+                );
+
+
+                var radius = 15;
+                var height = 120;
+                var width = 260;
+
+
+                var messageContainer = $("<div></div>")
+                .addClass("ffnet_messageContainer")
+                .appendTo("body");
+
+
+
+
+                var innerContainer = $("<div></div>")
+                .addClass("innerContainer")
+                .appendTo(messageContainer);
+
+                imageContainer.click(function ()
+                {
+                    if (messageContainer.is(":hidden"))
+                    {
+                        //Set Position of Element:
+                        var pos = imageContainer.position();
+
+                        messageContainer
+                        .css("top", (pos.top + 20) + "px")
+                        .css("left", (pos.left - 100) + "px")
+                        .show();
+
+                    }
+                    else
+                    {
+                        messageContainer.hide();
+                    }
+
+                });
+
+                innerContainer.append(
+                    $("<div>Message Menu (Script)</div>")
+                    .css("font-weight", "bold")
+                    .css("margin-bottom", "10px")
+                );
+
+                var count = 0;
+
+                if (typeof (_dataConfig['messages']) != "undefined")
+                {
+                    count = _dataConfig['messages'].length;
+                }
+
+
+                innerContainer.append(
+                    $('<div><span class="ffnet-messageCount">' + count + "</span> Message(s)</div>")
+                    .addClass("menuItem")
+                    .click(function ()
+                    {
+                        messageContainer.hide();
+
+                        _messagesGUI();
+
+                    })
+                );
+
+                innerContainer.append(
+                    $("<div>Give Feedback</div>")
+                    .addClass("menuItem")
+                    .click(function ()
+                    {
+                        messageContainer.hide();
+
+                        _feedbackGUI();
+                    })
+                );
+
+
+
+            }
+            else
+            {
+                if (_DEBUG)
+                {
+                    console.warn("Can't find Element .menulink ", menulinks);
 
                 }
-                else
-                {
-                    messageContainer.hide();
-                }
-
-            });
-
-            innerContainer.append(
-                $("<div>Message Menu (Script)</div>")
-                .css("font-weight", "bold")
-                .css("margin-bottom", "10px")
-            );
-
-            var count = 0;
-
-            if (typeof (_dataConfig['messages']) != "undefined")
-            {
-                count = _dataConfig['messages'].length;
             }
 
-
-            innerContainer.append(
-                $('<div><span class="ffnet-messageCount">' + count + "</span> Message(s)</div>")
-                .addClass("menuItem")
-                .click(function ()
-                {
-                    messageContainer.hide();
-
-                    _messagesGUI();
-
-                })
-            );
-
-            innerContainer.append(
-                $("<div>Give Feedback</div>")
-                .addClass("menuItem")
-                .click(function ()
-                {
-                    messageContainer.hide();
-
-                    _feedbackGUI();
-                })
-            );
-
-
-
-        }
-
+        }, 1000);
 
 
 
@@ -2740,7 +2754,7 @@ function storyParser()
                     $('<td class="ffnetparser_InputField"></td>').append(
                         input
                     ).append(
-                        $("<button>Default</button>").click(function()
+                        $("<button>Default</button>").click(function ()
                         {
                             $('#fflist-api_url').val("https://www.mrh-development.de/FanFictionUserScript");
                         })
@@ -3040,8 +3054,8 @@ function storyParser()
             _config.hide_lazy_images = _settings_elements.hide_lazy_images.is(':checked');
             _config.disable_image_hover = _settings_elements.disable_image_hover.is(':checked');
             _config.allow_copy = _settings_elements.allow_copy.is(':checked');
-            _config.disable_highlighter = _settings_elements.disable_highlighter.is(':checked'); 
-			_config.disable_cache = _settings_elements.disable_cache.is(':checked'); 
+            _config.disable_highlighter = _settings_elements.disable_highlighter.is(':checked');
+            _config.disable_cache = _settings_elements.disable_cache.is(':checked');
             _config.content_width = _settings_elements.content_width.val();
             _config.color_normal = _settings_elements.color_normal.val();
             _config.color_odd_color = _settings_elements.color_odd_color.val();
@@ -4139,7 +4153,7 @@ function storyParser()
             cache: false
         });
 
-        
+
 
         var tries = 0;
 
@@ -4661,7 +4675,7 @@ function storyParser()
 
         for (i = 0; i < parts.length; i++)
         {
-            version += Number(parts[i]) * Math.pow(100, (parts.length - i -1));
+            version += Number(parts[i]) * Math.pow(100, (parts.length - i - 1));
         }
 
         return version;
