@@ -8,6 +8,8 @@
 // @updateURL      https://github.com/MRH4287/FFNetParser/raw/master/ffnetlist.user.js
 // @include        http://www.fanfiction.net/*
 // @include        http://www.fictionpress.com/*
+// @include        https://www.fanfiction.net/*
+// @include        https://www.fictionpress.com/*
 // @run-at         document-end
 // ==/UserScript==
 
@@ -386,7 +388,7 @@ function storyParser()
         }
 
         // Add jQueryUI to the Page:        
-        var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
+        var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
         $("head").append(block);
 
         if (typeof ($.ui) == "undefined")
@@ -1193,7 +1195,7 @@ function storyParser()
         // Check for ScriptInsert Page:
         if (data.url.indexOf("?url=") == -1)
         {
-            url = 'http://www.fanfiction.net' + data.url;
+            url = 'https://www.fanfiction.net' + data.url;
         }
         else
         {
@@ -1941,7 +1943,7 @@ function storyParser()
             var title = body.find("title").first().text();
 
             $("body").append(
-                $("<img>").attr("src", 'https://readitlaterlist.com/v2/add?username=' + user + '&password=' + password + '&apikey=emIpiQ7cA6fR4u6dr7ga2aXC11dcD58a&url=http://www.fanfiction.net' + url + '&title=' + title)
+                $("<img>").attr("src", 'https://readitlaterlist.com/v2/add?username=' + user + '&password=' + password + '&apikey=emIpiQ7cA6fR4u6dr7ga2aXC11dcD58a&url=https://www.fanfiction.net' + url + '&title=' + title)
             );
 
             console.log(url + ' - ' + title + ' - Done');

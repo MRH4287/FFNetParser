@@ -7,7 +7,9 @@
          "matches": 
          [
             "http://www.fanfiction.net/*",
-            "http://www.fictionpress.com/*"
+            "http://www.fictionpress.com/*",
+            "https://www.fanfiction.net/*",
+            "https://www.fictionpress.com/*"
          ]
       }],
       "web_accessible_resources":
