@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.5.1.1
+// @version        4.5.2
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -84,10 +84,10 @@ if (typeof (jQuery.ui) == "undefined")
 
 function storyParser()
 {
-    var _DEBUG = false;
+    var _DEBUG = true;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.5.1.1';
+    var _VERSION = '4.5.2';
     var _BRANCH = 'master';
 
     var _LOAD_INTERNAL = false;
@@ -177,7 +177,7 @@ function storyParser()
     /**
     *   Initializes System
     */
-    var _init = function ()
+    var __init = function ()
     {
         var isNested = _IGNORE_NEW_VERSION;
 
@@ -401,7 +401,7 @@ function storyParser()
         $("head").append(block);
 
 
-        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://www.mrh-development.de/FanFictionUserScript/Css?branch=" + _BRANCH);
+        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://www.mrh-development.de/FanFictionUserScript/Css?branch=" + _BRANCH);
         $("head").append(block);
 
 
@@ -485,123 +485,116 @@ function storyParser()
         }
 
         // Add Messages Menu:
+        _log("Add Messages Menu")
 
-        window.setTimeout(function ()
+        var menulinks = $(".menulink").first();
+
+
+        if (menulinks.length > 0)
         {
+            var imageContainer = $("<div></div>")
+            .css("display", "inline-block")
+            .css("margin-left", "10px")
+            .css("height", "100%")
+            .addClass("ffnetMessageContainer")
+            .addClass("clickable")
+            .attr("title", "Advanced Messaging Features. Sorry, this is not a PM Button :-(")
+            .appendTo(menulinks);
 
-            _log("Add Messages Menu")
 
-            var menulinks = $(".menulink").first();
+            imageContainer.append(
+
+                $("<img></img>")
+                .attr("src", "http://private.mrh-development.de/ff/message-white.png")
+                .css("width", "20px")
+                .css("margin-bottom", "4px")
+            );
 
 
-            if (menulinks.length > 0)
+            var radius = 15;
+            var height = 120;
+            var width = 260;
+
+
+            var messageContainer = $("<div></div>")
+            .addClass("ffnet_messageContainer")
+            .appendTo("body");
+
+
+
+
+            var innerContainer = $("<div></div>")
+            .addClass("innerContainer")
+            .appendTo(messageContainer);
+
+            imageContainer.click(function ()
             {
-                var imageContainer = $("<div></div>")
-                .css("display", "inline-block")
-                .css("margin-left", "10px")
-                .css("height", "100%")
-                .addClass("ffnetMessageContainer")
-                .addClass("clickable")
-                .attr("title", "Advanced Messaging Features. Sorry, this is not a PM Button :-(")
-                .appendTo(menulinks);
-
-
-                imageContainer.append(
-
-                    $("<img></img>")
-                    .attr("src", "http://private.mrh-development.de/ff/message-white.png")
-                    .css("width", "20px")
-                    .css("margin-bottom", "4px")
-                );
-
-
-                var radius = 15;
-                var height = 120;
-                var width = 260;
-
-
-                var messageContainer = $("<div></div>")
-                .addClass("ffnet_messageContainer")
-                .appendTo("body");
-
-
-
-
-                var innerContainer = $("<div></div>")
-                .addClass("innerContainer")
-                .appendTo(messageContainer);
-
-                imageContainer.click(function ()
+                if (messageContainer.is(":hidden"))
                 {
-                    if (messageContainer.is(":hidden"))
-                    {
-                        //Set Position of Element:
-                        var pos = imageContainer.position();
+                    //Set Position of Element:
+                    var pos = imageContainer.position();
 
-                        messageContainer
-                        .css("top", (pos.top + 20) + "px")
-                        .css("left", (pos.left - 100) + "px")
-                        .show();
-
-                    }
-                    else
-                    {
-                        messageContainer.hide();
-                    }
-
-                });
-
-                innerContainer.append(
-                    $("<div>Message Menu (Script)</div>")
-                    .css("font-weight", "bold")
-                    .css("margin-bottom", "10px")
-                );
-
-                var count = 0;
-
-                if (typeof (_dataConfig['messages']) != "undefined")
-                {
-                    count = _dataConfig['messages'].length;
-                }
-
-
-                innerContainer.append(
-                    $('<div><span class="ffnet-messageCount">' + count + "</span> Message(s)</div>")
-                    .addClass("menuItem")
-                    .click(function ()
-                    {
-                        messageContainer.hide();
-
-                        _messagesGUI();
-
-                    })
-                );
-
-                innerContainer.append(
-                    $("<div>Give Feedback</div>")
-                    .addClass("menuItem")
-                    .click(function ()
-                    {
-                        messageContainer.hide();
-
-                        _feedbackGUI();
-                    })
-                );
-
-
-
-            }
-            else
-            {
-                if (_DEBUG)
-                {
-                    console.warn("Can't find Element .menulink ", menulinks);
+                    messageContainer
+                    .css("top", (pos.top + 20) + "px")
+                    .css("left", (pos.left - 100) + "px")
+                    .show();
 
                 }
+                else
+                {
+                    messageContainer.hide();
+                }
+
+            });
+
+            innerContainer.append(
+                $("<div>Message Menu (Script)</div>")
+                .css("font-weight", "bold")
+                .css("margin-bottom", "10px")
+            );
+
+            var count = 0;
+
+            if (typeof (_dataConfig['messages']) != "undefined")
+            {
+                count = _dataConfig['messages'].length;
             }
 
-        }, 1000);
 
+            innerContainer.append(
+                $('<div><span class="ffnet-messageCount">' + count + "</span> Message(s)</div>")
+                .addClass("menuItem")
+                .click(function ()
+                {
+                    messageContainer.hide();
+
+                    _messagesGUI();
+
+                })
+            );
+
+            innerContainer.append(
+                $("<div>Give Feedback</div>")
+                .addClass("menuItem")
+                .click(function ()
+                {
+                    messageContainer.hide();
+
+                    _feedbackGUI();
+                })
+            );
+
+
+
+        }
+        else
+        {
+            if (_DEBUG)
+            {
+                console.warn("Can't find Element .menulink ", menulinks);
+
+            }
+        }
 
 
         if (_DEBUG)
@@ -2761,7 +2754,7 @@ function storyParser()
                     ).append(
                         $("<button>Local</button>").click(function ()
                         {
-                            $('#fflist-api_url').val("https://localhost:49990/FanFictionUserScript");
+                            $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
                         })
                     )
                 )
@@ -4220,7 +4213,8 @@ function storyParser()
                 Version: _VERSION,
                 Token: _config.token,
                 Nested: (typeof (sessionStorage["ffnet-mutex"]) != "undefined") ? true : false,
-                Branch: _BRANCH
+                Branch: _BRANCH,
+                Page: window.location.href
             }
 
             if (_DEBUG)
@@ -4903,7 +4897,7 @@ function storyParser()
 
     // -------------------------------------------
 
-    _init();
+    __init();
 }
 
 var parser = new storyParser($('.z-list'));
