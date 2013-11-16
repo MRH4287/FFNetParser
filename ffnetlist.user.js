@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.5.1
+// @version        4.5.1.1
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -87,7 +87,7 @@ function storyParser()
     var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.5.1';
+    var _VERSION = '4.5.1.1';
     var _BRANCH = 'master';
 
     var _LOAD_INTERNAL = false;
@@ -114,7 +114,7 @@ function storyParser()
         // API:
         pocket_user: null,
         pocket_password: null,
-        api_url: 'http://www.mrh-development.de/FanFictionUserScript',
+        api_url: 'https://www.mrh-development.de/FanFictionUserScript',
         api_lookupKey: 'ffnet-api-interface',
         api_timeout: 3000,
         api_retries: 2,
@@ -401,7 +401,7 @@ function storyParser()
         $("head").append(block);
 
 
-        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://www.mrh-development.de/FanFictionUserScript/Css?branch=" + _BRANCH);
+        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://www.mrh-development.de/FanFictionUserScript/Css?branch=" + _BRANCH);
         $("head").append(block);
 
 
@@ -486,7 +486,7 @@ function storyParser()
 
         // Add Messages Menu:
 
-        var menulinks = $(".menulinks").first();
+        var menulinks = $(".menulink").first();
 
 
         if (menulinks.length > 0)
@@ -2742,12 +2742,12 @@ function storyParser()
                     ).append(
                         $("<button>Default</button>").click(function()
                         {
-                            $('#fflist-api_url').val("http://www.mrh-development.de/FanFictionUserScript");
+                            $('#fflist-api_url').val("https://www.mrh-development.de/FanFictionUserScript");
                         })
                     ).append(
                         $("<button>Local</button>").click(function ()
                         {
-                            $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
+                            $('#fflist-api_url').val("https://localhost:49990/FanFictionUserScript");
                         })
                     )
                 )
@@ -4154,7 +4154,7 @@ function storyParser()
             {
                 if (_DEBUG)
                 {
-                    console.log("API_Request - To many tries, abort");
+                    console.log("API_Request - To many tries, abort for ", data);
                 }
 
                 return;
