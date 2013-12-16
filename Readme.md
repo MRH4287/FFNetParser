@@ -42,6 +42,12 @@ In the most cases you just have to open the Script in your Browser.
 
 In Chrome you have to drag & drop the .user.js file into your extenions page.
 
+
+__If you are migrating from a Version Pre 4.5.1, check this Page:__
+
+https://github.com/MRH4287/FFNetParser/releases/tag/V.4.5.1
+
+
 ## First Run
 
 Just install the Script and you are good to go!
