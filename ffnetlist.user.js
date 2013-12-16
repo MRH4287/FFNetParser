@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.5.2
+// @version        4.5.3
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -114,7 +114,7 @@ function storyParser()
         // API:
         pocket_user: null,
         pocket_password: null,
-        api_url: 'https://www.mrh-development.de/FanFictionUserScript',
+        api_url: 'http://www.mrh-development.de/FanFictionUserScript',
         api_lookupKey: 'ffnet-api-interface',
         api_timeout: 3000,
         api_retries: 2,
@@ -372,6 +372,8 @@ function storyParser()
             }
         });
 
+        // Replace https in BackendURL to http
+        _config.api_url = _config.api_url.replace("https", "http");
 
 
         if (_DEBUG)
@@ -1852,7 +1854,7 @@ function storyParser()
             return;
         }
 
-        var field = body.find("#content_wrapper_inner > table > tbody > tr > td > b");
+        var field = body.find("#profile_top").find("b");
 
 
         var options = {
@@ -2749,7 +2751,7 @@ function storyParser()
                     ).append(
                         $("<button>Default</button>").click(function ()
                         {
-                            $('#fflist-api_url').val("https://www.mrh-development.de/FanFictionUserScript");
+                            $('#fflist-api_url').val("http://www.mrh-development.de/FanFictionUserScript");
                         })
                     ).append(
                         $("<button>Local</button>").click(function ()
