@@ -87,7 +87,7 @@ function storyParser()
     var _DEBUG = true;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.5.2';
+    var _VERSION = '4.5.3';
     var _BRANCH = 'master';
 
     var _LOAD_INTERNAL = false;
