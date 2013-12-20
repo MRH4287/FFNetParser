@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.5.3
+// @version        4.5.4
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -87,8 +87,8 @@ function storyParser()
     var _DEBUG = true;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.5.3';
-    var _BRANCH = 'master';
+    var _VERSION = '4.5.4';
+    var _BRANCH = 'dev';
 
     var _LOAD_INTERNAL = false;
 
@@ -150,6 +150,9 @@ function storyParser()
 
     // Config that is only available in this session
     var _dataConfig = {};
+
+    // Use the Cross-Origin-Resource-Sharing Feature
+    var _useCORS = false;
 
     var _gui_container = null;
 
@@ -375,6 +378,8 @@ function storyParser()
         // Replace https in BackendURL to http
         _config.api_url = _config.api_url.replace("https", "http");
 
+        // Check for CORS:
+        _useCORS = 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest();
 
         if (_DEBUG)
         {
@@ -4135,72 +4140,103 @@ function storyParser()
         var timeout = _config.api_timeout;
         var retrys = _config.api_retries;
 
-        var messageID = Math.random().toString().split(".")[1];
-        data.adress = apiLookupKey + messageID;
+        data.CORS = true;
 
-        $.ajax({
-            type: 'GET',
-            url: url,
-            async: false,
-            contentType: "application/json",
-            dataType: 'jsonp',
-            data: data,
-            cache: false
-        });
-
-
-
-        var tries = 0;
-
-        var checkFunction = function ()
+        if (_useCORS)
         {
-            if (_DEBUG)
+            $.ajax({
+                type: 'GET',
+                url: url,
+                async: true,
+                contentType: "application/json",
+                dataType: 'json',
+                crossDomain: true,
+                data: data,
+                cache: false
+            })
+            .done(function (result)
             {
-                console.log("API_Request - CheckFor Result");
-            }
+                _log("Got Result from Server: ", result);
 
-            if (tries >= retrys)
+                var data = result.Data[0].Value;
+
+                callback(data);
+
+            })
+            .fail(function(state)
+            {
+                console.error("[FFNet-Parser] Error while fetching Result from Server: ", state);
+            });
+
+        }
+        else
+        {
+            var messageID = Math.random().toString().split(".")[1];
+            data.adress = apiLookupKey + messageID;
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                async: false,
+                contentType: "application/json",
+                dataType: 'jsonp',
+                data: data,
+                cache: false
+            });
+
+
+
+            var tries = 0;
+
+            var checkFunction = function ()
             {
                 if (_DEBUG)
                 {
-                    console.log("API_Request - To many tries, abort for ", data);
+                    console.log("API_Request - CheckFor Result");
                 }
 
-                return;
-            }
-
-            if ((typeof sessionStorage[apiLookupKey + messageID] != "undefined") &&
-                (typeof sessionStorage[apiLookupKey + messageID] != "null") &&
-                sessionStorage[apiLookupKey + messageID] != "undefined" &&
-                sessionStorage[apiLookupKey + messageID] != "null" &&
-                sessionStorage[apiLookupKey + messageID] != "" &&
-                sessionStorage[apiLookupKey + messageID] != null)
-            {
-                if (_DEBUG)
+                if (tries >= retrys)
                 {
-                    //console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
+                    if (_DEBUG)
+                    {
+                        console.log("API_Request - To many tries, abort for ", data);
+                    }
+
+                    return;
                 }
 
-                var result = sessionStorage[apiLookupKey + messageID];
-
-                // Clear last Result
-                delete sessionStorage[apiLookupKey + messageID];
-
-                callback(result);
-
-            } else
-            {
-                if (_DEBUG)
+                if ((typeof sessionStorage[apiLookupKey + messageID] != "undefined") &&
+                    (typeof sessionStorage[apiLookupKey + messageID] != "null") &&
+                    sessionStorage[apiLookupKey + messageID] != "undefined" &&
+                    sessionStorage[apiLookupKey + messageID] != "null" &&
+                    sessionStorage[apiLookupKey + messageID] != "" &&
+                    sessionStorage[apiLookupKey + messageID] != null)
                 {
-                    console.log("API_Request - No Result found, Retry");
+                    if (_DEBUG)
+                    {
+                        //console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
+                    }
+
+                    var result = sessionStorage[apiLookupKey + messageID];
+
+                    // Clear last Result
+                    delete sessionStorage[apiLookupKey + messageID];
+
+                    callback(result);
+
+                } else
+                {
+                    if (_DEBUG)
+                    {
+                        console.log("API_Request - No Result found, Retry");
+                    }
+                    tries++;
+                    window.setTimeout(checkFunction, timeout);
                 }
-                tries++;
-                window.setTimeout(checkFunction, timeout);
-            }
-        };
+            };
 
-        window.setTimeout(checkFunction, timeout);
-
+            window.setTimeout(checkFunction, timeout);
+        }
     }
 
     /**
