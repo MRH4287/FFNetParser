@@ -4144,10 +4144,10 @@ function storyParser()
         var timeout = _config.api_timeout;
         var retrys = _config.api_retries;
 
-        data.CORS = true;
-
         if (_useCORS)
         {
+            data.CORS = true;
+
             $.ajax({
                 type: 'GET',
                 url: url,
