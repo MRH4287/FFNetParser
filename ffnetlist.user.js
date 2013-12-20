@@ -407,9 +407,13 @@ function storyParser()
         block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://private.mrh-development.de/ff/jquery.colorpicker.css");
         $("head").append(block);
 
-
+        /*
         block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://www.mrh-development.de/FanFictionUserScript/Css?branch=" + _BRANCH);
         $("head").append(block);
+        */
+
+        // Use this because of the new HTTPS Restrictions ...
+        _api_getStyles();
 
 
         // Check for DEBUG-Mode
@@ -4300,6 +4304,39 @@ function storyParser()
             });
 
         }
+    }
+
+    /**
+    *   Loads the CSS-Styles from the Server
+    */
+    var _api_getStyles = function()
+    {
+        insertStyles = function (style)
+        {
+            _log("Insert Styles ...");
+
+            var cssElement = $('<style id="ffnetParser-CSS" type="text/css"></style>').html(style);
+
+            $("head").append(cssElement);
+
+        };
+
+        if (typeof (_dataConfig["styles"]) == "undefined")
+        {
+            _log("Load Styles from Remote Server ...");
+
+            _apiRequest({ command: "getStyles", data: _BRANCH }, function (styles)
+            {
+                _dataConfig["styles"] = styles;
+
+                insertStyles(styles);
+            });
+        }
+        else
+        {
+            insertStyles(_dataConfig["styles"]);
+        }
+
     }
 
     /**
