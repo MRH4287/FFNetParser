@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             MRH-ff.net-list
 // @name           Fanfiction.net Story Parser
-// @version        4.5.4
+// @version        4.5.5
 // @namespace      window
 // @author         MRH
 // @description    www.fanfiction.net story parser
@@ -87,8 +87,8 @@ function storyParser()
     var _DEBUG = true;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.5.4';
-    var _BRANCH = 'master';
+    var _VERSION = '4.5.5';
+    var _BRANCH = 'dev';
 
     var _LOAD_INTERNAL = false;
 
@@ -123,6 +123,7 @@ function storyParser()
         // advanced Features:
         disable_cache: false,
         disable_highlighter: false,
+        disable_sync: true,
 
 
         // Do not change below this line:
@@ -322,16 +323,13 @@ function storyParser()
 
         if (typeof (_config['api_autoIncludeNewVersion']) == "undefined")
         {
-            // Updates Timeout Settings
-            _config['api_timeout'] = 3000;
 
             // Creates Warning for new Feature:
 
             var text = "<b>Please Read!</b><br />";
-            text += "In this Version, a new Feature has been implemented. With this Feature activated, you don't have to manually install new Versions. ";
+            text += "In one of the previous version, a new feature has been implemented. Whith this Feature activated, you don't have to manually install new Versions. ";
             text += "Newer Versions will be saved in your Local Storage and then executed. Because of that, the Version Number displayed in your UserScript Manager ";
-            text += "can be wrong. To Display the Version Number, check your Config Editor.";
-            text += "<br /><br /><b>Newer Versions will be saved in your Local Memory. Attackers could modify this data! This is unrealistic, but possible</b><br /><br />";
+            text += "can be wrong. To Display the Version Number, check your Menu.";
             text += "Do you want to activate this Feature?";
 
             var dialog = $('<div title="Fanfiction Story Parser"><p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + text + '</p></div>')
@@ -341,7 +339,6 @@ function storyParser()
             {
                 dialog.dialog({
                     resizable: true,
-                    height: 140,
                     modal: true,
                     buttons:
                     {
@@ -472,27 +469,7 @@ function storyParser()
 
                 }).attr('title', 'Open Config Menu')
             );
-            /*
-                .append(
-                $('<a></a>').addClass('menu-link').html('Config Import / Export').attr('href', '#').click(function (e)
-                {
-                    _openSaveConfig();
-                    e.preventDefault();
-
-                }).attr('title', 'Config Export')
-            ).append(
-                $('<a></a>').addClass('menu-link').html('Reset Config').attr('href', '#').click(function (e)
-                {
-                    if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
-                    {
-                        _defaultConfig();
-                    }
-                    e.preventDefault();
-
-                }).attr('title', 'Load default Config')
-            );
-            */
-
+            
         }
 
         // Add Messages Menu:
@@ -2938,6 +2915,37 @@ function storyParser()
             )
         );
 
+
+        // spacer:
+        table.append(spacer.clone());
+
+
+        // disable_sync
+        _log("GUI - disable_sync");
+
+        checkbox = $('<input type="checkbox" id="fflist-disable_sync">');
+        if (_config.disable_sync)
+        {
+            checkbox.attr('checked', 'checked');
+        }
+
+        _settings_elements['disable_sync'] = checkbox;
+
+        table.append(
+            $('<tr></tr>').append(
+                $('<td width="10%"></td>').append(
+                    $('<label for="fflist-disable_sync">Disable Synchronization Feature: </label>')
+                    .css('font-weight', 'bold')
+                )
+                .css('border-right', '1px solid gray')
+            ).append(
+                $('<td class="ffnetparser_InputField"></td>').append(
+                        checkbox
+                )
+            )
+        );
+
+
         cat.category.append(saveButtonContainer.clone());
 
         // --------------------------------------------------------------------------------------------------------------------------
@@ -3060,6 +3068,7 @@ function storyParser()
             _config.allow_copy = _settings_elements.allow_copy.is(':checked');
             _config.disable_highlighter = _settings_elements.disable_highlighter.is(':checked');
             _config.disable_cache = _settings_elements.disable_cache.is(':checked');
+            _config.disable_sync = _settings_elements.disable_sync.is(':checked');
             _config.content_width = _settings_elements.content_width.val();
             _config.color_normal = _settings_elements.color_normal.val();
             _config.color_odd_color = _settings_elements.color_odd_color.val();
@@ -3607,64 +3616,70 @@ function storyParser()
     */
     var _gui_show = function ()
     {
+        buttons = {
+
+            "Synchronization": function ()
+            {
+                if (confirm("All unsaved changes will be deleted!"))
+                {
+                    _gui_hide();
+
+                    _syncGUI();
+                }
+            },
+
+            "Config Import / Export": function ()
+            {
+                if (confirm("All unsaved changes will be deleted!"))
+                {
+                    _openSaveConfig();
+                }
+            },
+
+            "Menu": function ()
+            {
+                // Reopen:
+                if (confirm("All unsaved changes will be deleted!"))
+                {
+                    _gui_hide();
+
+                    _gui();
+
+                }
+
+            },
+
+            "Reset Config": function ()
+            {
+                if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
+                {
+                    $(this).dialog("close");
+
+                    _defaultConfig();
+                }
+
+            },
+
+            Close: function ()
+            {
+                if (confirm("All unsaved changes will be deleted!"))
+                {
+                    $(this).dialog("close");
+                }
+            }
+        }
+
+        if (_config.disable_sync)
+        {
+            delete buttons["Synchronization"];
+        }
 
         _gui_container.dialog({
             resizable: true,
             modal: true,
             height: 900,
             width: 664,
-            buttons:
-            {
-                "Synchronization": function ()
-                {
-                    if (confirm("All unsaved changes will be deleted!"))
-                    {
-                        _gui_hide();
-
-                        _syncGUI();
-                    }
-                },
-
-                "Config Import / Export": function ()
-                {
-                    if (confirm("All unsaved changes will be deleted!"))
-                    {
-                        _openSaveConfig();
-                    }
-                },
-
-                "Menu": function ()
-                {
-                    // Reopen:
-                    if (confirm("All unsaved changes will be deleted!"))
-                    {
-                        _gui_hide();
-
-                        _gui();
-
-                    }
-
-                },
-
-                "Reset Config": function ()
-                {
-                    if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
-                    {
-                        $(this).dialog("close");
-
-                        _defaultConfig();
-                    }
-
-                },
-
-                Close: function ()
-                {
-                    if (confirm("All unsaved changes will be deleted!"))
-                    {
-                        $(this).dialog("close");
-                    }
-                }
-            }
+            buttons: buttons         
         });
 
 
