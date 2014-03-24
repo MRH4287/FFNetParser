@@ -84,10 +84,10 @@ if (typeof (jQuery.ui) == "undefined")
 
 function storyParser()
 {
-    var _DEBUG = true;
+    var _DEBUG = false;
     var _IGNORE_NEW_VERSION = false;
 
-    var _VERSION = '4.5.5';
+    var _VERSION = '4.5.6';
     var _BRANCH = 'dev';
 
     var _LOAD_INTERNAL = false;
@@ -154,6 +154,9 @@ function storyParser()
 
     // Use the Cross-Origin-Resource-Sharing Feature
     var _useCORS = false;
+
+    // Is the current Page the page of a specific user
+    var _inUsersPage = false;
 
     var _gui_container = null;
 
@@ -412,6 +415,11 @@ function storyParser()
         // Use this because of the new HTTPS Restrictions ...
         _api_getStyles();
 
+        // Check if the current Page is a User Specific Page:
+        var locationRegEx = RegExp("\/u\/[0-9]+\/");
+        _inUsersPage = locationRegEx.test(location.href);
+
+        
 
         // Check for DEBUG-Mode
         if ((typeof (_config['debug']) != "undefined") || (_BRANCH == "dev"))
@@ -725,6 +733,8 @@ function storyParser()
         // Endless Mode --- DEBUG-Mode
         if (_DEBUG)
         {
+            // This is unfinished and should not be used ....
+            /*
             if ($(".z-list").length > 0)
             {
 
@@ -750,6 +760,7 @@ function storyParser()
                     })
                 );
             }
+            */
         }
 
     }
@@ -764,7 +775,16 @@ function storyParser()
         {
             return;
         }
-        _element = __element;
+
+        if (_inUsersPage)
+        {
+            _element = __element.filter("#st_inside > .z-list");
+        }
+        else
+        {
+            _element = __element;
+        }
+        
         _read();
     }
 
@@ -786,6 +806,7 @@ function storyParser()
         _hidden_elements = {};
         $('.parser-msg').remove();
         $('[data-color]').removeAttr("data-color");
+
 
         _element.each(function (k, e)
         {
@@ -2037,6 +2058,11 @@ function storyParser()
         }
 
         var notWrapped = $('.z-list[data-wrapped!="wrapped"]');
+
+        if (_inUsersPage)
+        {
+            notWrapped = notWrapped.filter("#st_inside > .z-list");
+        }
 
         if (notWrapped.length != 0)
         {
