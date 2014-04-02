@@ -4,8 +4,8 @@
 
 class storyParser
 {
-    private DEBUG: boolean = true;
-    private IGNORE_NEW_VERSION: boolean = true;
+    private DEBUG: boolean = false;
+    private IGNORE_NEW_VERSION: boolean = false;
 
     public VERSION = '5.0.0';
     public BRANCH = 'dev';

@@ -6,8 +6,8 @@ var storyParser = (function () {
     *   Initializes System
     */
     function storyParser() {
-        this.DEBUG = true;
-        this.IGNORE_NEW_VERSION = true;
+        this.DEBUG = false;
+        this.IGNORE_NEW_VERSION = false;
         this.VERSION = '5.0.0';
         this.BRANCH = 'dev';
         this.LOAD_INTERNAL = false;

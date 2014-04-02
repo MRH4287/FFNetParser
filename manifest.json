@@ -1,7 +1,7 @@
 {
      "name": "Fanfiction.net Story Parser",
 	 "description": "Improves the Fanfiction.net and Fictionpress.com Storylist by adding Filter Options. (+ Many more)",
-     "version": "4.5.6",
+     "version": "5.0.0",
      "manifest_version": 2,
      "content_scripts": [{
          "js": ["ffnetlist.user.js"],

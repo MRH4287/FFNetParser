@@ -12,13 +12,13 @@ namespace FFNetParser
     class Program
     {
         static string basePath = "../../";
-        static string output = "../../ffnetlist.user.js";
+        static string output = "../../../ffnetlist.user.js";
 
         static Tuple<string, string>[] includes = new Tuple<string, string>[]
         {
-            new Tuple<string, string>("jQuery", "../../jquery-1.10.2.js"),
-            new Tuple<string, string>("jQuery.ui", "../../jquery-ui.min.js"),
-            new Tuple<string, string>("jQuery.colorpicker", "../../jquery-colorpicker.min.js")
+            new Tuple<string, string>("jQuery", "../jquery-1.10.2.js"),
+            new Tuple<string, string>("jQuery.ui", "../jquery-ui.min.js"),
+            new Tuple<string, string>("jQuery.colorpicker", "../jquery-colorpicker.min.js")
         };
 
         static void Main(string[] args)
