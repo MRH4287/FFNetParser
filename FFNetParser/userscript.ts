@@ -1,4 +1,6 @@
-/// <reference path="main.ts" /> 
+/// <reference path="jquery.d.ts" /> 
+/// <reference path="jquery.colorpicker.d.ts" /> 
+/// <reference path="jqueryui.d.ts" /> 
 
 class storyParser
 {

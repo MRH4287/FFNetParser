@@ -53,11 +53,19 @@
     <TypeScriptCompile Include="jquery.colorpicker.d.ts" />
     <TypeScriptCompile Include="jquery.d.ts" />
     <TypeScriptCompile Include="jqueryui.d.ts" />
-    <TypeScriptCompile Include="main.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="footer.js" />
+    <Content Include="header.js" />
+    <Content Include="includeTemplate.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>tsc $(ProjectDir)\main.ts</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>tsc $(ProjectDir)\userscript.ts</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
