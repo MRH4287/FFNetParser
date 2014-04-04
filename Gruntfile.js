@@ -10,7 +10,7 @@ module.exports = function(grunt) {
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
 	  '//@ sourceMappingURL=ffnetlist.js.map\n' +
       '<%= manifest.homepage_url ? "* " + manifest.homepage_url + "\\n" : "" %>' +
-      ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= manifest.author %>; \n' +
+      ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= manifest.author %> \n' +
       ' * Licensed under MIT \n */\n',
     // Task configuration.
 	
