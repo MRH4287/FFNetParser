@@ -2,13 +2,13 @@
 /// <reference path="jquery.colorpicker.d.ts" /> 
 /// <reference path="jqueryui.d.ts" /> 
 
-class storyParser
+class StoryParser
 {
     private DEBUG: boolean = false;
     private IGNORE_NEW_VERSION: boolean = false;
 
-    public VERSION = '5.0.0';
-    public BRANCH = 'dev';
+    public VERSION = "5.0.0";
+    public BRANCH = "dev";
 
     private LOAD_INTERNAL: boolean = false;
 
@@ -22,9 +22,9 @@ class storyParser
         allow_copy: false,
 
         // Layout:
-        color_normal: '#FFFFFF',
-        color_mouse_over: '#EEF0F4',
-        color_odd_color: '#dfdfdf',
+        color_normal: "#FFFFFF",
+        color_mouse_over: "#EEF0F4",
+        color_odd_color: "#dfdfdf",
         hide_images: false,
         hide_lazy_images: false,
         disable_image_hover: false,
@@ -33,8 +33,8 @@ class storyParser
         // API:
         pocket_user: null,
         pocket_password: null,
-        api_url: 'http://www.mrh-development.de/FanFictionUserScript',
-        api_lookupKey: 'ffnet-api-interface',
+        api_url: "http://www.mrh-development.de/FanFictionUserScript",
+        api_lookupKey: "ffnet-api-interface",
         api_timeout: 3000,
         api_retries: 2,
         api_checkForUpdates: true,
@@ -47,9 +47,9 @@ class storyParser
 
 
         // Do not change below this line:
-        storage_key: 'ffnet-storycache',
-        config_key: 'ffnet-config',
-        dataStorage_key: 'ffnet-dataStore',
+        storage_key: "ffnet-storycache",
+        config_key: "ffnet-config",
+        dataStorage_key: "ffnet-dataStore",
 
         highlighter: {},
         marker: {},
@@ -88,10 +88,10 @@ class storyParser
     */
     private defaultConfig()
     {
-        if (typeof (this.config['token']) == "undefined")
+        if (this.config["token"] === undefined)
         {
             // Generates Random Token
-            this.config['token'] = Math.random().toString().split(".")[1];
+            this.config["token"] = Math.random().toString().split(".")[1];
             this.save_config();
         }
 
@@ -112,7 +112,7 @@ class storyParser
 
         var isNested = this.IGNORE_NEW_VERSION;
 
-        if (typeof (sessionStorage["ffnet-mutex"]) != "undefined")
+        if (typeof (sessionStorage["ffnet-mutex"]) !== "undefined")
         {
             if (this.DEBUG)
             {
@@ -121,7 +121,7 @@ class storyParser
 
             isNested = true;
 
-            if (typeof (localStorage["ffnet-Script-VersionID"]) != "undefined")
+            if (typeof (localStorage["ffnet-Script-VersionID"]) !== "undefined")
             {
                 var newVersionID = Number(localStorage["ffnet-Script-VersionID"]);
                 var currentID = this.getVersionId(this.VERSION);
@@ -156,7 +156,7 @@ class storyParser
         {
             // Check for new Version
             var data = this.loadFromMemory(localStorage, "ffnet-Script");
-            if (typeof (data.script) != "undefined")
+            if (data.script !== undefined)
             {
                 if (this.DEBUG)
                 {
@@ -180,7 +180,9 @@ class storyParser
 
                 try
                 {
+                    /*! jshint ignore:start */
                     eval(data.script);
+                    /*! jshint ignore:end */
                 }
                 catch (e)
                 {
@@ -233,24 +235,24 @@ class storyParser
 
         // Check for Config Values:
 
-        if ((typeof (this.config['pocket_user']) == "undefined") || (this.config['pocket_user'] === ""))
+        if ((this.config["pocket_user"] === undefined) || (this.config["pocket_user"] === ""))
         {
-            this.config['pocket_user'] = null;
+            this.config["pocket_user"] = null;
         }
 
-        if ((typeof (this.config['pocket_password']) == "undefined") || (this.config['pocket_password'] === ""))
+        if ((this.config["pocket_password"] === undefined) || (this.config["pocket_password"] === ""))
         {
-            this.config['pocket_password'] = null;
+            this.config["pocket_password"] = null;
         }
 
-        if (typeof (this.config['token']) == "undefined")
+        if (this.config["token"] === undefined)
         {
             // Generates Random Token
-            this.config['token'] = Math.random().toString().split(".")[1];
+            this.config["token"] = Math.random().toString().split(".")[1];
             this.save_config();
         }
 
-        if (typeof (this.config['api_autoIncludeNewVersion']) == "undefined")
+        if (this.config["api_autoIncludeNewVersion"] === undefined)
         {
 
             // Creates Warning for new Feature:
@@ -295,7 +297,7 @@ class storyParser
         // Load all the config Values that are listed in the _config Array at startup
         $.each(defaultConfig, function (name, defaultValue)
         {
-            if (typeof (self.config[name]) == "undefined")
+            if (self.config[name] === undefined)
             {
                 self.config[name] = defaultValue;
             }
@@ -324,7 +326,7 @@ class storyParser
         var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
         $("head").append(block);
 
-        if (typeof ($.ui) == "undefined")
+        if ($.ui === undefined)
         {
             console.error("Can't include jQuery UI!");
         }
@@ -342,13 +344,13 @@ class storyParser
         this.api_getStyles();
 
         // Check if the current Page is a User Specific Page:
-        var locationRegEx = RegExp("\/u\/[0-9]+\/");
+        var locationRegEx = new RegExp("\/u\/[0-9]+\/");
         this.inUsersPage = locationRegEx.test(location.href);
 
 
 
         // Check for DEBUG-Mode
-        if ((typeof (this.config['debug']) != "undefined") || (this.BRANCH == "dev"))
+        if ((this.config['debug'] !== undefined) || (this.BRANCH === "dev"))
         {
             this.DEBUG = true;
         }
@@ -409,7 +411,7 @@ class storyParser
         }
 
         // Add Messages Menu:
-        this.log("Add Messages Menu")
+        this.log("Add Messages Menu");
 
         var menulinks = $(".menulink").first();
 
@@ -479,7 +481,7 @@ class storyParser
 
             var count = 0;
 
-            if (typeof (this.dataConfig['messages']) != "undefined")
+            if (this.dataConfig['messages'] !== undefined)
             {
                 count = this.dataConfig['messages'].length;
             }
@@ -554,7 +556,7 @@ class storyParser
                         console.info("Display Only - Element Selected: ", selected);
                     }
 
-                    if (selected != "off")
+                    if (selected !== "off")
                     {
                         self.dataConfig["displayOnly"] = selected;
                     }
@@ -570,7 +572,7 @@ class storyParser
 
             var noneEntry = $('<option value="off">Display: Everything</option>').appendTo(input);
 
-            if (typeof (this.dataConfig["displayOnly"]) == "undefined")
+            if (this.dataConfig["displayOnly"] === undefined)
             {
                 noneEntry.attr("selected", "selected");
             }
@@ -580,7 +582,7 @@ class storyParser
             {
                 var entry = $('<option></option>').attr('value', title).html(title).appendTo(input);
 
-                if ((typeof (self.dataConfig["displayOnly"]) != "undefined") && (title == self.dataConfig["displayOnly"]))
+                if ((self.dataConfig["displayOnly"] !== undefined) && (title === self.dataConfig["displayOnly"]))
                 {
                     entry.attr("selected", "selected");
                 }
@@ -603,12 +605,12 @@ class storyParser
 
             if ($(event.target).is("body"))
             {
-
+                var element: JQuery;
                 // right
-                if (event.keyCode == 39)
+                if (event.keyCode === 39)
                 {
-                    var element = current.next("a");
-                    if (element.length != 0)
+                    element = current.next("a");
+                    if (element.length !== 0)
                     {
                         url = element.attr("href");
                     }
@@ -616,7 +618,7 @@ class storyParser
                     if (url == null)
                     {
                         element = $("body").find('button:contains(Next)').first();
-                        if (element.length != 0)
+                        if (element.length !== 0)
                         {
                             url = self.getUrlFromButton(element);
                         }
@@ -624,10 +626,10 @@ class storyParser
 
                 }
                 // left
-                else if (event.keyCode == 37)
+                else if (event.keyCode === 37)
                 {
-                    var element = current.prev("a");
-                    if (element.length != 0)
+                    element = current.prev("a");
+                    if (element.length !== 0)
                     {
                         url = element.attr("href");
                     }
@@ -635,7 +637,7 @@ class storyParser
                     if (url == null)
                     {
                         element = $("body").find('button:contains(Prev)').first();
-                        if (element.length != 0)
+                        if (element.length !== 0)
                         {
                             url = self.getUrlFromButton(element);
                         }
@@ -737,7 +739,7 @@ class storyParser
         var self = this;
         this.element.each(function (k, e)
         {
-            var element = $(e)
+            var element = $(e);
 
             // Reset Hide:
             element.show();
@@ -752,7 +754,7 @@ class storyParser
 
             var requestQueue = [];
 
-            if (self.config.hide_non_english_storys && (text.indexOf('english') == -1))
+            if (self.config.hide_non_english_storys && (text.indexOf('english') === -1))
             {
                 if (self.DEBUG)
                 {
@@ -787,7 +789,7 @@ class storyParser
                     {
                         var reg = new RegExp(marker, "i");
 
-                        if ((marker != "") && reg.test(text))
+                        if ((marker !== "") && reg.test(text))
                         {
                             // Ignore this Element
                             ignore = true;
@@ -834,7 +836,8 @@ class storyParser
                         'name': storyName,
                         'url': link,
                         'chapter': 0
-                    }
+                    };
+
                     self.elementCallback(self, config, element, textEl, headline, info);
 
 
@@ -855,7 +858,7 @@ class storyParser
 
                     requestQueue.push(parseData);
 
-                } else if (self.found.indexOf(storyName) == -1)
+                } else if (self.found.indexOf(storyName) === -1)
                 {
 
                     /*if (_DEBUG)
@@ -915,7 +918,7 @@ class storyParser
 
 
                 // Highlighter found:
-                if (typeof (self.config['highlighter'][link]) != "undefined")
+                if (self.config['highlighter'][link] !== "undefined")
                 {
                     if (self.DEBUG)
                     {
@@ -923,7 +926,7 @@ class storyParser
                     }
 
                     // Update old Format
-                    if (typeof (self.config['highlighter'][link]) != "object")
+                    if (typeof (self.config['highlighter'][link]) !== "object")
                     {
                         if (self.DEBUG)
                         {
@@ -966,7 +969,7 @@ class storyParser
                     console.log("[_read] Change Color of Line: ",element); 
                 }*/
 
-                if (typeof (self.dataConfig["displayOnly"]) != "undefined")
+                if (self.dataConfig["displayOnly"] !== undefined)
                 {
                     if (self.DEBUG)
                     {
@@ -1052,11 +1055,11 @@ class storyParser
         setTimeout(function ()
         {
             // Get Messages from Server:  
-            if (typeof (self.dataConfig['messages']) == "undefined")
+            if (typeof (self.dataConfig['messages']) === "undefined")
             {
                 self.apiGetMessages(function (messages)
                 {
-                    if ((typeof (messages.Messages) != "undefined") && (messages.Messages.length > 0))
+                    if ((messages.Messages !== undefined) && (messages.Messages.length > 0))
                     {
                         // New Messages:
                         self.dataConfig['messages'] = messages.Messages;
@@ -1133,7 +1136,7 @@ class storyParser
         var url: string;
 
         // Check for ScriptInsert Page:
-        if (data.url.indexOf("?url=") == -1)
+        if (data.url.indexOf("?url=") === -1)
         {
             url = 'https://www.fanfiction.net' + data.url;
         }
@@ -1144,7 +1147,7 @@ class storyParser
 
         var keywords = data.keywords;
 
-        if (typeof keywords == "undefined")
+        if (keywords === undefined)
         {
             console.warn('No Keywords!');
         }
@@ -1154,7 +1157,7 @@ class storyParser
         var executeNext = function ()
         {
             self.doParse(queue, i + 1);
-        }
+        };
 
         var callback = function (info)
         {
@@ -1170,7 +1173,7 @@ class storyParser
             self.found.push(el.storyName);
 
             executeNext();
-        }
+        };
 
         self.parse(url, keywords, callback, 0, executeNext);
 
@@ -1245,7 +1248,7 @@ class storyParser
                 var next = body.find('button:contains(Next)').first();
                 //console.log('next: ', next);
 
-                if (next.length != 0)
+                if (next.length !== 0)
                 {
                     var data = url = self.getUrlFromButton(next);
 
@@ -1305,7 +1308,7 @@ class storyParser
 
         var self = this;
 
-        if (storyEl.length == 1)
+        if (storyEl.length === 1)
         {
             var storyText = storyEl.html().toLowerCase();
 
@@ -1317,8 +1320,8 @@ class storyParser
                 {
                     try
                     {
-                        var reg = new RegExp(word, "i");
-                        if (reg.test(storyText))
+                        var wordReg = new RegExp(word, "i");
+                        if (wordReg.test(storyText))
                         {
 
                             var append = "([a-zA-Z0-9, :-_\*]+)?";
@@ -1331,7 +1334,7 @@ class storyParser
                             var sentence = "";
                             for (var i = 1; i < data.length; i++)
                             {
-                                if (typeof (data[i]) != "undefined")
+                                if (data[i] !== undefined)
                                 {
                                     sentence += data[i];
                                 }
@@ -1366,7 +1369,7 @@ class storyParser
     *   @param headline  The Headline of the Found story
     *   @param info The Info to the found element
     */
-    private elementCallback(self: storyParser, config, element, textEl, headline, info)
+    private elementCallback(self: StoryParser, config, element, textEl, headline, info)
     {
         var found_where = info.chapter;
 
@@ -1381,7 +1384,7 @@ class storyParser
             console.info("Element Callback for ", headline, info);
         }
 
-        if ((typeof (self.dataConfig["displayOnly"]) != "undefined") && (self.dataConfig["displayOnly"] == headline))
+        if ((self.dataConfig["displayOnly"] !== undefined) && (self.dataConfig["displayOnly"] === headline))
         {
             if (self.DEBUG)
             {
@@ -1395,7 +1398,7 @@ class storyParser
 
             self.hidden -= 1;
         }
-        else if (typeof (self.dataConfig["displayOnly"]) != "undefined")
+        else if (self.dataConfig["displayOnly"] !== undefined)
         {
             // Hide this Element because the Only Mode do not match
 
@@ -1466,13 +1469,13 @@ class storyParser
 
                 if (erg != null)
                 {
-                    if (erg.length == 1)
+                    if (erg.length === 1)
                     {
                         replace = keyword;
-                    } else if (erg.length == 2)
+                    } else if (erg.length === 2)
                     {
                         front = erg[1];
-                    } else if (erg.length == 3)
+                    } else if (erg.length === 3)
                     {
                         front = erg[1];
                         replace = erg[2];
@@ -1542,7 +1545,7 @@ class storyParser
                             $("<a></a>").attr('href', value.url).html(value.name)
                             ).append(" - " + value.chapter)
                             .attr("title", value.sentence)
-                        )
+                        );
                 });
 
                 headlineContainer.append(eUl);
@@ -1586,7 +1589,7 @@ class storyParser
                                 (
                                 $('<td style="padding-left: 15px"></td>').text(value)
                                 )
-                            )
+                            );
 
                     });
 
@@ -1682,7 +1685,7 @@ class storyParser
     {
         element.css('background-color', color);
 
-        if (typeof (notSetAttr) == "undefined")
+        if (notSetAttr === undefined)
         {
             element.attr("data-color", color);
             element.attr("data-mouseOverColor", colorMo);
@@ -1696,7 +1699,7 @@ class storyParser
         }).mouseleave(function ()
             {
                 $(this).css('background-color', color);
-            })
+            });
     }
 
 
@@ -1747,7 +1750,7 @@ class storyParser
         field.after(contextMenu);
 
         // Highlighter found:
-        if (typeof (this.config['highlighter'][document.location.pathname]) != "undefined")
+        if (this.config['highlighter'][document.location.pathname] !== undefined)
         {
             if (this.DEBUG)
             {
@@ -1755,7 +1758,7 @@ class storyParser
             }
 
             // Update old Format
-            if (typeof (this.config['highlighter'][document.location.pathname]) != "object")
+            if (typeof (this.config['highlighter'][document.location.pathname]) !== "object")
             {
                 if (this.DEBUG)
                 {
@@ -1769,7 +1772,7 @@ class storyParser
                 .css("width", "20px")
                 .css("height", "20px")
                 .css("margin-left", "15px")
-                .addClass("parser-msg")
+                .addClass("parser-msg");
 
             field.after(img);
 
@@ -1863,12 +1866,12 @@ class storyParser
     */
     private parsePocket(url, prefix, length, currentDepth = 1)
     {
-        if (typeof prefix == "undefined")
+        if (prefix === undefined)
         {
             prefix = "";
         }
 
-        if ((typeof length == "undefined") || (length == "all"))
+        if ((length === undefined) || (length === "all"))
         {
             length = 100;
         }
@@ -1904,7 +1907,7 @@ class storyParser
             var next = body.find('button:contains(Next)').first();
 
 
-            if ((next.length != 0) && (currentDepth + 1 <= length))
+            if ((next.length !== 0) && (currentDepth + 1 <= length))
             {
                 var data = url = self.getUrlFromButton(next);
 
@@ -1991,7 +1994,7 @@ class storyParser
         }
 
         var wrapper = $(".ffNetPageWrapper");
-        if (wrapper.length == 0)
+        if (wrapper.length === 0)
         {
             wrapper = this.createWrapper(currentPage);
         }
@@ -2003,7 +2006,7 @@ class storyParser
             notWrapped = notWrapped.filter("#st_inside > .z-list");
         }
 
-        if (notWrapped.length != 0)
+        if (notWrapped.length !== 0)
         {
             if (this.DEBUG)
             {
@@ -2020,13 +2023,8 @@ class storyParser
     }
 
 
-    private loadPage(loadPrev)
+    private loadPage(loadPrev = false)
     {
-        if (typeof (loadPrev) == "undefined")
-        {
-            loadPrev = false;
-        }
-
         var base = null;
 
         if (this.currentPage == null)
@@ -2061,7 +2059,7 @@ class storyParser
 
                 window.setTimeout(function ()
                 {
-                    self.readList(wrapper.children())
+                    self.readList(wrapper.children());
 
                 }, 200);
 
@@ -2079,7 +2077,7 @@ class storyParser
 
     private getCurrentPage(content)
     {
-        return content.find("center > b").first().text()
+        return content.find("center > b").first().text();
     }
 
 
@@ -2209,7 +2207,7 @@ class storyParser
                 $("." + target).fadeIn();
             });
 
-        }
+        };
 
         var __backLogic = function ()
         {
@@ -2217,7 +2215,7 @@ class storyParser
             {
                 $(".ffnet_Config_Button_Container").fadeIn();
             });
-        }
+        };
 
         // Render SubLogic:
 
@@ -2225,7 +2223,7 @@ class storyParser
         {
             return $("<div></div>").addClass("ffnet_Config_Button").text(name)
                 .attr("data-target", target).click(__buttonLogic).appendTo(container);
-        }
+        };
 
         var __getCategory = function (name, id, container)
         {
@@ -2246,7 +2244,7 @@ class storyParser
                 };
 
             return result;
-        }
+        };
 
         // ----------- GUI -------------------------
 
@@ -2273,7 +2271,7 @@ class storyParser
         // story_search_depth
         this.log("GUI - story_search_depth");
 
-        var input = $('<input type="text" id="fflist-story_search_depth">')
+        var input: JQuery = $('<input type="text" id="fflist-story_search_depth">')
             .attr('value', this.config.story_search_depth)
             .attr('size', '50');
 
@@ -2685,7 +2683,7 @@ class storyParser
             // api_url
             this.log("GUI - api_url");
 
-            var input = $('<input type="text" id="fflist-api_url">')
+            input = $('<input type="text" id="fflist-api_url">')
                 .attr('value', this.config.api_url);
 
             this.settings_elements['api_url'] = input;
@@ -2982,13 +2980,13 @@ class storyParser
 
             $.each(self.gui_elements, function (k, data)
             {
-                if (data == undefined)
+                if (data === undefined)
                 {
                     return;
                 }
 
                 var name = data.name.val();
-                if (name == '')
+                if (name === "")
                 {
                     return;
                 }
@@ -3008,10 +3006,10 @@ class storyParser
                         ignoreColor: data.ignoreColor.is(':checked'),
                         background: (name in self.config.marker && self.config.marker[name].background != null) ? (self.config.marker[name].background) : null,
                         text_color: data.text_color.val(),
-                        revision: ((typeof (self.config.marker[name]) == "undefined") || (typeof (self.config.marker[name].revision) == "undefined")) ? 0 : self.config.marker[name].revision + 1
+                        revision: ((self.config.marker[name] === undefined) || (self.config.marker[name].revision === undefined)) ? 0 : self.config.marker[name].revision + 1
                     };
 
-                if (config.text_color == "")
+                if (config.text_color === "")
                 {
                     config.text_color = "#686868";
                 }
@@ -3189,7 +3187,7 @@ class storyParser
         table.append(spacer.clone());
 
         // Keywords:
-        var input = $('<input type="text" id="fflist-' + name + '-keywords">')
+        input = $('<input type="text" id="fflist-' + name + '-keywords">')
             .attr('value', marker.keywords.join(', '))
             .attr('size', '50');
 
@@ -3217,7 +3215,7 @@ class storyParser
         table.append(spacer.clone());
 
         // Ignore:
-        var input = $('<input type="text" id="fflist-' + name + '-ignore">')
+        input = $('<input type="text" id="fflist-' + name + '-ignore">')
             .attr('value', marker.ignore.join(', '))
             .attr('size', '50');
 
@@ -3244,7 +3242,7 @@ class storyParser
         table.append(spacer.clone());
 
         // Ignore Color:
-        var checkbox = $('<input type="checkbox" id="fflist-' + name + '-ignoreColor">');
+        checkbox = $('<input type="checkbox" id="fflist-' + name + '-ignoreColor">');
         if (marker.ignoreColor)
         {
             checkbox.attr('checked', 'checked');
@@ -3292,7 +3290,7 @@ class storyParser
         table.append(spacer.clone());
 
         // Color:
-        var input = $('<input type="text" id="fflist-' + name + '-color">')
+        input = $('<input type="text" id="fflist-' + name + '-color">')
             .attr('value', marker.color)
             .attr('size', '50')
             .colorpicker({
@@ -3325,7 +3323,7 @@ class storyParser
         table.append(spacer.clone());
 
         // MouseOver:
-        var input = $('<input type="text" id="fflist-' + name + '-mouseOver">')
+        input = $('<input type="text" id="fflist-' + name + '-mouseOver">')
             .attr('value', marker.mouseOver)
             .attr('size', '50')
             .colorpicker({
@@ -3358,7 +3356,7 @@ class storyParser
         table.append(spacer.clone());
 
         //  text_color:
-        var input = $('<input type="text" id="fflist-' + name + '-text_color">')
+        input = $('<input type="text" id="fflist-' + name + '-text_color">')
             .attr('value', marker.text_color)
             .attr('size', '50')
             .colorpicker({
@@ -3511,7 +3509,7 @@ class storyParser
                         container.fadeOut(function ()
                         {
                             container.remove();
-                        })
+                        });
 
                     })
                     )
@@ -3629,7 +3627,7 @@ class storyParser
                     $(this).dialog("close");
                 }
             }
-        }
+        };
 
         if (this.config.disable_sync)
         {
@@ -3755,7 +3753,7 @@ class storyParser
 
         } else
         {
-            if (typeof (storyInfo) == "undefined")
+            if (storyInfo === undefined)
             {
                 if (this.DEBUG)
                 {
@@ -3800,7 +3798,7 @@ class storyParser
                 .css("display", "inline-block").css("margin-left", "15px")
                 .appendTo(this.gui_container);
 
-            if ((typeof (this.config['highlighter'][storyInfo.url]) != "undefined") && (this.config['highlighter'][storyInfo.url].hide))
+            if ((this.config['highlighter'][storyInfo.url] !== undefined) && (this.config['highlighter'][storyInfo.url].hide))
             {
                 hide.attr('checked', 'checked');
             }
@@ -3846,7 +3844,7 @@ class storyParser
             }
 
 
-            if (typeof (this.config['highlighter'][storyInfo.url]) != "undefined")
+            if (this.config['highlighter'][storyInfo.url] !== undefined)
             {
                 highlighter.val(this.config['highlighter'][storyInfo.url].image);
             }
@@ -3862,7 +3860,7 @@ class storyParser
                         var newVal = highlighter.val();
                         var hidden = hide.is(":checked");
 
-                        if ((newVal == "") && (!hidden))
+                        if ((newVal === "") && (!hidden))
                         {
                             self.config['highlighter'][storyInfo.url] = undefined;
                         }
@@ -3934,7 +3932,7 @@ class storyParser
                             value: value
                         });
 
-                        if (value == 100)
+                        if (value === 100)
                         {
                             element.dialog("close");
 
@@ -3953,7 +3951,7 @@ class storyParser
 
                         }
 
-                    }
+                    };
 
                     self.api_syncFilter(progress);
                 },
@@ -3977,7 +3975,7 @@ class storyParser
 
         var messages = $("<div></div>");
 
-        if (typeof (localMessages) != "undefined")
+        if (localMessages !== undefined)
         {
             this.apiMarkMessages();
 
@@ -4173,12 +4171,11 @@ class storyParser
                     return;
                 }
 
-                if ((typeof sessionStorage[apiLookupKey + messageID] != "undefined") &&
-                    (typeof sessionStorage[apiLookupKey + messageID] != "null") &&
-                    sessionStorage[apiLookupKey + messageID] != "undefined" &&
-                    sessionStorage[apiLookupKey + messageID] != "null" &&
-                    sessionStorage[apiLookupKey + messageID] != "" &&
-                    sessionStorage[apiLookupKey + messageID] != null)
+                if ((sessionStorage[apiLookupKey + messageID] !== undefined) &&
+                    (sessionStorage[apiLookupKey + messageID] !== "null") &&
+                    sessionStorage[apiLookupKey + messageID] !== "undefined" &&
+                    sessionStorage[apiLookupKey + messageID] !== null &&
+                    sessionStorage[apiLookupKey + messageID] !== "")
                 {
                     if (self.DEBUG)
                     {
@@ -4218,10 +4215,10 @@ class storyParser
                 {
                     Version: this.VERSION,
                     Token: this.config.token,
-                    Nested: (typeof (sessionStorage["ffnet-mutex"]) != "undefined") ? true : false,
+                    Nested: (sessionStorage["ffnet-mutex"] !== undefined) ? true : false,
                     Branch: this.BRANCH,
                     Page: window.location.href
-                }
+                };
 
             if (this.DEBUG)
             {
@@ -4288,7 +4285,7 @@ class storyParser
 
         };
 
-        if (typeof (this.dataConfig["styles"]) == "undefined")
+        if (this.dataConfig["styles"] === undefined)
         {
             this.log("Load Styles from Remote Server ...");
 
@@ -4344,7 +4341,7 @@ class storyParser
         this.apiRequest({ command: "sendFilter", data: JSON.stringify(data) }, function (result)
         {
 
-            if (typeof (callback) == "function")
+            if (typeof (callback) === "function")
             {
                 callback(JSON.parse(result));
             }
@@ -4375,7 +4372,7 @@ class storyParser
                 self.log("Upload Finished");
                 self.save_config();
 
-                if (typeof (onFinish) == "function")
+                if (typeof (onFinish) === "function")
                 {
                     onFinish();
                 }
@@ -4418,12 +4415,12 @@ class storyParser
                 if (!response.Error)
                 {
                     // Save Revision into internal Data-Structure
-                    if (typeof (keys[index]) == "undefined")
+                    if (keys[index] === undefined)
                     {
                         self.log("Error keys[", index, "] is undefined");
                         self.log("keys : ", keys);
                     }
-                    else if (typeof (self.config.marker[keys[index]]) == "undefined")
+                    else if (self.config.marker[keys[index]] === undefined)
                     {
                         self.log("Error _config.marker[", keys[index], "] is undefined");
                         self.log("_config.marker : ", self.config.marker);
@@ -4458,7 +4455,7 @@ class storyParser
         this.apiRequest({ command: "getNewestRevisions", data: this.config.token }, function (result)
         {
 
-            if (typeof (callback) == "function")
+            if (typeof (callback) === "function")
             {
                 callback(JSON.parse(result));
             }
@@ -4495,12 +4492,12 @@ class storyParser
 
                 self.log("Check Element: ", el);
 
-                if (typeof (marker) != "undefined")
+                if (marker !== undefined)
                 {
                     self.log("Local Marker Found - Version: ", marker.revision);
 
                     // Marker exists -> check Revision
-                    if (typeof (marker.revision) == "undefined")
+                    if (marker.revision === undefined)
                     {
                         marker.revision = 0;
                     }
@@ -4535,7 +4532,7 @@ class storyParser
             // Check for Filter, that are not on the Server
             $.each(self.config.marker, function (key, el)
             {
-                if (checked.indexOf(key) == -1)
+                if (checked.indexOf(key) === -1)
                 {
                     self.log("Filter ", el.name, " not on the Server -> upload");
 
@@ -4561,7 +4558,7 @@ class storyParser
     {
         this.log("Get Marker from Server: ", marker);
 
-        if (marker.length == 0)
+        if (marker.length === 0)
         {
             callback({
                 Error: false,
@@ -4581,7 +4578,7 @@ class storyParser
         this.apiRequest({ command: "getFilter", data: JSON.stringify(data) }, function (result)
         {
 
-            if (typeof (callback) == "function")
+            if (typeof (callback) === "function")
             {
                 callback(JSON.parse(result));
             }
@@ -4608,7 +4605,7 @@ class storyParser
             var progress = function (index)
             {
                 progress_callback((index / numberOfElements) * 100);
-            }
+            };
 
             // Upload Markers:
             self.api_sendMarkers(elements.upload, function ()
@@ -4616,7 +4613,7 @@ class storyParser
                 progress = function ()
                 {
                     progress_callback(((numberOfElements - 1) / numberOfElements) * 100);
-                }
+                };
 
                 self.api_getMarker(elements.download, function (result)
                 {
@@ -4842,12 +4839,11 @@ class storyParser
     */
     private loadFromMemory(memory, key)
     {
-        if ((typeof memory[key] != "undefined") &&
-            (typeof memory[key] != "null") &&
-            memory[key] != "undefined" &&
-            memory[key] != "null" &&
-            memory[key] != "" &&
-            memory[key] != null)
+        if ((memory[key] !== "undefined") &&
+            (memory[key] !== "null") &&
+            memory[key] !== undefined &&
+            memory[key] != null &&
+            memory[key] !== "")
         {
             return JSON.parse(memory[key]);
         }
@@ -4890,7 +4886,7 @@ class storyParser
         }
         else
         {
-            return null
+            return null;
         }
     }
 
@@ -4904,11 +4900,11 @@ class storyParser
     {
         if (this.DEBUG)
         {
-            if (typeof (b) == "undefined")
+            if (b === undefined)
             {
                 console.log(a);
             }
-            else if (typeof (c) == "undefined")
+            else if (c === undefined)
             {
                 console.log(a, b);
             }
@@ -4925,15 +4921,15 @@ class storyParser
     *   @param b Parameter B
     *   @param c Parameter C
     */
-    private info(a, b, c)
+    private info(a, b?, c?)
     {
         if (this.DEBUG)
         {
-            if (typeof (b) == "undefined")
+            if (b === undefined)
             {
                 console.info(a);
             }
-            else if (typeof (c) == "undefined")
+            else if (c === undefined)
             {
                 console.info(a, b);
             }
@@ -4948,7 +4944,5 @@ class storyParser
     // -------------------------------------------
 
     //__init();
-
-
 
 }

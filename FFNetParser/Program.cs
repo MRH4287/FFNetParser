@@ -23,6 +23,7 @@ namespace FFNetParser
 
         static void Main(string[] args)
         {
+            /*
            // using (var stream = File.OpenWrite(output))
             using(var writer = new StreamWriter(output))
             {
@@ -70,6 +71,7 @@ namespace FFNetParser
                 //writer.Write(current);
 
             }
+             * */
 
         }
 
