@@ -151,6 +151,14 @@ _Warning: The Data is transferred unencrypted!_
 __I would change that if i could, but HTTPS do not work so well with my API Calls__
 
 
+## How to Build this
+
+This Script uses Grunt as Buildtool.
+
+Install Node.js on your machine and run the command `npm install` in the project directory.
+
+After that, just run `grunt` to run the build process.
+
 
 ## Disclaimer
 
