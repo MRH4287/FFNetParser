@@ -7,8 +7,8 @@ class StoryParser
     private DEBUG: boolean = false;
     private IGNORE_NEW_VERSION: boolean = false;
 
-    public VERSION = "5.0.0";
-    public BRANCH = "dev";
+    public VERSION = "@@VERSION"; // 5.0.0
+    public BRANCH = "@@BRANCH"; // dev
 
     private LOAD_INTERNAL: boolean = false;
 
@@ -918,7 +918,7 @@ class StoryParser
 
 
                 // Highlighter found:
-                if (self.config['highlighter'][link] !== "undefined")
+                if (self.config['highlighter'][link] !== undefined)
                 {
                     if (self.DEBUG)
                     {
@@ -1202,7 +1202,7 @@ class StoryParser
 
         var ajax_callback = function (text: string)
         {
-            if (!(url in self.storyCache) && self.config.disable_cache)
+            if (!(url in self.storyCache) && !self.config.disable_cache)
             {
                 if (self.DEBUG)
                 {
@@ -1216,6 +1216,8 @@ class StoryParser
                     sessionStorage[self.config.storage_key] = JSON.stringify(self.storyCache);
                 } catch (ex)
                 {
+                    self.log("Can't save Story Cache: ", ex);
+
                     try
                     {
                         sessionStorage[self.config.storage_key] = '';

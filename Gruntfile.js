@@ -8,14 +8,24 @@ module.exports = function(grunt) {
 	manifest: grunt.file.readJSON('manifest.json'),
     banner: '/*! <%= manifest.name %> - v<%= manifest.version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+	  '//@ sourceMappingURL=ffnetlist.js.map\n' +
       '<%= manifest.homepage_url ? "* " + manifest.homepage_url + "\\n" : "" %>' +
-      '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= manifest.author %>; \n' +
-      ' Licensed under MIT */\n',
+      ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= manifest.author %>; \n' +
+      ' * Licensed under MIT \n */\n',
     // Task configuration.
 	
-	typescriptFiles: [
-				'build/userscript.js',
-			],
+	typescriptFiles: 
+	[
+		'build/userscript.js',
+	],
+	filesToPack:
+	[
+		'ffnetlist.js.map',
+		'ffnetlist.user.js',
+		'LICENSE.txt',
+		'manifest.json',
+		'jquery-1.10.2.min.map'
+	],
 	
     concat: {
 		options: 
@@ -23,16 +33,16 @@ module.exports = function(grunt) {
 			/*banner: '<%= banner %>',
 			stripBanners: true*/
 		},
-		UserScript: 
+		userscript: 
 		{
 			src: '<%= typescriptFiles %>',
 			dest: 'build/package.js' //<%= pkg.name %>
 			
 		},
-		Package: 
+		pack: 
 		{
 			src: [
-				'lib/header.js',
+				'build/header.js',
 				'lib/jquery-1.10.2.js',
 				'lib/jquery-ui.min.js',
 				'lib/jquery-colorpicker.min.js',
@@ -53,41 +63,6 @@ module.exports = function(grunt) {
         dest: 'build/package.min.js'
       }
     },
-	command : {
-        run_bat: 
-		{
-            type : 'bat',
-            cmd  : 'buildCRX.bat'
-        }
-    },
-	//FFNetChromeExtentionBuilder.exe
-	/*
-    jshint: {
-      options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        unused: true,
-        boss: true,
-        eqnull: true,
-        browser: true,
-        globals: {
-          jQuery: true
-        }
-      },
-      gruntfile: {
-        src: 'Gruntfile.js'
-      },
-      lib_test: {
-        src: '<%= typescriptFiles %>' //['build/*.js', 'test/** /*.js']
-      }
-    },
-	*/
 	tslint: {
 		options: {
 		  configuration: grunt.file.readJSON("tslint.json")
@@ -96,19 +71,6 @@ module.exports = function(grunt) {
 		  src: ['FFNetParser/*.ts']
 		}
 	},
-    qunit: {
-      files: ['test/**/*.html']
-    },
-    watch: {
-      gruntfile: {
-        files: '<%= jshint.gruntfile.src %>',
-        tasks: ['jshint:gruntfile']
-      },
-      lib_test: {
-        files: '<%= jshint.lib_test.src %>',
-        tasks: ['jshint:lib_test', 'qunit']
-      }
-    },
 	typescript: {
       base: {
         src: ['FFNetParser/*.ts'],
@@ -121,20 +83,128 @@ module.exports = function(grunt) {
           declaration: true
         }
       }
-    }
+    },
+	replace: 
+	{
+		header: 
+		{
+			options: 
+			{
+			  patterns: [
+				{
+				  match: 'VERSION',
+				  replacement: '<%= manifest.version %>'
+				}
+			  ]
+			},
+			files: [
+			  {expand: true, flatten: true, src: ['lib/header.js'], dest: 'build/'}
+			]
+		},
+		userscript:
+		{
+			options: 
+			{
+			  patterns: [
+				{
+					match: 'VERSION',
+					replacement: '<%= manifest.version %>'
+				},
+				{
+					match: 'BRANCH',
+					replacement: '<%= gitinfo.local.branch.current.name %>'
+				}
+			  ]
+			},
+			files: [
+			  {expand: true, flatten: true, src: '<%= typescriptFiles %>', dest: 'build/'}
+			]
+		}
+    },
+	gitinfo: {
+		// Fills a local Array with Git-specific data
+		// https://github.com/damkraw/grunt-gitinfo
+		options: { }
+    },
+	copy: 
+	{
+		map: 
+		{
+			src: 'build/userscript.js.map',
+			dest: 'ffnetlist.js.map'
+		},
+		crx:
+		{
+			src: '<%= filesToPack %>',
+			dest: 'Chrome'
+		}
+	},
+	compress: 
+	{
+		main: {
+			options: {
+			  archive: 'publish.zip'
+			},
+			files: [
+			  {src: '<%= filesToPack %>', dest: '.', filter: 'isFile'}
+			]
+		}
+	},
+	exec: 
+	{
+		buildCrx:
+		{
+		  command: 'buildcrx.bat',
+		  stdout: true,
+		  stderr: false
+		}
+	},
+	clean: 
+	{
+		build: 
+		{
+			src: ["build", "publish.zip", "Chrome.crx"]
+		},
+		chrome:
+		{
+			src: "Chrome"
+		}
+	}
   });
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-typescript');
   grunt.loadNpmTasks('grunt-tslint');
-  grunt.loadNpmTasks('grunt-contrib-commands');
+  grunt.loadNpmTasks('grunt-replace');
+  grunt.loadNpmTasks('grunt-gitinfo');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-compress');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-exec');
 
   // Default task.
-  grunt.registerTask('default', ['tslint', 'typescript', 'concat:UserScript', 'uglify', 'concat:Package', 'command']); //, 'qunit', 'jshint'
-
+  grunt.registerTask('default', 
+	[
+		'tslint',
+		'typescript',
+		'replace:header',
+		'gitinfo',
+		'replace:userscript',
+		'concat:userscript',
+		'uglify',
+		'concat:pack',
+		'copy:map',	
+		'clean:build'
+	]);
+	
+	grunt.registerTask('package', 
+	[
+		'default',
+		'exec',
+		'clean:chrome',
+		'compress'	
+	]);
+	
 };
