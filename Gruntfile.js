@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 	manifest: grunt.file.readJSON('manifest.json'),
     banner: '/*! <%= manifest.name %> - v<%= manifest.version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-	  '//@ sourceMappingURL=ffnetlist.js.map\n' +
+	  '//# sourceMappingURL=ffnetlist.js.map\n' +
       '<%= manifest.homepage_url ? "* " + manifest.homepage_url + "\\n" : "" %>' +
       ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= manifest.author %> \n' +
       ' * Licensed under MIT \n */\n',
@@ -183,10 +183,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-exec');
-
+  
   // Default task.
   grunt.registerTask('default', 
 	[
+		'clean:build',
 		'tslint',
 		'typescript',
 		'replace:header',
@@ -195,8 +196,7 @@ module.exports = function(grunt) {
 		'concat:userscript',
 		'uglify',
 		'concat:pack',
-		'copy:map',	
-		'clean:build'
+		'copy:map'
 	]);
 	
 	grunt.registerTask('package', 

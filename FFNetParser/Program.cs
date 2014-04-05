@@ -11,6 +11,7 @@ namespace FFNetParser
 {
     class Program
     {
+        /*
         static string basePath = "../../";
         static string output = "../../../ffnetlist.user.js";
 
@@ -20,6 +21,7 @@ namespace FFNetParser
             new Tuple<string, string>("jQuery.ui", "../jquery-ui.min.js"),
             new Tuple<string, string>("jQuery.colorpicker", "../jquery-colorpicker.min.js")
         };
+         * */
 
         static void Main(string[] args)
         {
@@ -75,7 +77,7 @@ namespace FFNetParser
 
         }
 
-
+        /*
         private static void addInludes(StringBuilder target)
         {
             var template = getFileContent("includeTemplate.js");
@@ -106,6 +108,6 @@ namespace FFNetParser
             return null;
 
         }
-
+        */
     }
 }

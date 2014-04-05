@@ -2,15 +2,38 @@
 /// <reference path="jquery.colorpicker.d.ts" /> 
 /// <reference path="jqueryui.d.ts" /> 
 
+/// <reference path="Types.ts" /> 
 class StoryParser
 {
+    /** 
+     * The DEBUG Option.
+     * Can be enabled with a Config option or when a dev Version is used.
+     */
     private DEBUG: boolean = false;
+
+    /**
+     * Do not use a stored Version from the Auto Updater.
+     */
     private IGNORE_NEW_VERSION: boolean = false;
 
-    public VERSION = "@@VERSION"; // 5.0.0
+    /**
+     * The current Version.
+     * Is replaced by Grunt.
+     */
+    public VERSION = "@@VERSION";
+
+    /**
+     * The current Git Branch.
+     * IS replaced by Grunt.
+     */
     public BRANCH = "@@BRANCH"; // dev
 
+    /**
+     * A stored version of the Script is used
+     */
+
     private LOAD_INTERNAL: boolean = false;
+
 
     // Default-Config:
     private config = {
@@ -57,35 +80,64 @@ class StoryParser
         markerBackup: {}
     };
 
+    /**
+     * Used for the reset of the config
+     */
     private baseConfig = this.config;
 
     // ----------------------
 
+    /**
+     * The list of elements that are modified
+     */
     private element: JQuery = null;
+    /**
+     * The number of hidden Elements
+     */
     private hidden = 0;
-    private hidden_elements: { [index: string]: string } = {};
 
-    private eList = {};
+    /**
+     * The hidden elements and the reason for hiding.
+     * Index: Link, Value: reason
+     */
+    private hiddenElements: { [index: string]: string } = {};
 
-    private found = [];
+    /**
+     * List of found Elements
+     * Key: Headline, Value: List of Links
+     */
+    private eList: { [index: string]: StoryInfo[] } = {};
+
+    /**
+     * Cache for in story search
+     */
     private storyCache: { [index: string]: string } = {};
 
 
-    // Config that is only available in this session
+    /** 
+     * Config that is only available in this session 
+     */
     private dataConfig = {};
 
-    // Use the Cross-Origin-Resource-Sharing Feature
+    /**
+     * Use the Cross-Origin-Resource-Sharing Feature
+     */
     private useCORS = false;
 
-    // Is the current Page the page of a specific user
+    /**
+     * Is the current Page the page of a specific user
+     */
     private inUsersPage = false;
 
-    private gui_container: JQuery = null;
+    /**
+     * The Container for the GUI
+     */
+    private guiContainer: JQuery = null;
 
 
     /**
-    *   Resets Config to the default setting
-    */
+     *   Resets Config to the default setting
+     */
     private defaultConfig()
     {
         if (this.config["token"] === undefined)
@@ -104,8 +156,8 @@ class StoryParser
     }
 
     /**
-    *   Initializes System
-    */
+     *   Initializes System
+     */
     constructor()
     {
         var self = this;
@@ -373,8 +425,8 @@ class StoryParser
     }
 
     /**
-    *   Adds GUI Elements like Menu Link
-    */
+     *   Adds GUI Elements like Menu Link
+     */
     private updateGUI()
     {
         // Updates Content_width
@@ -696,10 +748,10 @@ class StoryParser
     }
 
     /**
-    *   Start parsing story List
-    *   @param __element Base Element to start parsing
-    */
-    public readList(element)
+     *   Start parsing story List
+     *   @param element Base Element to start parsing
+     */
+    public readList(element: JQuery)
     {
         if (this.LOAD_INTERNAL)
         {
@@ -720,19 +772,18 @@ class StoryParser
 
 
     /**
-    *   Parses the elements in the specified Container
-    *   @remark Use readList for initial parsing
-    */
+     *   Parses the elements in the specified Container
+     *   @remark Use readList for initial parsing
+     */
     private read()
     {
 
         var odd = false;
 
         // Clear old Session:
-        this.found = [];
         this.eList = {};
         this.hidden = 0;
-        this.hidden_elements = {};
+        this.hiddenElements = {};
         $('.parser-msg').remove();
         $('[data-color]').removeAttr("data-color");
 
@@ -752,7 +803,7 @@ class StoryParser
 
             var storyName = self.getStoryName(link);
 
-            var requestQueue = [];
+            var requestQueue: RequestQueueData[] = [];
 
             if (self.config.hide_non_english_storys && (text.indexOf('english') === -1))
             {
@@ -761,7 +812,7 @@ class StoryParser
                     console.log("Hide Element because of 'hide_non_english_storys'", link);
                 }
 
-                self.hidden_elements[link] = "hide_non_english_storys";
+                self.hiddenElements[link] = "hide_non_english_storys";
 
                 element.hide();
                 self.hidden += 1;
@@ -777,13 +828,13 @@ class StoryParser
                 odd = true;
             }
 
-            var marker_found = false;
+            var markerFound = false;
 
-            $.each(self.config.marker, function (headline, config)
+            $.each(self.config.marker, function (headline: string, config: MarkerConfig)
             {
 
                 var ignore = false;
-                $.each(config.ignore, function (i, marker)
+                $.each(config.ignore, function (i: number, marker: string)
                 {
                     try
                     {
@@ -808,7 +859,7 @@ class StoryParser
 
                 var found = false;
 
-                $.each(config.keywords, function (i, marker)
+                $.each(config.keywords, function (i: number, marker: string)
                 {
                     var reg = new RegExp(marker, "i");
 
@@ -825,27 +876,24 @@ class StoryParser
                 {
                     if (!config.ignoreColor)
                     {
-                        marker_found = true;
+                        markerFound = true;
                     }
                     else if (self.DEBUG)
                     {
                         console.log("Ignore Color for ", headline);
                     }
 
-                    var info = {
-                        'name': storyName,
-                        'url': link,
-                        'chapter': 0
+                    var info: StoryInfo = {
+                        name: storyName,
+                        url: link,
+                        chapter: 0
                     };
 
                     self.elementCallback(self, config, element, textEl, headline, info);
 
-
-                    self.found.push(storyName);
-
                 } else if (config.search_story)
                 {
-                    var parseData = {
+                    var parseData: RequestQueueData = {
                         url: link,
                         keywords: config.keywords,
                         headline: headline,
@@ -858,15 +906,6 @@ class StoryParser
 
                     requestQueue.push(parseData);
 
-                } else if (self.found.indexOf(storyName) === -1)
-                {
-
-                    /*if (_DEBUG)
-                    {
-                        console.log("[_read-1] Change Color of Line: ",element); 
-                    }*/
-
-                    //_updateColor(element, color, colorMo, true);
                 }
 
                 if (self.config.mark_M_storys)
@@ -908,7 +947,7 @@ class StoryParser
 
                     self.toggleStoryConfig({
                         url: link,
-                        element: element,
+                       // element: element,
                         name: storyName
                     });
 
@@ -942,7 +981,7 @@ class StoryParser
                         {
                             console.log("Hide Entry because of Story Config: ", link);
                         }
-                        self.hidden_elements[link] = "storyConfig";
+                        self.hiddenElements[link] = "storyConfig";
 
                         element.attr("data-hiddenBy", "storyConfig");
 
@@ -962,7 +1001,7 @@ class StoryParser
                 }
             }
 
-            if (!marker_found)
+            if (!markerFound)
             {
                 /*if (_DEBUG)
                 {
@@ -976,7 +1015,7 @@ class StoryParser
                         console.log("Hide Entry because of Display-Only Mode: ", element);
                     }
 
-                    self.hidden_elements[link] = "Display-Only Mode";
+                    self.hiddenElements[link] = "Display-Only Mode";
 
 
                     element.hide();
@@ -1087,22 +1126,22 @@ class StoryParser
     }
 
     /**
-    *   Gets the name of a story from a Link
-    *   @param link Link to story
-    *   @result Name of Story
-    */
-    private getStoryName(link): string
+     *   Gets the name of a story from a Link
+     *   @param link Link to story
+     *   @result Name of Story
+     */
+    private getStoryName(link: string): string
     {
-        var storyName_reg = /\/s\/[0-9]+\/[0-9]+\/(.+)/;
-        var result = storyName_reg.exec(link);
+        var storyNameReg = /\/s\/[0-9]+\/[0-9]+\/(.+)/;
+        var result = storyNameReg.exec(link);
 
         if ((result != null) && (result.length > 1))
         {
             return result[1];
         } else
         {
-            storyName_reg = /\/[^\/]+\/(.+)/;
-            result = storyName_reg.exec(link);
+            storyNameReg = /\/[^\/]+\/(.+)/;
+            result = storyNameReg.exec(link);
             if ((result != null) && (result.length > 1))
             {
                 return result[1];
@@ -1114,12 +1153,12 @@ class StoryParser
     }
 
     /**
-    *   Starts Recursive Parsing of stories
-    *   @param queue List of Stories to parse
-    *   @param i What element in the queue should be parsed
-    *   @remark Don't specify the second Argument for initial parsing
-    */
-    private doParse(queue, i = 0)
+     *   Starts Recursive Parsing of stories
+     *   @param queue List of Stories to parse
+     *   @param i What element in the queue should be parsed
+     *   @remark Don't specify the second Argument for initial parsing
+     */
+    private doParse(queue: RequestQueueData[], i = 0)
     {
         if (this.DEBUG)
         {
@@ -1170,8 +1209,6 @@ class StoryParser
 
             self.elementCallback(self, el.config, el.element, el.textEl, el.headline, info);
 
-            self.found.push(el.storyName);
-
             executeNext();
         };
 
@@ -1180,14 +1217,14 @@ class StoryParser
     }
 
     /**
-    *   Recursive Parsing function
-    *   @param url URL to Story
-    *   @param keyword  Keywords for parsing
-    *   @param callback Callback in case of a found entry
-    *   @param i Recursive Depth
-    *   @param executeNext Callback for executing next element in the queue
-    */
-    private parse(url, keywords, callback, i, executeNext)
+     *   Recursive Parsing function
+     *   @param url URL to Story
+     *   @param keyword  Keywords for parsing
+     *   @param callback Callback in case of a found entry
+     *   @param i Recursive Depth
+     *   @param executeNext Callback for executing next element in the queue
+     */
+    private parse(url: string, keywords: string[], callback: (StoryInfo) => void, i: number, executeNext: () => void)
     {
 
         if (i >= this.config.story_search_depth)
@@ -1200,7 +1237,7 @@ class StoryParser
 
         var self = this;
 
-        var ajax_callback = function (text: string)
+        var ajaxCallback = function (text: string)
         {
             if (!(url in self.storyCache) && !self.config.disable_cache)
             {
@@ -1275,7 +1312,7 @@ class StoryParser
             }
 
 
-            ajax_callback(this.storyCache[url]);
+            ajaxCallback(this.storyCache[url]);
         } else
         {
             if (this.DEBUG)
@@ -1285,7 +1322,7 @@ class StoryParser
 
             $.ajax({
                 url: url,
-                success: ajax_callback
+                success: ajaxCallback
             });
         }
 
@@ -1296,13 +1333,13 @@ class StoryParser
 
 
     /**
-    *   Parses a story page for recursive search.
-    *   @see _parse
-    *   @param body Body Element of the loaded page
-    *   @param keywords What Keywords to look for
-    *   @result Matching Sentence or null
-    */
-    private parseSite(body, keywords)
+     *   Parses a story page for recursive search.
+     *   @see _parse
+     *   @param body Body Element of the loaded page
+     *   @param keywords What Keywords to look for
+     *   @result Matching Sentence or null
+     */
+    private parseSite(body: JQuery, keywords: string[]): string
     {
         var storyEl = body.find('.storytext');
 
@@ -1363,17 +1400,17 @@ class StoryParser
     }
 
     /**
-    *   Callback triggered, if an element was found
-    *   @param self The current Instance
-    *   @param config Element Config, as specified by the user
-    *   @param element The instance of the HTML-Entity containing the match
-    *   @param textEl The HTML-Instance containing the Text
-    *   @param headline  The Headline of the Found story
-    *   @param info The Info to the found element
-    */
-    private elementCallback(self: StoryParser, config, element, textEl, headline, info)
+     *   Callback triggered, if an element was found
+     *   @param self The current Instance
+     *   @param config Element Config, as specified by the user
+     *   @param element The instance of the HTML-Entity containing the match
+     *   @param textEl The HTML-Instance containing the Text
+     *   @param headline  The Headline of the Found story
+     *   @param info The Info to the found element
+     */
+    private elementCallback(self: StoryParser, config: MarkerConfig, element: JQuery, textEl: JQuery, headline: string, info: StoryInfo)
     {
-        var found_where = info.chapter;
+        var foundWhere = info.chapter;
 
         if (!(headline in self.eList))
         {
@@ -1409,7 +1446,7 @@ class StoryParser
                 console.log("Hide Element because of 'displayOnly' ", info);
             }
 
-            self.hidden_elements[info.url] = "displayOnly";
+            self.hiddenElements[info.url] = "displayOnly";
 
             element.hide();
             self.hidden += 1;
@@ -1423,7 +1460,7 @@ class StoryParser
                 console.log("Hide Element because of Filter '" + headline + "'", info);
             }
 
-            self.hidden_elements[info.url] = "Filter '" + headline + "'";
+            self.hiddenElements[info.url] = "Filter '" + headline + "'";
 
             element.hide();
             element.addClass('hidden');
@@ -1441,7 +1478,7 @@ class StoryParser
             if (config.mark_chapter)
             {
                 element.find('a').first().after(
-                    $("<span class=\"parser-msg\"> <b>[" + headline + "-" + found_where + "]</b></span>")
+                    $("<span class=\"parser-msg\"> <b>[" + headline + "-" + foundWhere + "]</b></span>")
                         .attr("title", info.sentence)
                     );
             }
@@ -1513,8 +1550,8 @@ class StoryParser
     }
 
     /**
-    *   Updates the List of found elements
-    */
+     *   Updates the List of found elements
+     */
     private updateList()
     {
         // Wrap Content:
@@ -1578,7 +1615,7 @@ class StoryParser
                     var dialog = $('<div title="Hidden Elements"></div>');
                     var table = $("<table></table>").appendTo(dialog);
 
-                    $.each(self.hidden_elements, function (key, value)
+                    $.each(self.hiddenElements, function (key, value)
                     {
                         table.append(
                             $("<tr></tr>").append(
@@ -1625,8 +1662,8 @@ class StoryParser
     }
 
     /**
-    *   Updates the colors of the elements in the story list
-    */
+     *   Updates the colors of the elements in the story list
+     */
     private updateListColor()
     {
         var odd = false;
@@ -1677,17 +1714,17 @@ class StoryParser
     }
 
     /**
-    *   Updates the Color of a specifiy Element in the list
-    *   @param element HTML-Instance of found element
-    *   @param color The Color to set the Element to
-    *   @param colorMo The color used for the Mouse Over effect
-    *   @param notSetAttr Don't set the HTML-Attribute
-    */
-    private updateColor(element, color, colorMo, notSetAttr?)
+     *   Updates the Color of a specifiy Element in the list
+     *   @param element HTML-Instance of found element
+     *   @param color The Color to set the Element to
+     *   @param colorMo The color used for the Mouse Over effect
+     *   @param notSetAttr Don't set the HTML-Attribute
+     */
+    private updateColor(element: JQuery, color: string, colorMo: string, notSetAttr?: boolean)
     {
         element.css('background-color', color);
 
-        if (notSetAttr === undefined)
+        if ((notSetAttr === undefined) || (notSetAttr === false))
         {
             element.attr("data-color", color);
             element.attr("data-mouseOverColor", colorMo);
@@ -1866,7 +1903,7 @@ class StoryParser
     *   @param currentDepth The current depth of the recusion
     *   @remark Leave the Arguments length and currentDepth away, to achive default behavior
     */
-    private parsePocket(url, prefix, length, currentDepth = 1)
+    private parsePocket(url: string, prefix: string, length: any, currentDepth: number = 1)
     {
         if (prefix === undefined)
         {
@@ -1892,7 +1929,7 @@ class StoryParser
 
         var self = this;
 
-        var ajax_callback = function (text)
+        var ajaxCallback = function (text)
         {
             var body = $(text);
 
@@ -1931,16 +1968,17 @@ class StoryParser
 
         $.ajax({
             url: url,
-            success: ajax_callback
+            success: ajaxCallback
         });
 
     }
 
     // ------- Endless Mode ------
 
-    private currentPage = null;
+    /** The current displayed Page */
+    private currentPage: JQuery = null;
 
-    private getPageContent(base, prev, callback)
+    private getPageContent(base: JQuery, prev: boolean, callback: (elements: JQuery, data: JQuery) => void)
     {
         var url = null;
         if (prev)
@@ -1979,7 +2017,7 @@ class StoryParser
 
     }
 
-    private createWrapper(page)
+    private createWrapper(page: string)
     {
         return $("<div></div>").addClass("ffNetPageWrapper")
             .attr("data-page", page);
@@ -2077,7 +2115,7 @@ class StoryParser
         });
     }
 
-    private getCurrentPage(content)
+    private getCurrentPage(content: JQuery)
     {
         return content.find("center > b").first().text();
     }
@@ -2093,7 +2131,7 @@ class StoryParser
         this.loadPage(true);
     }
 
-    private getNextPage(base)
+    private getNextPage(base: JQuery): string
     {
         var container = base.find("center").last();
 
@@ -2108,7 +2146,7 @@ class StoryParser
         return null;
     }
 
-    private getPrevPage(base)
+    private getPrevPage(base: JQuery) : string
     {
         var container = base.find("center").last();
 
@@ -2127,61 +2165,56 @@ class StoryParser
 
     // --------- GUI -------------
 
-    private settings_elements = {};
-    private gui_elements = {};
-    private add_count = 0;
+    /** The Input Elements that are used in the config GUI */
+    private settingsElements: { [index: string]: JQuery } = {};
+    /** The Elements that are displayed on the GUI */
+    private guiElements: { [index: string]: { [index: string]: JQuery } } = {};
+    /** The number of new Entries created */
+    private addCount = 0;
 
     /*
-    *   Creates the GUI used for the Menus
-    */
+     *   Creates the GUI used for the Menus
+     */
     private gui_create()
     {
         this.log("Creating GUI ");
 
-        var width = 600;
-        var win_width = window.outerWidth;
-
         var container = $('<div title="Fanfiction Story Parser"></div>')
-        //.addClass("ffnet_guiContainer")
-        //.css('left', ((win_width - width) / 2) + "px")
             .hide();
-
-        //TODO: Check what this was for ...
-        //container.html($('#content').hide().html());
 
         $("body").append(container);
 
-        this.gui_container = container;
+        this.guiContainer = container;
 
         this.log("GUI Created");
 
     }
 
     /**
-    *   Renders GUI for the Config-Menu
-    */
+     *   Renders GUI for the Config-Menu
+     */
     private gui_update()
     {
         this.log("Update GUI");
 
-        this.gui_elements = {};
-        this.settings_elements = {};
-        this.gui_container.html('');
+        this.guiElements = {};
+        this.settingsElements = {};
+        this.guiContainer.html('');
 
         // Reset Position:
-        //_gui_container.css("position", "absolute");
+        //_guiContainer.css("position", "absolute");
 
-        this.add_count = 0;
+        this.addCount = 0;
 
         // Displays current Version:
-        this.gui_container.attr("title", "Fanfiction Story Parser - Version: " + this.VERSION + " - Branch: " + this.BRANCH);
+        this.guiContainer.attr("title", "Fanfiction Story Parser - Version: " + this.VERSION + " - Branch: " + this.BRANCH);
 
 
         // render Settings Container:
-        var s_container = $("<div></div>")
+        var settingsContainer = $("<div></div>")
             .addClass("ffnet_settingsContainer")
 
-            .appendTo(this.gui_container);
+            .appendTo(this.guiContainer);
 
         this.log("Container rendered");
 
@@ -2200,7 +2233,7 @@ class StoryParser
 
 
         // Button Logic:
-        var __buttonLogic = function ()
+        var buttonLogic = function ()
         {
             var target = $(this).attr("data-target");
 
@@ -2211,7 +2244,7 @@ class StoryParser
 
         };
 
-        var __backLogic = function ()
+        var backLogic = function ()
         {
             $(".ffnet_Config_Category:visible").fadeOut(400, function ()
             {
@@ -2221,18 +2254,18 @@ class StoryParser
 
         // Render SubLogic:
 
-        var __getButton = function (name, target, container)
+        var getButton = function (name, target, container)
         {
             return $("<div></div>").addClass("ffnet_Config_Button").text(name)
-                .attr("data-target", target).click(__buttonLogic).appendTo(container);
+                .attr("data-target", target).click(buttonLogic).appendTo(container);
         };
 
-        var __getCategory = function (name, id, container)
+        var getCategory = function (name, id, container)
         {
             var cat = $("<div></div>").addClass("ffnet_Config_Category").addClass(id).appendTo(container);
             var headline = $("<div></div>").addClass("headline").appendTo(cat);
             var backField = $("<div></div>").addClass("back").appendTo(headline);
-            var backButton = $('<button class="btn">Back</back>').click(__backLogic).appendTo(backField);
+            var backButton = $('<button class="btn">Back</back>').click(backLogic).appendTo(backField);
             var textField = $("<div></div>").appendTo(headline).text(name);
 
             var table = $('<table width="100%"></table>').appendTo(cat);
@@ -2259,15 +2292,15 @@ class StoryParser
             );
 
 
-        var buttonContainer = $('<div class="ffnet_Config_Button_Container"></div>').appendTo(s_container);
+        var buttonContainer = $('<div class="ffnet_Config_Button_Container"></div>').appendTo(settingsContainer);
 
-        __getButton("Story Settings", "ffnetConfig-Settings", buttonContainer);
-        __getButton("Layout Settings", "ffnetConfig-Layout", buttonContainer);
-        __getButton("API Settings", "ffnetConfig-API", buttonContainer);
-        __getButton("Advanced", "ffnetConfig-Andvanced", buttonContainer);
+        getButton("Story Settings", "ffnetConfig-Settings", buttonContainer);
+        getButton("Layout Settings", "ffnetConfig-Layout", buttonContainer);
+        getButton("API Settings", "ffnetConfig-API", buttonContainer);
+        getButton("Advanced", "ffnetConfig-Andvanced", buttonContainer);
 
         // --------------------------------------------------------------------------------------------------------------------------
-        var cat = __getCategory("Story Settings", "ffnetConfig-Settings", s_container);
+        var cat = getCategory("Story Settings", "ffnetConfig-Settings", settingsContainer);
         var table = cat.table;
 
         // story_search_depth
@@ -2277,7 +2310,7 @@ class StoryParser
             .attr('value', this.config.story_search_depth)
             .attr('size', '50');
 
-        this.settings_elements['story_search_depth'] = input;
+        this.settingsElements['story_search_depth'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -2305,7 +2338,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.settings_elements['mark_M_storys'] = checkbox;
+        this.settingsElements['mark_M_storys'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2335,7 +2368,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.settings_elements['hide_non_english_storys'] = checkbox;
+        this.settingsElements['hide_non_english_storys'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2363,7 +2396,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.settings_elements['allow_copy'] = checkbox;
+        this.settingsElements['allow_copy'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2382,7 +2415,7 @@ class StoryParser
         cat.category.append(saveButtonContainer.clone());
 
         // --------------------------------------------------------------------------------------------------------------------------
-        cat = __getCategory("Layout Settings", "ffnetConfig-Layout", s_container);
+        cat = getCategory("Layout Settings", "ffnetConfig-Layout", settingsContainer);
         table = cat.table;
 
 
@@ -2395,7 +2428,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.settings_elements['hide_images'] = checkbox;
+        this.settingsElements['hide_images'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2423,7 +2456,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.settings_elements['hide_lazy_images'] = checkbox;
+        this.settingsElements['hide_lazy_images'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2452,7 +2485,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.settings_elements['disable_image_hover'] = checkbox;
+        this.settingsElements['disable_image_hover'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2480,7 +2513,7 @@ class StoryParser
             .attr('value', this.config.content_width)
             .attr('size', '50');
 
-        this.settings_elements['content_width'] = input;
+        this.settingsElements['content_width'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -2510,7 +2543,7 @@ class StoryParser
                 colorFormat: "#HEX"
             });
 
-        this.settings_elements['color_normal'] = input;
+        this.settingsElements['color_normal'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -2542,7 +2575,7 @@ class StoryParser
                 colorFormat: "#HEX"
             });
 
-        this.settings_elements['color_mouse_over'] = input;
+        this.settingsElements['color_mouse_over'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -2571,7 +2604,7 @@ class StoryParser
                 colorFormat: "#HEX"
             });
 
-        this.settings_elements['color_odd_color'] = input;
+        this.settingsElements['color_odd_color'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -2591,7 +2624,7 @@ class StoryParser
         cat.category.append(saveButtonContainer.clone());
 
         // --------------------------------------------------------------------------------------------------------------------------
-        cat = __getCategory("API Settings", "ffnetConfig-API", s_container);
+        cat = getCategory("API Settings", "ffnetConfig-API", settingsContainer);
         table = cat.table;
 
 
@@ -2617,7 +2650,7 @@ class StoryParser
             .attr('value', this.config.pocket_user)
             .attr('size', '50');
 
-        this.settings_elements['pocket_user'] = input;
+        this.settingsElements['pocket_user'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -2644,7 +2677,7 @@ class StoryParser
             .attr('value', this.config.pocket_password)
             .attr('size', '50');
 
-        this.settings_elements['pocket_password'] = input;
+        this.settingsElements['pocket_password'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -2688,7 +2721,7 @@ class StoryParser
             input = $('<input type="text" id="fflist-api_url">')
                 .attr('value', this.config.api_url);
 
-            this.settings_elements['api_url'] = input;
+            this.settingsElements['api_url'] = input;
 
             table.append(
                 $('<tr></tr>').append(
@@ -2745,7 +2778,7 @@ class StoryParser
 
         });
 
-        this.settings_elements['api_checkForUpdates'] = checkbox;
+        this.settingsElements['api_checkForUpdates'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2774,7 +2807,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.settings_elements['api_autoIncludeNewVersion'] = checkbox;
+        this.settingsElements['api_autoIncludeNewVersion'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2802,7 +2835,7 @@ class StoryParser
             .attr('size', '50')
             .attr("pattern", "[0-9a-zA-Z]+");
 
-        this.settings_elements['token'] = input;
+        this.settingsElements['token'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -2822,7 +2855,7 @@ class StoryParser
         cat.category.append(saveButtonContainer.clone());
 
         // --------------------------------------------------------------------------------------------------------------------------
-        cat = __getCategory("Advanced", "ffnetConfig-Andvanced", s_container);
+        cat = getCategory("Advanced", "ffnetConfig-Andvanced", settingsContainer);
         table = cat.table;
 
 
@@ -2835,7 +2868,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.settings_elements['disable_highlighter'] = checkbox;
+        this.settingsElements['disable_highlighter'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2865,7 +2898,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.settings_elements['disable_cache'] = checkbox;
+        this.settingsElements['disable_cache'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2895,7 +2928,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.settings_elements['disable_sync'] = checkbox;
+        this.settingsElements['disable_sync'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -2918,7 +2951,7 @@ class StoryParser
 
         this.log("GUI - Add Markers: ", this.config.marker);
 
-        var container = $("<div></div>").appendTo(this.gui_container);
+        var container = $("<div></div>").appendTo(this.guiContainer);
 
         var self = this;
 
@@ -2931,12 +2964,12 @@ class StoryParser
 
         if (this.DEBUG)
         {
-            console.log("Config elements: ", this.gui_elements);
+            console.log("Config elements: ", this.guiElements);
         }
 
 
         var filterButtonContainer = saveButtonContainer.clone();
-        filterButtonContainer.appendTo(this.gui_container);
+        filterButtonContainer.appendTo(this.guiContainer);
 
         $('<input class="btn" type="button" value="Add Field"></input>')
             .button({
@@ -2946,8 +2979,9 @@ class StoryParser
             })
             .click(function ()
             {
-                self.gui_add_form('New-Form ' + (self.add_count++),
+                self.gui_add_form('New-Form ' + (self.addCount++),
                     {
+                        name: null,
                         display: true,
                         keywords: [
 
@@ -2963,7 +2997,8 @@ class StoryParser
                         print_story: false,
                         mention_in_headline: true,
                         text_color: '#686868',
-                        revision: -1
+                        revision: -1,
+                        ignoreColor: false
                     }, container
                     , true // Display Big
                     );
@@ -2974,13 +3009,13 @@ class StoryParser
         // Save Logic
         $(".ffnetSaveButton").click(function ()
         {
-            var new_config = {};
+            var newConfig = {};
 
             self.log("Save Config");
-            self.log("Parsing Config elements: ", self.gui_elements);
+            self.log("Parsing Config elements: ", self.guiElements);
 
 
-            $.each(self.gui_elements, function (k, data)
+            $.each(self.guiElements, function (k, data)
             {
                 if (data === undefined)
                 {
@@ -3023,37 +3058,37 @@ class StoryParser
 
 
                 //console.log(name, config);
-                new_config[name] = config;
+                newConfig[name] = config;
 
             });
 
-            self.config.story_search_depth = Number(self.settings_elements['story_search_depth'].val());
-            self.config.mark_M_storys = self.settings_elements['mark_M_storys'].is(':checked');
-            self.config.hide_non_english_storys = self.settings_elements['hide_non_english_storys'].is(':checked');
-            self.config.hide_images = self.settings_elements['hide_images'].is(':checked');
-            self.config.hide_lazy_images = self.settings_elements['hide_lazy_images'].is(':checked');
-            self.config.disable_image_hover = self.settings_elements['disable_image_hover'].is(':checked');
-            self.config.allow_copy = self.settings_elements['allow_copy'].is(':checked');
-            self.config.disable_highlighter = self.settings_elements['disable_highlighter'].is(':checked');
-            self.config.disable_cache = self.settings_elements['disable_cache'].is(':checked');
-            self.config.disable_sync = self.settings_elements['disable_sync'].is(':checked');
-            self.config.content_width = self.settings_elements['content_width'].val();
-            self.config.color_normal = self.settings_elements['color_normal'].val();
-            self.config.color_odd_color = self.settings_elements['color_odd_color'].val();
-            self.config.color_mouse_over = self.settings_elements['color_mouse_over'].val();
-            self.config.pocket_user = self.settings_elements['pocket_user'].val();
-            self.config.pocket_password = self.settings_elements['pocket_password'].val();
-            self.config.api_checkForUpdates = self.settings_elements['api_checkForUpdates'].is(':checked');
-            self.config.api_autoIncludeNewVersion = self.settings_elements['api_autoIncludeNewVersion'].is(':checked');
-            self.config.token = self.settings_elements['token'].val();
+            self.config.story_search_depth = Number(self.settingsElements['story_search_depth'].val());
+            self.config.mark_M_storys = self.settingsElements['mark_M_storys'].is(':checked');
+            self.config.hide_non_english_storys = self.settingsElements['hide_non_english_storys'].is(':checked');
+            self.config.hide_images = self.settingsElements['hide_images'].is(':checked');
+            self.config.hide_lazy_images = self.settingsElements['hide_lazy_images'].is(':checked');
+            self.config.disable_image_hover = self.settingsElements['disable_image_hover'].is(':checked');
+            self.config.allow_copy = self.settingsElements['allow_copy'].is(':checked');
+            self.config.disable_highlighter = self.settingsElements['disable_highlighter'].is(':checked');
+            self.config.disable_cache = self.settingsElements['disable_cache'].is(':checked');
+            self.config.disable_sync = self.settingsElements['disable_sync'].is(':checked');
+            self.config.content_width = self.settingsElements['content_width'].val();
+            self.config.color_normal = self.settingsElements['color_normal'].val();
+            self.config.color_odd_color = self.settingsElements['color_odd_color'].val();
+            self.config.color_mouse_over = self.settingsElements['color_mouse_over'].val();
+            self.config.pocket_user = self.settingsElements['pocket_user'].val();
+            self.config.pocket_password = self.settingsElements['pocket_password'].val();
+            self.config.api_checkForUpdates = self.settingsElements['api_checkForUpdates'].is(':checked');
+            self.config.api_autoIncludeNewVersion = self.settingsElements['api_autoIncludeNewVersion'].is(':checked');
+            self.config.token = self.settingsElements['token'].val();
 
             if (self.DEBUG)
             {
-                self.config.api_url = self.settings_elements['api_url'].val();
+                self.config.api_url = self.settingsElements['api_url'].val();
             }
 
 
-            self.config.marker = new_config;
+            self.config.marker = newConfig;
 
             self.save_config();
 
@@ -3071,17 +3106,17 @@ class StoryParser
     }
 
     /**
-    *   Add a form for filter input
-    *   @param name Name of the Input field
-    *   @param marker Marker Config
-    *   @param mainContainer Container for addition
-    *   @param displayBig Don't minimize Element after adding
-    */
-    private gui_add_form(name, marker, mainContainer, displayBig = false)
+     *   Add a form for filter input
+     *   @param name Name of the Input field
+     *   @param marker Marker Config
+     *   @param mainContainer Container for addition
+     *   @param displayBig Don't minimize Element after adding
+     */
+    private gui_add_form(name: string, marker: MarkerConfig, mainContainer: JQuery, displayBig: boolean = false)
     {
         this.log("GUI Add Form: ", name);
 
-        this.gui_elements[name] = {};
+        this.guiElements[name] = {};
 
         var radius = 10;
 
@@ -3141,7 +3176,7 @@ class StoryParser
             .attr('value', name)
             .attr('size', '50');
 
-        this.gui_elements[name]['name'] = input;
+        this.guiElements[name]['name'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -3169,7 +3204,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.gui_elements[name]['display'] = checkbox;
+        this.guiElements[name]['display'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -3193,7 +3228,7 @@ class StoryParser
             .attr('value', marker.keywords.join(', '))
             .attr('size', '50');
 
-        this.gui_elements[name]['keywords'] = input;
+        this.guiElements[name]['keywords'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -3221,7 +3256,7 @@ class StoryParser
             .attr('value', marker.ignore.join(', '))
             .attr('size', '50');
 
-        this.gui_elements[name]['ignore'] = input;
+        this.guiElements[name]['ignore'] = input;
 
         table.append(
             $('<tr></tr>').append(
@@ -3270,7 +3305,7 @@ class StoryParser
 
         });
 
-        this.gui_elements[name]['ignoreColor'] = checkbox;
+        this.guiElements[name]['ignoreColor'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -3299,7 +3334,7 @@ class StoryParser
                 colorFormat: "#HEX"
             });
 
-        this.gui_elements[name]['color'] = input;
+        this.guiElements[name]['color'] = input;
 
         if (marker.ignoreColor)
         {
@@ -3332,7 +3367,7 @@ class StoryParser
                 colorFormat: "#HEX"
             });
 
-        this.gui_elements[name]['mouseOver'] = input;
+        this.guiElements[name]['mouseOver'] = input;
 
         if (marker.ignoreColor)
         {
@@ -3365,7 +3400,7 @@ class StoryParser
                 colorFormat: "#HEX"
             });
 
-        this.gui_elements[name]['text_color'] = input;
+        this.guiElements[name]['text_color'] = input;
 
         if (marker.ignoreColor)
         {
@@ -3397,7 +3432,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.gui_elements[name]['search_story'] = checkbox;
+        this.guiElements[name]['search_story'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -3424,7 +3459,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.gui_elements[name]['mark_chapter'] = checkbox;
+        this.guiElements[name]['mark_chapter'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -3451,7 +3486,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.gui_elements[name]['print_story'] = checkbox;
+        this.guiElements[name]['print_story'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -3477,7 +3512,7 @@ class StoryParser
             checkbox.attr('checked', 'checked');
         }
 
-        this.gui_elements[name]['mention_in_headline'] = checkbox;
+        this.guiElements[name]['mention_in_headline'] = checkbox;
 
         table.append(
             $('<tr></tr>').append(
@@ -3506,7 +3541,7 @@ class StoryParser
                 $('<td></td>').append(
                     $('<input class="btn" type="button" value="Remove">').click(function ()
                     {
-                        self.gui_elements[name] = undefined;
+                        self.guiElements[name] = undefined;
 
                         container.fadeOut(function ()
                         {
@@ -3564,17 +3599,17 @@ class StoryParser
     }
 
     /**
-    *   Hides the GUI
-    */
+     *   Hides the GUI
+     */
     private gui_hide()
     {
-        this.gui_container.dialog("close");
-        //_gui_container.fadeOut();
+        this.guiContainer.dialog("close");
+        //_guiContainer.fadeOut();
     }
 
     /**
-    *   Displays the GUI
-    */
+     *   Displays the GUI
+     */
     private gui_show()
     {
         var self = this;
@@ -3636,7 +3671,7 @@ class StoryParser
             delete buttons["Synchronization"];
         }
 
-        this.gui_container.dialog({
+        this.guiContainer.dialog({
             resizable: true,
             modal: true,
             height: 900,
@@ -3645,15 +3680,15 @@ class StoryParser
         });
 
 
-        // _gui_container.fadeIn();
+        // _guiContainer.fadeIn();
     }
 
     /**
-    *   Creates and displays the GUI
-    */
+     *   Creates and displays the GUI
+     */
     private gui()
     {
-        if (this.gui_container == null)
+        if (this.guiContainer == null)
         {
             this.gui_create();
         }
@@ -3664,18 +3699,18 @@ class StoryParser
     }
 
     /**
-    *   Open "Save Config" Submenu
-    */
+     *   Open "Save Config" Submenu
+     */
     private openSaveConfig()
     {
-        if (this.gui_container == null)
+        if (this.guiContainer == null)
         {
             this.gui_create();
         }
 
         var self = this;
 
-        if (this.gui_container.is(':visible'))
+        if (this.guiContainer.is(':visible'))
         {
             // Currently Visible, reopen
             this.gui_hide();
@@ -3684,7 +3719,7 @@ class StoryParser
 
         } else
         {
-            this.gui_container.html('');
+            this.guiContainer.html('');
 
             /*
             $('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
@@ -3696,22 +3731,22 @@ class StoryParser
                     }
 
                 })
-            ).appendTo(_gui_container);
+            ).appendTo(_guiContainer);
             */
 
-            this.gui_container.append('<label for="ffnet-config-display">Your current Config:</label><br/>');
+            this.guiContainer.append('<label for="ffnet-config-display">Your current Config:</label><br/>');
 
             var old = $('<textarea id="ffnet-config-display" style="width:90%; height: 100px;"></textarea>')
                 .val(this.getConfig())
-                .appendTo(this.gui_container);
+                .appendTo(this.guiContainer);
 
 
-            this.gui_container.append('<br/><label for="ffnet-config-set">Import Config:</label><br/>');
+            this.guiContainer.append('<br/><label for="ffnet-config-set">Import Config:</label><br/>');
 
             var neu = $('<textarea id="ffnet-config-set" style="width:90%; height: 100px;"></textarea>')
-                .appendTo(this.gui_container);
+                .appendTo(this.guiContainer);
 
-            this.gui_container.append(
+            this.guiContainer.append(
                 $('<input class="btn" type="button" value="Set" />')
                     .click(function ()
                     {
@@ -3727,14 +3762,14 @@ class StoryParser
     }
 
     /**
-    *   Open or closes the GUI for the Story Config
-    *   @param storyInfo Infos about the story
-    */
-    private toggleStoryConfig(storyInfo)
+     *   Open or closes the GUI for the Story Config
+     *   @param storyInfo Infos about the story
+     */
+    private toggleStoryConfig(storyInfo: StoryInfo)
     {
         var self = this;
 
-        if (this.gui_container == null)
+        if (this.guiContainer == null)
         {
             if (this.DEBUG)
             {
@@ -3744,7 +3779,7 @@ class StoryParser
             this.gui_create();
         }
 
-        if (this.gui_container.is(':visible'))
+        if (this.guiContainer.is(':visible'))
         {
             if (this.DEBUG)
             {
@@ -3770,11 +3805,11 @@ class StoryParser
                 console.log("Starting Content Generation");
             }
 
-            this.gui_container.html('');
+            this.guiContainer.html('');
 
 
             // Set Position:
-            //_gui_container.css("position", "fixed");
+            //_guiContainer.css("position", "fixed");
 
             /*
             $('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
@@ -3782,42 +3817,42 @@ class StoryParser
                 {
                     if (confirm("All unsaved changes will be deleted!"))
                     {
-                        _gui_container.css("position", "absolute");
+                        _guiContainer.css("position", "absolute");
                         _gui_hide();
                     }
 
                 })
-            ).appendTo(_gui_container);
+            ).appendTo(_guiContainer);
             */
 
-            this.gui_container.append("<p>This Menu allows you to set story specific options for:</p>");
-            this.gui_container.append(storyInfo.name);
-            this.gui_container.append("<hr />");
-            this.gui_container.append("<p>Highlighter Options:</p>");
+            this.guiContainer.append("<p>This Menu allows you to set story specific options for:</p>");
+            this.guiContainer.append(storyInfo.name);
+            this.guiContainer.append("<hr />");
+            this.guiContainer.append("<p>Highlighter Options:</p>");
 
-            this.gui_container.append($('<label for="ffnet-story-highlighter-hide">Hide Story</label>').css("display", "inline-block"));
+            this.guiContainer.append($('<label for="ffnet-story-highlighter-hide">Hide Story</label>').css("display", "inline-block"));
             var hide = $('<input type="checkbox" id="ffnet-story-highlighter-hide">')
                 .css("display", "inline-block").css("margin-left", "15px")
-                .appendTo(this.gui_container);
+                .appendTo(this.guiContainer);
 
             if ((this.config['highlighter'][storyInfo.url] !== undefined) && (this.config['highlighter'][storyInfo.url].hide))
             {
                 hide.attr('checked', 'checked');
             }
 
-            this.gui_container.append("<hr />");
+            this.guiContainer.append("<hr />");
 
-            this.gui_container.append('<label for="ffnet-story-highlighter">Highlighter Path: (leave empty to clear)</label><br/>');
+            this.guiContainer.append('<label for="ffnet-story-highlighter">Highlighter Path: (leave empty to clear)</label><br/>');
             var highlighter = $('<input id="ffnet-story-highlighter" type="text"></input>')
-                .appendTo(this.gui_container)
+                .appendTo(this.guiContainer)
                 .css("width", "500px");
 
-            this.gui_container.append("<p></p>");
+            this.guiContainer.append("<p></p>");
 
-            var image_container = $("<div></div>")
+            var imageContainer = $("<div></div>")
                 .css("border", "1px solid black")
                 .css("padding", "2px")
-                .appendTo(this.gui_container);
+                .appendTo(this.guiContainer);
 
             var image = $("<img></img>")
                 .css("width", "30px")
@@ -3828,7 +3863,7 @@ class StoryParser
 
             image.clone()
                 .attr("src", "http://private.mrh-development.de/ff/none.gif")
-                .appendTo(image_container)
+                .appendTo(imageContainer)
                 .click(function ()
                 {
                     highlighter.val("");
@@ -3838,7 +3873,7 @@ class StoryParser
             {
                 image.clone()
                     .attr("src", "http://private.mrh-development.de/ff/" + i + ".gif")
-                    .appendTo(image_container)
+                    .appendTo(imageContainer)
                     .click(function ()
                     {
                         highlighter.val($(this).attr("src"));
@@ -3851,11 +3886,11 @@ class StoryParser
                 highlighter.val(this.config['highlighter'][storyInfo.url].image);
             }
 
-            this.gui_container.append("<p></p>");
+            this.guiContainer.append("<p></p>");
 
 
 
-            this.gui_container.append(
+            this.guiContainer.append(
                 $('<input class="btn" type="button" value="Set" />')
                     .click(function ()
                     {
@@ -3876,7 +3911,7 @@ class StoryParser
 
                         self.save_config();
 
-                        self.gui_container.css("position", "absolute");
+                        self.guiContainer.css("position", "absolute");
                         self.gui_hide();
                         self.read();
                         self.enableInStoryHighlighter();
@@ -3895,8 +3930,8 @@ class StoryParser
     }
 
     /**
-    *   Open or closes the GUI for the Synchronize Feature 
-    */
+     *   Open or closes the GUI for the Synchronize Feature 
+     */
     private syncGUI()
     {
         var self = this;
@@ -3930,6 +3965,11 @@ class StoryParser
                 {
                     var progress = function (value)
                     {
+                        if (value === -1)
+                        {
+                            value = false;
+                        }
+
                         progressBar.progressbar("option", {
                             value: value
                         });
@@ -3968,8 +4008,8 @@ class StoryParser
     }
 
     /**
-    *   Open or closes the GUI for the Messaging GUI
-    */
+     *   Open or closes the GUI for the Messaging GUI
+     */
     private messagesGUI()
     {
         // Mark Messages as read:
@@ -4022,22 +4062,22 @@ class StoryParser
     }
 
     /**
-    *   Open or closes the GUI for the Feedback Function
-    */
+     *   Open or closes the GUI for the Feedback Function
+     */
     private feedbackGUI()
     {
         var self = this;
         var types = ["Bug", "Feature Request", "Question", "Other"];
 
-        var input_type = $("<select></select>");
+        var inputType = $("<select></select>");
         $.each(types, function (_, type)
         {
             $("<option></option>").text(type)
-                .appendTo(input_type);
+                .appendTo(inputType);
         });
 
-        var input_title = $('<input type="text" required />');
-        var input_message = $('<textarea style="width:90%; height: 100px;" required></textarea>');
+        var inputTitle = $('<input type="text" required />');
+        var inputMessage = $('<textarea style="width:90%; height: 100px;" required></textarea>');
 
 
         var element = $('<div title="Fanfiction Story Parser"></div>')
@@ -4048,13 +4088,13 @@ class StoryParser
                 "<b>Feedback:</b><br /><br />"
                 )
                 .append("<b>Type:</b><br />")
-                .append(input_type)
+                .append(inputType)
 
                 .append("<br /><b>Title:</b><br />")
-                .append(input_title)
+                .append(inputTitle)
 
                 .append("<br /><b>Message:</b><br />")
-                .append(input_message)
+                .append(inputMessage)
 
             ).appendTo($("body"));
 
@@ -4068,9 +4108,9 @@ class StoryParser
                 {
                     var data = {
                         Token: self.config.token,
-                        Type: input_type.val(),
-                        Title: input_title.val(),
-                        Message: input_message.val(),
+                        Type: inputType.val(),
+                        Title: inputTitle.val(),
+                        Message: inputMessage.val(),
                         Version: self.VERSION,
                         Branch: self.BRANCH
                     };
@@ -4095,11 +4135,11 @@ class StoryParser
     // ----- API-Interface ------
 
     /**
-    *   Generic API-Request
-    *   @param data Request Options
-    *   @param callback Function executed after result was found
-    */
-    private apiRequest(data, callback)
+     *   Generic API-Request
+     *   @param data Request Options
+     *   @param callback Function executed after result was found
+     */
+    private apiRequest(data: any, callback: (result: string) => void)
     {
         var url = this.config.api_url;
         var apiLookupKey = this.config.api_lookupKey;
@@ -4207,8 +4247,8 @@ class StoryParser
     }
 
     /**
-    *   Checks the current Version
-    */
+     *   Checks the current Version
+     */
     private api_checkVersion()
     {
         if ((this.config.api_checkForUpdates))
@@ -4272,8 +4312,8 @@ class StoryParser
     }
 
     /**
-    *   Loads the CSS-Styles from the Server
-    */
+     *   Loads the CSS-Styles from the Server
+     */
     private api_getStyles()
     {
         var self = this;
@@ -4306,8 +4346,8 @@ class StoryParser
     }
 
     /**
-    *   Updates the current script to the newest Version
-    */
+     *   Updates the current script to the newest Version
+     */
     private api_updateScript()
     {
         if (this.config.api_autoIncludeNewVersion)
@@ -4334,11 +4374,11 @@ class StoryParser
     }
 
     /**
-    *   Synchronize - Send Marker Config
-    *   @param data Marker Config
-    *   @param callback Executed after transfer
-    */
-    private api_sendMarker(data, callback)
+     *   Synchronize - Send Marker Config
+     *   @param data Marker Config
+     *   @param callback Executed after transfer
+     */
+    private api_sendMarker(data: any, callback?: (result: any) => void)
     {
         this.apiRequest({ command: "sendFilter", data: JSON.stringify(data) }, function (result)
         {
@@ -4354,12 +4394,12 @@ class StoryParser
     }
 
     /**
-    *   Synchronize - Send all markers
-    *   @param keys List of all Markers
-    *   @param onFinish Callback after the transfer
-    *   @param progress Callback after every step
-    */
-    private api_sendMarkers(keys, onFinish, progress)
+     *   Synchronize - Send all markers
+     *   @param keys List of all Markers
+     *   @param onFinish Callback after the transfer
+     *   @param progress Callback after every step
+     */
+    private api_sendMarkers(keys: string[], onFinish: () => void, progress: (progress: number) => void)
     {
         this.log("Send Markers to Server: ", keys);
 
@@ -4448,10 +4488,10 @@ class StoryParser
     }
 
     /**
-    *   Synchronize - Get the Versions of the marker on the remote Server
-    *   @param callback Callback Function
-    */
-    private api_getRevisions(callback)
+     *   Synchronize - Get the Versions of the marker on the remote Server
+     *   @param callback Callback Function
+     */
+    private api_getRevisions(callback: (result: any) => void)
     {
         var self = this;
         this.apiRequest({ command: "getNewestRevisions", data: this.config.token }, function (result)
@@ -4468,16 +4508,16 @@ class StoryParser
     }
 
     /**
-    *   Synchronize - Checks if all marker are up to date
-    *   @param callback Callback after success
-    */
-    private api_getNeedUpdate(callback)
+     *   Synchronize - Checks if all marker are up to date
+     *   @param callback Callback after success
+     */
+    private api_getNeedUpdate(callback: (result: { upload: string[]; download: string[] }) => void)
     {
         this.log("API - Checking for Filter Changes");
 
-        var upload = [];
-        var download = [];
-        var checked = [];
+        var upload: string[] = [];
+        var download: string[] = [];
+        var checked: string[] = [];
 
         var self = this;
 
@@ -4551,12 +4591,12 @@ class StoryParser
     }
 
     /**
-    *   Synchronize - Get a specific marker from the remote Server
-    *   @param marker Name of the Marker
-    *   @param callback Callback after success
-    *   @param progress Callback after every step
-    */
-    private api_getMarker(marker, callback, progress)
+     *   Synchronize - Get a specific marker from the remote Server
+     *   @param marker Names of the Marker
+     *   @param callback Callback after success
+     *   @param progress Callback after every step
+     */
+    private api_getMarker(marker: string[], callback: (result: { Error: boolean; Marker: any[]; Revision: number}) => void)
     {
         this.log("Get Marker from Server: ", marker);
 
@@ -4591,12 +4631,12 @@ class StoryParser
     }
 
     /**
-    *   Synchronize - Starts the synchronization
-    *   @param progress_callback Callback with progress information
-    */
-    private api_syncFilter(progress_callback)
+     *   Synchronize - Starts the synchronization
+     *   @param progress_callback Callback with progress information
+     */
+    private api_syncFilter(progress_callback: (progress: number) => void)
     {
-        progress_callback(false);
+        progress_callback(-1);
 
         var self = this;
 
@@ -4661,10 +4701,10 @@ class StoryParser
                     }
                     else
                     {
-                        console.error("Can't retrieve Filters from Server: ", result.Message);
+                        console.error("Can't retrieve Filters from Server");
                     }
 
-                }, progress);
+                });
 
             }, progress);
 
@@ -4673,10 +4713,10 @@ class StoryParser
     }
 
     /**
-    *   Get all new Messages from the Server
-    *   @param callback Callback after success
-    */
-    private apiGetMessages(callback)
+     *   Get all new Messages from the Server
+     *   @param callback Callback after success
+     */
+    private apiGetMessages(callback: (result: any) => void)
     {
         this.apiRequest({ command: "getMessages", data: this.config.token }, function (result)
         {
@@ -4689,8 +4729,8 @@ class StoryParser
     }
 
     /**
-    *   Tell the remote Server, that all new messages have been read
-    */
+     *   Tell the remote Server, that all new messages have been read
+     */
     private apiMarkMessages()
     {
         delete this.dataConfig['messages'];
@@ -4707,11 +4747,11 @@ class StoryParser
     }
 
     /**
-    *   Gets the Version Ident Number
-    *   @param name Name of the Version
-    *   @result Version Ident Number
-    */
-    private getVersionId(name)
+     *   Gets the Version Ident Number
+     *   @param name Name of the Version
+     *   @result Version Ident Number
+     */
+    private getVersionId(name: string): number
     {
         var parts = name.split(".");
         var version = 0;
@@ -4726,8 +4766,8 @@ class StoryParser
 
 
     /**
-    *   Activates Debug Options
-    */
+     *   Activates Debug Options
+     */
     public debugOptions()
     {
         if (this.DEBUG)
@@ -4764,8 +4804,8 @@ class StoryParser
     // --------------------------
 
     /**
-    *   Save Config
-    */
+     *   Save Config
+     */
     private save_config()
     {
         try
@@ -4783,8 +4823,8 @@ class StoryParser
     }
 
     /**
-    *   Save to the session storage
-    */
+     *   Save to the session storage
+     */
     private save_dataStore()
     {
         this.saveToMemory(sessionStorage, this.config.dataStorage_key, this.dataConfig);
@@ -4796,8 +4836,8 @@ class StoryParser
     }
 
     /**
-    *   Loads Config from Memory
-    */
+     *   Loads Config from Memory
+     */
     public getConfig()
     {
         return JSON.stringify(this.config);
@@ -4806,10 +4846,10 @@ class StoryParser
 
 
     /**
-    *   Overwrites the config with a new one
-    *   @param newConfig New Config
-    */
-    public setConfig(newConfig)
+     *   Overwrites the config with a new one
+     *   @param newConfig New Config
+     */
+    public setConfig(newConfig: any)
     {
         if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
         {
@@ -4821,25 +4861,15 @@ class StoryParser
     }
 
 
-
-    /**
-    *   Returns the List of found Story Elements
-    *   @returns List of found Elements
-    */
-    public getList()
-    {
-        return this.eList;
-    }
-
     // -------- Multiuse Functions ---------
 
     /**
-    *   Load a JSON-Text from Memory
-    *   @param memory Memory to load from
-    *   @param key Key of element
-    *   @result desearialized Object
-    */
-    private loadFromMemory(memory, key)
+     *   Load a JSON-Text from Memory
+     *   @param memory Memory to load from
+     *   @param key Key of element
+     *   @result desearialized Object
+     */
+    private loadFromMemory(memory: any, key: string): any
     {
         if ((memory[key] !== "undefined") &&
             (memory[key] !== "null") &&
@@ -4854,12 +4884,12 @@ class StoryParser
     }
 
     /**
-    *   Save an object to an JSON File
-    *   @param memory Memory to save to
-    *   @param key Key of Element
-    *   @param object Object File
-    */
-    private saveToMemory(memory, key, object)
+     *   Save an object to an JSON File
+     *   @param memory Memory to save to
+     *   @param key Key of Element
+     *   @param object Object File
+     */
+    private saveToMemory(memory: any, key: string, object: any)
     {
         try
         {
@@ -4873,14 +4903,14 @@ class StoryParser
     }
 
     /**
-    *   Gets the URL from a Button
-    *   @param button Button Instance
-    */
-    private getUrlFromButton(button)
+     *   Gets the URL from a Button
+     *   @param button Button Instance
+     */
+    private getUrlFromButton(button: JQuery): string
     {
         var script = button.attr('onclick');
-        var script_reg = /self\.location=\'([^']+)\'/;
-        var data = script_reg.exec(script);
+        var scriptReg = /self\.location=\'([^']+)\'/;
+        var data = scriptReg.exec(script);
 
         if ((data != null) && (data.length > 1))
         {
@@ -4893,12 +4923,12 @@ class StoryParser
     }
 
     /**
-    *   Log to the Debug-Console
-    *   @param a Parameter A
-    *   @param b Parameter B
-    *   @param c Paramater C
-    */
-    private log(a, b?, c?)
+     *   Log to the Debug-Console
+     *   @param a Parameter A
+     *   @param b Parameter B
+     *   @param c Paramater C
+     */
+    private log(a: any, b?: any, c?: any)
     {
         if (this.DEBUG)
         {
@@ -4918,12 +4948,12 @@ class StoryParser
     }
 
     /**
-    *   Creates an Info Message
-    *   @param a Parameter A
-    *   @param b Parameter B
-    *   @param c Parameter C
-    */
-    private info(a, b?, c?)
+     *   Creates an Info Message
+     *   @param a Parameter A
+     *   @param b Parameter B
+     *   @param c Parameter C
+     */
+    private info(a: any, b?: any, c?: any)
     {
         if (this.DEBUG)
         {
@@ -4941,10 +4971,5 @@ class StoryParser
             }
         }
     }
-
-
-    // -------------------------------------------
-
-    //__init();
 
 }
