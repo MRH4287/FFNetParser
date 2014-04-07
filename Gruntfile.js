@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 	manifest: grunt.file.readJSON('manifest.json'),
     banner: '/*! <%= manifest.name %> - v<%= manifest.version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-	  '//# sourceMappingURL=ffnetlist.js.map\n' +
+	  //'//# sourceMappingURL=ffnetlist.js.map\n' +
       '<%= manifest.homepage_url ? "* " + manifest.homepage_url + "\\n" : "" %>' +
       ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= manifest.author %> \n' +
       ' * Licensed under MIT \n */\n',
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 	
 	typescriptFiles: 
 	[
-		'build/userscript.js',
+		'build/userscript.js'
 	],
 	filesToPack:
 	[
@@ -195,8 +195,8 @@ module.exports = function(grunt) {
 		'replace:userscript',
 		'concat:userscript',
 		'uglify',
-		'concat:pack',
-		'copy:map'
+		'concat:pack'//,
+		//'copy:map'
 	]);
 	
 	grunt.registerTask('package', 

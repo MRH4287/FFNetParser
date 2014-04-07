@@ -19,5 +19,9 @@
         [
             "jquery-1.10.2.min.map",
 			"ffnetlist.js.map"
-        ]
+        ],
+		"externally_connectable": 
+		{
+			"matches": ["*://*.fanfiction.net/*", "*://*.fictionpress.com/*"]
+		}
 }

@@ -49,6 +49,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="chrome.d.ts" />
     <TypeScriptCompile Include="Types.ts" />
     <TypeScriptCompile Include="userscript.ts" />
     <TypeScriptCompile Include="jquery.colorpicker.d.ts" />

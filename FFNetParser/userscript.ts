@@ -31,12 +31,13 @@ class StoryParser
     /**
      * A stored version of the Script is used
      */
-
     private LOAD_INTERNAL: boolean = false;
 
 
-    // Default-Config:
-    private config = {
+    /**
+     * The Config of the Script
+     */
+    public config: Config = {
 
         // Story:
         story_search_depth: 2,                  // The Max depth for a recursive search
@@ -123,6 +124,11 @@ class StoryParser
      * Use the Cross-Origin-Resource-Sharing Feature
      */
     private useCORS = false;
+
+    /**
+     * Use the HTTPS Connection
+     */
+    private useHTTPS = true;
 
     /**
      * Is the current Page the page of a specific user
@@ -355,8 +361,13 @@ class StoryParser
             }
         });
 
-        // Replace https in BackendURL to http
-        this.config.api_url = this.config.api_url.replace("https", "http");
+
+        // Check if we use HTTPS
+        this.useHTTPS = this.config.api_url.toLowerCase().indexOf("https") !== -1;
+
+        //this.config.api_url = this.config.api_url.replace("https", "http");
+
+
 
         // Check for CORS:
         this.useCORS = 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest();
@@ -384,7 +395,7 @@ class StoryParser
         }
 
         // Add jQuery Color Picker to the Page:     
-        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://private.mrh-development.de/ff/jquery.colorpicker.css");
+        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", this.getUrl("jquery.colorpicker.css"));
         $("head").append(block);
 
         /*
@@ -483,7 +494,7 @@ class StoryParser
             imageContainer.append(
 
                 $("<img></img>")
-                    .attr("src", "http://private.mrh-development.de/ff/message-white.png")
+                    .attr("src", self.getUrl("message-white.png"))
                     .css("width", "20px")
                     .css("margin-bottom", "4px")
                 );
@@ -932,7 +943,7 @@ class StoryParser
                     .addClass("context-menu")
                     .append(
                     $("<img></img>")
-                        .attr("src", "http://private.mrh-development.de/ff/edit.gif")
+                        .attr("src", self.getUrl("edit.gif"))
                         .css("width", "100%")
                         .css("height", "100%")
                     );
@@ -1096,7 +1107,7 @@ class StoryParser
             // Get Messages from Server:  
             if (typeof (self.dataConfig['messages']) === "undefined")
             {
-                self.apiGetMessages(function (messages)
+                self.api_GetMessages(function (messages)
                 {
                     if ((messages.Messages !== undefined) && (messages.Messages.length > 0))
                     {
@@ -1104,7 +1115,7 @@ class StoryParser
                         self.dataConfig['messages'] = messages.Messages;
 
                         // Update Icon:
-                        $(".ffnetMessageContainer img").attr("src", "http://private.mrh-development.de/ff/message_new-white.png");
+                        $(".ffnetMessageContainer img").attr("src", self.getUrl("/message_new-white.png"));
 
                         $('.ffnet-messageCount').text(messages.Messages.length);
 
@@ -1116,7 +1127,7 @@ class StoryParser
             else
             {
                 // Update Icon:
-                $(".ffnetMessageContainer img").attr("src", "http://private.mrh-development.de/ff/message_new-white.png");
+                $(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
                 $('.ffnet-messageCount').text(self.dataConfig['messages'].length);
             }
 
@@ -1767,7 +1778,7 @@ class StoryParser
             .addClass("parser-msg")
             .append(
             $("<img></img>")
-                .attr("src", "http://private.mrh-development.de/ff/edit.gif")
+                .attr("src", this.getUrl("edit.gif"))
                 .css("width", "100%")
                 .css("height", "100%")
             );
@@ -3009,7 +3020,7 @@ class StoryParser
         // Save Logic
         $(".ffnetSaveButton").click(function ()
         {
-            var newConfig = {};
+            var newConfig: { [index: string]: MarkerConfig } = {};
 
             self.log("Save Config");
             self.log("Parsing Config elements: ", self.guiElements);
@@ -3563,7 +3574,7 @@ class StoryParser
                     .css('border-right', '1px solid gray')
                 ).append(
                 $('<td></td>').append(
-                    $('<img src="http://private.mrh-development.de/ff/glyphicons_369_collapse_top.png" alt="Minimize"></img>').click(function ()
+                    $('<img src="' + self.getUrl('glyphicons_369_collapse_top.png') + '" alt="Minimize"></img>').click(function ()
                     {
 
                         container
@@ -3862,7 +3873,7 @@ class StoryParser
                 .css("display", "inline-block");
 
             image.clone()
-                .attr("src", "http://private.mrh-development.de/ff/none.gif")
+                .attr("src", self.getUrl("none.gif"))
                 .appendTo(imageContainer)
                 .click(function ()
                 {
@@ -3872,7 +3883,7 @@ class StoryParser
             for (var i = 1; i <= 6; i++)
             {
                 image.clone()
-                    .attr("src", "http://private.mrh-development.de/ff/" + i + ".gif")
+                    .attr("src", self.getUrl(i + ".gif"))
                     .appendTo(imageContainer)
                     .click(function ()
                     {
@@ -4019,7 +4030,7 @@ class StoryParser
 
         if (localMessages !== undefined)
         {
-            this.apiMarkMessages();
+            this.api_MarkMessages();
 
             $.each(localMessages, function (k, el)
             {
@@ -4716,7 +4727,7 @@ class StoryParser
      *   Get all new Messages from the Server
      *   @param callback Callback after success
      */
-    private apiGetMessages(callback: (result: any) => void)
+    private api_GetMessages(callback: (result: any) => void)
     {
         this.apiRequest({ command: "getMessages", data: this.config.token }, function (result)
         {
@@ -4731,12 +4742,12 @@ class StoryParser
     /**
      *   Tell the remote Server, that all new messages have been read
      */
-    private apiMarkMessages()
+    private api_MarkMessages()
     {
         delete this.dataConfig['messages'];
         this.save_dataStore();
 
-        $(".ffnetMessageContainer img").attr("src", "http://private.mrh-development.de/ff/message-white.png");
+        $(".ffnetMessageContainer img").attr("src", this.getUrl("message-white.png"));
         $(".ffnet-messageCount").text("0");
 
 
@@ -4764,6 +4775,19 @@ class StoryParser
         return version;
     }
 
+    private getUrl(path: string): string
+    {
+        if (this.useHTTPS)
+        {
+            return "https://www.mrh-development.de/FanFictionUserScript/SSLProxy/?url=" + path;
+        }
+        else
+        {
+            return "http://private.mrh-development.de/ff/" + path;
+        }
+
+    }
+
 
     /**
      *   Activates Debug Options
@@ -4773,27 +4797,7 @@ class StoryParser
         if (this.DEBUG)
         {
 
-            /*
-            var table = $(".zui").find("td").first();
-
-            if (table.length > 0)
-            {
-
-
-                // Add User Interface
-                table.append(
-                    $('<a></a>').addClass('menu-link').html('Debug').attr('href', '#').click(function (e)
-                    {
-
-                        _messagesGUI();
-
-                    }).attr('title', 'DEBUG Options')
-                );
-
-            }
-            */
-            //alert("Currently not used")
-
+        
         }
     }
 
