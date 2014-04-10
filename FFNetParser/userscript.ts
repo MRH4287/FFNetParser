@@ -389,7 +389,7 @@ class StoryParser
         var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
         $("head").append(block);
 
-        if ($.ui === undefined)
+        if (typeof($.ui) === "undefined")
         {
             console.error("Can't include jQuery UI!");
         }
@@ -1060,8 +1060,20 @@ class StoryParser
             {
                 var el = $(e);
                 var color = el.attr("data-color");
+                var colorMo = el.attr("data-mouseOverColor");
 
                 el.css("background-color", color);
+
+                el.unbind("mouseenter").unbind("mouseleave");
+
+                el.mouseenter(function ()
+                {
+                    $(this).css('background-color', colorMo);
+                }).mouseleave(function ()
+                    {
+                        $(this).css('background-color', color);
+                    });
+
 
             });
 
@@ -1197,7 +1209,7 @@ class StoryParser
 
         var keywords = data.keywords;
 
-        if (keywords === undefined)
+        if (typeof(keywords) === "undefined")
         {
             console.warn('No Keywords!');
         }
@@ -1499,8 +1511,8 @@ class StoryParser
                 textEl.css('color', config.text_color);
             }
 
-            var color: string;
-            var colorMo: string;
+            var color: string = config.color;
+            var colorMo: string = config.mouseOver;
 
             $.each(config.keywords, function (key, keyword)
             {
@@ -1512,10 +1524,6 @@ class StoryParser
                 var front = '';
                 var replace = '';
                 var behind = '';
-
-                var color = config.color;
-                var colorMo = config.mouseOver;
-
 
                 if (erg != null)
                 {
@@ -1547,12 +1555,12 @@ class StoryParser
 
             if (!config.ignoreColor)
             {
-                /*if (_DEBUG)
+                if (self.DEBUG)
                 {
                     console.log("[ElementCallback] Change Color of Line: ",element); 
-                }*/
+                }
 
-                self.updateColor(element, color, colorMo);
+                self.updateColor(element, color, colorMo, false);
             }
 
         }
@@ -1731,11 +1739,13 @@ class StoryParser
      *   @param colorMo The color used for the Mouse Over effect
      *   @param notSetAttr Don't set the HTML-Attribute
      */
-    private updateColor(element: JQuery, color: string, colorMo: string, notSetAttr?: boolean)
+    private updateColor(element: JQuery, color: string, colorMo: string, notSetAttr: boolean)
     {
+        //console.log("Update Color called! " + color + ", " + colorMo + ", " + notSetAttr);
+
         element.css('background-color', color);
 
-        if ((notSetAttr === undefined) || (notSetAttr === false))
+        if (notSetAttr === false)
         {
             element.attr("data-color", color);
             element.attr("data-mouseOverColor", colorMo);
@@ -1916,12 +1926,12 @@ class StoryParser
     */
     private parsePocket(url: string, prefix: string, length: any, currentDepth: number = 1)
     {
-        if (prefix === undefined)
+        if (typeof(prefix) === "undefined")
         {
             prefix = "";
         }
 
-        if ((length === undefined) || (length === "all"))
+        if ((typeof(length) === "undefined") || (length === "all"))
         {
             length = 100;
         }
@@ -3028,7 +3038,7 @@ class StoryParser
 
             $.each(self.guiElements, function (k, data)
             {
-                if (data === undefined)
+                if (typeof(data) === "undefined")
                 {
                     return;
                 }
@@ -3054,7 +3064,7 @@ class StoryParser
                         ignoreColor: data.ignoreColor.is(':checked'),
                         background: (name in self.config.marker && self.config.marker[name].background != null) ? (self.config.marker[name].background) : null,
                         text_color: data.text_color.val(),
-                        revision: ((self.config.marker[name] === undefined) || (self.config.marker[name].revision === undefined)) ? 0 : self.config.marker[name].revision + 1
+                        revision: ((typeof(self.config.marker[name]) === "undefined") || (typeof(self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
                     };
 
                 if (config.text_color === "")
@@ -3801,7 +3811,7 @@ class StoryParser
 
         } else
         {
-            if (storyInfo === undefined)
+            if (typeof(storyInfo) === "undefined")
             {
                 if (this.DEBUG)
                 {
@@ -4550,7 +4560,7 @@ class StoryParser
                     self.log("Local Marker Found - Version: ", marker.revision);
 
                     // Marker exists -> check Revision
-                    if (marker.revision === undefined)
+                    if (typeof(marker.revision) === "undefined")
                     {
                         marker.revision = 0;
                     }
@@ -4936,11 +4946,11 @@ class StoryParser
     {
         if (this.DEBUG)
         {
-            if (b === undefined)
+            if (typeof(b) === "undefined")
             {
                 console.log(a);
             }
-            else if (c === undefined)
+            else if (typeof(c) === "undefined")
             {
                 console.log(a, b);
             }
@@ -4961,11 +4971,11 @@ class StoryParser
     {
         if (this.DEBUG)
         {
-            if (b === undefined)
+            if (typeof(b) === "undefined")
             {
                 console.info(a);
             }
-            else if (c === undefined)
+            else if (typeof(c) === "undefined")
             {
                 console.info(a, b);
             }
