@@ -57,7 +57,7 @@ class StoryParser
         // API:
         pocket_user: null,
         pocket_password: null,
-        api_url: "http://www.mrh-development.de/FanFictionUserScript",
+        api_url: "https://www.mrh-development.de/FanFictionUserScript",
         api_lookupKey: "ffnet-api-interface",
         api_timeout: 3000,
         api_retries: 2,
@@ -362,10 +362,13 @@ class StoryParser
         });
 
 
+        //TODO: Remove this later :)
+        this.config.api_url = this.config.api_url.replace("http", "https");
+
         // Check if we use HTTPS
         this.useHTTPS = this.config.api_url.toLowerCase().indexOf("https") !== -1;
 
-        //this.config.api_url = this.config.api_url.replace("https", "http");
+        
 
 
 
