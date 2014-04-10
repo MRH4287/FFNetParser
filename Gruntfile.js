@@ -204,8 +204,8 @@ module.exports = function(grunt) {
 	grunt.registerTask('package', 
 	[
 		'default',
-		'exec',
-		'clean:chrome',
+		//'exec',
+		//'clean:chrome',
 		'compress'	
 	]);
 	
