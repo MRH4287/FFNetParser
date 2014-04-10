@@ -6,10 +6,12 @@ module.exports = function(grunt) {
     // Metadata.
     pkg: grunt.file.readJSON('package.json'),
 	manifest: grunt.file.readJSON('manifest.json'),
-    banner: '/*! <%= manifest.name %> - v<%= manifest.version %> - ' +
+    banner: '// -- Start Script -- \n' +
+	  '/*! <%= manifest.name %> - v<%= manifest.version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+	  ' * Commit-Hash: <%= gitinfo.local.branch.current.SHA %>\n' +
 	  //'//# sourceMappingURL=ffnetlist.js.map\n' +
-      '<%= manifest.homepage_url ? "* " + manifest.homepage_url + "\\n" : "" %>' +
+      '<%= manifest.homepage_url ? " * " + manifest.homepage_url + "\\n" : "" %>' +
       ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= manifest.author %> \n' +
       ' * Licensed under MIT \n */\n',
     // Task configuration.
