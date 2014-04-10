@@ -363,7 +363,7 @@ class StoryParser
 
 
         //TODO: Remove this later :)
-        this.config.api_url = this.config.api_url.replace("http", "https");
+        this.config.api_url = this.config.api_url.replace("http:", "https:");
 
         // Check if we use HTTPS
         this.useHTTPS = this.config.api_url.toLowerCase().indexOf("https") !== -1;
