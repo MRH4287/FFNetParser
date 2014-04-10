@@ -3597,7 +3597,7 @@ class StoryParser
                         {
                             container.click(function ()
                             {
-                                container.css('height', '550px');
+                                container.css('height', '592px');
                                 container.css("cursor", "auto");
                                 container.removeAttr("title");
 
