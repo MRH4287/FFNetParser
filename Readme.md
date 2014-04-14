@@ -8,6 +8,11 @@ This UserScript allows to parse and mark stories in the list.
 If there is an problem with fictionpress.com, please report that to me.**
 
 
+*You can find a compiled Version of the Script [Here](http://server.mrh-development.de:8080/job/Fanfiction%20User%20Script/lastSuccessfulBuild/artifact/ffnetlist.user.js)*
+
+**Warning: The Version above can be broken! Choose a different Version [Here](http://server.mrh-development.de:8080/job/Fanfiction%20User%20Script/) if necessary.**
+
+
 ## Feature-List:
 * GUI - Customization (change colors, site width, hide story images, disable image hover effect)
 * Build filter to search for specific keywords.
@@ -145,10 +150,6 @@ To Import or Export your Config, click on the `Config Import / Export` in the Me
 This allows the user to upload their filter settings to the web service.
 
 The Data is Synchronized between the clients. To identify a specific user, a user specific token is used, that is generated at first run.
-
-_Warning: The Data is transferred unencrypted!_ 
-
-__I would change that if i could, but HTTPS do not work so well with my API Calls__
 
 
 ## How to Build this
