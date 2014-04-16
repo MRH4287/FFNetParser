@@ -363,8 +363,11 @@ class StoryParser
 
 
         //TODO: Remove this later :)
-        this.config.api_url = this.config.api_url.replace("http:", "https:");
-
+        if (this.config.api_url.toLocaleLowerCase() === "http://www.mrh-development.de/FanFictionUserScript".toLocaleLowerCase())
+        {
+            this.config.api_url = "https://www.mrh-development.de/FanFictionUserScript";
+            this.save_config();
+        }
         // Check if we use HTTPS
         this.useHTTPS = this.config.api_url.toLowerCase().indexOf("https") !== -1;
 
