@@ -1130,7 +1130,7 @@ class StoryParser
                         self.dataConfig['messages'] = messages.Messages;
 
                         // Update Icon:
-                        $(".ffnetMessageContainer img").attr("src", self.getUrl("/message_new-white.png"));
+                        $(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
 
                         $('.ffnet-messageCount').text(messages.Messages.length);
 

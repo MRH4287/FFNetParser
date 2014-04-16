@@ -171,6 +171,14 @@ module.exports = function(grunt) {
 		{
 			src: "Chrome"
 		}
+	},
+	qunit: 
+	{
+		options: 
+		{
+			timeout: 5000
+		},
+		all: ['test/*.html']
 	}
   });
 
@@ -185,6 +193,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-exec');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
   
   // Default task.
   grunt.registerTask('default', 
@@ -204,6 +213,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('package', 
 	[
 		'default',
+		'qunit', // Start the Unit Tests
 		//'exec',
 		//'clean:chrome',
 		'compress'	

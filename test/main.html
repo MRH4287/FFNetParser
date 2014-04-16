@@ -1,0 +1,353 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>UserScript Test Suit</title>
+    <!-- Load local QUnit. -->
+    <link rel="stylesheet" href="libs/qunit.css" media="screen">
+    <link rel='stylesheet' href='https://www.fanfiction.net/static/styles/xss24.css'>
+
+
+
+</head>
+<body>
+    <div id="top" style="width:100%;background-color: #333399; ">
+        <div class="menulink maxwidth" style="padding:0.5em 10px 0.5em 10px; vertical-align:middle;">
+            <span class="pull-right" id="name_login">
+                <a style="color:white;" href="/login.php">
+                    <span style="font-size:15px;position:relative;top:1px" class="icon-lock"></span> Login
+                </a> | <a style="color:white;" href="#">Sign Up</a>
+            </span>
+            <a style="font-weight:bold;border:none;" href="/">FanFiction</a>&nbsp;&nbsp;
+            <small>|</small>&nbsp;&nbsp;unleash your imagination
+            <span title="Mobile Edition" style="font-size:14px;margin-left:10px;" class="icon-kub-mobile"></span>
+            <span style="font-size:14px;margin-left:10px;" class="icon-tl-text" title="Fontastic Panel: UI Settings"></span>
+            <div class="xmenu_item">
+                <span style="cursor:pointer;font-size:14px;margin-left:10px;" class="icon-globe" title="Language"></span>
+                <div align="center" id="google_translate_element" class="hide">
+                    <div class="skiptranslate goog-te-gadget" dir="ltr" style="">
+                        <div id=":0.targetLanguage" style="white-space: nowrap;" class="goog-te-gadget-simple">
+                            <img src="https://www.google.com/images/cleardot.gif" class="goog-te-gadget-icon" style="background-image: url(&quot;https://translate.googleapis.com/translate_static/img/te_ctrl3.gif&quot;); background-position: -65px 0px;">
+                            <span style="vertical-align: middle;">
+                                <a class="goog-te-menu-value" href="javascript:void(0)">
+                                    <span>Sprache auswählen</span>
+                                    <img width="1" height="1" src="https://www.google.com/images/cleardot.gif">
+                                    <span style="border-left: 1px solid rgb(187, 187, 187);">&#8203;</span>
+                                    <img width="1" height="1" src="https://www.google.com/images/cleardot.gif">
+                                    <span style="color: rgb(155, 155, 155);">▼</span>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="zmenu" style="width:100%;">
+        <div style="vertical-align: middle; padding: 5px; width: 1300px;" class="maxwidth" id="zmenu">
+            <span class="zui">
+                <!-- new stuff -->
+                <table class="maxwidth" style="width: 1300px;">
+                    <tbody>
+                        <tr>
+                            <td valign="middle">
+                                <div class="dropdown xmenu_item">
+                                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">Browse <b class="caret"></b></a>
+                                </div>
+                                <div class="dropdown xmenu_item">
+                                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">Just In <b class="caret"></b></a>
+                                </div>
+                                <div class="dropdown xmenu_item">
+                                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">Community <b class="caret"></b></a>
+                                </div>
+                                <div class="dropdown xmenu_item">
+                                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">Forum <b class="caret"></b></a>
+                                </div>
+                                <div class="dropdown xmenu_item">
+                                    <a href="#" data-toggle="dropdown" class="dropdown-toggle">Betas <b class="caret"></b></a>
+                                </div>
+                            </td>
+                            <td valign="middle">
+                                <form class="pull-right" action="#" id="search_form" method="get">
+                                    <div class="input-prepend">
+                                        <div class="btn-group">
+                                            <button data-toggle="dropdown" class="btn dropdown-toggle">
+                                                <span id="search_head">Story</span>
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="xdrop_search" href="#">Story</a></li>
+                                                <li><a class="xdrop_search" href="#">Writer</a></li>
+                                                <li><a class="xdrop_search" href="#">Forum</a></li>
+                                                <!-- <li class='divider'></li> -->
+                                                <li><a class="xdrop_search" href="#">Community</a></li>
+                                            </ul>
+                                        </div>
+                                        <input type="text" title="Search" placeholder="Search" id="search_keywords" name="keywords" class="span2">
+                                        <!--  input-append <button class='btn' type='submit'>Go</button> -->
+                                    </div>
+                                    <!-- <input class=searchfield type=text name='keywords' placeholder='Search' title='Search' style='width:100px'> -->
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </span>
+        </div>
+    </div>
+
+    <div id="content_parent" class="xcontrast_outer" style="width:100%;">
+        <div style="background-color: white; width: 1300px;" id="content_wrapper" class="xcontrast maxwidth">
+            <div style="padding:0.5em;" id="content_wrapper_inner">
+                <span style="float:right">
+                    <a href="#">
+                        <span style="color:rgb(50, 79, 231)" class="icon-shuffle"></span>
+                        Crossovers
+                    </a>&nbsp;
+                    <a href="#" style="border:none;">
+                        <img width="16" height="16" border="0" align="absmiddle" style="marign-right:3px;" src="//fast-fictionpressllc.netdna-ssl.com/static/ficons/group.png">
+                        Communities
+                    </a>&nbsp;
+                    <a href="#" style="border:none;">
+                        <img width="16" height="16" border="0" align="absmiddle" style="marign-right:3px;" src="//fast-fictionpressllc.netdna-ssl.com/static/ficons/comments.png">
+                        Forums
+                    </a>&nbsp;
+                    <a href="#" title="Feed" style="border:none;">
+                        <span style="color:rgb(255, 143, 0)" class="icon-rss-squared"></span>
+                    </a>
+                </span>
+                <img width="16" height="16" border="0" align="absmiddle" src="//fast-fictionpressllc.netdna-ssl.com/static/ficons/script.png">
+                <a href="#">Games</a>
+                <span class="xcontrast_txt icon-chevron-right xicon-section-arrow"></span>
+                Test
+                <div align="center" class="lc-wrapper">
+                    <span class="lc">
+                        <span class="btn">Filters</span>
+                    </span>
+                </div>
+
+
+                <div id="filters" data-dynamic="true" class="modal fade hide in">
+                    <form id="myform" name="myform">
+                        <div class="modal-body">
+                            <span style="margin-right:35px" class="pull-right">
+                                Pairing <input type="checkbox" name="pm" value="1" onclick="live_count();">
+                            </span>
+                            <span style="color:#04761c">Plus</span>
+                            Filters
+                            <div style="height:10px"></div>
+                            <select class="filter_select selection_hl" title="sort options" name="sortid">
+                                <option value="1">Sort: Update Date</option>
+                            </select>
+                            <select class="filter_select  " title="time range options" name="timerange">
+                                <option value="0">Time Range: All</option>
+                            </select>
+                            <select class="filter_select " title="genre 1 filter" name="genreid1">
+                                <option value="0">Genre (A): All</option>
+                            </select>
+                            <select class="filter_select " title="genre 2 filter" name="genreid2">
+                                <option value="0">Genre (B): All</option>
+                            </select>
+                            <select class="filter_select selection_hl" name="censorid" title="rating filter">
+                                <option value="10">Rating: All
+                            </select>
+                            <select class="filter_select " name="languageid" title="language filter">
+                                <option value="0">Language</option>
+                            </select>
+                            <select class="filter_select " name="statusid" title="story status">
+                                <option selected="" value="0">Status: All</option>
+                            </select>
+                            <select class="filter_select " name="verseid1" title="world">
+                                <option selected="" value="0">World: All</option>
+                            </select>
+                            <select class="filter_select " name="characterid1" title="character 1 filter">
+                                <option value="0">All Characters (A)</option>
+                                <option value="97976">AZ</option>
+                                <option value="29325">Aaron/Ryou</option>
+                            </select>
+                            <select class="filter_select filter_select_negative  " title="except genre filter" name="_genreid1">
+                                <option value="0">Genre</option>
+                            </select>
+                            <select class="filter_select filter_select_negative " name="_characterid1" title="except character filter">
+                                <option value="0">Character (A)</option>
+                            </select>
+                            <select class="filter_select filter_select_negative " name="_characterid2" title="except character filter">
+                                <option value="0">Character (B)</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <span data-dismiss="modal" class="btn pull-left">Cancel</span>
+                            <span onclick="process_filter();" class="btn pull-right btn-primary">Apply</span>
+                            <div align="center"><span style="margin-top:5px" class="badge" id="live_counter">59.2K</span></div>
+                        </div>
+                    </form>
+
+                    <!-- end modal -->
+                </div>
+
+                <center style="margin-top:5px;margin-bottom:5px;">
+                    59.2K | Page  <b>1</b>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#">4</a>
+                    <a href="#">11</a>  ..
+                    <a href="#">Last</a>
+                    <a href="#">Next »</a>
+                </center>
+                <hr size="1" />
+                <div style="margin-top:5px;float:right;width:160px;margin-left:5px;text-align:right;">
+                </div>
+
+                <div style="min-height:77px;border-bottom:1px #cdcdcd solid;" class="z-list zhover zpointer">
+                    <a href="#" class="stitle">
+                        <img width="50" height="74" src="//fast-fictionpressllc.netdna-ssl.com/static/images/d_60_90.jpg" style="clear:left;float:left;margin-right:3px;padding:2px;border:1px solid #ccc;-moz-border-radius:2px;-webkit-border-radius:2px;" class="lazy cimage">
+                        Test 1
+                    </a>
+                    <a href="#">
+                        <span class="icon-chevron-right xicon-section-arrow"></span>
+                    </a>  by <a href="#">TestUser</a>
+                    <a href="#" class="reviews">reviews</a>
+                    <div class="z-indent z-padtop">
+                        This is a very good test story!
+                        <div class="z-padtop2 xgray">
+                            Rated: K - English - Humor/Adventure - Chapters: 4 - Words: 6,283 - Reviews: 1 - Updated:
+                            <span data-xutime="11111">11m ago</span>
+                            - Published:
+                            <span data-xutime="1111">Mar 17</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="min-height:77px;border-bottom:1px #cdcdcd solid;" class="z-list zhover zpointer">
+                    <a href="#" class="stitle">
+                        <img width="50" height="74" data-original="//ffcdn2012-fictionpressllc.netdna-ssl.com/image/1302876/75/" src="//ffcdn2012-fictionpressllc.netdna-ssl.com/image/1302876/75/" style="clear: left; float: left; margin-right: 3px; padding: 2px; border: 1px solid rgb(204, 204, 204); display: block;" class="lazy cimage">
+                        Test 2
+                    </a>
+                    <a href="#">
+                        <span class="icon-chevron-right xicon-section-arrow"></span>
+                    </a>  by
+                    <a href="#">BlaTest!</a>
+                    <a href="#" class="reviews">reviews</a>
+                    <div class="z-indent z-padtop">
+                        I am testing here a nice story!
+                        <div class="z-padtop2 xgray">
+                            Rated: T - English - Adventure/Friendship - Chapters: 15 - Words: 35,048 - Reviews: 14 - Favs: 34 - Follows: 28 - Updated:
+                            <span data-xutime="1234">17m ago</span>
+                            - Published:
+                            <span data-xutime="3456">Jul 6, 2013</span>
+                            - Char1, Char2
+                        </div>
+                    </div>
+                </div>
+
+
+                <center style="margin-top:5px;margin-bottom:5px;">
+                    59.2K | Page  <b>1</b>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#">4</a>
+                    <a href="#">11</a>  ..
+                    <a href="#">Last</a>
+                    <a href="#">Next »</a>
+                </center>
+                <div align="center" style="margin-top:6px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div style="margin-top: 100px"></div>
+
+    <div id="qunit"></div>
+    <script src="libs/qunit.js"></script>
+
+    <!-- Apply special Test Config: -->
+    <script>
+        var config =
+            {
+                "pocket_user": "",
+                "pocket_password": "",
+                "token": "8447442506439984",
+                "story_search_depth": 2,
+                "mark_M_storys": true,
+                "hide_non_english_storys": true,
+                "allow_copy": false,
+                "color_normal": "#FFFFFF",
+                "color_mouse_over": "#EEF0F4",
+                "color_odd_color": "#dfdfdf",
+                "hide_images": true,
+                "hide_lazy_images": true,
+                "disable_image_hover": false,
+                "content_width": "90%",
+                "api_url": "https://www.mrh-development.de/FanFictionUserScript",
+                "api_lookupKey": "ffnet-api-interface",
+                "api_timeout": 3000,
+                "api_retries": 2,
+                "api_checkForUpdates": false,
+                "api_autoIncludeNewVersion": false,
+                "disable_cache": true,
+                "disable_highlighter": false,
+                "disable_sync": true,
+                "storage_key": "ffnet-storycache",
+                "config_key": "ffnet-config",
+                "dataStorage_key": "ffnet-dataStore",
+                "highlighter": {},
+                "marker":
+                    {
+                        "Test-Data":
+                            {
+                                "name": "Test-Data",
+                                "color": "#ff0000",
+                                "ignore": [""],
+                                "keywords": ["([^a-z]|^)(good)([^a-z]|$)"],
+                                "mark_chapter": true,
+                                "mention_in_headline": true,
+                                "display": true,
+                                "mouseOver": "#00ff00",
+                                "print_story": true,
+                                "search_story": false,
+                                "ignoreColor": false,
+                                "background": null,
+                                "text_color": "#686868",
+                                "revision": 1
+                            },
+                        "Test-Data2":
+                            {
+                                "name": "Test-Data2",
+                                "color": "#FFFFFF",
+                                "ignore": [""],
+                                "keywords": ["([^a-z]|^)(nice)([^a-z]|$)"],
+                                "mark_chapter": false,
+                                "mention_in_headline": true,
+                                "display": false,
+                                "mouseOver": "#FFFFFF",
+                                "print_story": false,
+                                "search_story": false,
+                                "ignoreColor": true
+                                , "background": null,
+                                "text_color": "#686868",
+                                "revision": 0
+                            }
+                    },
+                "markerBackup": {}
+        };
+
+        localStorage['ffnet-config'] = JSON.stringify(config);
+
+
+    </script>
+
+    <!-- Insert the Userscript here! -->
+    <!-- We need to insert it here, because of the way this script works -->
+    <script src="../ffnetlist.user.js"></script>
+
+    <!-- Load local lib and tests. -->
+    <script src="main_test.js"></script>
+</body>
+
+
+
+
+</html>
