@@ -1,7 +1,7 @@
 {
      "name": "Fanfiction.net Story Parser",
 	 "description": "Improves the Fanfiction.net and Fictionpress.com Storylist by adding Filter Options. (+ Many more)",
-     "version": "5.0.1",
+     "version": "5.0.2",
      "manifest_version": 2,
 	 "author": "Manuel Holzhauser",
 	 "homepage_url": "http://www.mrh-development.de",
