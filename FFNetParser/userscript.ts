@@ -362,6 +362,7 @@ class StoryParser
         });
 
 
+
         //TODO: Remove this later :)
         if (this.config.api_url.toLocaleLowerCase() === "http://www.mrh-development.de/FanFictionUserScript".toLocaleLowerCase())
         {
@@ -371,7 +372,7 @@ class StoryParser
         // Check if we use HTTPS
         this.useHTTPS = this.config.api_url.toLowerCase().indexOf("https") !== -1;
 
-        
+
 
 
 
@@ -395,7 +396,7 @@ class StoryParser
         var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
         $("head").append(block);
 
-        if (typeof($.ui) === "undefined")
+        if (typeof ($.ui) === "undefined")
         {
             console.error("Can't include jQuery UI!");
         }
@@ -714,14 +715,13 @@ class StoryParser
 
                 }
 
-                if (self.DEBUG)
+                if (url !== null)
                 {
-                    console.log("Changes to Page: ", url);
-                }
+                    if (self.DEBUG)
+                    {
+                        console.log("Changes to Page: ", url);
+                    }
 
-
-                if (url != null)
-                {
                     location.href = url;
                 }
             }
@@ -964,7 +964,7 @@ class StoryParser
 
                     self.toggleStoryConfig({
                         url: link,
-                       // element: element,
+                        // element: element,
                         name: storyName
                     });
 
@@ -1215,7 +1215,7 @@ class StoryParser
 
         var keywords = data.keywords;
 
-        if (typeof(keywords) === "undefined")
+        if (typeof (keywords) === "undefined")
         {
             console.warn('No Keywords!');
         }
@@ -1497,7 +1497,7 @@ class StoryParser
             self.hidden += 1;
         } else
         {
-            if (config.background != null)
+            if ((config.background !== null) && (config.background !== ""))
             {
                 element.css('background-image', 'url(' + config.background + ')')
                     .css('background-repeat', 'no-repeat')
@@ -1563,7 +1563,7 @@ class StoryParser
             {
                 if (self.DEBUG)
                 {
-                    console.log("[ElementCallback] Change Color of Line: ",element); 
+                    console.log("[ElementCallback] Change Color of Line: ", element);
                 }
 
                 self.updateColor(element, color, colorMo, false);
@@ -1932,12 +1932,12 @@ class StoryParser
     */
     private parsePocket(url: string, prefix: string, length: any, currentDepth: number = 1)
     {
-        if (typeof(prefix) === "undefined")
+        if (typeof (prefix) === "undefined")
         {
             prefix = "";
         }
 
-        if ((typeof(length) === "undefined") || (length === "all"))
+        if ((typeof (length) === "undefined") || (length === "all"))
         {
             length = 100;
         }
@@ -2173,7 +2173,7 @@ class StoryParser
         return null;
     }
 
-    private getPrevPage(base: JQuery) : string
+    private getPrevPage(base: JQuery): string
     {
         var container = base.find("center").last();
 
@@ -2199,6 +2199,134 @@ class StoryParser
     /** The number of new Entries created */
     private addCount = 0;
 
+
+    /**
+    * Creates a block of Elements in the Container Element and saves the Elements with its IDs in the saveTo Variable
+    * @param parent The Elements will be added to this Container
+    * @param elements The List of Element-Options
+    * @param the Collection to save the Input-Data to
+    */
+    private gui_createElements(parent: JQuery, elements: GUIElement[], saveTo: any)
+    {
+        var self = this;
+
+        $.each(elements, function (_, data: GUIElement)
+        {
+            var element: JQuery = null;
+
+            if ((data.debugOnly === true) && !self.DEBUG)
+            {
+                return;
+            }
+
+            var id = "fflist-element-" + Math.floor(Math.random() * 1000000);
+
+            switch (data.type)
+            {
+                case GUIElementType.Input:
+
+                    element = $('<input type="text" id="' + id + '"/>');
+                    element.val(data.value);
+
+                    break;
+                case GUIElementType.Checkbox:
+
+                    element = $('<input type="checkbox" id="' + id + '"/>');
+                    if (data.value === true)
+                    {
+                        element.attr('checked', 'checked');
+                    }
+
+                    break;
+                case GUIElementType.Button:
+
+                    element = $('<input type="button" class="btn"  id="' + id + '"/>');
+                    element.val(data.value);
+
+                    if (typeof (data.callback) !== "undefined")
+                    {
+                        element.click(data.callback);
+                    }
+
+                    break;
+                case GUIElementType.Combobox:
+
+                    element = $('<select id="' + id + '"/>');
+
+                    if (typeof (data.values) !== "undefined")
+                    {
+                        $.each(data.values, function (_, option)
+                        {
+                            $("<option/>").text(option).appendTo(element);
+                        });
+
+                    }
+                    break;
+                case GUIElementType.Text:
+
+                    element = $('<p></p>').html(data.value);
+
+                    break;
+
+                case GUIElementType.Custom:
+
+                    if (typeof (data.customElement) !== "undefined")
+                    {
+                        element = data.customElement(data);
+                    }
+                    else
+                    {
+                        element = $('<p style="color: red; text-size: 15px">Missing Custom Element!</p>');
+                    }
+
+                    break;
+            }
+
+            if (typeof (data.attributes) !== "undefined")
+            {
+                $.each(data.attributes, function (key, value)
+                {
+                    element.attr(key, value);
+                });
+            }
+
+            if (typeof (data.css) !== "undefined")
+            {
+                $.each(data.css, function (key, value)
+                {
+                    element.css(key, value);
+                });
+            }
+
+            if (typeof (data.customOptions) !== "undefined")
+            {
+                data.customOptions(element);
+            }
+
+            parent.append(
+                $('<tr></tr>').append(
+                    $('<td width="30%" style="height: 30px"></td>').append(
+                        $('<label></label>')
+                            .html(data.label)
+                            .css('font-weight', 'bold')
+                            .attr("for", element.attr('id'))
+                        )
+                        .css('border-right', '1px solid gray')
+                    ).append(
+                    $('<td class="ffnetparser_InputField"></td>').append(
+                        element
+                        )
+                    )
+                );
+
+            saveTo[data.name] = element;
+            //self.settingsElements[data.name] = element;
+
+        });
+
+    }
+
+
     /*
      *   Creates the GUI used for the Menus
      */
@@ -2222,6 +2350,8 @@ class StoryParser
      */
     private gui_update()
     {
+        var self = this;
+
         this.log("Update GUI");
 
         this.guiElements = {};
@@ -2330,114 +2460,42 @@ class StoryParser
         var cat = getCategory("Story Settings", "ffnetConfig-Settings", settingsContainer);
         var table = cat.table;
 
-        // story_search_depth
-        this.log("GUI - story_search_depth");
-
-        var input: JQuery = $('<input type="text" id="fflist-story_search_depth">')
-            .attr('value', this.config.story_search_depth)
-            .attr('size', '50');
-
-        this.settingsElements['story_search_depth'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-story_search_depth">Max Search depth: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // mark_M_storys:
-        this.log("GUI - mark_M_storys");
-
-        var checkbox = $('<input type="checkbox" id="fflist-mark_M_storys">');
-        if (this.config.mark_M_storys)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.settingsElements['mark_M_storys'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-mark_M_storys">Mark "M" rated Storys: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
 
 
-        // spacer:
-        table.append(spacer.clone());
+        this.gui_createElements(table,
+            [
+                {
+                    name: "story_search_depth",
+                    type: GUIElementType.Input,
+                    label: "Max Search depth: ",
+                    value: this.config.story_search_depth,
+                    attributes:
+                    {
+                        'size': '50'
+                    }
+                },
+                {
+                    name: 'mark_M_storys',
+                    type: GUIElementType.Checkbox,
+                    value: this.config.mark_M_storys,
+                    label: 'Mark "M" rated Storys: '
+                },
+                {
+                    name: 'hide_non_english_storys',
+                    type: GUIElementType.Checkbox,
+                    value: this.config.hide_non_english_storys,
+                    label: 'Hide non English Storys: '
+                },
+                {
+                    name: 'allow_copy',
+                    type: GUIElementType.Checkbox,
+                    value: this.config.allow_copy,
+                    label: 'Allow the selection of Text: '
+                }
+
+            ], this.settingsElements);
 
 
-        // hide_non_english_storys:
-        this.log("GUI - hide_non_english_storys");
-
-        checkbox = $('<input type="checkbox" id="fflist-hide_non_english_storys">');
-        if (this.config.hide_non_english_storys)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.settingsElements['hide_non_english_storys'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-hide_non_english_storys">Hide non English Storys: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // allow_copy
-        this.log("GUI - allow_copy");
-
-        checkbox = $('<input type="checkbox" id="fflist-allow_copy">');
-        if (this.config.allow_copy)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.settingsElements['allow_copy'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-allow_copy">Allow the selection of Text: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
 
         cat.category.append(saveButtonContainer.clone());
 
@@ -2446,206 +2504,88 @@ class StoryParser
         table = cat.table;
 
 
-        // hide_images:
-        this.log("GUI - hide_images");
-
-        checkbox = $('<input type="checkbox" id="fflist-hide_images">');
-        if (this.config.hide_images)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.settingsElements['hide_images'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-hide_images">Hide Story Images: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // hide_lazy_images:
-        this.log("GUI - hide_lazy_images");
-
-        checkbox = $('<input type="checkbox" id="fflist-hide_lazy_images">');
-        if (this.config.hide_lazy_images)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.settingsElements['hide_lazy_images'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-hide_lazy_images">Hide <abbr title="Images that are loaded after the first run. Mostly Story Images, not User Images">lazy</abbr> images: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // disable_image_hover:
-        this.log("GUI - disable_image_hover");
-
-        checkbox = $('<input type="checkbox" id="fflist-disable_image_hover">');
-        if (this.config.disable_image_hover)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.settingsElements['disable_image_hover'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-disable_image_hover">Disable Image Hover Effect: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
+        this.gui_createElements(table,
+            [
+                {
+                    name: 'hide_images',
+                    type: GUIElementType.Checkbox,
+                    value: this.config.hide_images,
+                    label: 'Hide Story Images: '
+                },
+                {
+                    name: 'hide_lazy_images',
+                    type: GUIElementType.Checkbox,
+                    value: this.config.hide_lazy_images,
+                    label: 'Hide <abbr title="Images that are loaded after the first run. Mostly Story Images, not User Images">lazy</abbr> images: '
+                },
+                {
+                    name: 'disable_image_hover',
+                    type: GUIElementType.Checkbox,
+                    value: this.config.disable_image_hover,
+                    label: 'Disable Image Hover Effect: '
+                },
+                {
+                    name: 'content_width',
+                    type: GUIElementType.Input,
+                    value: this.config.content_width,
+                    label: 'Content Width: ',
+                    attributes:
+                    {
+                        size: 50
+                    }
+                },
+                {
+                    name: 'color_normal',
+                    type: GUIElementType.Input,
+                    value: this.config.color_normal,
+                    label: 'Normal Background-Color: ',
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (element) 
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    }
+                },
+                {
+                    name: 'color_mouse_over',
+                    type: GUIElementType.Input,
+                    value: this.config.color_mouse_over,
+                    label: 'MouseOver Background-Color: ',
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (element) 
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    }
+                },
+                {
+                    name: 'color_odd_color',
+                    type: GUIElementType.Input,
+                    value: this.config.color_odd_color,
+                    label: 'Odd Background-Color: ',
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (element) 
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    }
+                }
 
 
-        // spacer:
-        table.append(spacer.clone());
 
-
-        // content_width
-        this.log("GUI - content_width");
-
-        input = $('<input type="text" id="fflist-content_width">')
-            .attr('value', this.config.content_width)
-            .attr('size', '50');
-
-        this.settingsElements['content_width'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-content_width">Content Width: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-
-        // color_normal
-        this.log("GUI - color_normal");
-
-        input = $('<input type="text" id="fflist-color_normal">')
-            .attr('value', this.config.color_normal)
-            .attr('size', '50')
-            .colorpicker({
-                colorFormat: "#HEX"
-            });
-
-        this.settingsElements['color_normal'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-color_normal">Normal Background-Color: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // color_mouse_over
-        this.log("GUI - color_mouse_over");
-
-        input = $('<input type="text" id="fflist-color_mouse_over">')
-            .attr('value', this.config.color_mouse_over)
-            .attr('size', '50')
-            .colorpicker({
-                colorFormat: "#HEX"
-            });
-
-        this.settingsElements['color_mouse_over'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-color_mouse_over">MouseOver Background-Color: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // color_odd_color
-        this.log("GUI - color_odd_color");
-
-        input = $('<input type="text" id="fflist-color_odd_color">')
-            .attr('value', this.config.color_odd_color)
-            .attr('size', '50')
-            .colorpicker({
-                colorFormat: "#HEX"
-            });
-
-        this.settingsElements['color_odd_color'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-color_odd_color">Odd Background-Color: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-                )
-            );
+            ], this.settingsElements);
 
 
         cat.category.append(saveButtonContainer.clone());
@@ -2655,228 +2595,109 @@ class StoryParser
         table = cat.table;
 
 
-        // Pocket ---
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append("--------")
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    " ---- <a href=\"http://www.getpocket.com\">Pocket</a> Settings ----"
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // pocket_user
-        this.log("GUI - pocket_user");
-
-        input = $('<input type="text" id="fflist-pocket_user">')
-            .attr('value', this.config.pocket_user)
-            .attr('size', '50');
-
-        this.settingsElements['pocket_user'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-pocket_user">Username: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-                )
-            );
-
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // pocket_password
-        this.log("GUI - pocket_password");
-
-        input = $('<input type="password" id="fflist-pocket_password">')
-            .attr('value', this.config.pocket_password)
-            .attr('size', '50');
-
-        this.settingsElements['pocket_password'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-pocket_password">Password: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-                )
-            );
-
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // API ---
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append("--------")
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    " ---- API Settings ----"
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        if (this.DEBUG)
-        {
-
-            // api_url
-            this.log("GUI - api_url");
-
-            input = $('<input type="text" id="fflist-api_url">')
-                .attr('value', this.config.api_url);
-
-            this.settingsElements['api_url'] = input;
-
-            table.append(
-                $('<tr></tr>').append(
-                    $('<td width="30%"></td>').append(
-                        $('<label for="fflist-api_url">Server Backend Address: </label>')
-                            .css('font-weight', 'bold')
-                        )
-                        .css('border-right', '1px solid gray')
-                    ).append(
-                    $('<td class="ffnetparser_InputField"></td>').append(
-                        input
-                        ).append(
-                        $("<button>Default</button>").click(function ()
+        this.gui_createElements(table,
+            [
+                {
+                    name: '',
+                    type: GUIElementType.Text,
+                    label: "--------",
+                    value: ' ---- <a href="http://www.getpocket.com">Pocket</a> Settings ----'
+                },
+                {
+                    name: 'pocket_user',
+                    type: GUIElementType.Input,
+                    label: 'Username: ',
+                    value: this.config.pocket_user,
+                    attributes:
+                    {
+                        size: 50
+                    }
+                },
+                {
+                    name: 'pocket_password',
+                    type: GUIElementType.Input,
+                    label: 'Password: ',
+                    value: this.config.pocket_password,
+                    attributes:
+                    {
+                        size: 50,
+                        type: 'password'
+                    }
+                },
+                {
+                    name: '',
+                    type: GUIElementType.Text,
+                    label: "--------",
+                    value: ' ---- API Settings ----'
+                },
+                {
+                    name: 'api_url',
+                    type: GUIElementType.Custom,
+                    label: 'Server Backend Address: ',
+                    value: '',
+                    debugOnly: true,
+                    customElement: function ()
+                    {
+                        return $('<span></span>').
+                            append(
+                            $('<input type="text" class="dataContainer ffnetparser_InputField" id="fflist-api_url" />')
+                                .attr('size', '50')
+                                .val(self.config.api_url)
+                            ).append(
+                            $("<button>Default</button>").click(function ()
+                            {
+                                $('#fflist-api_url').val("https://www.mrh-development.de/FanFictionUserScript");
+                            })
+                            ).append(
+                            $("<button>Local</button>").click(function ()
+                            {
+                                $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
+                            })
+                            );
+                    }
+                },
+                {
+                    name: 'api_checkForUpdates',
+                    type: GUIElementType.Checkbox,
+                    label: 'Check for Updates: ',
+                    value: this.config.api_checkForUpdates,
+                    customOptions: function (checkbox)
+                    {
+                        checkbox.change(function ()
                         {
-                            $('#fflist-api_url').val("http://www.mrh-development.de/FanFictionUserScript");
-                        })
-                        ).append(
-                        $("<button>Local</button>").click(function ()
-                        {
-                            $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
-                        })
-                        )
-                    )
-                );
+                            if (!$("#fflist-api_checkForUpdates").is(":checked"))
+                            {
+                                $("#fflist-api_autoIncludeNewVersion").attr("disabled", "disabled");
+                            }
+                            else
+                            {
+                                $("#fflist-api_autoIncludeNewVersion").removeAttr("disabled");
+                            }
 
-            // spacer:
-            table.append(spacer.clone());
-        }
+                        });
+                    }
+                },
+                {
+                    name: 'api_autoIncludeNewVersion',
+                    type: GUIElementType.Checkbox,
+                    label: 'Auto Update: ',
+                    value: this.config.api_autoIncludeNewVersion,
+                },
+                {
+                    name: 'token',
+                    type: GUIElementType.Input,
+                    label: '<abbr title="Used for identification on the Web-Service (e.g. Synchronization)">Token</abbr>: ',
+                    value: this.config.token,
+                    attributes:
+                    {
+                        size: 50,
+                        pattern: "[0-9a-zA-Z]+"
+                    }
+                }
 
-        // api_checkForUpdates
-        this.log("GUI - api_checkForUpdates");
-
-        checkbox = $('<input type="checkbox" id="fflist-api_checkForUpdates">');
-        if (this.config.api_checkForUpdates)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-        else
-        {
-            $("#api_autoIncludeNewVersion").attr("disabled", "disabled");
-        }
-
-
-        checkbox.change(function ()
-        {
-            if (!$("#fflist-api_checkForUpdates").is(":checked"))
-            {
-                $("#fflist-api_autoIncludeNewVersion").attr("disabled", "disabled");
-            }
-            else
-            {
-                $("#fflist-api_autoIncludeNewVersion").removeAttr("disabled");
-            }
-
-        });
-
-        this.settingsElements['api_checkForUpdates'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-api_checkForUpdates">Check for Updates: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
+            ], this.settingsElements);
 
 
-        // spacer:
-        table.append(spacer.clone());
-
-        // api_autoIncludeNewVersion
-        this.log("GUI - api_autoIncludeNewVersion");
-
-        checkbox = $('<input type="checkbox" id="fflist-api_autoIncludeNewVersion">');
-        if (this.config.api_autoIncludeNewVersion)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.settingsElements['api_autoIncludeNewVersion'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-api_autoIncludeNewVersion">Auto Update: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // token
-        this.log("GUI - token");
-
-        input = $('<input type="text" id="fflist-token">')
-            .attr('value', this.config.token)
-            .attr('size', '50')
-            .attr("pattern", "[0-9a-zA-Z]+");
-
-        this.settingsElements['token'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-token"><abbr title="Used for identification on the Web-Service (e.g. Synchronization)">Token</abbr>: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-                )
-            );
 
 
         cat.category.append(saveButtonContainer.clone());
@@ -2886,91 +2707,28 @@ class StoryParser
         table = cat.table;
 
 
-        // disable_highlighter
-        this.log("GUI - disable_highlighter");
+        this.gui_createElements(table,
+            [
+                {
+                    name: 'disable_highlighter',
+                    type: GUIElementType.Checkbox,
+                    label: '<abbr title="Disable the Story Highlighter Feature.">Disable Highlighter</abbr>: ',
+                    value: this.config.disable_highlighter
+                },
+                {
+                    name: 'disable_cache',
+                    type: GUIElementType.Checkbox,
+                    label: '<abbr title="Disable the Caching function used for the in Story search.">Disable Cache</abbr>: ',
+                    value: this.config.disable_cache
+                },
+                {
+                    name: 'disable_sync',
+                    type: GUIElementType.Checkbox,
+                    label: 'Disable Synchronization Feature: ',
+                    value: this.config.disable_sync
+                }
 
-        checkbox = $('<input type="checkbox" id="fflist-disable_highlighter">');
-        if (this.config.disable_highlighter)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.settingsElements['disable_highlighter'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-disable_highlighter"><abbr title="Disable the Story Highlighter Feature.">Disable Highlighter</abbr>: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-
-        // spacer:
-        table.append(spacer.clone());
-
-
-        // disable_cache
-        this.log("GUI - disable_cache");
-
-        checkbox = $('<input type="checkbox" id="fflist-disable_cache">');
-        if (this.config.disable_cache)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.settingsElements['disable_cache'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-disable_cache"><abbr title="Disable the Caching function used for the in Story search.">Disable Cache</abbr>: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-
-        // spacer:
-        table.append(spacer.clone());
-
-
-        // disable_sync
-        this.log("GUI - disable_sync");
-
-        checkbox = $('<input type="checkbox" id="fflist-disable_sync">');
-        if (this.config.disable_sync)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.settingsElements['disable_sync'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-disable_sync">Disable Synchronization Feature: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
+            ], this.settingsElements);
 
         cat.category.append(saveButtonContainer.clone());
 
@@ -2980,7 +2738,6 @@ class StoryParser
 
         var container = $("<div></div>").appendTo(this.guiContainer);
 
-        var self = this;
 
         $.each(this.config.marker, function (name, marker)
         {
@@ -3044,7 +2801,7 @@ class StoryParser
 
             $.each(self.guiElements, function (k, data)
             {
-                if (typeof(data) === "undefined")
+                if (typeof (data) === "undefined")
                 {
                     return;
                 }
@@ -3068,9 +2825,9 @@ class StoryParser
                         print_story: data.print_story.is(':checked'),
                         search_story: data.search_story.is(':checked'),
                         ignoreColor: data.ignoreColor.is(':checked'),
-                        background: (name in self.config.marker && self.config.marker[name].background != null) ? (self.config.marker[name].background) : null,
+                        background: (self.DEBUG ? data.background.val() : ((name in self.config.marker && self.config.marker[name].background != null) ? (self.config.marker[name].background) : null)),
                         text_color: data.text_color.val(),
-                        revision: ((typeof(self.config.marker[name]) === "undefined") || (typeof(self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
+                        revision: ((typeof (self.config.marker[name]) === "undefined") || (typeof (self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
                     };
 
                 if (config.text_color === "")
@@ -3111,7 +2868,7 @@ class StoryParser
 
             if (self.DEBUG)
             {
-                self.config.api_url = self.settingsElements['api_url'].val();
+                self.config.api_url = self.settingsElements['api_url'].find('.dataContainer').first().val();
             }
 
 
@@ -3147,11 +2904,11 @@ class StoryParser
 
         var radius = 10;
 
-        var height = 35;
+        var height = '35';
 
         if (displayBig)
         {
-            height = 580;
+            height = 'auto'; //580;
         }
 
         var container = $('<div class="fflist-filterField"></div>')
@@ -3178,7 +2935,7 @@ class StoryParser
                     _log("Scroll Offset: ", offset);
                     */
 
-                    container.css('height', '580px');
+                    container.css('height', 'auto');
                     container.css("cursor", "auto");
                     container.removeAttr("title")
                         .unbind();
@@ -3190,383 +2947,177 @@ class StoryParser
 
         var table = $('<table width="100%"></table>').appendTo(container);
 
-        var spacer = $('<tr></tr>').append
-            (
-            $('<td width="30%" style="height:10px"></td>')
-                .css('border-right', '1px solid gray')
-            ).append(
-            $('<td></td>')
-            );
-
-        // Name
-        var input = $('<input type="text" id="fflist-' + name + '-name">')
-            .attr('value', name)
-            .attr('size', '50');
-
-        this.guiElements[name]['name'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-' + name + '-name">Name: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-
-
-        // Display:
-        var checkbox = $('<input type="checkbox" id="fflist-' + name + '-display">');
-        if (marker.display)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.guiElements[name]['display'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-' + name + '-display">Display Found Entries: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // Keywords:
-        input = $('<input type="text" id="fflist-' + name + '-keywords">')
-            .attr('value', marker.keywords.join(', '))
-            .attr('size', '50');
-
-        this.guiElements[name]['keywords'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-' + name + '-keywords">Keywords: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    ).append(
-                    '<br><span style="font-size: small;">Seperated with ", "</span>'
-                    )
-
-                )
-            );
-
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // Ignore:
-        input = $('<input type="text" id="fflist-' + name + '-ignore">')
-            .attr('value', marker.ignore.join(', '))
-            .attr('size', '50');
-
-        this.guiElements[name]['ignore'] = input;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-' + name + '-ignore">Ignore when: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    ).append(
-                    '<br><span style="font-size: small;">Seperated with ", "</span>'
-                    )
-
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // Ignore Color:
-        checkbox = $('<input type="checkbox" id="fflist-' + name + '-ignoreColor">');
-        if (marker.ignoreColor)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        checkbox.change(function ()
-        {
-            if ($('#fflist-' + name + '-ignoreColor').is(":checked"))
-            {
-                $('#fflist-' + name + '-color')
-                    .add('#fflist-' + name + '-mouseOver')
-                    .add('#fflist-' + name + '-text_color')
-                    .attr("disabled", "disabled");
-            }
-            else
-            {
-                $('#fflist-' + name + '-color')
-                    .add('#fflist-' + name + '-mouseOver')
-                    .add('#fflist-' + name + '-text_color')
-                    .removeAttr("disabled");
-            }
-
-
-        });
-
-        this.guiElements[name]['ignoreColor'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-' + name + '-ignoreColor">Ignore Color Settings: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // Color:
-        input = $('<input type="text" id="fflist-' + name + '-color">')
-            .attr('value', marker.color)
-            .attr('size', '50')
-            .colorpicker({
-                colorFormat: "#HEX"
-            });
-
-        this.guiElements[name]['color'] = input;
-
-        if (marker.ignoreColor)
-        {
-            input.attr('disabled', 'disabled');
-        }
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-' + name + '-color">Color: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // MouseOver:
-        input = $('<input type="text" id="fflist-' + name + '-mouseOver">')
-            .attr('value', marker.mouseOver)
-            .attr('size', '50')
-            .colorpicker({
-                colorFormat: "#HEX"
-            });
-
-        this.guiElements[name]['mouseOver'] = input;
-
-        if (marker.ignoreColor)
-        {
-            input.attr('disabled', 'disabled');
-        }
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-' + name + '-mouseOver">Mouse Over Color: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        //  text_color:
-        input = $('<input type="text" id="fflist-' + name + '-text_color">')
-            .attr('value', marker.text_color)
-            .attr('size', '50')
-            .colorpicker({
-                colorFormat: "#HEX"
-            });
-
-        this.guiElements[name]['text_color'] = input;
-
-        if (marker.ignoreColor)
-        {
-            input.attr('disabled', 'disabled');
-        }
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="30%"></td>').append(
-                    $('<label for="fflist-' + name + '-text_color">Info Text Color: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    input
-                    )
-
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // search_story:
-        checkbox = $('<input type="checkbox" id="fflist-' + name + '-search_story">');
-        if (marker.search_story)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.guiElements[name]['search_story'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-' + name + '-search_story">Search in Storys: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // mark_chapter:
-        checkbox = $('<input type="checkbox" id="fflist-' + name + '-mark_chapter">');
-        if (marker.mark_chapter)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.guiElements[name]['mark_chapter'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-' + name + '-mark_chapter">Mark Chaper: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // print_story:
-        checkbox = $('<input type="checkbox" id="fflist-' + name + '-print_story">');
-        if (marker.print_story)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.guiElements[name]['print_story'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-' + name + '-print_story">List Storys: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
-
-        // mention_in_headline:
-        checkbox = $('<input type="checkbox" id="fflist-' + name + '-mention_in_headline">');
-        if (marker.mention_in_headline)
-        {
-            checkbox.attr('checked', 'checked');
-        }
-
-        this.guiElements[name]['mention_in_headline'] = checkbox;
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>').append(
-                    $('<label for="fflist-' + name + '-mention_in_headline">Mention in Headline: </label>')
-                        .css('font-weight', 'bold')
-                    )
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td class="ffnetparser_InputField"></td>').append(
-                    checkbox
-                    )
-                )
-            );
-
-        // spacer:
-        table.append(spacer.clone());
 
         var self = this;
 
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>')
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td></td>').append(
-                    $('<input class="btn" type="button" value="Remove">').click(function ()
+        this.gui_createElements(table,
+            [
+                {
+                    name: 'name',
+                    type: GUIElementType.Input,
+                    label: "Name: ",
+                    value: name,
+                    attributes:
+                    {
+                        size: 50
+                    }
+                },
+                {
+                    name: 'display',
+                    type: GUIElementType.Checkbox,
+                    label: 'Display Found Entries: ',
+                    value: marker.display
+                },
+                {
+                    name: 'keywords',
+                    type: GUIElementType.Input,
+                    label: 'Keywords: ',
+                    value: marker.keywords.join(', '),
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (input)
+                    {
+                        input.parent().append(
+                            '<br><span style="font-size: small;">Seperated with ", "</span>'
+                            );
+                    }
+                },
+                {
+                    name: 'ignore',
+                    type: GUIElementType.Input,
+                    label: 'Ignore when: ',
+                    value: marker.ignore.join(', '),
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (input)
+                    {
+                        input.parent().append(
+                            '<br><span style="font-size: small;">Seperated with ", "</span>'
+                            );
+                    }
+                },
+                {
+                    name: 'ignoreColor',
+                    type: GUIElementType.Checkbox,
+                    label: 'Ignore Color Settings:',
+                    value: marker.ignoreColor,
+                    customOptions: function (checkbox)
+                    {
+                        var check = function ()
+                        {
+                            if (checkbox.is(":checked"))
+                            {
+                                $('#fflist-' + name + '-color')
+                                    .add('#fflist-' + name + '-mouseOver')
+                                    .add('#fflist-' + name + '-text_color')
+                                    .attr("disabled", "disabled");
+                            }
+                            else
+                            {
+                                $('#fflist-' + name + '-color')
+                                    .add('#fflist-' + name + '-mouseOver')
+                                    .add('#fflist-' + name + '-text_color')
+                                    .removeAttr("disabled");
+                            }
+                        };
+
+                        checkbox.change(function ()
+                        {
+                            check();
+                        });
+
+                        window.setTimeout(check, 10);
+                    }
+                },
+                {
+                    name: 'color',
+                    type: GUIElementType.Input,
+                    value: marker.color,
+                    label: 'Color: ',
+                    customOptions: function (element) 
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    },
+                    attributes:
+                    {
+                        id: 'fflist-' + name + '-color'
+                    }
+                },
+                {
+                    name: 'mouseOver',
+                    type: GUIElementType.Input,
+                    value: marker.mouseOver,
+                    label: 'Mouse Over Color: ',
+                    customOptions: function (element) 
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    },
+                    attributes:
+                    {
+                        id: 'fflist-' + name + '-mouseOver'
+                    }
+                },
+                {
+                    name: 'text_color',
+                    type: GUIElementType.Input,
+                    value: marker.text_color,
+                    label: 'Info Text Color: ',
+                    customOptions: function (element) 
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    },
+                    attributes:
+                    {
+                        id: 'fflist-' + name + '-text_color'
+                    }
+                },
+                {
+                    name: 'background',
+                    type: GUIElementType.Input,
+                    value: marker.background,
+                    label: 'Background Image (Path): ',
+                    debugOnly: true
+                },
+                {
+                    name: 'search_story',
+                    type: GUIElementType.Checkbox,
+                    value: marker.search_story,
+                    label: 'Search in Storys: '
+                },
+                {
+                    name: 'mark_chapter',
+                    type: GUIElementType.Checkbox,
+                    value: marker.mark_chapter,
+                    label: 'Mark Chaper: '
+                },
+                {
+                    name: 'print_story',
+                    type: GUIElementType.Checkbox,
+                    value: marker.print_story,
+                    label: 'List Storys: '
+                },
+                {
+                    name: 'mention_in_headline',
+                    type: GUIElementType.Checkbox,
+                    value: marker.mention_in_headline,
+                    label: 'Mention in Headline: '
+                },
+                {
+                    name: '',
+                    type: GUIElementType.Button,
+                    value: 'Remove',
+                    label: '',
+                    callback: function ()
                     {
                         self.guiElements[name] = undefined;
 
@@ -3575,49 +3126,40 @@ class StoryParser
                             container.remove();
                         });
 
-                    })
-                    )
-                )
-            );
-
-
-        //Spacer:
-        table.append(spacer.clone());
-
-        table.append(
-            $('<tr></tr>').append(
-                $('<td width="10%"></td>')
-                    .css('border-right', '1px solid gray')
-                ).append(
-                $('<td></td>').append(
-                    $('<img src="' + self.getUrl('glyphicons_369_collapse_top.png') + '" alt="Minimize"></img>').click(function ()
+                    }
+                },
+                {
+                    name: '',
+                    type: GUIElementType.Custom,
+                    value: '',
+                    label: '',
+                    customElement: function ()
                     {
-
-                        container
-                            .unbind()
-                            .css("cursor", "pointer")
-                            .css("height", "35px")
-                            .attr('title', "Click to Edit");
-
-                        setTimeout(function ()
+                        return $('<img src="' + self.getUrl('glyphicons_369_collapse_top.png') + '" alt="Minimize"></img>').click(function ()
                         {
-                            container.click(function ()
+
+                            container
+                                .unbind()
+                                .css("cursor", "pointer")
+                                .css("height", "35px")
+                                .attr('title', "Click to Edit");
+
+                            setTimeout(function ()
                             {
-                                container.css('height', '592px');
-                                container.css("cursor", "auto");
-                                container.removeAttr("title");
+                                container.click(function ()
+                                {
+                                    container.css('height', 'auto');
+                                    container.css("cursor", "auto");
+                                    container.removeAttr("title");
 
-                            });
+                                });
 
-                        }, 100);
-                    })
-                        .css("cursor", "pointer")
-                    )
-                )
-            );
-
-
-
+                            }, 100);
+                        })
+                            .css("cursor", "pointer");
+                    }
+                }
+            ], this.guiElements[name]);
 
 
         container.fadeIn();
@@ -3817,7 +3359,7 @@ class StoryParser
 
         } else
         {
-            if (typeof(storyInfo) === "undefined")
+            if (typeof (storyInfo) === "undefined")
             {
                 if (this.DEBUG)
                 {
@@ -4566,7 +4108,7 @@ class StoryParser
                     self.log("Local Marker Found - Version: ", marker.revision);
 
                     // Marker exists -> check Revision
-                    if (typeof(marker.revision) === "undefined")
+                    if (typeof (marker.revision) === "undefined")
                     {
                         marker.revision = 0;
                     }
@@ -4623,7 +4165,7 @@ class StoryParser
      *   @param callback Callback after success
      *   @param progress Callback after every step
      */
-    private api_getMarker(marker: string[], callback: (result: { Error: boolean; Marker: any[]; Revision: number}) => void)
+    private api_getMarker(marker: string[], callback: (result: { Error: boolean; Marker: any[]; Revision: number }) => void)
     {
         this.log("Get Marker from Server: ", marker);
 
@@ -4813,7 +4355,7 @@ class StoryParser
         if (this.DEBUG)
         {
 
-        
+
         }
     }
 
@@ -4952,11 +4494,11 @@ class StoryParser
     {
         if (this.DEBUG)
         {
-            if (typeof(b) === "undefined")
+            if (typeof (b) === "undefined")
             {
                 console.log(a);
             }
-            else if (typeof(c) === "undefined")
+            else if (typeof (c) === "undefined")
             {
                 console.log(a, b);
             }
@@ -4977,11 +4519,11 @@ class StoryParser
     {
         if (this.DEBUG)
         {
-            if (typeof(b) === "undefined")
+            if (typeof (b) === "undefined")
             {
                 console.info(a);
             }
-            else if (typeof(c) === "undefined")
+            else if (typeof (c) === "undefined")
             {
                 console.info(a, b);
             }

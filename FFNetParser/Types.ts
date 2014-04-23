@@ -81,3 +81,24 @@ interface Config
     token: string;
     markerBackup: { [index: string]: MarkerConfig };
 }
+
+
+enum GUIElementType
+{
+    Input, Button, Checkbox, Combobox, Text, Custom
+}
+
+interface GUIElement
+{
+    name: string;
+    type: GUIElementType;
+    label: string;
+    value: any;
+    css?: {};
+    attributes?: {};
+    callback?: (e: JQueryEventObject) => void;
+    values?: string[];
+    customOptions?: (element: JQuery) => void;
+    customElement?: (data: GUIElement) => JQuery;
+    debugOnly?: boolean;
+}
