@@ -1046,6 +1046,9 @@ class StoryParser
 
             }
 
+            // Add Anchor:
+            element.find("a").first().attr("name", storyName);
+
             self.doParse(requestQueue);
 
 
@@ -1606,9 +1609,13 @@ class StoryParser
                 {
                     eUl.append(
                         $("<li></li>").append(
-                            $("<a></a>").attr('href', value.url).html(value.name)
+                            $("<span></span>").append(
+                                $("<a></a>").attr('href', value.url).html(value.name)
                             ).append(" - " + value.chapter)
-                            .attr("title", value.sentence)
+                                    .attr("title", value.sentence)
+                            ).append(
+                                $(" <a>#</a>").attr("href", "#" + value.name)
+                            )
                         );
                 });
 
