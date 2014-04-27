@@ -3092,8 +3092,7 @@ class StoryParser
                     name: 'background',
                     type: GUIElementType.Input,
                     value: marker.background,
-                    label: 'Background Image (Path): ',
-                    debugOnly: true
+                    label: 'Background Image (Path): '
                 },
                 {
                     name: 'search_story',
