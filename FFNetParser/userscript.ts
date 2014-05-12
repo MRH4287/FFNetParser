@@ -1611,10 +1611,10 @@ class StoryParser
                         $("<li></li>").append(
                             $("<span></span>").append(
                                 $("<a></a>").attr('href', value.url).html(value.name)
-                            ).append(" - " + value.chapter)
-                                    .attr("title", value.sentence)
+                                ).append(" - " + value.chapter)
+                                .attr("title", value.sentence)
                             ).append(
-                                $(" <a>#</a>").attr("href", "#" + value.name)
+                            $(" <a>#</a>").attr("href", "#" + value.name)
                             )
                         );
                 });
@@ -2305,11 +2305,6 @@ class StoryParser
                 });
             }
 
-            if (typeof (data.customOptions) !== "undefined")
-            {
-                data.customOptions(element);
-            }
-
             parent.append(
                 $('<tr></tr>').append(
                     $('<td width="30%" style="height: 30px"></td>').append(
@@ -2325,6 +2320,11 @@ class StoryParser
                         )
                     )
                 );
+
+            if (typeof (data.customOptions) !== "undefined")
+            {
+                data.customOptions(element);
+            }
 
             saveTo[data.name] = element;
             //self.settingsElements[data.name] = element;
@@ -3141,28 +3141,55 @@ class StoryParser
                     label: '',
                     customElement: function ()
                     {
-                        return $('<img src="' + self.getUrl('glyphicons_369_collapse_top.png') + '" alt="Minimize"></img>').click(function ()
-                        {
+                        var elementContainer = $("<div></div>");
+                        $('<div style="display:inline-block; width: 80%"></div>').appendTo(elementContainer).append(
 
-                            container
-                                .unbind()
-                                .css("cursor", "pointer")
-                                .css("height", "35px")
-                                .attr('title', "Click to Edit");
-
-                            setTimeout(function ()
+                            $('<img src="' + self.getUrl('glyphicons_369_collapse_top.png') + '" alt="Minimize"></img>').click(function ()
                             {
-                                container.click(function ()
+
+                                container
+                                    .unbind()
+                                    .css("cursor", "pointer")
+                                    .css("height", "35px")
+                                    .attr('title', "Click to Edit");
+
+                                setTimeout(function ()
                                 {
-                                    container.css('height', 'auto');
-                                    container.css("cursor", "auto");
-                                    container.removeAttr("title");
+                                    container.click(function ()
+                                    {
+                                        container.css('height', 'auto');
+                                        container.css("cursor", "auto");
+                                        container.removeAttr("title");
 
-                                });
+                                    });
 
-                            }, 100);
-                        })
-                            .css("cursor", "pointer");
+                                }, 100);
+                            }).css("cursor", "pointer")
+                            );
+
+                        $('<div style="display:inline-block; width: 10%"></div>').appendTo(elementContainer).append(
+                            $('<button class="btn">Export</button>')
+                                .button()
+                                .click(function (event)
+                                {
+                                    event.preventDefault();
+
+                                    // Create Dialog:
+                                    var dialog = $('<div></div>').attr("title", "Export Data for Element " + marker.name)
+                                        .append(
+                                        $("<pre></pre>").text(JSON.stringify(marker))
+                                        ).appendTo($("body"));
+
+                                    dialog.dialog({
+                                        close: function (event, ui) 
+                                        {
+                                            dialog.remove();
+                                        }
+                                    });
+                                })
+                            );
+
+                        return elementContainer;
                     }
                 }
             ], this.guiElements[name]);
