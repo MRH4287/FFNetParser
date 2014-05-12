@@ -2797,6 +2797,59 @@ class StoryParser
             }).appendTo(filterButtonContainer);
 
 
+        $('<input class="btn" type="button" value="Import Filter"></input>')
+            .button({
+                icons: {
+                    primary: "ui-icon-plusthick"
+                }
+            })
+            .click(function (event)
+            {
+                event.preventDefault();
+
+
+                // Create Dialog:
+                var dialog = $('<div></div>').attr("title", "Import Filter")
+                    .append(
+                    $('<textarea rows="5" cols="20" class="FilterInput"></textarea>')
+                    )
+                    .append(
+                    $('<button class="btn">Save</button>')
+                        .button()
+                        .click(function (e)
+                        {
+                            e.preventDefault();
+
+                            var text = dialog.find(".FilterInput").val();
+
+                            try
+                            {
+                                var newMarker : MarkerConfig = JSON.parse(text);
+
+                                self.gui_add_form(newMarker.name, newMarker, container, true);
+
+                            }
+                            catch (error)
+                            {
+                                console.error("Can't Parse JSON: " + error); 
+                            }
+
+                            dialog.dialog("close");
+                        })
+                    ).appendTo($("body"));
+
+                dialog.dialog({
+                    close: function (event, ui) 
+                    {
+                        dialog.remove();
+                    }
+                });
+
+
+            }).appendTo(filterButtonContainer);
+
+
+
         // Save Logic
         $(".ffnetSaveButton").click(function ()
         {
