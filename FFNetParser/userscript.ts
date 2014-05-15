@@ -476,6 +476,11 @@ class StoryParser
                     e.preventDefault();
 
                 }).attr('title', 'Open Config Menu')
+                ).append(
+                $('<a></a>').addClass('menu-link').html('Filter Collection')
+                    .attr('href', 'http://filter.mrh-development.de')
+                    .attr("target", "_blank")
+                    .attr('title', 'Open The Filter Collection')
                 );
 
         }

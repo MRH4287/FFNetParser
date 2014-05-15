@@ -27,7 +27,7 @@ test('Main-Header GUI', function ()
     var container = $("#zmenu > .zui > table > tbody > tr > td").first();
 
     var elements = container.find(".menu-link");
-    equal(elements.length, 2, "There have to be two Elements in the Main Header");
+    equal(elements.length, 3, "There have to be three Elements in the Main Header");
 
 });
 
