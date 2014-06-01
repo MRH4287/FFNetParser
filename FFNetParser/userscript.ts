@@ -4399,7 +4399,7 @@ class StoryParser
         this.save_dataStore();
 
         $(".ffnetMessageContainer img").attr("src", this.getUrl("message-white.png"));
-        $(".ffnetMessageContainer").css("background-color", "auto");
+        $(".ffnetMessageContainer").css("background-color", "");
         $(".ffnet-messageCount").text("0");
 
 
