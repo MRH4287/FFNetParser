@@ -497,6 +497,7 @@ class StoryParser
                 .css("display", "inline-block")
                 .css("margin-left", "10px")
                 .css("height", "100%")
+                .css("border-radius", "5px")
                 .addClass("ffnetMessageContainer")
                 .addClass("clickable")
                 .attr("title", "Advanced Messaging Features. Sorry, this is not a PM Button :-(")
@@ -1142,6 +1143,7 @@ class StoryParser
 
                         // Update Icon:
                         $(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
+                        $(".ffnetMessageContainer").css("background-color", "red");
 
                         $('.ffnet-messageCount').text(messages.Messages.length);
 
@@ -4397,6 +4399,7 @@ class StoryParser
         this.save_dataStore();
 
         $(".ffnetMessageContainer img").attr("src", this.getUrl("message-white.png"));
+        $(".ffnetMessageContainer").css("background-color", "auto");
         $(".ffnet-messageCount").text("0");
 
 
