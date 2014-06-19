@@ -57,8 +57,6 @@
     <TypeScriptCompile Include="jqueryui.d.ts" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="footer.js" />
-    <Content Include="header.js" />
     <Content Include="includeTemplate.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

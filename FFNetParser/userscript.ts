@@ -54,6 +54,11 @@ class StoryParser
         disable_image_hover: false,
         content_width: "90%",
 
+        // Reading Help:
+        readingHelp_enabled: false,
+        readingHelp_backgroundColor: null,
+        readingHelp_color: null,
+
         // API:
         pocket_user: null,
         pocket_password: null,
@@ -1862,6 +1867,54 @@ class StoryParser
 
     }
 
+
+    /**
+    *   Enable the Reading Aid Function
+    */
+    public enableReadingAid()
+    {
+        if (this.LOAD_INTERNAL)
+        {
+            return;
+        }
+
+        var reg = new RegExp(".+/s/[0-9]+/.+");
+        if (!reg.test(location.href))
+        {
+            return;
+        }
+
+        if (this.config.readingHelp_enabled)
+        {
+            var data = "";
+
+            if ((this.config.readingHelp_backgroundColor !== null) && (this.config.readingHelp_backgroundColor !== ""))
+            {
+                data = "background-color: " + this.config.readingHelp_backgroundColor + ";";
+            }
+            if ((this.config.readingHelp_color !== null) && (this.config.readingHelp_color !== ""))
+            {
+                data += " color: " + this.config.readingHelp_color + ";";
+            }
+
+            // Build Style Object
+            var style = $('<style type="text/css"></style>')
+                .html(".readingAidMarker { " + data + " }")
+                .appendTo($("head"));
+
+            $("p").mouseenter(function ()
+            {
+                $(this).addClass("readingAidMarker");
+            }).mouseleave(function ()
+                {
+                    $(this).removeClass("readingAidMarker");
+                });
+
+
+        }
+    }
+
+
     /**
     *   Enables the Pocket Save Feature (Story View)
     */
@@ -2595,6 +2648,44 @@ class StoryParser
                             colorFormat: "#HEX"
                         });
                     }
+                },
+                {
+                    name: 'readingHelp_enabled',
+                    type: GUIElementType.Checkbox,
+                    value: this.config.readingHelp_enabled,
+                    label: 'Enable the Reading Help: '
+                },
+                {
+                    name: 'readingHelp_backgroundColor',
+                    type: GUIElementType.Input,
+                    value: this.config.readingHelp_backgroundColor,
+                    label: 'Reading Help Background Color: ',
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (element)
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    }
+                },
+                {
+                    name: 'readingHelp_color',
+                    type: GUIElementType.Input,
+                    value: this.config.readingHelp_color,
+                    label: 'Reading Help Text Color: ',
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (element)
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    }
                 }
 
 
@@ -2831,14 +2922,14 @@ class StoryParser
 
                             try
                             {
-                                var newMarker : MarkerConfig = JSON.parse(text);
+                                var newMarker: MarkerConfig = JSON.parse(text);
 
                                 self.gui_add_form(newMarker.name, newMarker, container, true);
 
                             }
                             catch (error)
                             {
-                                console.error("Can't Parse JSON: " + error); 
+                                console.error("Can't Parse JSON: " + error);
                             }
 
                             dialog.dialog("close");
@@ -2927,6 +3018,9 @@ class StoryParser
             self.config.color_normal = self.settingsElements['color_normal'].val();
             self.config.color_odd_color = self.settingsElements['color_odd_color'].val();
             self.config.color_mouse_over = self.settingsElements['color_mouse_over'].val();
+            self.config.readingHelp_enabled = self.settingsElements['readingHelp_enabled'].val();
+            self.config.readingHelp_color = self.settingsElements['readingHelp_color'].val();
+            self.config.readingHelp_backgroundColor = self.settingsElements['readingHelp_backgroundColor'].val();
             self.config.pocket_user = self.settingsElements['pocket_user'].val();
             self.config.pocket_password = self.settingsElements['pocket_password'].val();
             self.config.api_checkForUpdates = self.settingsElements['api_checkForUpdates'].is(':checked');

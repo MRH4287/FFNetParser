@@ -57,6 +57,11 @@ interface Config
     disable_image_hover: boolean;
     content_width: string;
 
+    // Reading Aid:
+    readingHelp_enabled: boolean;
+    readingHelp_backgroundColor: string;
+    readingHelp_color: string;
+
     // API:
     pocket_user: string;
     pocket_password: string;
