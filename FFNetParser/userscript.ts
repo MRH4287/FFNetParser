@@ -1884,7 +1884,7 @@ class StoryParser
             return;
         }
 
-        if (this.config.readingHelp_enabled)
+        if (this.config.readingHelp_enabled === true)
         {
             var data = "";
 
@@ -3018,7 +3018,7 @@ class StoryParser
             self.config.color_normal = self.settingsElements['color_normal'].val();
             self.config.color_odd_color = self.settingsElements['color_odd_color'].val();
             self.config.color_mouse_over = self.settingsElements['color_mouse_over'].val();
-            self.config.readingHelp_enabled = self.settingsElements['readingHelp_enabled'].val();
+            self.config.readingHelp_enabled = self.settingsElements['readingHelp_enabled'].is(':checked');
             self.config.readingHelp_color = self.settingsElements['readingHelp_color'].val();
             self.config.readingHelp_backgroundColor = self.settingsElements['readingHelp_backgroundColor'].val();
             self.config.pocket_user = self.settingsElements['pocket_user'].val();
