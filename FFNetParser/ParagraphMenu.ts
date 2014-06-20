@@ -51,11 +51,7 @@
         {
             self.menuElement.fadeOut();
 
-            var paragraphNumber = Number(self.baseElement.attr("data-paragraphNumber"));
-            
-
-            //self.parser.info("Save Position on Page: 
-
+            self.saveStoryPosition();
         });
 
         $("<li>Get Link to this Position</li>").appendTo(this.menuElement)
@@ -108,10 +104,45 @@
         this.parser.log("Paragraph Menu Container built");
     }
 
+    private saveStoryPosition()
+    {
+        var paragraphNumber = Number(this.baseElement.attr("data-paragraphNumber"));
+
+        var data = this.getStoryData();
+        var urlReg = new RegExp("([^#]+)(?:#.+)?");
+
+        var url = urlReg.exec(location.href)[1];
+
+        var storyID = data.ID;
+
+        if (typeof (this.parser.config.storyReminder[storyID]) !== "undefined")
+        {
+            if (!confirm("There is already a reminder for this StoryID. Overwrite?"))
+            {
+                return;
+            }
+        }
+
+        var element: StoryReminderData = {
+            storyID: data.ID,
+            chapter: Number(data.Chapter),
+            name: data.Name,
+            paragraphID: paragraphNumber,
+            time: Date.now(),
+            visited: false,
+            url: url + "#paragraph=" + paragraphNumber
+        };
+
+        this.parser.config.storyReminder[data.ID] = element;
+        this.parser.save_config();
+
+        this.parser.log("Position Saved!");
+    }
+
 
     private getStoryData()
     {
-        var reg = new RegExp(".+/s/([0-9]+)/(?:([0-9]+)/?)?(?:(.+)/?)?");
+        var reg = new RegExp(".+/s/([0-9]+)/(?:([0-9]+)/?)?(?:([^#]+)/?)?");
 
         var result = reg.exec(location.href);
 

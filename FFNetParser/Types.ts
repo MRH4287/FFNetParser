@@ -75,6 +75,7 @@ interface Config
     // advanced Features:
     disable_cache: boolean;
     disable_highlighter: boolean;
+    disable_parahraphMenu: boolean;
     disable_sync: boolean;
 
     storage_key: string;
@@ -85,7 +86,7 @@ interface Config
     marker: { [index: string]: MarkerConfig };
     token: string;
     markerBackup: { [index: string]: MarkerConfig };
-    storyRemainder: { [index: string]: StoryReminderData };
+    storyReminder: { [index: string]: StoryReminderData };
 }
 
 interface StoryReminderData
@@ -96,6 +97,7 @@ interface StoryReminderData
     paragraphID: number;
     visited: boolean;
     time: number;
+    url: string;
 }
 
 enum GUIElementType

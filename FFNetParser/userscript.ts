@@ -74,6 +74,7 @@ class StoryParser
         // advanced Features:
         disable_cache: false,
         disable_highlighter: false,
+        disable_parahraphMenu: false,
         disable_sync: true,
 
 
@@ -86,7 +87,7 @@ class StoryParser
         marker: {},
         token: undefined,
         markerBackup: {},
-        storyRemainder: {}
+        storyReminder: {}
     };
 
     /**
@@ -517,6 +518,7 @@ class StoryParser
 
         if (menulinks.length > 0)
         {
+
             var imageContainer = $("<div></div>")
                 .css("display", "inline-block")
                 .css("margin-left", "10px")
@@ -611,6 +613,98 @@ class StoryParser
                 );
 
 
+            // Message Menu End
+
+            // Story Reminder:
+
+            if (!this.config.disable_parahraphMenu)
+            {
+
+                var sRImageContainer = $("<div></div>")
+                    .css("display", "inline-block")
+                    .css("margin-left", "10px")
+                    .css("height", "100%")
+                    .css("border-radius", "5px")
+                    .addClass("ffnetStoryReminderContainer")
+                    .addClass("clickable")
+                    .attr("title", "Saved Story Reminder")
+                    .appendTo(menulinks);
+
+                sRImageContainer.append(
+
+                    $("<img></img>")
+                        .attr("src", self.getUrl("notes.png"))
+                        .css("width", "12px")
+                        .css("margin-bottom", "4px")
+                    );
+
+
+                sRImageContainer.click(function (event)
+                {
+                    event.preventDefault();
+
+                    var table = $("<table></table>");
+                    table.append("<tr><th>ID</th><th>Name</th><th>Chapter</th><th>Time</th><th>Visited</th><th>Options</th></tr>");
+
+                    $.each(self.config.storyReminder, function (_, el: StoryReminderData)
+                    {
+                        $("<tr></tr>")
+                            .append(
+                            $("<td></td>").text(el.storyID)
+                            ).append(
+                            $("<td></td>").text(el.name)
+                            ).append(
+                            $("<td></td>").text(el.chapter)
+                            ).append(
+                            $("<td></td>").text((new Date(el.time)).toLocaleString())
+                            ).append(
+                            $("<td></td>").text((el.visited) ? "Yes" : "No")
+                            ).append(
+                            $("<td></td>").append(
+                                $('<a href="#">Delete</a>').click(function (e)
+                                {
+                                    e.preventDefault();
+                                    if (confirm("Do you realy want to delete that element?"))
+                                    {
+                                        delete self.config.storyReminder[_];
+                                        self.save_config();
+                                        dialog.dialog('close');
+                                    }
+
+                                })
+                                )
+                            ).addClass("clickable")
+                            .click(function (e)
+                            {
+                                e.preventDefault();
+
+                                self.config.storyReminder[_].visited = true;
+                                self.save_config();
+
+                                location.href = el.url;
+                            }).appendTo(table);
+                    });
+
+
+                    // Create Dialog:
+                    var dialog = $('<div></div>').attr("title", "Saved Story Reminder")
+                        .append(
+                            table
+                        ).appendTo($("body"));
+
+                    dialog.dialog({
+                        close: function (event, ui) 
+                        {
+                            dialog.remove();
+                        }
+                    });
+
+
+                });
+
+
+
+            }
 
         }
         else
@@ -1942,6 +2036,12 @@ class StoryParser
 
 
         }
+
+        if (!this.config.disable_parahraphMenu)
+        {
+            // Load the Paragraph Menu
+            new ParagraphMenu(this);
+        }
     }
 
 
@@ -2857,6 +2957,12 @@ class StoryParser
                     value: this.config.disable_cache
                 },
                 {
+                    name: 'disable_parahraphMenu',
+                    type: GUIElementType.Checkbox,
+                    label: '<abbr title="Disable the Paragraph Menu.">Disable Paragraph Menu</abbr>: ',
+                    value: this.config.disable_parahraphMenu
+                },
+                {
                     name: 'disable_sync',
                     type: GUIElementType.Checkbox,
                     label: 'Disable Synchronization Feature: ',
@@ -3043,6 +3149,7 @@ class StoryParser
             self.config.allow_copy = self.settingsElements['allow_copy'].is(':checked');
             self.config.disable_highlighter = self.settingsElements['disable_highlighter'].is(':checked');
             self.config.disable_cache = self.settingsElements['disable_cache'].is(':checked');
+            self.config.disable_parahraphMenu = self.settingsElements['disable_parahraphMenu'].is(':checked');
             self.config.disable_sync = self.settingsElements['disable_sync'].is(':checked');
             self.config.content_width = self.settingsElements['content_width'].val();
             self.config.color_normal = self.settingsElements['color_normal'].val();
@@ -4586,7 +4693,7 @@ class StoryParser
     /**
      *   Save Config
      */
-    private save_config()
+    public save_config()
     {
         try
         {
@@ -4594,8 +4701,6 @@ class StoryParser
 
         } catch (e)
         {
-
-
             console.warn(e);
             console.log("Current Config: ", this.config);
         }
