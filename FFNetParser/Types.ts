@@ -85,8 +85,18 @@ interface Config
     marker: { [index: string]: MarkerConfig };
     token: string;
     markerBackup: { [index: string]: MarkerConfig };
+    storyRemainder: { [index: string]: StoryReminderData };
 }
 
+interface StoryReminderData
+{
+    name: string;
+    storyID: string;
+    chapter: number;
+    paragraphID: number;
+    visited: boolean;
+    time: number;
+}
 
 enum GUIElementType
 {

@@ -2,6 +2,7 @@ node_modules/
 
 ## Ignore Local copy
 ffnetlist.user.js
+style.css
 *.pem
 *.crx
 

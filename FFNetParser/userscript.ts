@@ -1,8 +1,10 @@
 /// <reference path="jquery.d.ts" /> 
 /// <reference path="jquery.colorpicker.d.ts" /> 
 /// <reference path="jqueryui.d.ts" /> 
+/// <reference path="chrome.d.ts" /> 
 
 /// <reference path="Types.ts" /> 
+/// <reference path="ParagraphMenu.ts" /> 
 class StoryParser
 {
     /** 
@@ -83,7 +85,8 @@ class StoryParser
         highlighter: {},
         marker: {},
         token: undefined,
-        markerBackup: {}
+        markerBackup: {},
+        storyRemainder: {}
     };
 
     /**
@@ -415,8 +418,12 @@ class StoryParser
         $("head").append(block);
         */
 
-        // Use this because of the new HTTPS Restrictions ...
-        this.api_getStyles();
+        // Check if the current Context is a Chrome Extention, if yes it is loaded over this system:
+        if (typeof (chrome) === "undefined")
+        {
+            // Use this because of the new HTTPS Restrictions ...
+            this.api_getStyles();
+        }
 
         // Check if the current Page is a User Specific Page:
         var locationRegEx = new RegExp("\/u\/[0-9]+\/");
@@ -443,6 +450,18 @@ class StoryParser
         {
             console.log("GUI Update done.");
         }
+
+
+        window.setTimeout(function ()
+        {
+            // Check if a Paragraph is given in the current request:
+            var reg = new RegExp(".+#paragraph=([0-9]+)");
+            if (reg.test(location.href))
+            {
+                var match = reg.exec(location.href);
+                self.goToParagraphID(Number(match[1]));
+            }
+        }, 1000);
 
 
     }
@@ -1865,6 +1884,17 @@ class StoryParser
 
 
 
+    }
+
+    /**
+    *   Go to a specific Paragraph on the page
+    *   @param id Paragraph Number
+    */
+    private goToParagraphID(id) 
+    {
+        $($("p")[id]).before('<a name="goto" id="gotoMarker"></a>');
+        location.href = '#goto';
+        $("#gotoMarker").remove();
     }
 
 
@@ -4678,7 +4708,7 @@ class StoryParser
      *   @param b Parameter B
      *   @param c Paramater C
      */
-    private log(a: any, b?: any, c?: any)
+    public log(a: any, b?: any, c?: any)
     {
         if (this.DEBUG)
         {
@@ -4703,7 +4733,7 @@ class StoryParser
      *   @param b Parameter B
      *   @param c Parameter C
      */
-    private info(a: any, b?: any, c?: any)
+    public info(a: any, b?: any, c?: any)
     {
         if (this.DEBUG)
         {

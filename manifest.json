@@ -7,6 +7,7 @@
 	 "homepage_url": "http://www.mrh-development.de",
      "content_scripts": [{
          "js": ["ffnetlist.user.js"],
+         "css": ["style.css"],
          "matches": 
          [
             "http://www.fanfiction.net/*",
@@ -18,7 +19,8 @@
       "web_accessible_resources":
         [
             "jquery-1.10.2.min.map",
-			"ffnetlist.js.map"
+			"ffnetlist.js.map",
+            "style.css"
         ],
 		"externally_connectable": 
 		{
