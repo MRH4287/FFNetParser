@@ -643,7 +643,7 @@ class StoryParser
                 {
                     event.preventDefault();
 
-                    var table = $("<table></table>");
+                    var table = $('<table class="table table-striped"></table>');
                     table.append("<tr><th>ID</th><th>Name</th><th>Chapter</th><th>Time</th><th>Visited</th><th>Options</th></tr>");
 
                     $.each(self.config.storyReminder, function (_, el: StoryReminderData)
