@@ -102,7 +102,7 @@ interface StoryReminderData
 
 enum GUIElementType
 {
-    Input, Button, Checkbox, Combobox, Text, Custom
+    Input, Button, Checkbox, Combobox, Text, Color, Custom
 }
 
 interface GUIElement
@@ -117,5 +117,14 @@ interface GUIElement
     values?: string[];
     customOptions?: (element: JQuery) => void;
     customElement?: (data: GUIElement) => JQuery;
+    result?: (element: JQuery) => any;
     debugOnly?: boolean;
+}
+
+interface GUIData
+{
+    name: string;
+    collection: any;
+    guiData: GUIElement[];
+    instances: { [index: string]: JQuery };
 }

@@ -11,12 +11,12 @@ class StoryParser
      * The DEBUG Option.
      * Can be enabled with a Config option or when a dev Version is used.
      */
-    private DEBUG: boolean = false;
+    public DEBUG: boolean = false;
 
     /**
      * Do not use a stored Version from the Auto Updater.
      */
-    private IGNORE_NEW_VERSION: boolean = false;
+    public IGNORE_NEW_VERSION: boolean = false;
 
     /**
      * The current Version.
@@ -33,7 +33,7 @@ class StoryParser
     /**
      * A stored version of the Script is used
      */
-    private LOAD_INTERNAL: boolean = false;
+    public LOAD_INTERNAL: boolean = false;
 
 
     /**
@@ -127,7 +127,7 @@ class StoryParser
     /** 
      * Config that is only available in this session 
      */
-    private dataConfig = {};
+    public dataConfig = {};
 
     /**
      * Use the Cross-Origin-Resource-Sharing Feature
@@ -153,7 +153,7 @@ class StoryParser
     /**
      *   Resets Config to the default setting
      */
-    private defaultConfig()
+    public defaultConfig()
     {
         if (this.config["token"] === undefined)
         {
@@ -916,7 +916,7 @@ class StoryParser
      *   Parses the elements in the specified Container
      *   @remark Use readList for initial parsing
      */
-    private read()
+    public read()
     {
 
         var odd = false;
@@ -4032,7 +4032,7 @@ class StoryParser
      *   @param data Request Options
      *   @param callback Function executed after result was found
      */
-    private apiRequest(data: any, callback: (result: string) => void)
+    public apiRequest(data: any, callback: (result: string) => void)
     {
         var url = this.config.api_url;
         var apiLookupKey = this.config.api_lookupKey;
@@ -4142,7 +4142,7 @@ class StoryParser
     /**
      *   Checks the current Version
      */
-    private api_checkVersion()
+    public api_checkVersion()
     {
         if ((this.config.api_checkForUpdates))
         {
@@ -4207,7 +4207,7 @@ class StoryParser
     /**
      *   Loads the CSS-Styles from the Server
      */
-    private api_getStyles()
+    public api_getStyles()
     {
         var self = this;
         var insertStyles = function (style)
@@ -4241,7 +4241,7 @@ class StoryParser
     /**
      *   Updates the current script to the newest Version
      */
-    private api_updateScript()
+    public api_updateScript()
     {
         if (this.config.api_autoIncludeNewVersion)
         {
@@ -4271,7 +4271,7 @@ class StoryParser
      *   @param data Marker Config
      *   @param callback Executed after transfer
      */
-    private api_sendMarker(data: any, callback?: (result: any) => void)
+    public api_sendMarker(data: any, callback?: (result: any) => void)
     {
         this.apiRequest({ command: "sendFilter", data: JSON.stringify(data) }, function (result)
         {
@@ -4292,7 +4292,7 @@ class StoryParser
      *   @param onFinish Callback after the transfer
      *   @param progress Callback after every step
      */
-    private api_sendMarkers(keys: string[], onFinish: () => void, progress: (progress: number) => void)
+    public api_sendMarkers(keys: string[], onFinish: () => void, progress: (progress: number) => void)
     {
         this.log("Send Markers to Server: ", keys);
 
@@ -4384,7 +4384,7 @@ class StoryParser
      *   Synchronize - Get the Versions of the marker on the remote Server
      *   @param callback Callback Function
      */
-    private api_getRevisions(callback: (result: any) => void)
+    public api_getRevisions(callback: (result: any) => void)
     {
         var self = this;
         this.apiRequest({ command: "getNewestRevisions", data: this.config.token }, function (result)
@@ -4404,7 +4404,7 @@ class StoryParser
      *   Synchronize - Checks if all marker are up to date
      *   @param callback Callback after success
      */
-    private api_getNeedUpdate(callback: (result: { upload: string[]; download: string[] }) => void)
+    public api_getNeedUpdate(callback: (result: { upload: string[]; download: string[] }) => void)
     {
         this.log("API - Checking for Filter Changes");
 
@@ -4489,7 +4489,7 @@ class StoryParser
      *   @param callback Callback after success
      *   @param progress Callback after every step
      */
-    private api_getMarker(marker: string[], callback: (result: { Error: boolean; Marker: any[]; Revision: number }) => void)
+    public api_getMarker(marker: string[], callback: (result: { Error: boolean; Marker: any[]; Revision: number }) => void)
     {
         this.log("Get Marker from Server: ", marker);
 
@@ -4527,7 +4527,7 @@ class StoryParser
      *   Synchronize - Starts the synchronization
      *   @param progress_callback Callback with progress information
      */
-    private api_syncFilter(progress_callback: (progress: number) => void)
+    public api_syncFilter(progress_callback: (progress: number) => void)
     {
         progress_callback(-1);
 
@@ -4609,7 +4609,7 @@ class StoryParser
      *   Get all new Messages from the Server
      *   @param callback Callback after success
      */
-    private api_GetMessages(callback: (result: any) => void)
+    public api_GetMessages(callback: (result: any) => void)
     {
         this.apiRequest({ command: "getMessages", data: this.config.token }, function (result)
         {
@@ -4624,7 +4624,7 @@ class StoryParser
     /**
      *   Tell the remote Server, that all new messages have been read
      */
-    private api_MarkMessages()
+    public api_MarkMessages()
     {
         delete this.dataConfig['messages'];
         this.save_dataStore();
@@ -4645,7 +4645,7 @@ class StoryParser
      *   @param name Name of the Version
      *   @result Version Ident Number
      */
-    private getVersionId(name: string): number
+    public getVersionId(name: string): number
     {
         var parts = name.split(".");
         var version = 0;
@@ -4658,7 +4658,7 @@ class StoryParser
         return version;
     }
 
-    private getUrl(path: string): string
+    public getUrl(path: string): string
     {
         if (this.useHTTPS)
         {
