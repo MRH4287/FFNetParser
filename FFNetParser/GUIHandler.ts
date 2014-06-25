@@ -10,30 +10,26 @@
      */
     private guiContainer: JQuery = null;
 
-    /**
-     * The Input Elements that are used in the config GUI 
-    */
-    //private settingsElements: { [index: string]: JQuery } = {};
-
-    /** 
-     * The Elements that are displayed on the GUI 
-     */
-    //private guiElements: { [index: string]: { [index: string]: JQuery } } = {};
-
     /** 
      * The number of new Entries created 
      */
     private addCount = 0;
-
 
     /**
      * Registered GUIs
      */
     private guiData: { [index: string]: GUIData } = {};
 
+    /**
+     * Registered Categories
+     */
+    private categories: { [index: string]: GUICategory } = {};
 
-    public registerGUI(name: string, collection: any, elements: GUIElement[])
+
+    public registerGUI(name: string, collection: any, elements: GUIElement[], sticky: boolean = false, customSave?: (data: GUIData) => void): GUIData
     {
+        this.log("Register GUI- Name: " + name + " Elements: ", elements);
+
         if (typeof (this.guiData[name]) !== "undefined")
         {
             this.log("Warning: overwriting GUI Data for: ", name);
@@ -44,14 +40,38 @@
             collection: collection,
             name: name,
             guiData: elements,
-            instances: {}
+            instances: {},
+            customSaveFunction: customSave,
+            sticky: sticky
         };
 
         this.guiData[name] = element;
+
+        return element;
     }
 
+    public registerCategory(data: GUICategory)
+    {
+        if (typeof (this.categories[data.name]) !== "undefined")
+        {
+            this.log("Warning: overwriting category Data for: ", data.name);
+            delete this.categories[data.name];
+        }
 
-    public renderGUITo(name: string, target: JQuery)
+        this.categories[data.name] = data;
+    }
+
+    public renderGUI(element: GUIData, target: JQuery)
+    {
+        if (typeof (element) === "undefined")
+        {
+            throw new Error("The Property 'element' isn't allowed to be undefined!");
+        }
+
+        this.createElements(target, element.guiData, element.instances);
+    }
+
+    public renderGUIElement(name: string, target: JQuery)
     {
         if (typeof (this.guiData[name]) === "undefined")
         {
@@ -61,41 +81,78 @@
 
         var data = this.guiData[name];
 
-        this.createElements(target, data.guiData, data.instances);
+        this.renderGUI(data, target);
     }
+
 
     private saveData(data: GUIData)
     {
         var self = this;
 
-        $.each(data.guiData, function (_, element: GUIElement)
+        if (typeof (data.customSaveFunction) === "undefined")
         {
-            // Check if Element exists:
-            if (typeof (data.instances[element.name]) === "undefined")
+
+            $.each(data.guiData, function (_, element: GUIElement)
             {
-                self.log("Can't find GUI Instance for element '" + element.name + "'! Won't save Data!");
-                return;
-            }
+                if (element.debugOnly && !self.DEBUG)
+                {
+                    return;
+                }
 
-            var value = null;
+                // Check if Element exists:
+                if (typeof (data.instances[element.name]) === "undefined")
+                {
+                    self.log("Can't find GUI Instance for element '" + element.name + "'! Won't save Data!");
+                    return;
+                }
 
-            if (typeof (element.result) === "undefined")
+                var value = null;
+
+                if (typeof (element.result) === "undefined")
+                {
+                    self.log("Warning: Element don't have Result Callback set!", element);
+                    return;
+                }
+
+                value = element.result(data.instances[element.name]);
+
+                if (value === null)
+                {
+                    // Do not set Config Value for this Element ...
+
+                    return;
+                }
+
+                var collection = data.collection;
+
+                if (typeof (collection) === "function")
+                {
+                    collection = collection();
+                }
+
+                if (typeof (collection) !== "object")
+                {
+                    this.log(element);
+                    throw new Error("The parameter 'collection' has to be of type 'object'! Given: " + typeof (collection));
+                }
+
+                collection[element.name] = value;
+
+                if (!data.sticky)
+                {
+                    delete self.guiData[data.name];
+                }
+            });
+        }
+        else
+        {
+            data.customSaveFunction(data);
+
+            if (!data.sticky)
             {
-                self.log("Warning: Element don't have Result Callback set!", element);
-                return;
+                delete self.guiData[data.name];
             }
-
-            value = element.result(data.instances[element.name]);
-
-            if (value === null)
-            {
-                // Do not set Config Value for this Element ...
-
-                return;
-            }
-
-            data.collection[element.name] = value;
-        });
+        }
     }
 
     public saveDataElement(name: string)
@@ -123,6 +180,333 @@
     }
 
 
+    public initGUI()
+    {
+        var self = this;
+
+        var storyData = this.registerGUI("config-story", this.config,
+            [
+                {
+                    name: "story_search_depth",
+                    type: GUIElementType.Input,
+                    label: "Max Search depth: ",
+                    value: function () { return self.config.story_search_depth; },
+                    attributes:
+                    {
+                        'size': '50'
+                    }
+                },
+                {
+                    name: 'mark_M_storys',
+                    type: GUIElementType.Checkbox,
+                    value: function () { return self.config.mark_M_storys; },
+                    label: 'Mark "M" rated Storys: '
+                },
+                {
+                    name: 'hide_non_english_storys',
+                    type: GUIElementType.Checkbox,
+                    value: function () { return self.config.hide_non_english_storys; },
+                    label: 'Hide non English Storys: '
+                },
+                {
+                    name: 'allow_copy',
+                    type: GUIElementType.Checkbox,
+                    value: function () { return self.config.allow_copy; },
+                    label: 'Allow the selection of Text: '
+                }
+
+            ]
+            );
+
+        this.registerCategory(
+            {
+                name: "story",
+                title: "Story Settings",
+                elements: storyData
+            });
+
+        var layoutData = this.registerGUI("config-layout", this.config,
+            [
+                {
+                    name: 'hide_images',
+                    type: GUIElementType.Checkbox,
+                    value: function () { return self.config.hide_images; },
+                    label: 'Hide Story Images: '
+                },
+                {
+                    name: 'hide_lazy_images',
+                    type: GUIElementType.Checkbox,
+                    value: function () { return self.config.hide_lazy_images; },
+                    label: 'Hide <abbr title="Images that are loaded after the first run. Mostly Story Images, not User Images">lazy</abbr> images: '
+                },
+                {
+                    name: 'disable_image_hover',
+                    type: GUIElementType.Checkbox,
+                    value: function () { return self.config.disable_image_hover; },
+                    label: 'Disable Image Hover Effect: '
+                },
+                {
+                    name: 'content_width',
+                    type: GUIElementType.Input,
+                    value: function () { return self.config.content_width; },
+                    label: 'Content Width: ',
+                    attributes:
+                    {
+                        size: 50
+                    }
+                },
+                {
+                    name: 'color_normal',
+                    type: GUIElementType.Input,
+                    value: function () { return self.config.color_normal; },
+                    label: 'Normal Background-Color: ',
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (element) 
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    }
+                },
+                {
+                    name: 'color_mouse_over',
+                    type: GUIElementType.Input,
+                    value: function () { return self.config.color_mouse_over; },
+                    label: 'MouseOver Background-Color: ',
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (element) 
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    }
+                },
+                {
+                    name: 'color_odd_color',
+                    type: GUIElementType.Input,
+                    value: function () { return self.config.color_odd_color; },
+                    label: 'Odd Background-Color: ',
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (element) 
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    }
+                },
+                {
+                    name: 'readingHelp_enabled',
+                    type: GUIElementType.Checkbox,
+                    value: function () { return self.config.readingHelp_enabled; },
+                    label: 'Enable the Reading Help: '
+                },
+                {
+                    name: 'readingHelp_backgroundColor',
+                    type: GUIElementType.Input,
+                    value: function () { return self.config.readingHelp_backgroundColor; },
+                    label: 'Reading Help Background Color: ',
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (element)
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    }
+                },
+                {
+                    name: 'readingHelp_color',
+                    type: GUIElementType.Input,
+                    value: function () { return self.config.readingHelp_color; },
+                    label: 'Reading Help Text Color: ',
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: function (element)
+                    {
+                        element.colorpicker({
+                            colorFormat: "#HEX"
+                        });
+                    }
+                }
+            ]);
+
+
+        this.registerCategory(
+            {
+                name: "layout",
+                title: "Layout Settings",
+                elements: layoutData
+            });
+
+        var apiData = this.registerGUI("config-api", this.config,
+            [
+                {
+                    name: '',
+                    type: GUIElementType.Text,
+                    label: "--------",
+                    value: function () { return ' ---- <a href="http://www.getpocket.com">Pocket</a> Settings ----'; }
+                },
+                {
+                    name: 'pocket_user',
+                    type: GUIElementType.Input,
+                    label: 'Username: ',
+                    value: function () { return self.config.pocket_user; },
+                    attributes:
+                    {
+                        size: 50
+                    }
+                },
+                {
+                    name: 'pocket_password',
+                    type: GUIElementType.Input,
+                    label: 'Password: ',
+                    value: function () { return self.config.pocket_password; },
+                    attributes:
+                    {
+                        size: 50,
+                        type: 'password'
+                    }
+                },
+                {
+                    name: '',
+                    type: GUIElementType.Text,
+                    label: "--------",
+                    value: function () { return ' ---- API Settings ----'; }
+                },
+                {
+                    name: 'api_url',
+                    type: GUIElementType.Custom,
+                    label: 'Server Backend Address: ',
+                    value: function () { return ''; },
+                    debugOnly: true,
+                    result: function (element)
+                    {
+                        return element.find('.dataContainer').first().val();
+                    },
+                    customElement: function ()
+                    {
+                        return $('<span></span>').
+                            append(
+                            $('<input type="text" class="dataContainer ffnetparser_InputField" id="fflist-api_url" />')
+                                .attr('size', '50')
+                                .val(self.config.api_url)
+                            ).append(
+                            $("<button>Default</button>").click(function ()
+                            {
+                                $('#fflist-api_url').val("https://www.mrh-development.de/FanFictionUserScript");
+                            })
+                            ).append(
+                            $("<button>Local</button>").click(function ()
+                            {
+                                $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
+                            })
+                            );
+                    }
+                },
+                {
+                    name: 'api_checkForUpdates',
+                    type: GUIElementType.Checkbox,
+                    label: 'Check for Updates: ',
+                    value: function () { return self.config.api_checkForUpdates; },
+                    customOptions: function (checkbox)
+                    {
+                        checkbox.change(function ()
+                        {
+                            if (!$("#fflist-api_checkForUpdates").is(":checked"))
+                            {
+                                $("#fflist-api_autoIncludeNewVersion").attr("disabled", "disabled");
+                            }
+                            else
+                            {
+                                $("#fflist-api_autoIncludeNewVersion").removeAttr("disabled");
+                            }
+
+                        });
+                    }
+                },
+                {
+                    name: 'api_autoIncludeNewVersion',
+                    type: GUIElementType.Checkbox,
+                    label: 'Auto Update: ',
+                    value: function () { return self.config.api_autoIncludeNewVersion; },
+                },
+                {
+                    name: 'token',
+                    type: GUIElementType.Input,
+                    label: '<abbr title="Used for identification on the Web-Service (e.g. Synchronization)">Token</abbr>: ',
+                    value: function () { return self.config.token; },
+                    attributes:
+                    {
+                        size: 50,
+                        pattern: "[0-9a-zA-Z]+"
+                    }
+                }
+
+            ]);
+
+        this.registerCategory(
+            {
+                name: "api",
+                title: "API Settings",
+                elements: apiData
+            });
+
+
+        var advancedData = this.registerGUI("config-advanced", this.config,
+            [
+                {
+                    name: 'disable_highlighter',
+                    type: GUIElementType.Checkbox,
+                    label: '<abbr title="Disable the Story Highlighter Feature.">Disable Highlighter</abbr>: ',
+                    value: function () { return self.config.disable_highlighter; }
+                },
+                {
+                    name: 'disable_cache',
+                    type: GUIElementType.Checkbox,
+                    label: '<abbr title="Disable the Caching function used for the in Story search.">Disable Cache</abbr>: ',
+                    value: function () { return self.config.disable_cache; }
+                },
+                {
+                    name: 'disable_parahraphMenu',
+                    type: GUIElementType.Checkbox,
+                    label: '<abbr title="Disable the Paragraph Menu.">Disable Paragraph Menu</abbr>: ',
+                    value: function () { return self.config.disable_parahraphMenu; }
+                },
+                {
+                    name: 'disable_sync',
+                    type: GUIElementType.Checkbox,
+                    label: 'Disable Synchronization Feature: ',
+                    value: function () { return self.config.disable_sync; }
+                }
+
+            ]);
+
+
+        this.registerCategory(
+            {
+                name: "advanced",
+                title: "Advanced Settings",
+                elements: advancedData
+            });
+
+    }
+
+
+
+
     /**
     * Creates a block of Elements in the Container Element and saves the Elements with its IDs in the saveTo Variable
     * @param parent The Elements will be added to this Container
@@ -135,6 +519,12 @@
 
         $.each(elements, function (_, data: GUIElement)
         {
+            if (typeof (saveTo[data.name]) !== "undefined")
+            {
+                delete saveTo[data.name];
+            }
+
+
             var element: JQuery = null;
 
             if ((data.debugOnly === true) && !self.parser.DEBUG)
@@ -149,7 +539,7 @@
                 case GUIElementType.Input:
 
                     element = $('<input type="text" id="' + id + '"/>');
-                    element.val(data.value);
+                    element.val(data.value());
 
                     if (typeof (data.result) === "undefined")
                     {
@@ -163,7 +553,7 @@
                 case GUIElementType.Checkbox:
 
                     element = $('<input type="checkbox" id="' + id + '"/>');
-                    if (data.value === true)
+                    if (data.value() === true)
                     {
                         element.attr('checked', 'checked');
                     }
@@ -180,7 +570,7 @@
                 case GUIElementType.Button:
 
                     element = $('<input type="button" class="btn"  id="' + id + '"/>');
-                    element.val(data.value);
+                    element.val(data.value());
 
                     if (typeof (data.callback) !== "undefined")
                     {
@@ -219,7 +609,7 @@
                     break;
                 case GUIElementType.Text:
 
-                    element = $('<p></p>').html(data.value);
+                    element = $('<p></p>').html(data.value());
 
                     if (typeof (data.result) === "undefined")
                     {
@@ -234,7 +624,7 @@
                 case GUIElementType.Color:
 
                     element = $('<input type="text" id="' + id + '"/>')
-                        .val(data.value)
+                        .val(data.value())
                         .colorpicker({
                             colorFormat: "#HEX"
                         });
@@ -332,6 +722,77 @@
 
     }
 
+    // ---- GUI Helpers 
+
+    // Buttons
+
+    private getSaveButtonContainer()
+    {
+        var saveButtonContainer = $('<div class="fflist-buttonContainer"></div>');
+
+        $('<input class="btn" type="button" value="Save"></input>')
+            .button({
+                icons: {
+                    primary: "ui-icon-check"
+                }
+            }).addClass("ffnetSaveButton").appendTo(saveButtonContainer);
+
+        return saveButtonContainer;
+    }
+
+    // Button Logic:
+    private buttonLogic = function ()
+    {
+        var target = $(this).attr("data-target");
+
+        $(".ffnet_Config_Button_Container").fadeOut(400, function ()
+        {
+            $("." + target).fadeIn();
+        });
+
+    };
+
+    private backLogic = function ()
+    {
+        $(".ffnet_Config_Category:visible").fadeOut(400, function ()
+        {
+            $(".ffnet_Config_Button_Container").fadeIn();
+        });
+    };
+
+    // Render SubLogic:
+
+    private getButton = function (name, target, container)
+    {
+        return $("<div></div>").addClass("ffnet_Config_Button").text(name)
+            .attr("data-target", target).click(this.buttonLogic).appendTo(container);
+    };
+
+    private getCategory = function (name, id, container)
+    {
+        var cat = $("<div></div>").addClass("ffnet_Config_Category").addClass(id).appendTo(container);
+        var headline = $("<div></div>").addClass("headline").appendTo(cat);
+        var backField = $("<div></div>").addClass("back").appendTo(headline);
+        var backButton = $('<button class="btn">Back</back>').click(this.backLogic).appendTo(backField);
+        var textField = $("<div></div>").appendTo(headline).text(name);
+
+        var table = $('<table width="100%"></table>').appendTo(cat);
+
+
+        var result =
+            {
+                category: cat,
+                headline: headline,
+                table: table
+            };
+
+        return result;
+    };
+
+
+
+    // ----------
+
     /**
      *   Renders GUI for the Config-Menu
      */
@@ -360,67 +821,6 @@
         this.log("Container rendered");
 
 
-        // Buttons
-
-        var saveButtonContainer = $('<div class="fflist-buttonContainer"></div>');
-
-        $('<input class="btn" type="button" value="Save"></input>')
-            .button({
-                icons: {
-                    primary: "ui-icon-check"
-                }
-            }).addClass("ffnetSaveButton").appendTo(saveButtonContainer);
-
-
-
-        // Button Logic:
-        var buttonLogic = function ()
-        {
-            var target = $(this).attr("data-target");
-
-            $(".ffnet_Config_Button_Container").fadeOut(400, function ()
-            {
-                $("." + target).fadeIn();
-            });
-
-        };
-
-        var backLogic = function ()
-        {
-            $(".ffnet_Config_Category:visible").fadeOut(400, function ()
-            {
-                $(".ffnet_Config_Button_Container").fadeIn();
-            });
-        };
-
-        // Render SubLogic:
-
-        var getButton = function (name, target, container)
-        {
-            return $("<div></div>").addClass("ffnet_Config_Button").text(name)
-                .attr("data-target", target).click(buttonLogic).appendTo(container);
-        };
-
-        var getCategory = function (name, id, container)
-        {
-            var cat = $("<div></div>").addClass("ffnet_Config_Category").addClass(id).appendTo(container);
-            var headline = $("<div></div>").addClass("headline").appendTo(cat);
-            var backField = $("<div></div>").addClass("back").appendTo(headline);
-            var backButton = $('<button class="btn">Back</back>').click(backLogic).appendTo(backField);
-            var textField = $("<div></div>").appendTo(headline).text(name);
-
-            var table = $('<table width="100%"></table>').appendTo(cat);
-
-
-            var result =
-                {
-                    category: cat,
-                    headline: headline,
-                    table: table
-                };
-
-            return result;
-        };
 
         // ----------- GUI -------------------------
 
@@ -434,333 +834,29 @@
 
 
         var buttonContainer = $('<div class="ffnet_Config_Button_Container"></div>').appendTo(settingsContainer);
+        var saveButtonContainer = this.getSaveButtonContainer();
 
-        getButton("Story Settings", "ffnetConfig-Settings", buttonContainer);
-        getButton("Layout Settings", "ffnetConfig-Layout", buttonContainer);
-        getButton("API Settings", "ffnetConfig-API", buttonContainer);
-        getButton("Advanced", "ffnetConfig-Andvanced", buttonContainer);
-
-        // --------------------------------------------------------------------------------------------------------------------------
-        var cat = getCategory("Story Settings", "ffnetConfig-Settings", settingsContainer);
-        var table = cat.table;
-
-        this.registerGUI("config-story", this.config,
-            [
-                {
-                    name: "story_search_depth",
-                    type: GUIElementType.Input,
-                    label: "Max Search depth: ",
-                    value: this.config.story_search_depth,
-                    attributes:
-                    {
-                        'size': '50'
-                    }
-                },
-                {
-                    name: 'mark_M_storys',
-                    type: GUIElementType.Checkbox,
-                    value: this.config.mark_M_storys,
-                    label: 'Mark "M" rated Storys: '
-                },
-                {
-                    name: 'hide_non_english_storys',
-                    type: GUIElementType.Checkbox,
-                    value: this.config.hide_non_english_storys,
-                    label: 'Hide non English Storys: '
-                },
-                {
-                    name: 'allow_copy',
-                    type: GUIElementType.Checkbox,
-                    value: this.config.allow_copy,
-                    label: 'Allow the selection of Text: '
-                }
-
-            ]);
-
-        this.renderGUITo("config", table);
-
-
-        cat.category.append(saveButtonContainer.clone());
+        $.each(this.categories, function (name, element: GUICategory)
+        {
+            self.getButton(element.title, "ffnetConfig-" + element.name, buttonContainer);
+        });
 
         // --------------------------------------------------------------------------------------------------------------------------
-        cat = getCategory("Layout Settings", "ffnetConfig-Layout", settingsContainer);
-        table = cat.table;
 
+        $.each(this.categories, function (name, element: GUICategory)
+        {
+            self.log("Render Category: ", element);
 
-        this.registerGUI("config-layout", this.config,
-            [
-                {
-                    name: 'hide_images',
-                    type: GUIElementType.Checkbox,
-                    value: this.config.hide_images,
-                    label: 'Hide Story Images: '
-                },
-                {
-                    name: 'hide_lazy_images',
-                    type: GUIElementType.Checkbox,
-                    value: this.config.hide_lazy_images,
-                    label: 'Hide <abbr title="Images that are loaded after the first run. Mostly Story Images, not User Images">lazy</abbr> images: '
-                },
-                {
-                    name: 'disable_image_hover',
-                    type: GUIElementType.Checkbox,
-                    value: this.config.disable_image_hover,
-                    label: 'Disable Image Hover Effect: '
-                },
-                {
-                    name: 'content_width',
-                    type: GUIElementType.Input,
-                    value: this.config.content_width,
-                    label: 'Content Width: ',
-                    attributes:
-                    {
-                        size: 50
-                    }
-                },
-                {
-                    name: 'color_normal',
-                    type: GUIElementType.Input,
-                    value: this.config.color_normal,
-                    label: 'Normal Background-Color: ',
-                    attributes:
-                    {
-                        size: 50
-                    },
-                    customOptions: function (element) 
-                    {
-                        element.colorpicker({
-                            colorFormat: "#HEX"
-                        });
-                    }
-                },
-                {
-                    name: 'color_mouse_over',
-                    type: GUIElementType.Input,
-                    value: this.config.color_mouse_over,
-                    label: 'MouseOver Background-Color: ',
-                    attributes:
-                    {
-                        size: 50
-                    },
-                    customOptions: function (element) 
-                    {
-                        element.colorpicker({
-                            colorFormat: "#HEX"
-                        });
-                    }
-                },
-                {
-                    name: 'color_odd_color',
-                    type: GUIElementType.Input,
-                    value: this.config.color_odd_color,
-                    label: 'Odd Background-Color: ',
-                    attributes:
-                    {
-                        size: 50
-                    },
-                    customOptions: function (element) 
-                    {
-                        element.colorpicker({
-                            colorFormat: "#HEX"
-                        });
-                    }
-                },
-                {
-                    name: 'readingHelp_enabled',
-                    type: GUIElementType.Checkbox,
-                    value: this.config.readingHelp_enabled,
-                    label: 'Enable the Reading Help: '
-                },
-                {
-                    name: 'readingHelp_backgroundColor',
-                    type: GUIElementType.Input,
-                    value: this.config.readingHelp_backgroundColor,
-                    label: 'Reading Help Background Color: ',
-                    attributes:
-                    {
-                        size: 50
-                    },
-                    customOptions: function (element)
-                    {
-                        element.colorpicker({
-                            colorFormat: "#HEX"
-                        });
-                    }
-                },
-                {
-                    name: 'readingHelp_color',
-                    type: GUIElementType.Input,
-                    value: this.config.readingHelp_color,
-                    label: 'Reading Help Text Color: ',
-                    attributes:
-                    {
-                        size: 50
-                    },
-                    customOptions: function (element)
-                    {
-                        element.colorpicker({
-                            colorFormat: "#HEX"
-                        });
-                    }
-                }
+            var cat = self.getCategory(element.title, "ffnetConfig-" + element.name, settingsContainer);
+            element.instance = cat.category;
+            var table = cat.table;
 
+            self.renderGUI(element.elements, table);
 
+            cat.category.append(saveButtonContainer.clone());
 
-            ]);
+        });
 
-        this.renderGUITo("config-layout", table);
-
-
-        cat.category.append(saveButtonContainer.clone());
-
-        // --------------------------------------------------------------------------------------------------------------------------
-        cat = getCategory("API Settings", "ffnetConfig-API", settingsContainer);
-        table = cat.table;
-
-
-        this.registerGUI("config-api", this.config,
-            [
-                {
-                    name: '',
-                    type: GUIElementType.Text,
-                    label: "--------",
-                    value: ' ---- <a href="http://www.getpocket.com">Pocket</a> Settings ----'
-                },
-                {
-                    name: 'pocket_user',
-                    type: GUIElementType.Input,
-                    label: 'Username: ',
-                    value: this.config.pocket_user,
-                    attributes:
-                    {
-                        size: 50
-                    }
-                },
-                {
-                    name: 'pocket_password',
-                    type: GUIElementType.Input,
-                    label: 'Password: ',
-                    value: this.config.pocket_password,
-                    attributes:
-                    {
-                        size: 50,
-                        type: 'password'
-                    }
-                },
-                {
-                    name: '',
-                    type: GUIElementType.Text,
-                    label: "--------",
-                    value: ' ---- API Settings ----'
-                },
-                {
-                    name: 'api_url',
-                    type: GUIElementType.Custom,
-                    label: 'Server Backend Address: ',
-                    value: '',
-                    debugOnly: true,
-                    customElement: function ()
-                    {
-                        return $('<span></span>').
-                            append(
-                            $('<input type="text" class="dataContainer ffnetparser_InputField" id="fflist-api_url" />')
-                                .attr('size', '50')
-                                .val(self.config.api_url)
-                            ).append(
-                            $("<button>Default</button>").click(function ()
-                            {
-                                $('#fflist-api_url').val("https://www.mrh-development.de/FanFictionUserScript");
-                            })
-                            ).append(
-                            $("<button>Local</button>").click(function ()
-                            {
-                                $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
-                            })
-                            );
-                    }
-                },
-                {
-                    name: 'api_checkForUpdates',
-                    type: GUIElementType.Checkbox,
-                    label: 'Check for Updates: ',
-                    value: this.config.api_checkForUpdates,
-                    customOptions: function (checkbox)
-                    {
-                        checkbox.change(function ()
-                        {
-                            if (!$("#fflist-api_checkForUpdates").is(":checked"))
-                            {
-                                $("#fflist-api_autoIncludeNewVersion").attr("disabled", "disabled");
-                            }
-                            else
-                            {
-                                $("#fflist-api_autoIncludeNewVersion").removeAttr("disabled");
-                            }
-
-                        });
-                    }
-                },
-                {
-                    name: 'api_autoIncludeNewVersion',
-                    type: GUIElementType.Checkbox,
-                    label: 'Auto Update: ',
-                    value: this.config.api_autoIncludeNewVersion,
-                },
-                {
-                    name: 'token',
-                    type: GUIElementType.Input,
-                    label: '<abbr title="Used for identification on the Web-Service (e.g. Synchronization)">Token</abbr>: ',
-                    value: this.config.token,
-                    attributes:
-                    {
-                        size: 50,
-                        pattern: "[0-9a-zA-Z]+"
-                    }
-                }
-
-            ]);
-
-        this.renderGUITo("config-layout", table);
-
-
-        cat.category.append(saveButtonContainer.clone());
-
-        // --------------------------------------------------------------------------------------------------------------------------
-        cat = getCategory("Advanced", "ffnetConfig-Andvanced", settingsContainer);
-        table = cat.table;
-
-        this.registerGUI("config-advanced", this.config,
-            [
-                {
-                    name: 'disable_highlighter',
-                    type: GUIElementType.Checkbox,
-                    label: '<abbr title="Disable the Story Highlighter Feature.">Disable Highlighter</abbr>: ',
-                    value: this.config.disable_highlighter
-                },
-                {
-                    name: 'disable_cache',
-                    type: GUIElementType.Checkbox,
-                    label: '<abbr title="Disable the Caching function used for the in Story search.">Disable Cache</abbr>: ',
-                    value: this.config.disable_cache
-                },
-                {
-                    name: 'disable_parahraphMenu',
-                    type: GUIElementType.Checkbox,
-                    label: '<abbr title="Disable the Paragraph Menu.">Disable Paragraph Menu</abbr>: ',
-                    value: this.config.disable_parahraphMenu
-                },
-                {
-                    name: 'disable_sync',
-                    type: GUIElementType.Checkbox,
-                    label: 'Disable Synchronization Feature: ',
-                    value: this.config.disable_sync
-                }
-
-            ]);
-
-        this.renderGUITo("config-advanced", table);
-
-        cat.category.append(saveButtonContainer.clone());
 
         // --------------------------------------------------------------------------------------------------------------------------
 
@@ -775,6 +871,8 @@
         });
 
         this.log("GUI - Markers added");
+
+        // --------------------------------------------------------------------------------------------------------------------------
 
         var filterButtonContainer = saveButtonContainer.clone();
         filterButtonContainer.appendTo(this.guiContainer);
@@ -870,59 +968,12 @@
         // Save Logic
         $(".ffnetSaveButton").click(function ()
         {
-            var newConfig: { [index: string]: MarkerConfig } = {};
-
             self.log("Save Config");
 
             self.saveAll();
 
             /*
-            $.each(self.guiElements, function (k, data)
-            {
-                if (typeof (data) === "undefined")
-                {
-                    return;
-                }
-
-                var name = data.name.val();
-                if (name === "")
-                {
-                    return;
-                }
-
-                var config =
-                    {
-                        name: name,
-                        color: data.color.val(),
-                        ignore: data.ignore.val().split(', '),
-                        keywords: data.keywords.val().split(', '),
-                        mark_chapter: data.mark_chapter.is(':checked'),
-                        mention_in_headline: data.mention_in_headline.is(':checked'),
-                        display: data.display.is(':checked'),
-                        mouseOver: data.mouseOver.val(),
-                        print_story: data.print_story.is(':checked'),
-                        search_story: data.search_story.is(':checked'),
-                        ignoreColor: data.ignoreColor.is(':checked'),
-                        background: (self.DEBUG ? data.background.val() : ((name in self.config.marker && self.config.marker[name].background != null) ? (self.config.marker[name].background) : null)),
-                        text_color: data.text_color.val(),
-                        revision: ((typeof (self.config.marker[name]) === "undefined") || (typeof (self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
-                    };
-
-                if (config.text_color === "")
-                {
-                    config.text_color = "#686868";
-                }
-
-                if (self.DEBUG)
-                {
-                    console.log("Filter '" + name + "' saved: ", config);
-                }
-
-
-                //console.log(name, config);
-                newConfig[name] = config;
-
-            });
+           
 
             self.config.story_search_depth = Number(self.settingsElements['story_search_depth'].val());
             self.config.mark_M_storys = self.settingsElements['mark_M_storys'].is(':checked');
@@ -954,8 +1005,6 @@
             }
 
             */
-
-            self.config.marker = newConfig;
 
             self.parser.save_config();
 
@@ -1018,17 +1067,18 @@
 
         var table = $('<table width="100%"></table>').appendTo(container);
 
-
         var self = this;
 
-
-        this.registerGUI(name, self.config.marker,
+        this.registerGUI(name, function () { return self.config.marker[name]; },
             [
                 {
                     name: 'name',
                     type: GUIElementType.Input,
                     label: "Name: ",
-                    value: name,
+                    value: function ()
+                    {
+                        return name;
+                    },
                     attributes:
                     {
                         size: 50
@@ -1038,17 +1088,23 @@
                     name: 'display',
                     type: GUIElementType.Checkbox,
                     label: 'Display Found Entries: ',
-                    value: marker.display
+                    value: function ()
+                    {
+                        return marker.display;
+                    }
                 },
                 {
                     name: 'keywords',
                     type: GUIElementType.Input,
                     label: 'Keywords: ',
-                    value: marker.keywords.join(', '),
+                    value: function ()
+                    {
+                        return marker.keywords.join(', ');
+                    },
                     result: function (element)
                     {
                         return element.val().split(", ");
-                    }, 
+                    },
                     attributes:
                     {
                         size: 50
@@ -1064,7 +1120,10 @@
                     name: 'ignore',
                     type: GUIElementType.Input,
                     label: 'Ignore when: ',
-                    value: marker.ignore.join(', '),
+                    value: function ()
+                    {
+                        return marker.ignore.join(', ');
+                    },
                     result: function (element)
                     {
                         return element.val().split(", ");
@@ -1084,7 +1143,10 @@
                     name: 'ignoreColor',
                     type: GUIElementType.Checkbox,
                     label: 'Ignore Color Settings:',
-                    value: marker.ignoreColor,
+                    value: function ()
+                    {
+                        return marker.ignoreColor;
+                    },
                     customOptions: function (checkbox)
                     {
                         var check = function ()
@@ -1116,7 +1178,10 @@
                 {
                     name: 'color',
                     type: GUIElementType.Color,
-                    value: marker.color,
+                    value: function ()
+                    {
+                        return marker.color;
+                    },
                     label: 'Color: ',
                     attributes:
                     {
@@ -1126,7 +1191,10 @@
                 {
                     name: 'mouseOver',
                     type: GUIElementType.Color,
-                    value: marker.mouseOver,
+                    value: function ()
+                    {
+                        return marker.mouseOver;
+                    },
                     label: 'Mouse Over Color: ',
                     attributes:
                     {
@@ -1136,7 +1204,10 @@
                 {
                     name: 'text_color',
                     type: GUIElementType.Color,
-                    value: marker.text_color,
+                    value: function ()
+                    {
+                        return marker.text_color;
+                    },
                     label: 'Info Text Color: ',
                     attributes:
                     {
@@ -1146,42 +1217,60 @@
                 {
                     name: 'background',
                     type: GUIElementType.Input,
-                    value: marker.background,
+                    value: function ()
+                    {
+                        return marker.background;
+                    },
                     label: 'Background Image (Path): '
                 },
                 {
                     name: 'search_story',
                     type: GUIElementType.Checkbox,
-                    value: marker.search_story,
+                    value: function ()
+                    {
+                        return marker.search_story;
+                    },
                     label: 'Search in Storys: '
                 },
                 {
                     name: 'mark_chapter',
                     type: GUIElementType.Checkbox,
-                    value: marker.mark_chapter,
+                    value: function ()
+                    {
+                        return marker.mark_chapter;
+                    },
                     label: 'Mark Chaper: '
                 },
                 {
                     name: 'print_story',
                     type: GUIElementType.Checkbox,
-                    value: marker.print_story,
+                    value: function ()
+                    {
+                        return marker.print_story;
+                    },
                     label: 'List Storys: '
                 },
                 {
                     name: 'mention_in_headline',
                     type: GUIElementType.Checkbox,
-                    value: marker.mention_in_headline,
+                    value: function ()
+                    {
+                        return marker.mention_in_headline;
+                    },
                     label: 'Mention in Headline: '
                 },
                 {
                     name: '',
                     type: GUIElementType.Button,
-                    value: 'Remove',
+                    value: function ()
+                    {
+                        return 'Remove';
+                    },
                     label: '',
                     callback: function ()
                     {
-                        delete self.guiData[name];
-
+                        self.guiData[name].instances['name'].val('');
+                        
                         container.fadeOut(function ()
                         {
                             container.remove();
@@ -1192,7 +1281,14 @@
                 {
                     name: '',
                     type: GUIElementType.Custom,
-                    value: '',
+                    value: function ()
+                    {
+                        return '';
+                    },
+                    result: function ()
+                    {
+                        return null;
+                    },
                     label: '',
                     customElement: function ()
                     {
@@ -1247,9 +1343,52 @@
                         return elementContainer;
                     }
                 }
-            ]);
+            ], false, function (data)
+            {
+                if (typeof (self.config.marker[data.name]) !== "undefined")
+                {
+                    delete self.config.marker[data.name];
+                }
 
-        this.renderGUITo(name, table);
+                var name = data.instances['name'].val();
+                if (name === "")
+                {
+                    return;
+                }
+
+                var config =
+                    {
+                        name: name,
+                        color: data.instances['color'].val(),
+                        ignore: data.instances['ignore'].val().split(', '),
+                        keywords: data.instances['keywords'].val().split(', '),
+                        mark_chapter: data.instances['mark_chapter'].is(':checked'),
+                        mention_in_headline: data.instances['mention_in_headline'].is(':checked'),
+                        display: data.instances['display'].is(':checked'),
+                        mouseOver: data.instances['mouseOver'].val(),
+                        print_story: data.instances['print_story'].is(':checked'),
+                        search_story: data.instances['search_story'].is(':checked'),
+                        ignoreColor: data.instances['ignoreColor'].is(':checked'),
+                        background: data.instances['background'].val(),
+                        text_color: data.instances['text_color'].val(),
+                        revision: ((typeof (self.config.marker[name]) === "undefined") || (typeof (self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
+                    };
+
+                if (config.text_color === "")
+                {
+                    config.text_color = "#686868";
+                }
+
+                if (self.DEBUG)
+                {
+                    console.log("Filter '" + name + "' saved: ", config);
+                }
+
+                self.config.marker[name] = config;
+
+            });
+
+        this.renderGUIElement(name, table);
 
 
         container.fadeIn();
@@ -1311,6 +1450,12 @@
                 {
                     $(this).dialog("close");
 
+                    self.guiData = {};
+                    self.categories = {};
+                    self.addCount = 0;
+                    
+                    self.initGUI();
+
                     self.parser.defaultConfig();
                 }
 
@@ -1345,7 +1490,7 @@
     /**
      *   Creates and displays the GUI
      */
-    private gui()
+    public gui()
     {
         if (this.guiContainer == null)
         {
@@ -1360,7 +1505,7 @@
     /**
      *   Open "Save Config" Submenu
      */
-    private openSaveConfig()
+    public openSaveConfig()
     {
         if (this.guiContainer == null)
         {
@@ -1424,7 +1569,7 @@
      *   Open or closes the GUI for the Story Config
      *   @param storyInfo Infos about the story
      */
-    private toggleStoryConfig(storyInfo: StoryInfo)
+    public toggleStoryConfig(storyInfo: StoryInfo)
     {
         var self = this;
 
@@ -1589,7 +1734,7 @@
     }
 
     /**
-     *   Open or closes the GUI for the Synchronize Feature 
+     *   Open or closes the GUI for the Synchronize Feature
      */
     private syncGUI()
     {
@@ -1669,7 +1814,7 @@
     /**
      *   Open or closes the GUI for the Messaging GUI
      */
-    private messagesGUI()
+    public messagesGUI()
     {
         // Mark Messages as read:
         var localMessages = this.dataConfig['messages'];
@@ -1723,7 +1868,7 @@
     /**
      *   Open or closes the GUI for the Feedback Function
      */
-    private feedbackGUI()
+    public feedbackGUI()
     {
         var self = this;
         var types = ["Bug", "Feature Request", "Question", "Other"];

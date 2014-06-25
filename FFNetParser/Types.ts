@@ -110,7 +110,7 @@ interface GUIElement
     name: string;
     type: GUIElementType;
     label: string;
-    value: any;
+    value: () => any;
     css?: {};
     attributes?: {};
     callback?: (e: JQueryEventObject) => void;
@@ -127,4 +127,14 @@ interface GUIData
     collection: any;
     guiData: GUIElement[];
     instances: { [index: string]: JQuery };
+    customSaveFunction?: (data: GUIData) => void;
+    sticky: boolean;
+}
+
+interface GUICategory
+{
+    name: string;
+    title: string;
+    instance?: JQuery;
+    elements: GUIData;
 }
