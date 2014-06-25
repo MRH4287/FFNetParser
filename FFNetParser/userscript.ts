@@ -5,6 +5,8 @@
 
 /// <reference path="Types.ts" /> 
 /// <reference path="ParagraphMenu.ts" /> 
+/// <reference path="GUIHandler.ts" /> 
+/// <reference path="ExtentionBaseClass.ts" /> 
 class StoryParser
 {
     /** 
