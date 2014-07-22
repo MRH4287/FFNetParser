@@ -177,11 +177,16 @@
             self.saveData(element);
         });
 
+        
+
     }
 
 
     public initGUI()
     {
+        this.guiData = {};
+        this.categories = {};
+
         var self = this;
 
         var storyData = this.registerGUI("config-story", this.config,
@@ -340,6 +345,12 @@
                             colorFormat: "#HEX"
                         });
                     }
+                },
+                {
+                    name: 'enable_chapter_review_ratio',
+                    type: GUIElementType.Checkbox,
+                    value: function () { return self.config.enable_chapter_review_ratio; },
+                    label: 'Enable the Chapter/Review Ratio Info: '
                 }
             ]);
 
@@ -1492,6 +1503,8 @@
      */
     public gui()
     {
+        this.initGUI();
+
         if (this.guiContainer == null)
         {
             this.gui_create();
