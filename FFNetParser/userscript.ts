@@ -62,6 +62,7 @@ class StoryParser
         hide_lazy_images: false,
         disable_image_hover: false,
         content_width: "90%",
+        enable_chapter_review_ratio: false,
 
         // Reading Help:
         readingHelp_enabled: false,
@@ -464,10 +465,6 @@ class StoryParser
             }
         }, 1000);
 
-
-        //Init the GUI with static Data
-        this.GUI.initGUI();
-
     }
 
     /**
@@ -692,11 +689,11 @@ class StoryParser
                     // Create Dialog:
                     var dialog = $('<div></div>').attr("title", "Saved Story Reminder")
                         .append(
-                            table
+                        table
                         ).appendTo($("body"));
 
                     dialog.dialog({
-                        close: function (event, ui) 
+                        close: function (event, ui)
                         {
                             dialog.remove();
                         }
@@ -1056,6 +1053,7 @@ class StoryParser
                 {
                     textEl.html(textEl.html().replace('Rated: M', '<b>Rated: M</b>'));
                 }
+                 
             });
 
             if (self.config['hide_images'])
@@ -1175,6 +1173,9 @@ class StoryParser
 
             // Add Anchor:
             element.find("a").first().attr("name", storyName);
+
+            // Chapter Review Ratio
+            self.manageChapterReviewRatio(element);
 
             self.doParse(requestQueue);
 
@@ -1987,7 +1988,7 @@ class StoryParser
     *   Go to a specific Paragraph on the page
     *   @param id Paragraph Number
     */
-    private goToParagraphID(id) 
+    private goToParagraphID(id)
     {
         $($("p")[id]).before('<a name="goto" id="gotoMarker"></a>');
         location.href = '#goto';
@@ -2045,6 +2046,48 @@ class StoryParser
             // Load the Paragraph Menu
             new ParagraphMenu(this);
         }
+    }
+
+    /**
+     * Adds the Chapter/Review Ration Information
+     * @param element z-list Instance
+     */
+    private manageChapterReviewRatio(element: JQuery): void
+    {
+        if (this.config.enable_chapter_review_ratio)
+        {
+            var reg = new RegExp(".+Chapters: ?([0-9]+).*Reviews: ?([0-9]+).*");
+
+            var parent = element.find(".z-padtop2").first();
+            if (reg.test(parent.text()))
+            {
+                var result = reg.exec(parent.text());
+
+                var chapter = Number(result[1]);
+                var reviews = Number(result[2]);
+
+                var ggt = function ggt(m: number, n: number): number
+                {
+                    if (n === 0)
+                    {
+                        return m;
+                    }
+                    else
+                    {
+                        return ggt(n, m % n);
+                    }
+                };
+
+                var devisor = ggt(chapter, reviews);
+
+                $('<span class="parser-msg"></span>')
+                    .text(" - Chapter/Review Ratio: " + (chapter / devisor) + "/" + (reviews / devisor))
+                    .appendTo(parent);;
+
+
+            }
+        }
+
     }
 
 

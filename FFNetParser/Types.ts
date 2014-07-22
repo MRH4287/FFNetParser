@@ -56,6 +56,7 @@ interface Config
     hide_lazy_images: boolean;
     disable_image_hover: boolean;
     content_width: string;
+    enable_chapter_review_ratio: boolean;
 
     // Reading Aid:
     readingHelp_enabled: boolean;
