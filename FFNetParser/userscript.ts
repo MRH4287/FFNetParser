@@ -2066,6 +2066,7 @@ class StoryParser
                 var chapter = Number(result[1]);
                 var reviews = Number(result[2]);
 
+                /*
                 var ggt = function ggt(m: number, n: number): number
                 {
                     if (n === 0)
@@ -2082,8 +2083,15 @@ class StoryParser
 
                 $('<span class="parser-msg"></span>')
                     .text(" - Chapter/Review Ratio: " + (chapter / devisor) + "/" + (reviews / devisor))
-                    .appendTo(parent);;
+                    .appendTo(parent);
+                */
 
+                var num = reviews / chapter;
+                var fixed = (Math.round(num * 100) / 100).toFixed(2);
+
+                $('<span class="parser-msg"></span>')
+                    .text(" - Chapter/Review Ratio: 1/" + (fixed))
+                    .appendTo(parent);
 
             }
         }
