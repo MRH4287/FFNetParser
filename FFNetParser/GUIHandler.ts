@@ -453,6 +453,15 @@
                     type: GUIElementType.Checkbox,
                     label: 'Auto Update: ',
                     value: function () { return self.config.api_autoIncludeNewVersion; },
+                    customOptions: function (element)
+                    {
+                        // Only Check if the Script is not loaded over Chrome!
+                        if (typeof (chrome) !== "undefined")
+                        {
+                            element.removeProp("checked").prop("disabled", "disabled").attr("title", "The Update-Feature is disabled in the Chrome Version. " +
+                                "Chrome updates the Script for you! If you have problems, please send me a Message.");
+                        }
+                    }
                 },
                 {
                     name: 'token',
