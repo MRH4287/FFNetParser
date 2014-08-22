@@ -72,6 +72,7 @@ interface Config
     api_retries: number;
     api_checkForUpdates: boolean;
     api_autoIncludeNewVersion: boolean;
+    api_webSocketServerAddress: string;
 
     // advanced Features:
     disable_cache: boolean;
@@ -138,4 +139,12 @@ interface GUICategory
     title: string;
     instance?: JQuery;
     elements: GUIData;
+}
+
+interface WebSocketMessage
+{
+    Type: string;
+    Data: string;
+    Sender: string;
+    Time: string;
 }

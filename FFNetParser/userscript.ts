@@ -5,7 +5,8 @@
 
 /// <reference path="Types.ts" /> 
 /// <reference path="ParagraphMenu.ts" /> 
-/// <reference path="GUIHandler.ts" /> 
+/// <reference path="GUIHandler.ts" />
+/// <reference path="LiveChatHandler.ts" /> 
 /// <reference path="ExtentionBaseClass.ts" /> 
 class StoryParser
 {
@@ -41,6 +42,11 @@ class StoryParser
      * Module used for the GUI
      */
     public GUI: GUIHandler = new GUIHandler(this);
+
+    /**
+     * Handler for the IRC-Live Chat
+     */
+    public chat: LiveChatHandler = new LiveChatHandler(this);
 
 
     /**
@@ -78,6 +84,7 @@ class StoryParser
         api_retries: 2,
         api_checkForUpdates: true,
         api_autoIncludeNewVersion: true,
+        api_webSocketServerAddress: "wss://www.mrh-development.de:8182",
 
         // advanced Features:
         disable_cache: false,
@@ -612,6 +619,25 @@ class StoryParser
                     })
                 );
 
+            var liveChatContainer = $("<div>Live Chat</div>")
+                .addClass("menuItem")
+                .click(function ()
+                {
+
+                    messageContainer.hide();
+
+                    self.GUI.toggleLiveChat();
+
+                });
+
+            if (!this.chat.Available)
+            {
+                liveChatContainer.unbind("click").attr("title", "This Feature is not available in your Browser. Sorry!");
+            }
+
+            innerContainer.append(liveChatContainer);
+
+
 
             // Message Menu End
 
@@ -1053,7 +1079,7 @@ class StoryParser
                 {
                     textEl.html(textEl.html().replace('Rated: M', '<b>Rated: M</b>'));
                 }
-                 
+
             });
 
             if (self.config['hide_images'])
@@ -3026,7 +3052,12 @@ class StoryParser
      */
     public api_GetMessages(callback: (result: any) => void)
     {
-        this.apiRequest({ command: "getMessages", data: this.config.token }, function (result)
+        var data = {
+            Token: this.config.token,
+            Version: this.VERSION
+        };
+
+        this.apiRequest({ command: "getMessages", data: JSON.stringify(data) }, function (result)
         {
             var response = JSON.parse(result);
 

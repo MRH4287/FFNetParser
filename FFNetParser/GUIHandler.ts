@@ -177,7 +177,7 @@
             self.saveData(element);
         });
 
-        
+
 
     }
 
@@ -423,6 +423,36 @@
                             $("<button>Local</button>").click(function ()
                             {
                                 $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
+                            })
+                            );
+                    }
+                },
+                {
+                    name: 'api_webSocketServerAddress',
+                    type: GUIElementType.Custom,
+                    label: 'Live-Chat Backend Address: ',
+                    value: function () { return ''; },
+                    debugOnly: true,
+                    result: function (element)
+                    {
+                        return element.find('.dataContainer').first().val();
+                    },
+                    customElement: function ()
+                    {
+                        return $('<span></span>').
+                            append(
+                            $('<input type="text" class="dataContainer ffnetparser_InputField" id="fflist-api_webSocketServerAddress" />')
+                                .attr('size', '50')
+                                .val(self.config.api_webSocketServerAddress)
+                            ).append(
+                            $("<button>Default</button>").click(function ()
+                            {
+                                $('#fflist-api_webSocketServerAddress').val("wss://www.mrh-development.de:8182");
+                            })
+                            ).append(
+                            $("<button>Local</button>").click(function ()
+                            {
+                                $('#fflist-api_webSocketServerAddress').val("ws://127.0.0.1:8182");
                             })
                             );
                     }
@@ -1281,7 +1311,7 @@
                     callback: function ()
                     {
                         self.guiData[name].instances['name'].val('');
-                        
+
                         container.fadeOut(function ()
                         {
                             container.remove();
@@ -1464,7 +1494,7 @@
                     self.guiData = {};
                     self.categories = {};
                     self.addCount = 0;
-                    
+
                     self.initGUI();
 
                     self.parser.defaultConfig();
@@ -1736,15 +1766,164 @@
                 );
 
 
-            if (this.DEBUG)
-            {
-                console.log("Display Content");
-            }
+            this.log("Display Content");
+
 
             this.gui_show();
         }
 
     }
+
+    /**
+     *   Open or closes the GUI for the Live Chat
+     */
+    public toggleLiveChat()
+    {
+
+        var self = this;
+
+        if (this.guiContainer == null)
+        {
+            if (this.DEBUG)
+            {
+                console.log("Generate GUI Container");
+            }
+
+            this.gui_create();
+        }
+
+        if (this.guiContainer.is(':visible'))
+        {
+            if (this.DEBUG)
+            {
+                console.log("Hide GUI Container");
+            }
+
+            this.gui_hide();
+
+        } else
+        {
+            if (!this.parser.chat.Available)
+            {
+                alert("This Feature is not enabled in your Browser. Needed: WebSocket");
+                return;
+            }
+
+
+            if (this.DEBUG)
+            {
+                console.log("Starting Content Generation");
+            }
+
+            this.guiContainer.html('');
+
+            this.guiContainer.append('<h2 style="text-align:center: magin-bottom: 10px">Live Chat Feature:</h2>');
+
+            var chatContainer = $("<div></div>").appendTo(this.guiContainer).hide();
+
+            var connectBox = $("<div></div>").appendTo(this.guiContainer);
+            connectBox.append("<p>This Feature allows you to connect to the Live-Chat.<p>")
+                .append("<p>If you need help or just want to talk, you are welcome!</p>")
+                .append("<p>I can't be online all the time. I am living in Europe, so please have this in mind</p>")
+                .append("<hr /><p>The Connection is made using an Encrypted Connection to my Server.</p>")
+                .append('<p>Every Message is sent to my <abbr title="irc.esper.net#FanfictionStoryParser">IRC-Channel</abbr></p>')
+                .append(
+                $('<div style="text-align:center"></div>').append(
+                    $('<button class="btn btn-primary">Connect</button>')
+                        .click(function (e)
+                        {
+                            e.preventDefault();
+                            connectBox.fadeOut(0.5, function ()
+                            {
+                                self.parser.chat.connect();
+
+                                chatContainer.fadeIn(0.5);
+                            });
+
+                        })
+                    )
+                );
+
+
+            var addMessageElement = function (sender, message, time)
+            {
+                var newMeessage = $('<div class="ChatMessage"></div>')
+                    .append($('<div class="Sender"></div>').text(sender))
+                    .append($('<div class="Message"></div>').text(message))
+                    .append($('<div class="Time"></div>').text(time));
+
+                container.append(newMeessage);
+
+                container[0].scrollTop = container[0].scrollHeight;
+
+            };
+
+
+            var container = $('<div class="ChatMessageContainer"></div>').appendTo(chatContainer);
+            var input = $('<input type="text" />');
+
+            var send = function ()
+            {
+                var text = input.val();
+                input.val("");
+
+                addMessageElement(self.config.token, text, (new Date()).toLocaleTimeString());
+                self.parser.chat.sendChatMessage(text);
+
+            };
+
+            chatContainer.append(container);
+            chatContainer.append(
+                $('<div class="ChatInputContainer"></div>')
+                    .append(input)
+                    .append(
+                    $('<button class="btn btn-primary">Send</button>').click(function (e)
+                    {
+                        send();
+                    })
+                    )
+                );
+
+            input.keydown(function (e)
+            {
+                if (e.keyCode === 13)
+                {
+                    send();
+                }
+            });
+
+            this.parser.chat.onError = function (message)
+            {
+                addMessageElement("System", message, (new Date().toLocaleTimeString()));
+
+            };
+
+
+
+            //addMessageElement("System", "Connected to Server", (new Date()).toLocaleTimeString());
+
+            this.parser.chat.setMessageCallback(function (data: WebSocketMessage)
+            {
+                if (data.Type === "Chat")
+                {
+                    addMessageElement(data.Sender, data.Data, (new Date(Number(data.Time)).toLocaleTimeString()));
+                }
+
+            });
+
+
+            //addMessageElement("Test", "Das ist ein Test einer längeren Nachticht ... 123 BLUB", "NOW");
+
+
+            this.log("Display Content");
+
+
+            this.gui_show();
+        }
+
+
+    }
+
 
     /**
      *   Open or closes the GUI for the Synchronize Feature
