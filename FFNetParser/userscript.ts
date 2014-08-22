@@ -336,46 +336,57 @@ class StoryParser
             this.save_config();
         }
 
+
         if (this.config["api_autoIncludeNewVersion"] === undefined)
         {
-
-            // Creates Warning for new Feature:
-
-            var text = "<b>Please Read!</b><br />";
-            text += "In one of the previous version, a new feature has been implemented. Whith this Feature activated, you don't have to manually install new Versions. ";
-            text += "Newer Versions will be saved in your Local Storage and then executed. Because of that, the Version Number displayed in your UserScript Manager ";
-            text += "can be wrong. To Display the Version Number, check your Menu.";
-            text += "Do you want to activate this Feature?";
-
-            var dialog = $('<div title="Fanfiction Story Parser"><p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + text + '</p></div>')
-                .appendTo($("body"));
-
-            window.setTimeout(function ()
+            // Only Check if the Script is not loaded over Chrome!
+            if (typeof (chrome) === "undefined")
             {
-                dialog.dialog({
-                    resizable: true,
-                    modal: true,
-                    buttons:
-                    {
-                        "Enable Feature": function ()
+
+                // Creates Warning for new Feature:
+
+                var text = "<b>Please Read!</b><br />";
+                text += "In one of the previous version, a new feature has been implemented. Whith this Feature activated, you don't have to manually install new Versions. ";
+                text += "Newer Versions will be saved in your Local Storage and then executed. Because of that, the Version Number displayed in your UserScript Manager ";
+                text += "can be wrong. To Display the Version Number, check your Menu.";
+                text += "Do you want to activate this Feature?";
+
+                var dialog = $('<div title="Fanfiction Story Parser"><p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + text + '</p></div>')
+                    .appendTo($("body"));
+
+                window.setTimeout(function ()
+                {
+                    dialog.dialog({
+                        resizable: true,
+                        modal: true,
+                        buttons:
                         {
-                            $(this).dialog("close");
+                            "Enable Feature": function ()
+                            {
+                                $(this).dialog("close");
 
-                            self.config['api_autoIncludeNewVersion'] = true;
-                            self.save_config();
+                                self.config['api_autoIncludeNewVersion'] = true;
+                                self.save_config();
 
-                        },
-                        Cancel: function ()
-                        {
-                            $(this).dialog("close");
+                            },
+                            Cancel: function ()
+                            {
+                                $(this).dialog("close");
 
-                            self.config['api_autoIncludeNewVersion'] = false;
-                            self.save_config();
+                                self.config['api_autoIncludeNewVersion'] = false;
+                                self.save_config();
+                            }
                         }
-                    }
-                });
-            }, 1000);
+                    });
+                }, 1000);
+            }
+            else
+            {
+                self.config['api_autoIncludeNewVersion'] = false;
+                self.save_config();
+            }
         }
+
 
 
         // Load all the config Values that are listed in the _config Array at startup
@@ -669,7 +680,7 @@ class StoryParser
                 {
                     event.preventDefault();
 
-                    var table = $("<table></table>");
+                    var table = $('<table class="table table-hover table-responsive table-border"></table>');
                     table.append("<tr><th>ID</th><th>Name</th><th>Chapter</th><th>Time</th><th>Visited</th><th>Options</th></tr>");
 
                     $.each(self.config.storyReminder, function (_, el: StoryReminderData)
@@ -2593,7 +2604,8 @@ class StoryParser
                     Token: this.config.token,
                     Nested: (sessionStorage["ffnet-mutex"] !== undefined) ? true : false,
                     Branch: this.BRANCH,
-                    Page: window.location.href
+                    Page: window.location.href,
+                    Chrome: (typeof(chrome) !== "undefined")
                 };
 
             if (this.DEBUG)
