@@ -24,32 +24,6 @@ abbr[data-original-title] {
 @guiContainer_width: 600px;
 
 
-/*
-    Not Used since Version 4.4.7
-
-.ffnet_guiContainer
-{
-    position: absolute;
-    top: 15px;
-    background-color: white;
-    width: @guiContainer_width;
-    min-height: 500px;
-    overflow: auto;
-    padding: 10px 5px 10px 5px;
-
-    .gradient(#CCCCCC, #ffffff, 0px, 10%);
-    .border_radius(15px);
-
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
-    -goog-ms-box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
-    border: 1px solid black;
-    
-}
-*/
-
-
 .ffnet_settingsContainer {
     margin: auto;
     margin-bottom: 30px;
@@ -90,7 +64,7 @@ abbr[data-original-title] {
 
 @messageContainer_radius: 15px;
 @messageContainer_width: 260px;
-@messageContainer_height: 120px;
+@messageContainer_height: 150px;
 
 @messageContainer_outerColor: #333399;
 @messageContainer_innerColor: #F6F7EE;
@@ -183,6 +157,78 @@ abbr[data-original-title] {
 }
 
 
+/* Live Chat */
+
+@chat_Container_Width: 630px;
+@chat_Container_Height: 400px;
+
+
+.ChatMessageContainer {
+    width: @chat_Container_Width;
+    height: @chat_Container_Height;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 10px 0px 0px 10px;
+    margin-bottom: 10px;
+    overflow: auto;
+
+    .ChatMessage {
+        width: @chat_Container_Width - 30px;
+        min-height: 40px;
+        margin-bottom: 2px;
+        margin-left: 5px;
+        padding-top: 5px;
+
+        div {
+            display: inline-block;
+
+        }
+
+        .Sender {
+            width: 130px;
+            background-color: lightgray;
+            height: 40px;
+            vertical-align: middle;
+            padding-left:5px;
+            padding-top:20px;
+        }
+
+        .Message {
+            width: 370px;
+            margin-left: 10px;
+            min-height: 40px;
+            vertical-align: top;
+            padding-left: 5px;
+            padding-top: 5px;
+        }
+
+        .Time
+        {
+            width: 60px;         
+
+        }
+    }
+
+    .ChatMessage:nth-of-type(even) {
+        background-color: #dfdfdf;
+    }
+
+    .ChatMessage:nth-of-type(odd) {
+        background-color: #ffffff;
+    }
+}
+
+
+.ChatInputContainer {
+    input {
+        width: 530px;
+        margin-right: 10px;
+    }
+
+    button {
+        width: 80px;
+    }
+}
 
 /*  Common  */
 .gradient(@from, @to, @start: 0.0, @end: 1.0) when (isnumber(@start)) and (isnumber(@end)) {

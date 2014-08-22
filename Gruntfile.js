@@ -19,7 +19,10 @@ module.exports = function (grunt) {
         typescriptFiles:
         [
             'build/userscript.js',
-            'build/ParagraphMenu.js'
+            'build/ParagraphMenu.js',
+            'build/ExtentionBaseClass.js',
+            'build/GUIHandler.js',
+            'build/LiveChatHandler.js'
         ],
         filesToPack:
         [

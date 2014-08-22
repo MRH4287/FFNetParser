@@ -56,6 +56,7 @@ interface Config
     hide_lazy_images: boolean;
     disable_image_hover: boolean;
     content_width: string;
+    enable_chapter_review_ratio: boolean;
 
     // Reading Aid:
     readingHelp_enabled: boolean;
@@ -71,6 +72,7 @@ interface Config
     api_retries: number;
     api_checkForUpdates: boolean;
     api_autoIncludeNewVersion: boolean;
+    api_webSocketServerAddress: string;
 
     // advanced Features:
     disable_cache: boolean;
@@ -102,7 +104,7 @@ interface StoryReminderData
 
 enum GUIElementType
 {
-    Input, Button, Checkbox, Combobox, Text, Custom
+    Input, Button, Checkbox, Combobox, Text, Color, Custom
 }
 
 interface GUIElement
@@ -110,12 +112,39 @@ interface GUIElement
     name: string;
     type: GUIElementType;
     label: string;
-    value: any;
+    value: () => any;
     css?: {};
     attributes?: {};
     callback?: (e: JQueryEventObject) => void;
     values?: string[];
     customOptions?: (element: JQuery) => void;
     customElement?: (data: GUIElement) => JQuery;
+    result?: (element: JQuery) => any;
     debugOnly?: boolean;
+}
+
+interface GUIData
+{
+    name: string;
+    collection: any;
+    guiData: GUIElement[];
+    instances: { [index: string]: JQuery };
+    customSaveFunction?: (data: GUIData) => void;
+    sticky: boolean;
+}
+
+interface GUICategory
+{
+    name: string;
+    title: string;
+    instance?: JQuery;
+    elements: GUIData;
+}
+
+interface WebSocketMessage
+{
+    Type: string;
+    Data: string;
+    Sender: string;
+    Time: string;
 }
