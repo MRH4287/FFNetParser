@@ -68,6 +68,11 @@
 
     }
 
+    public disconnect()
+    {
+        this.socket.close();
+    }
+
     public get Available()
     {
         return ("WebSocket" in window);

@@ -1449,8 +1449,19 @@
     /**
      *   Displays the GUI
      */
-    private gui_show()
+    private gui_show(closeCallback: () => void = null)
     {
+        if (closeCallback === null)
+        {
+            closeCallback = function ()
+            {
+                if (confirm("All unsaved changes will be deleted!"))
+                {
+                    $(this).dialog("close");
+                }
+            };
+        }
+
         var self = this;
         var buttons = {
 
@@ -1502,13 +1513,7 @@
 
             },
 
-            Close: function ()
-            {
-                if (confirm("All unsaved changes will be deleted!"))
-                {
-                    $(this).dialog("close");
-                }
-            }
+            Close: closeCallback
         };
 
         if (this.config.disable_sync)
@@ -1918,7 +1923,12 @@
             this.log("Display Content");
 
 
-            this.gui_show();
+            this.gui_show(function ()
+            {
+                
+                self.parser.chat.disconnect();
+
+            });
         }
 
 
