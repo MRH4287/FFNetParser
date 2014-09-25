@@ -2384,7 +2384,7 @@ class StoryParser
 
         var offset = 500;
 
-        if (typeof (window["scrollY"]) === undefined)
+        if (typeof (window["scrollY"]) === "undefined")
         {
             console.warn("[FFNetParser] EndlessMode disabled. Reason: No Support for Scroll-Events");
             return;
