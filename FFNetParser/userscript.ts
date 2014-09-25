@@ -2645,6 +2645,10 @@ class StoryParser
 
                     self.enableReadingAid(chapter);
 
+                    // Copy Classes and styles from main Container:
+                    chapter.attr("class", $("#storytext").attr("class"))
+                        .attr("style", $("#storytext").attr("style"));
+
                     chapter.slideDown();
 
                     window.setTimeout(function ()
