@@ -63,6 +63,10 @@ interface Config
     readingHelp_backgroundColor: string;
     readingHelp_color: string;
 
+    // Endless Mode:
+    endless_enable: boolean;            // Is the Endless Mode Enabled
+    endless_forceClickAfter: number;    // Show a "Next Page" button after X pages
+
     // API:
     pocket_user: string;
     pocket_password: string;

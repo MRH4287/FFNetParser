@@ -80,6 +80,10 @@ class StoryParser
         readingHelp_backgroundColor: null,
         readingHelp_color: null,
 
+        // Endless Mode:
+        endless_enable: false,            // Is the Endless Mode Enabled
+        endless_forceClickAfter: 5,    // Show a "Next Page" button after X pages
+
         // API:
         pocket_user: null,
         pocket_password: null,
@@ -1027,8 +1031,8 @@ class StoryParser
         this.eList[page] = {};
         this.hidden[page] = 0;
         this.hiddenElements[page] = {};
-        $('.parser-msg').remove();
-        $('[data-color]').removeAttr("data-color");
+        container.find('.parser-msg').remove();
+        container.find('[data-color]').removeAttr("data-color");
 
         var self = this;
         elements.each(function (k, e)
@@ -2081,8 +2085,9 @@ class StoryParser
 
 
     /**
-    *   Enable the Reading Aid Function
-    */
+     * Enable the Reading Aid Function
+     * @param container The Container to enable the Reading Aid for
+     */
     public enableReadingAid(container: JQuery = null)
     {
         if (container === null)
@@ -2147,6 +2152,9 @@ class StoryParser
             }
         }
     }
+
+
+
 
     /**
      * Adds the Chapter/Review Ration Information
@@ -2358,6 +2366,69 @@ class StoryParser
 
     private endlessRequestPending = false;
 
+    private endlessRequestsDone = 0;
+
+    /**
+     * Enabled the EndlessMode 
+     */
+    public enableEndlessMode()
+    {
+        var self = this;
+
+        if (!this.config.endless_enable)
+        {
+            return;
+        }
+
+        var isStory = ($(".z-list").length === 0);
+
+        var offset = 500;
+
+        if (typeof (window["scrollY"]) === undefined)
+        {
+            console.warn("[FFNetParser] EndlessMode disabled. Reason: No Support for Scroll-Events");
+            return;
+        }
+
+
+        window.onscroll = function (ev)
+        {
+
+
+            if ((window.innerHeight + <number>window['scrollY']) >= $(document).height() - offset)
+            {
+                var lastPageContainer: JQuery = null;
+                if (isStory)
+                {
+                    lastPageContainer = $(".storytext").last();
+                }
+                else
+                {
+                    lastPageContainer = $(".ffNetPageWrapper").last();
+                }
+
+                if (lastPageContainer === null || lastPageContainer.length === 0)
+                {
+                    console.log("Error: Can't find Page Container!");
+                    return;
+                }
+
+                var lastPage = Number(lastPageContainer.attr("data-page"));
+                if (lastPage === Number.NaN)
+                {
+                    console.log("Error parsing Page Number!");
+                    return;
+                }
+
+                self.appendPageContent(lastPage + 1);
+            }
+        };
+
+
+
+    }
+
+
     private getPageContent(url: string, callback: (page: JQuery) => void)
     {
         if (this.DEBUG)
@@ -2531,81 +2602,119 @@ class StoryParser
 
         this.log("Appending Page Content. Page: " + page + " - IsStory: ", isStroy);
 
-        var loadingElement = null;
+        var loadingElement = $("<div><center><b>Loading ...</b></center></div>");;
 
-        if (isStroy)
+
+
+        this.endlessRequestsDone++;
+        var overLimit = this.endlessRequestsDone > this.config.endless_forceClickAfter;
+
+        if (!overLimit)
         {
-            var lastPage = $(".storytext").last();
 
-            this.log("LastPage: ", lastPage);
-
-            loadingElement = $("<div><center><b>Loading ...</b></center></div>");
-            lastPage.after(loadingElement);
-
-            this.log("Loading Element added ....");
-
-            this.loadChapterFromPage(page, function (chapter)
+            if (isStroy)
             {
-                self.log("Server Answer Received", chapter);
+                var lastPage = $(".storytext").last();
 
-                self.endlessRequestPending = false;
-                loadingElement.remove();
+                this.log("LastPage: ", lastPage);
 
-                // Add Page Name:
-                chapter.prepend("<hr /><center><b>Page: " + page + "</b></center><hr />");
+                lastPage.after(loadingElement);
 
+                this.log("Loading Element added ....");
 
-                chapter.hide();
-
-                lastPage.after(chapter);
-
-                if (self.config.allow_copy)
+                this.loadChapterFromPage(page, function (chapter)
                 {
-                    self.log("Allow Selection of Text");
-                    $(".nocopy").removeClass("nocopy").parent().attr("style", "padding: 0px 0.5em;");
-                }
+                    self.log("Server Answer Received", chapter);
 
-                self.enableReadingAid(chapter);
 
-                chapter.slideDown();
-            });
+                    loadingElement.remove();
 
+                    // Add Page Name:
+                    chapter.prepend("<hr /><center><b>Page: " + page + "</b></center><hr />");
+
+
+                    chapter.hide();
+
+                    lastPage.after(chapter);
+
+                    if (self.config.allow_copy)
+                    {
+                        self.log("Allow Selection of Text");
+                        $(".nocopy").removeClass("nocopy").parent().attr("style", "padding: 0px 0.5em;");
+                    }
+
+                    self.enableReadingAid(chapter);
+
+                    chapter.slideDown();
+
+                    window.setTimeout(function ()
+                    {
+                        self.endlessRequestPending = false;
+                    }, 1000);
+                });
+
+            }
+            else
+            {
+                var lastWrapper = $(".ffNetPageWrapper").last();
+
+                this.log("LastWrapper: ", lastWrapper);
+
+                lastWrapper.after(loadingElement);
+
+                this.log("Loading Element added ....");
+
+                this.loadElementsFromPage(page, function (wrapper)
+                {
+                    self.log("Server Answer Received", wrapper);
+
+
+                    loadingElement.remove();
+
+                    // Set new elements as wrapped
+                    wrapper.find(".z-list").attr("data-wrapped", "wrapped");
+
+                    wrapper.hide();
+
+
+                    lastWrapper.after(wrapper);
+
+                    self.read(wrapper);
+
+                    wrapper.slideDown();
+
+                    window.setTimeout(function ()
+                    {
+                        self.endlessRequestPending = false;
+                    }, 1000);
+                });
+            }
         }
         else
         {
-            var lastWrapper = $(".ffNetPageWrapper").last();
+            // Add a Load New Page Button:
+            var button = $('<button class="btn">Load Next Page</button>')
+                .click(function (e)
+                {
+                    e.preventDefault();
 
-            this.log("LastWrapper: ", lastWrapper);
+                    location.href = self.getLinkToPageNumber(page);
+                });
 
-            loadingElement = $("<div><center><b>Loading ...</b></center></div>");
-            lastWrapper.after(loadingElement);
 
-            this.log("Loading Element added ....");
-
-            this.loadElementsFromPage(page, function (wrapper)
+            if (isStroy)
             {
-                self.log("Server Answer Received", wrapper);
-
-                self.endlessRequestPending = false;
-                loadingElement.remove();
-
-                // Set new elements as wrapped
-                wrapper.find(".z-list").attr("data-wrapped", "wrapped");
-
-                wrapper.hide();
-
-
-                lastWrapper.after(wrapper);
-
-                self.read(wrapper);
-
-                wrapper.slideDown();
-            });
-
-
-
+                $(".storytext").last()
+                    .append("<br /><hr />")
+                    .append($("<center></center").append(button));
+            }
+            else
+            {
+                $(".ffNetPageWrapper").last()
+                    .append("<br /><hr />")
+                    .append($("<center></center").append(button));
+            }
         }
-
 
     }
 

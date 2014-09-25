@@ -218,6 +218,24 @@
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.allow_copy; },
                     label: 'Allow the selection of Text: '
+                },
+                {
+                    name: "endless_enable",
+                    type: GUIElementType.Checkbox,
+                    value: function ()
+                    {
+                        return self.config.endless_enable;
+                    },
+                    label: "Enable EndlessMode: "
+                },
+                {
+                    name: "endless_forceClickAfter",
+                    type: GUIElementType.Input,
+                    value: function ()
+                    {
+                        return self.config.endless_forceClickAfter;
+                    },
+                    label: "Number of Chapters/Pages after which the user is forced to manually go to the next one: "
                 }
 
             ]

@@ -78,11 +78,7 @@ class ParagraphMenu
                 var paragraphNumber = Number(self.baseElement.attr("data-paragraphNumber"));
 
                 var data = self.getStoryData();
-                /*
-                var urlReg = new RegExp("([^#]+)(?:#.+)?");
-                var url = urlReg.exec(location.href)[1];
-                */
-
+  
                 var page = data.Chapter;
                 var url = self.parser.getLinkToPageNumber(page);
 
