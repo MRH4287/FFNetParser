@@ -113,25 +113,26 @@ class StoryParser
     // ----------------------
 
     /**
-     * The list of elements that are modified
-     */
-    private element: JQuery = null;
-    /**
      * The number of hidden Elements
      */
-    private hidden = 0;
+    private hidden: { [index: number]: number } = {};
 
     /**
      * The hidden elements and the reason for hiding.
      * Index: Link, Value: reason
      */
-    private hiddenElements: { [index: string]: string } = {};
+    private hiddenElements: { [index: number]: { [index: string]: string } } = {};
 
     /**
      * List of found Elements
      * Key: Headline, Value: List of Links
      */
-    private eList: { [index: string]: StoryInfo[] } = {};
+    private eList: { [inex: number]: { [index: string]: StoryInfo[] } } = {};
+
+    /**
+     *  The List of PageWrapper for every page
+     */
+    private wrapperList: { [index: number]: JQuery } = {};
 
     /**
      * Cache for in story search
@@ -483,6 +484,39 @@ class StoryParser
             }
         }, 1000);
 
+
+        setTimeout(function ()
+        {
+            // Get Messages from Server:  
+            if (typeof (self.dataConfig['messages']) === "undefined")
+            {
+                self.api_GetMessages(function (messages)
+                {
+                    if ((messages.Messages !== undefined) && (messages.Messages.length > 0))
+                    {
+                        // New Messages:
+                        self.dataConfig['messages'] = messages.Messages;
+
+                        // Update Icon:
+                        $(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
+                        $(".ffnetMessageContainer").css("background-color", "red");
+
+                        $('.ffnet-messageCount').text(messages.Messages.length);
+
+                        self.save_dataStore();
+                    }
+                });
+
+            }
+            else
+            {
+                // Update Icon:
+                $(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
+                $('.ffnet-messageCount').text(self.dataConfig['messages'].length);
+            }
+
+        }, 5000);
+
     }
 
     /**
@@ -508,7 +542,7 @@ class StoryParser
             table.append(
                 $('<a></a>').addClass('menu-link').html('Reparse Stories').attr('href', '#').click(function (e)
                 {
-                    self.readList($('.z-list'));
+                    self.readAll();
                     e.preventDefault();
 
                 }).attr('title', 'Parse the Stories again')
@@ -797,7 +831,7 @@ class StoryParser
                     }
 
                     self.save_dataStore();
-                    self.readList($('.z-list'));
+                    self.readAll();
 
                 }).addClass("filter_select");
 
@@ -926,47 +960,64 @@ class StoryParser
     }
 
     /**
-     *   Start parsing story List
-     *   @param element Base Element to start parsing
+     *  Initial Read
      */
-    public readList(element: JQuery)
+    public readList()
+    {
+        // Wrap Content:
+        var wrapper = this.createPageWrapper();
+
+        this.read(wrapper);
+    }
+
+    /**
+     * Parse the Content of all PageWrapper
+     */
+    public readAll()
+    {
+        var self = this;
+
+        this.log("Parse all PageWrapper");
+
+        $.each(this.wrapperList, function (page : number, wrapper : JQuery)
+        {
+            self.log("Parse Page: ", page);
+
+            self.read(wrapper);
+        });
+
+    }
+
+
+    /**
+     *   Parses the elements in the specified Container
+     *   @param container The PageWrapper for the Elements
+     */
+    public read(container: JQuery)
     {
         if (this.LOAD_INTERNAL)
         {
             return;
         }
 
-        if (this.inUsersPage)
-        {
-            this.element = element.filter("#st_inside > .z-list");
-        }
-        else
-        {
-            this.element = element;
-        }
+        var page = Number(container.attr("data-page"));
 
-        this.read();
-    }
+        this.log("Read List for Page: ", page);
 
+        var elements = container.find(".z-list");
 
-    /**
-     *   Parses the elements in the specified Container
-     *   @remark Use readList for initial parsing
-     */
-    public read()
-    {
 
         var odd = false;
 
         // Clear old Session:
-        this.eList = {};
-        this.hidden = 0;
-        this.hiddenElements = {};
+        this.eList[page] = {};
+        this.hidden[page] = 0;
+        this.hiddenElements[page] = {};
         $('.parser-msg').remove();
         $('[data-color]').removeAttr("data-color");
 
         var self = this;
-        this.element.each(function (k, e)
+        elements.each(function (k, e)
         {
             var element = $(e);
 
@@ -990,10 +1041,10 @@ class StoryParser
                     console.log("Hide Element because of 'hide_non_english_storys'", link);
                 }
 
-                self.hiddenElements[link] = "hide_non_english_storys";
+                self.hiddenElements[page][link] = "hide_non_english_storys";
 
                 element.hide();
-                self.hidden += 1;
+                self.hidden[page] += 1;
                 return;
             }
 
@@ -1067,7 +1118,7 @@ class StoryParser
                         chapter: 0
                     };
 
-                    self.elementCallback(self, config, element, textEl, headline, info);
+                    self.elementCallback(self, config, element, textEl, headline, info, page);
 
                 } else if (config.search_story)
                 {
@@ -1165,7 +1216,7 @@ class StoryParser
                         element.attr("data-hiddenBy", "storyConfig");
 
                         element.hide();
-                        self.hidden++;
+                        self.hidden[page]++;
                     }
 
 
@@ -1194,11 +1245,11 @@ class StoryParser
                         console.log("Hide Entry because of Display-Only Mode: ", element);
                     }
 
-                    self.hiddenElements[link] = "Display-Only Mode";
+                    self.hiddenElements[page][link] = "Display-Only Mode";
 
 
                     element.hide();
-                    self.hidden += 1;
+                    self.hidden[page] += 1;
                 }
                 else
                 {
@@ -1214,7 +1265,7 @@ class StoryParser
             // Chapter Review Ratio
             self.manageChapterReviewRatio(element);
 
-            self.doParse(requestQueue);
+            self.doParse(requestQueue, page);
 
 
         });
@@ -1224,13 +1275,13 @@ class StoryParser
             console.info("Current Highlighter Settings: ", this.config['highlighter']);
         }
 
-        this.updateList();
+        this.updateList(page);
 
         // Timed Events:
         setTimeout(function ()
         {
             // Color corrections            
-            self.element.filter("[data-color]").each(function (k, e)
+            elements.filter("[data-color]").each(function (k, e)
             {
                 var el = $(e);
                 var color = el.attr("data-color");
@@ -1254,13 +1305,18 @@ class StoryParser
             // Disable Image Hover Effect:
             if (self.config.disable_image_hover)
             {
-                $("head").append(
-                    $("<style></style")
-                        .text(".z-list_hover { height: auto !important }")
-                        .addClass("parser-msg")
-                    );
+                if ($(".disableImageHoverClass").length === 0)
+                {
 
-                $(".cimage").each(function (k, e)
+                    $("head").append(
+                        $('<style class="disableImageHoverClass"></style')
+                            .text(".z-list_hover { height: auto !important }")
+                            .addClass("parser-msg")
+                        );
+
+                }
+
+                elements.find(".cimage").each(function (k, e)
                 {
                     var el = $(e);
                     var width = el.width();
@@ -1274,7 +1330,7 @@ class StoryParser
 
             if (self.config.hide_lazy_images)
             {
-                $(".lazy").remove();
+                elements.find(".lazy").remove();
             }
 
             if (self.config.allow_copy)
@@ -1286,41 +1342,6 @@ class StoryParser
 
 
         }, 1000);
-
-
-        setTimeout(function ()
-        {
-            // Get Messages from Server:  
-            if (typeof (self.dataConfig['messages']) === "undefined")
-            {
-                self.api_GetMessages(function (messages)
-                {
-                    if ((messages.Messages !== undefined) && (messages.Messages.length > 0))
-                    {
-                        // New Messages:
-                        self.dataConfig['messages'] = messages.Messages;
-
-                        // Update Icon:
-                        $(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
-                        $(".ffnetMessageContainer").css("background-color", "red");
-
-                        $('.ffnet-messageCount').text(messages.Messages.length);
-
-                        self.save_dataStore();
-                    }
-                });
-
-            }
-            else
-            {
-                // Update Icon:
-                $(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
-                $('.ffnet-messageCount').text(self.dataConfig['messages'].length);
-            }
-
-        }, 5000);
-
-
     }
 
     /**
@@ -1353,10 +1374,11 @@ class StoryParser
     /**
      *   Starts Recursive Parsing of stories
      *   @param queue List of Stories to parse
+     *   @param page The Page of the Search
      *   @param i What element in the queue should be parsed
      *   @remark Don't specify the second Argument for initial parsing
      */
-    private doParse(queue: RequestQueueData[], i = 0)
+    private doParse(queue: RequestQueueData[], page: number, i = 0)
     {
         if (this.DEBUG)
         {
@@ -1393,7 +1415,7 @@ class StoryParser
 
         var executeNext = function ()
         {
-            self.doParse(queue, i + 1);
+            self.doParse(queue, page, i + 1);
         };
 
         var callback = function (info)
@@ -1405,7 +1427,7 @@ class StoryParser
                 console.info('execute Callback Function ' + el.headline + ' for ', info);
             }
 
-            self.elementCallback(self, el.config, el.element, el.textEl, el.headline, info);
+            self.elementCallback(self, el.config, el.element, el.textEl, el.headline, info, page);
 
             executeNext();
         };
@@ -1605,16 +1627,17 @@ class StoryParser
      *   @param textEl The HTML-Instance containing the Text
      *   @param headline  The Headline of the Found story
      *   @param info The Info to the found element
+     *   @param page The Page of this Event
      */
-    private elementCallback(self: StoryParser, config: MarkerConfig, element: JQuery, textEl: JQuery, headline: string, info: StoryInfo)
+    private elementCallback(self: StoryParser, config: MarkerConfig, element: JQuery, textEl: JQuery, headline: string, info: StoryInfo, page: number)
     {
         var foundWhere = info.chapter;
 
         if (!(headline in self.eList))
         {
-            self.eList[headline] = [];
+            self.eList[page][headline] = [];
         }
-        self.eList[headline].push(info);
+        self.eList[page][headline].push(info);
 
         if (self.DEBUG)
         {
@@ -1633,7 +1656,7 @@ class StoryParser
                 element.show();
             }, 100);
 
-            self.hidden -= 1;
+            self.hidden[page] -= 1;
         }
         else if (self.dataConfig["displayOnly"] !== undefined)
         {
@@ -1644,10 +1667,10 @@ class StoryParser
                 console.log("Hide Element because of 'displayOnly' ", info);
             }
 
-            self.hiddenElements[info.url] = "displayOnly";
+            self.hiddenElements[page][info.url] = "displayOnly";
 
             element.hide();
-            self.hidden += 1;
+            self.hidden[page] += 1;
         }
 
 
@@ -1658,12 +1681,12 @@ class StoryParser
                 console.log("Hide Element because of Filter '" + headline + "'", info);
             }
 
-            self.hiddenElements[info.url] = "Filter '" + headline + "'";
+            self.hiddenElements[page][info.url] = "Filter '" + headline + "'";
 
             element.hide();
             element.addClass('hidden');
             self.updateListColor();
-            self.hidden += 1;
+            self.hidden[page] += 1;
         } else
         {
             if ((config.background !== null) && (config.background !== ""))
@@ -1740,30 +1763,37 @@ class StoryParser
 
         }
 
-        self.updateList();
+        self.updateList(page);
     }
 
     /**
      *   Updates the List of found elements
      */
-    private updateList()
+    private updateList(page: number)
     {
-        // Wrap Content:
-        this.createPageWrapper();
+        var wrapper = this.wrapperList[page];
 
+        if (typeof (wrapper) === "undefined")
+        {
+            this.log("UpdateList - Page Wrapper for Page " + page + " is undefined! Abort. ", this.wrapperList);
+            return;
+        }
+
+
+        this.log("Update List for Page: ", page);
 
         var text = "";
 
         if (this.DEBUG)
         {
-            console.log("Headline-List = ", this.eList);
+            console.log("Headline-List = ", this.eList[page]);
         }
 
         var headlineContainer = $("<div></div>");
 
         var self = this;
 
-        $.each(this.eList, function (headline, elements)
+        $.each(this.eList[page], function (headline, elements)
         {
             if (self.config.marker[headline].print_story)
             {
@@ -1790,14 +1820,14 @@ class StoryParser
 
             if (self.config.marker[headline].mention_in_headline)
             {
-                text += "<b>" + headline + ":</b> " + self.eList[headline].length + " ";
+                text += "<b>" + headline + ":</b> " + self.eList[page][headline].length + " ";
             }
 
         });
 
-        $('#mrhOutput').remove();
+        wrapper.find('#mrhOutput').remove();
 
-        var hiddenByStoryConfig = $('div[data-hiddenBy="storyConfig"]');
+        var hiddenByStoryConfig = wrapper.find('div[data-hiddenBy="storyConfig"]');
 
         if (hiddenByStoryConfig.length > 0)
         {
@@ -1805,15 +1835,15 @@ class StoryParser
         }
 
         var list = $('<div id=\'mrhOutput\'></div>')
-            .html(text + ' <i>All hidden elements:</i> ').append(
-            $("<u></u>").text(self.hidden).click(
+            .html('<div><b>Page: ' + page +'</b></div>' + text + ' <i>All hidden elements:</i> ').append(
+            $("<u></u>").text(self.hidden[page]).click(
                 function (e)
                 {
                     // Build Dialog
                     var dialog = $('<div title="Hidden Elements"></div>');
                     var table = $("<table></table>").appendTo(dialog);
 
-                    $.each(self.hiddenElements, function (key, value)
+                    $.each(self.hiddenElements[page], function (key, value)
                     {
                         table.append(
                             $("<tr></tr>").append(
@@ -1856,7 +1886,7 @@ class StoryParser
             }));
         }
 
-        $(".ffNetPageWrapper").first().before(list);
+        wrapper.prepend(list);
     }
 
     /**
@@ -1867,7 +1897,7 @@ class StoryParser
         var odd = false;
         var self = this;
 
-        this.element.not('.hidden').each(function (k, e)
+        $(".z-list").not('.hidden').each(function (k, e)
         {
             var el = $(e);
             var link = el.find('a').first().attr('href');
@@ -2290,22 +2320,10 @@ class StoryParser
 
     // ------- Endless Mode ------
 
-    /** The current displayed Page */
-    private currentPage: JQuery = null;
+    private endlessRequestPending = false;
 
-    private getPageContent(base: JQuery, prev: boolean, callback: (elements: JQuery, data: JQuery) => void)
+    private getPageContent(url: string, callback: (page: JQuery) => void)
     {
-        var url = null;
-        if (prev)
-        {
-            url = this.getPrevPage(base);
-        }
-        else
-        {
-            url = this.getNextPage(base);
-        }
-
-
         if (this.DEBUG)
         {
             console.log("Requesting next page: ", url);
@@ -2315,30 +2333,30 @@ class StoryParser
 
         $.get(url, function (content)
         {
-
             var data = $(content);
 
-            var elements = data.find(".z-list");
-
-            if (self.DEBUG)
-            {
-                console.log("Elements Found: ", elements);
-            }
-
-            callback(elements, data);
-
+            callback(data);
         });
 
 
     }
 
-    private createWrapper(page: string)
+    private getCurrentPage(content: JQuery): number
     {
-        return $("<div></div>").addClass("ffNetPageWrapper")
-            .attr("data-page", page);
+        return Number(content.find("center > b").first().text());
     }
 
-    private createPageWrapper()
+    private createWrapper(page: number): JQuery
+    {
+        var wrapper = $("<div></div>").addClass("ffNetPageWrapper")
+            .attr("data-page", page);
+
+        this.wrapperList[page] = wrapper;
+
+        return wrapper;
+    }
+
+    private createPageWrapper(): JQuery
     {
         // Wrap the current Page into a PageWrapper
         var currentPage = this.getCurrentPage($("body"));
@@ -2372,12 +2390,113 @@ class StoryParser
             notWrapped.last().after(wrapper);
 
             notWrapped.detach().appendTo(wrapper)
-                .attr("data-wrapped", "wrapped")
-                .attr("data-page", currentPage);
+                .attr("data-wrapped", "wrapped");
+        }
+
+        return wrapper;
+    }
+
+    private getLinkToPageNumber(page: number): string
+    {
+        // Regex used to get the Pagenumber
+        var regex = new RegExp("([?|&]p)=[0-9]+");
+        var container = $("center").first().find("a").first();
+
+        if (container.length > 0)
+        {
+            var href = container.attr("href");
+
+            return href.replace(regex, "$1=" + page);
+        }
+        else
+        {
+            var next = $('button:contains(Next)').first();
+
+            var url = this.getUrlFromButton(next);
+
+            regex = new RegExp("s/([0-9]+)/[0-9]+/");
+
+            return url.replace(regex, "s/$1/" + page + "/");
         }
     }
 
+    private loadElementsFromPage(page: number, callback: (data: JQuery) => void)
+    {
+        var self = this;
 
+        var url = this.getLinkToPageNumber(page);
+
+        this.getPageContent(url, function (res)
+        {
+            var elements = res.find(".z-list");
+            var wrapper = self.createWrapper(page);
+
+            wrapper.append(elements);
+
+            callback(wrapper);
+
+        });
+    }
+
+    public appendPageContent(page: number)
+    {
+        var self = this;
+
+        if (this.endlessRequestPending)
+        {
+            return;
+        }
+
+        this.endlessRequestPending = true;
+
+        var isStroy = ($(".z-list").length === 0);
+
+        this.log("Appending Page Content. Page: " + page + " - IsStory: ", isStroy);
+
+        if (isStroy)
+        {
+            console.error("TODO: Add Support for Story Mode!");
+        }
+        else
+        {
+            var lastWrapper = $(".ffNetPageWrapper").last();
+
+            this.log("LastWrapper: ", lastWrapper);
+
+            var loadingElement = $("<div><center><b>Loading ...</b></center></div>");
+            lastWrapper.after(loadingElement);
+
+            this.log("Loading Element added ....");
+
+            this.loadElementsFromPage(page, function (wrapper)
+            {
+                self.log("Server Answer Received", wrapper);
+
+                self.endlessRequestPending = false;
+                loadingElement.remove();
+
+                // Set new elements as wrapped
+                wrapper.find(".z-list").attr("data-wrapped", "wrapped");
+
+                wrapper.hide();
+
+
+                lastWrapper.after(wrapper);
+
+                self.read(wrapper);
+
+                wrapper.slideDown();
+            });
+
+
+
+        }
+
+
+    }
+
+
+    /*
     private loadPage(loadPrev = false)
     {
         var base = null;
@@ -2430,10 +2549,7 @@ class StoryParser
         });
     }
 
-    private getCurrentPage(content: JQuery)
-    {
-        return content.find("center > b").first().text();
-    }
+
 
 
     private loadNextPage()
@@ -2475,6 +2591,7 @@ class StoryParser
 
         return null;
     }
+    */
 
 
     // ----- API-Interface ------
@@ -2605,7 +2722,7 @@ class StoryParser
                     Nested: (sessionStorage["ffnet-mutex"] !== undefined) ? true : false,
                     Branch: this.BRANCH,
                     Page: window.location.href,
-                    Chrome: (typeof(chrome) !== "undefined")
+                    Chrome: (typeof (chrome) !== "undefined")
                 };
 
             if (this.DEBUG)

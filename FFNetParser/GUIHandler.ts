@@ -1613,7 +1613,7 @@
                     {
                         self.parser.setConfig(neu.val());
                         self.gui_hide();
-                        self.parser.read();
+                        self.parser.readAll();
                     })
                 );
 
@@ -1774,7 +1774,7 @@
 
                         self.guiContainer.css("position", "absolute");
                         self.gui_hide();
-                        self.parser.read();
+                        self.parser.readAll();
                         self.parser.enableInStoryHighlighter();
                     })
                 );
