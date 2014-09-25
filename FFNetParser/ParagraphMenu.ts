@@ -1,4 +1,7 @@
-﻿class ParagraphMenu
+﻿/**
+ * The Class for the Story Remainer Menu
+ */
+class ParagraphMenu
 {
     private parser: StoryParser = null;
 
@@ -25,8 +28,20 @@
         });
 
         // Add Logic to the Paragraph Elements on the Page:
+        this.addHandler($("body"));
+
+    }
+
+    /**
+     * Adds EventHandler to the Paragraph Elements of the Page
+     * @param container The element, that contains the Paragraphs
+     */
+    public addHandler(container: JQuery)
+    {
+        var self = this;
         var i = 0;
-        $("p").each(function ()
+
+        container.find("p").each(function ()
         {
             var el = $(this);
             el.mouseover(function ()
@@ -63,9 +78,14 @@
                 var paragraphNumber = Number(self.baseElement.attr("data-paragraphNumber"));
 
                 var data = self.getStoryData();
+                /*
                 var urlReg = new RegExp("([^#]+)(?:#.+)?");
-
                 var url = urlReg.exec(location.href)[1];
+                */
+
+                var page = data.Chapter;
+                var url = self.parser.getLinkToPageNumber(page);
+
 
                 // Create Dialog:
                 var dialog = $('<div></div>').attr("title", "Link for this Position")
@@ -109,9 +129,12 @@
         var paragraphNumber = Number(this.baseElement.attr("data-paragraphNumber"));
 
         var data = this.getStoryData();
-        var urlReg = new RegExp("([^#]+)(?:#.+)?");
 
-        var url = urlReg.exec(location.href)[1];
+        /*var urlReg = new RegExp("([^#]+)(?:#.+)?");
+        var url = urlReg.exec(location.href)[1];*/
+
+        var page = data.Chapter;
+        var url = this.parser.getLinkToPageNumber(page);
 
         var storyID = data.ID;
 
@@ -146,9 +169,11 @@
 
         var result = reg.exec(location.href);
 
+        var chapter = Number(this.baseElement.parent().attr("data-page"));
+
         return {
             "ID": result[1],
-            "Chapter": result[2],
+            "Chapter": chapter,
             "Name": result[3]
         };
     }

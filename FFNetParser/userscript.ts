@@ -48,6 +48,11 @@ class StoryParser
      */
     public chat: LiveChatHandler = new LiveChatHandler(this);
 
+    /**
+     * The Paragraph Menu of the current Page
+     */
+    public paragramMenu: ParagraphMenu = null;
+
 
     /**
      * The Config of the Script
@@ -964,10 +969,19 @@ class StoryParser
      */
     public readList()
     {
+        if (this.LOAD_INTERNAL)
+        {
+            return;
+        }
+
         // Wrap Content:
         var wrapper = this.createPageWrapper();
 
-        this.read(wrapper);
+        // Only run, if not a Story List
+        if (wrapper !== null)
+        {
+            this.read(wrapper);
+        }
     }
 
     /**
@@ -979,7 +993,7 @@ class StoryParser
 
         this.log("Parse all PageWrapper");
 
-        $.each(this.wrapperList, function (page : number, wrapper : JQuery)
+        $.each(this.wrapperList, function (page: number, wrapper: JQuery)
         {
             self.log("Parse Page: ", page);
 
@@ -1397,7 +1411,10 @@ class StoryParser
         // Check for ScriptInsert Page:
         if (data.url.indexOf("?url=") === -1)
         {
-            url = 'https://www.fanfiction.net' + data.url;
+            var domainRegex = new RegExp("https?://[^/]+");
+            var domain = domainRegex.exec(location.href)[0];
+
+            url = domain + data.url;
         }
         else
         {
@@ -1835,7 +1852,7 @@ class StoryParser
         }
 
         var list = $('<div id=\'mrhOutput\'></div>')
-            .html('<div><b>Page: ' + page +'</b></div>' + text + ' <i>All hidden elements:</i> ').append(
+            .html('<div><b>Page: ' + page + '</b></div>' + text + ' <i>All hidden elements:</i> ').append(
             $("<u></u>").text(self.hidden[page]).click(
                 function (e)
                 {
@@ -2066,8 +2083,13 @@ class StoryParser
     /**
     *   Enable the Reading Aid Function
     */
-    public enableReadingAid()
+    public enableReadingAid(container: JQuery = null)
     {
+        if (container === null)
+        {
+            container = $("body");
+        }
+
         if (this.LOAD_INTERNAL)
         {
             return;
@@ -2092,12 +2114,16 @@ class StoryParser
                 data += " color: " + this.config.readingHelp_color + ";";
             }
 
-            // Build Style Object
-            var style = $('<style type="text/css"></style>')
-                .html(".readingAidMarker { " + data + " }")
-                .appendTo($("head"));
+            if ($(".readingAidStyle").length === 0)
+            {
+                // Build Style Object
+                var style = $('<style class="readingAidStyle" type="text/css"></style>')
+                    .html(".readingAidMarker { " + data + " }")
+                    .appendTo($("head"));
+            }
 
-            $("p").mouseenter(function ()
+
+            container.find("p").mouseenter(function ()
             {
                 $(this).addClass("readingAidMarker");
             }).mouseleave(function ()
@@ -2110,8 +2136,15 @@ class StoryParser
 
         if (!this.config.disable_parahraphMenu)
         {
-            // Load the Paragraph Menu
-            new ParagraphMenu(this);
+            if (this.paragramMenu === null)
+            {
+                // Load the Paragraph Menu
+                this.paragramMenu = new ParagraphMenu(this);
+            }
+            else
+            {
+                this.paragramMenu.addHandler(container);
+            }
         }
     }
 
@@ -2282,8 +2315,11 @@ class StoryParser
 
             var title = body.find("title").first().text();
 
+            var domainRegex = new RegExp("https?://[^/]+");
+            var domain = domainRegex.exec(location.href)[0];
+
             $("body").append(
-                $("<img>").attr("src", 'https://readitlaterlist.com/v2/add?username=' + user + '&password=' + password + '&apikey=emIpiQ7cA6fR4u6dr7ga2aXC11dcD58a&url=https://www.fanfiction.net' + url + '&title=' + title)
+                $("<img>").attr("src", 'https://readitlaterlist.com/v2/add?username=' + user + '&password=' + password + '&apikey=emIpiQ7cA6fR4u6dr7ga2aXC11dcD58a&url=' + domain + url + '&title=' + title)
                 );
 
             console.log(url + ' - ' + title + ' - Done');
@@ -2341,9 +2377,21 @@ class StoryParser
 
     }
 
-    private getCurrentPage(content: JQuery): number
+    public getCurrentPage(): number
     {
-        return Number(content.find("center > b").first().text());
+        var pageNumber = $("center > b").first();
+
+        if (pageNumber.length !== 0)
+        {
+            return Number(pageNumber.text());
+        }
+        else
+        {
+            // We are in a Story ....
+            pageNumber = $("#chap_select").children().filter("[selected]");
+
+            return Number(pageNumber.attr("value"));
+        }
     }
 
     private createWrapper(page: number): JQuery
@@ -2359,45 +2407,60 @@ class StoryParser
     private createPageWrapper(): JQuery
     {
         // Wrap the current Page into a PageWrapper
-        var currentPage = this.getCurrentPage($("body"));
+        var currentPage = this.getCurrentPage();
 
         if (this.DEBUG)
         {
             console.log("Current Page: ", currentPage);
         }
 
-        var wrapper = $(".ffNetPageWrapper");
-        if (wrapper.length === 0)
+        if ($(".z-list").length !== 0)
         {
-            wrapper = this.createWrapper(currentPage);
-        }
 
-        var notWrapped = $('.z-list[data-wrapped!="wrapped"]');
-
-        if (this.inUsersPage)
-        {
-            notWrapped = notWrapped.filter("#st_inside > .z-list");
-        }
-
-        if (notWrapped.length !== 0)
-        {
-            if (this.DEBUG)
+            var wrapper = $(".ffNetPageWrapper");
+            if (wrapper.length === 0)
             {
-                console.log("Not Wrapped Elements found");
+                wrapper = this.createWrapper(currentPage);
             }
 
+            var notWrapped = $('.z-list[data-wrapped!="wrapped"]');
 
-            notWrapped.last().after(wrapper);
+            if (this.inUsersPage)
+            {
+                notWrapped = notWrapped.filter("#st_inside > .z-list");
+            }
 
-            notWrapped.detach().appendTo(wrapper)
-                .attr("data-wrapped", "wrapped");
+            if (notWrapped.length !== 0)
+            {
+                if (this.DEBUG)
+                {
+                    console.log("Not Wrapped Elements found");
+                }
+
+
+                notWrapped.last().after(wrapper);
+
+                notWrapped.detach().appendTo(wrapper)
+                    .attr("data-wrapped", "wrapped");
+            }
+
+            return wrapper;
         }
+        else
+        {
+            // Story
+            $("#storytext").attr("data-page", currentPage);
 
-        return wrapper;
+            return null;
+        }
     }
 
-    private getLinkToPageNumber(page: number): string
+    public getLinkToPageNumber(page: number): string
     {
+        var domainRegex = new RegExp("https?://[^/]+");
+        var domain = domainRegex.exec(location.href)[0];
+
+
         // Regex used to get the Pagenumber
         var regex = new RegExp("([?|&]p)=[0-9]+");
         var container = $("center").first().find("a").first();
@@ -2406,7 +2469,7 @@ class StoryParser
         {
             var href = container.attr("href");
 
-            return href.replace(regex, "$1=" + page);
+            return domain + href.replace(regex, "$1=" + page);
         }
         else
         {
@@ -2416,7 +2479,7 @@ class StoryParser
 
             regex = new RegExp("s/([0-9]+)/[0-9]+/");
 
-            return url.replace(regex, "s/$1/" + page + "/");
+            return domain + url.replace(regex, "s/$1/" + page + "/");
         }
     }
 
@@ -2438,6 +2501,21 @@ class StoryParser
         });
     }
 
+    private loadChapterFromPage(page: number, callback: (page: JQuery) => void)
+    {
+        var self = this;
+        var url = this.getLinkToPageNumber(page);
+
+        this.getPageContent(url, function (res)
+        {
+            var story = res.find(".storytext").first();
+
+            story.removeAttr("id").attr("data-page", page);
+
+            callback(story);
+        });
+    }
+
     public appendPageContent(page: number)
     {
         var self = this;
@@ -2453,9 +2531,45 @@ class StoryParser
 
         this.log("Appending Page Content. Page: " + page + " - IsStory: ", isStroy);
 
+        var loadingElement = null;
+
         if (isStroy)
         {
-            console.error("TODO: Add Support for Story Mode!");
+            var lastPage = $(".storytext").last();
+
+            this.log("LastPage: ", lastPage);
+
+            loadingElement = $("<div><center><b>Loading ...</b></center></div>");
+            lastPage.after(loadingElement);
+
+            this.log("Loading Element added ....");
+
+            this.loadChapterFromPage(page, function (chapter)
+            {
+                self.log("Server Answer Received", chapter);
+
+                self.endlessRequestPending = false;
+                loadingElement.remove();
+
+                // Add Page Name:
+                chapter.prepend("<hr /><center><b>Page: " + page + "</b></center><hr />");
+
+
+                chapter.hide();
+
+                lastPage.after(chapter);
+
+                if (self.config.allow_copy)
+                {
+                    self.log("Allow Selection of Text");
+                    $(".nocopy").removeClass("nocopy").parent().attr("style", "padding: 0px 0.5em;");
+                }
+
+                self.enableReadingAid(chapter);
+
+                chapter.slideDown();
+            });
+
         }
         else
         {
@@ -2463,7 +2577,7 @@ class StoryParser
 
             this.log("LastWrapper: ", lastWrapper);
 
-            var loadingElement = $("<div><center><b>Loading ...</b></center></div>");
+            loadingElement = $("<div><center><b>Loading ...</b></center></div>");
             lastWrapper.after(loadingElement);
 
             this.log("Loading Element added ....");
