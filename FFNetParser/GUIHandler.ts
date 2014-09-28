@@ -1470,6 +1470,9 @@
     private gui_hide()
     {
         this.guiContainer.dialog("close");
+        this.guiContainer.remove();
+        this.guiContainer = null;
+
         //_guiContainer.fadeOut();
     }
 
