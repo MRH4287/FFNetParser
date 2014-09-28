@@ -2009,9 +2009,11 @@ class StoryParser
         }
 
         var body = $("body");
-        var field = body.find('#gui_table1i').first().find("b").first();
+        var field = body.find('#profile_top').first().find("b").first();
 
-        var contextMenu = $("<div></div>")
+        body.find(".highlight-msg").remove();
+
+        var contextMenu = $('<div class="highlight-msg"></div>')
             .css("width", "20px")
             .css("height", "20px")
             .css("float", "right")
@@ -2062,7 +2064,7 @@ class StoryParser
                 .css("width", "20px")
                 .css("height", "20px")
                 .css("margin-left", "15px")
-                .addClass("parser-msg");
+                .addClass("highlight-msg");
 
             field.after(img);
 
