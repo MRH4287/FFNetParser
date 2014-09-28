@@ -1,0 +1,406 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>UserScript Test Suit</title>
+    <!-- Load local QUnit. -->
+    <link rel="stylesheet" href="libs/qunit.css" media="screen">
+    <link rel='stylesheet' href='https://www.fanfiction.net/static/styles/xss24.css'>
+    <link rel="stylesheet" href="../style.css">
+
+
+</head>
+<body>
+    <div id="top" style="width:100%;background-color: #333399; ">
+        <div class="menulink maxwidth" style="padding:0.5em 10px 0.5em 10px; vertical-align:middle;">
+            <span class="pull-right" id="name_login">
+                <a style="color:white;" href="/login.php">
+                    <span style="font-size:15px;position:relative;top:1px" class="icon-lock"></span> Login
+                </a> | <a style="color:white;" href="#">Sign Up</a>
+            </span>
+            <a style="font-weight:bold;border:none;" href="/">FanFiction</a>&nbsp;&nbsp;
+            <small>|</small>&nbsp;&nbsp;unleash your imagination
+            <span title="Mobile Edition" style="font-size:14px;margin-left:10px;" class="icon-kub-mobile"></span>
+            <span style="font-size:14px;margin-left:10px;" class="icon-tl-text" title="Fontastic Panel: UI Settings"></span>
+            <div class="xmenu_item">
+                <span style="cursor:pointer;font-size:14px;margin-left:10px;" class="icon-globe" title="Language"></span>
+                <div align="center" id="google_translate_element" class="hide">
+                    <div class="skiptranslate goog-te-gadget" dir="ltr" style="">
+                        <div id=":0.targetLanguage" style="white-space: nowrap;" class="goog-te-gadget-simple">
+                            <img src="https://www.google.com/images/cleardot.gif" class="goog-te-gadget-icon" style="background-image: url(&quot;https://translate.googleapis.com/translate_static/img/te_ctrl3.gif&quot;); background-position: -65px 0px;">
+                            <span style="vertical-align: middle;">
+                                <a class="goog-te-menu-value" href="javascript:void(0)">
+                                    <span>Sprache auswählen</span>
+                                    <img width="1" height="1" src="https://www.google.com/images/cleardot.gif">
+                                    <span style="border-left: 1px solid rgb(187, 187, 187);">&#8203;</span>
+                                    <img width="1" height="1" src="https://www.google.com/images/cleardot.gif">
+                                    <span style="color: rgb(155, 155, 155);">▼</span>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style='width:100%;' class=xcontrast_outer id=content_parent>
+        <div class='xcontrast maxwidth' id=content_wrapper style='background-color: white;'>
+            <div id=content_wrapper_inner style='padding:0.5em;'>
+                <div style='margin-bottom: 10px' class='lc-wrapper' id=pre_story_links>
+                    <span class=lc-left>
+                        <a class=xcontrast_txt href='/game/'>Games</a><span class='xcontrast_txt icon-chevron-right xicon-section-arrow'></span><a class=xcontrast_txt href="/game/Pok%C3%A9mon/">Pokémon</a>
+                    </span>
+                </div>
+                <div id=profile_top style='min-height:112px;'>
+                    <span style='cursor:pointer;' title='Click for Larger Image'>
+                        <div class='cimage' style='clear:left;float:left;margin-right:3px;padding:2px;border:1px solid #ccc;-moz-border-radius:2px;-webkit-border-radius:2px;width:75px;height:112px'></div>
+                    </span>
+                    <button class='btn pull-right icon-heart' type=button> Follow/Fav</button>
+                    <b class='xcontrast_txt'>Test</b>
+                    <span class='xcontrast_txt'>
+                        <div style='height:5px'></div>
+                        By:
+                    </span>
+                    <a class='xcontrast_txt' href='#'>Test</a>
+                    <span class='icon-mail-1  xcontrast_txt'></span>
+                    <a class='xcontrast_txt' title="Send Private Message" href='#'></a>
+                    <div style='margin-top:2px' class='xcontrast_txt'>
+                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
+                    </div>
+                    <span class='xgray xcontrast_txt'>
+                        Rated: <a class='xcontrast_txt' href='https://www.fictionratings.com/' target='rating'>Fiction  T</a>
+                        - English - Adventure/Suspense -  Character A, Character B - Chapters: 42   - Words: 222,222 - Reviews:
+                        <a href='#'>274</a> - Favs: 54 - Follows: 45 - Updated: <span data-xutime='1393419347'>2/26</span> - Published: <span data-xutime='1305470055'>5/15/2011</span> - Status: Complete - id: 123456789
+                    </span>
+                </div>
+                <div align=center class='lc-wrapper' style='margin-top:10px;'>
+                    <div class='lc'>
+                        <span class='xcontrast_txt'>
+                            <span class='icon-tl-text' style='font-size:14px;cursor:pointer;' title="+ Font Size"></span>
+                            +
+                        </span>
+                        &#160;&#160;<span class='xcontrast_txt'>
+                            <span class='icon-tl-text' style='font-size:14px;cursor:pointer;' title="- Font Size">
+                            </span>
+                            -
+                        </span>&#160;&#160;
+                        <span style='font-size:14px;cursor:pointer;' class='icon-tl-text xcontrast_txt' title="Fonts">
+                        </span>&#160;&#160;
+
+                        <span class='icon-align-justify xcontrast_txt' style='font-size:14px' title="Story Width"></span>
+                        <span id=f_width class='hide xcontrast_txt'>
+                            <span>Full</span>
+                            <span>3/4</span>
+                            <span>1/2</span>
+                        </span> &#160;&#160;
+                        <span class='icon-tl-text-height xcontrast_txt' style='font-size:14px;cursor:pointer;' title="Line Spacing"></span>
+                        <span id=f_size class='hide xcontrast_txt'>
+                            <span>Expand</span>
+                            <span>Tighten</span>
+                        </span>&#160;&#160;<span class='xcontrast_txt icon-tl-contrast' style='margin-left:2px;margin-right:2px;font-size:14px;' title="Story Contrast"></span>
+                    </div>
+                </div>
+                <span style='float:right; '>
+                    <select id=chap_select title="Chapter Navigation" name=chapter>
+                        <option value=1 selected>1. Test</option>
+                    </select>
+                    <button class="btn" type="BUTTON">Next &gt;</button>
+                </span><div style='height:5px'></div>
+
+                <style>
+                    .storytext {
+                        max-height: 999999px;
+                        width: 100%;
+                        font-size: 1em;
+                        font-family: "Verdana";
+                        line-height: 1.25;
+                        text-align: left;
+                    }
+                </style>
+
+                <div role='main' aria-label='story content' class='storytextp' id='storytextp' align=center style='padding:0 0.5em 0 0.5em;'>
+                    <div class='storytext xcontrast_txt nocopy' id='storytext'>
+                        <p>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+                            sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+                            sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+                            ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+                            magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata
+                            sanctus est Lorem ipsum dolor sit amet.
+                        </p>
+                        <p>
+                            Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros
+                            et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor
+                            sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+                        </p>
+                        <p>
+                            Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+                            Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at
+                            vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+                        </p>
+                        <p>
+                            Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet,
+                            consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam,
+                            quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+                        </p>
+                        <p>
+                            Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis.
+                        </p>
+                        </p>
+
+                    </div>
+                </div>
+                <div style='height:5px'></div>
+                <div style='clear:both;text-align:right;'>
+                    <select id=chap_select title="Chapter Navigation" name=chapter>
+                        <option value=1 selected>1. Test</option>
+                    </select>
+
+                    <button class="btn" type="BUTTON">Next &gt;</button>
+                </div>
+                <div style='height:5px'></div>
+
+
+                <div id=review>
+                    <table border="0" cellspacing="0" style='width:100%;'>
+                        <!-- min-width:500px;max-width:975px;clear:both;margin-right:auto;margin-left:auto;-->
+                        <tr>
+                            <td width=300 valign=top></td>
+                            <td width=10></td>
+                            <td valign=top>
+                                <div style='width:100%;max-width:700px;'>
+                                    <table style='width:100%;'>
+                                        <tr>
+                                            <td colspan=2>
+
+                                                <div id=review_name style=''>
+                                                    <!-- min-width:500px;max-width:975px;  style='padding:0.5em;width:98%;' -->
+                                                    <input class='input-block-level' style='max-width:700px' type=text name='name' id='review_name_value' maxlength=16 placeholder="Name:">
+                                                    <div style='height:4px'></div>
+                                                </div>
+
+
+
+                                                <textarea class='input-block-level' style='max-width:700px' rows=10 placeholder="Type your review for this chapter here..." name=review id=review_review></textarea>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style='vertical-align:middle;'>
+                                                <div id='alert_subs' class='hide xcontrast_txt'>
+                                                    Favorite :
+                                                    Story <input style='margin:-2px 0 0 0' type=checkbox name=favstory id=review_favstory>
+                                                    Author <input style='margin:-2px 0 0 0' type=checkbox name=favauthor id=review_favauthor>
+                                                    &#160;
+                                                    Follow :
+                                                    Story <input style='margin:-2px 0 0 0' type=checkbox name=storyalert id=review_storyalert>
+                                                    Author <input style='margin:-2px 0 0 0' type=checkbox name=authoralert id=review_authoralert>
+                                                </div>
+                                            </td>
+                                            <td align=right>
+                                                <!-- Split button -->
+                                                <div class='btn-group xreset-left'>
+                                                    <button type='button' class='btn icon-edit-1' id=review_postbutton>Post Review</button>
+                                                    <button type='button' class='btn dropdown-toggle login_items' data-toggle='dropdown'>
+
+                                                        <span class='sr-only '>As</span>
+                                                        <span class='caret '></span>
+                                                    </button>
+                                                    <ul class='dropdown-menu' role='menu'></ul>
+                                                </div>
+
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- <div id='please_login' class='modal hide fade'></div> -->
+                <div style='height:15px'></div>
+                <div align=center class=lc-wrapper>
+                    <div class=lc>
+                        <form name=myselect onsubmit='return false;'>
+                            <table style='min-width:400px;margin-left:auto;margin-right:auto;' cellpadding=4>
+                                <tr>
+                                    <td>
+                                        <div class='btn-group ' id='story_actions'>
+                                            <div class='btn-group dropup' align=left>
+                                                <button class='btn dropdown-toggle' data-toggle='dropdown'>
+                                                    <span>Actions</span>
+                                                    <span class='caret'></span>
+                                                </button>
+                                                <ul class='dropdown-menu'>
+                                                    <li>Add to Community</li>
+                                                    <li>Report Abuse</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class='btn-group ' id='share_providers'>
+                                            <div class='btn-group dropup' align=left>
+                                                <button class='btn dropdown-toggle' data-toggle='dropdown'>
+                                                    <span class='icon-share'> Share</span>
+
+                                                </button>
+                                                <ul class='dropdown-menu'>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <button class='btn icon-heart' type=button > Follow/Favorite</button>
+                                        <style>
+                                            label input[type=checkbox] {
+                                                position: relative;
+                                                vertical-align: middle;
+                                                bottom: -5px;
+                                            }
+                                        </style>
+                                        <div class='modal fade hide' id=follow_area>
+                                            <div class='modal-body'>
+                                                <center>
+                                                    <table style='padding:6px;color:black !important;'>
+                                                        <tr>
+                                                            <td valign=top>
+                                                                + Follow
+                                                                <hr>
+                                                                <label class='checkbox'>
+                                                                    <input type='checkbox' id=q_follow_story> Story
+                                                                </label>
+                                                                <label class='checkbox'>
+                                                                    <input type='checkbox' id=q_follow_author> Writer
+                                                                </label>
+                                                            </td>
+                                                            <td width=20></td>
+                                                            <td valign=top>
+                                                                + Favorite
+                                                                <hr>
+                                                                <label class='checkbox'>
+                                                                    <input type='checkbox' id=q_fav_story> Story
+                                                                </label>
+                                                                <label class='checkbox'>
+                                                                    <input type='checkbox' id=q_fav_author> Writer
+                                                                </label>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </center>
+                                            </div>
+                                            <div class='modal-footer'>
+
+
+                                                <span class='btn pull-left' data-dismiss='modal'>Close</span>
+                                                <span id='q_working' class='hide'>Working...&nbsp;&nbsp;</span>
+                                                <span class='btn btn-primary'>Save</span>
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+                <div style='height:5px'></div>
+            </div>
+        </div>
+    </div><div id=p_footer class=maxwidth style='clear:all;padding:1em 0 1em 0;'><div style='text-align:center'><a href='#'>Help</a> . <a href='#'>Privacy</a> . <a href='#'>Terms of Service</a>  . <a href='#top'>Top</a></div><div style='height:10px'></div><div style='text-align:center'><a href='http://blog.fictionpress.com'><span class='icon-wordpress' style='color:rgb(104, 100, 100);font-size:18px;height:20px;width:20px;'></span></a>  <a href='//www.twitter.com/fictionpress'><span class='icon-twitter-3' style='color:rgb(104, 100, 100);font-size:18px;height:20px;width:20px;'></span></a> <a href='//plus.google.com/+fanfiction'><span class='icon-google__x2B_' style='color:rgb(104, 100, 100);font-size:18px;height:20px;width:20px;'></span></a></div><div style='height:15px'></div></div>
+
+
+    <div style="margin-top: 100px"></div>
+
+    <div id="qunit"></div>
+    <script src="libs/qunit.js"></script>
+
+    <!-- Apply special Test Config: -->
+    <script>
+        var config =
+            {
+                "pocket_user": "test",
+                "pocket_password": "test",
+                "token": "8447442506439984",
+                "story_search_depth": 2,
+                "mark_M_storys": true,
+                "hide_non_english_storys": true,
+                "allow_copy": false,
+                "color_normal": "#FFFFFF",
+                "color_mouse_over": "#EEF0F4",
+                "color_odd_color": "#dfdfdf",
+                "hide_images": true,
+                "hide_lazy_images": true,
+                "disable_image_hover": false,
+                "content_width": "90%",
+                "api_url": "https://www.mrh-development.de/FanFictionUserScript",
+                "api_lookupKey": "ffnet-api-interface",
+                "api_timeout": 3000,
+                "api_retries": 2,
+                "api_checkForUpdates": false,
+                "api_autoIncludeNewVersion": false,
+                "disable_cache": true,
+                "disable_highlighter": false,
+                "disable_sync": true,
+                "storage_key": "ffnet-storycache",
+                "config_key": "ffnet-config",
+                "dataStorage_key": "ffnet-dataStore",
+                "highlighter": {},
+                "marker":
+                    {
+                        "Test-Data":
+                            {
+                                "name": "Test-Data",
+                                "color": "#ff0000",
+                                "ignore": [""],
+                                "keywords": ["([^a-z]|^)(good)([^a-z]|$)"],
+                                "mark_chapter": true,
+                                "mention_in_headline": true,
+                                "display": true,
+                                "mouseOver": "#00ff00",
+                                "print_story": true,
+                                "search_story": false,
+                                "ignoreColor": false,
+                                "background": null,
+                                "text_color": "#686868",
+                                "revision": 1
+                            },
+                        "Test-Data2":
+                            {
+                                "name": "Test-Data2",
+                                "color": "#FFFFFF",
+                                "ignore": [""],
+                                "keywords": ["([^a-z]|^)(nice)([^a-z]|$)"],
+                                "mark_chapter": false,
+                                "mention_in_headline": true,
+                                "display": false,
+                                "mouseOver": "#FFFFFF",
+                                "print_story": false,
+                                "search_story": false,
+                                "ignoreColor": true
+                                , "background": null,
+                                "text_color": "#686868",
+                                "revision": 0
+                            }
+                    },
+                "markerBackup": {}
+            };
+
+        localStorage['ffnet-config'] = JSON.stringify(config);
+
+
+    </script>
+    <!-- Insert the Userscript here! -->
+    <!-- We need to insert it here, because of the way this script works -->
+    <script src="../ffnetlist.user.js"></script>
+
+    <!-- Load local lib and tests. -->
+    <script src="story_test.js"></script>
+</body>
+
+
+
+
+</html>
