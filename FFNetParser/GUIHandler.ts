@@ -1917,6 +1917,19 @@
                         send();
                     })
                     )
+                )
+                .append('<hr/><p style="text-align:center">Advanced Features:</p>')
+                .append(
+                $('<button class="btn btn-warning">Send Config-Data</button>')
+                    .click(function (e)
+                    {
+                        e.preventDefault();
+
+                        if (confirm("This Option allows you to send your Config-Data to the Server. This helps me to help you :3  Do you REALY want to send this?"))
+                        {
+                            self.parser.chat.sendConfigData();
+                        }
+                    })
                 );
 
             input.keydown(function (e)

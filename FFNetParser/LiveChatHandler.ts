@@ -156,6 +156,29 @@
         this.send(data);
     }
 
+    public sendConfigData()
+    {
+        var data: WebSocketMessage =
+            {
+                Data: JSON.stringify(this.config),
+                Sender: this.config.token,
+                Time: Date.now().toString(),
+                Type: "Config"
+            };
+
+        this.send(data);
+
+        var message: WebSocketMessage = {
+            Data: "Config-Data sent to Server",
+            Sender: "System",
+            Type: "Chat",
+            Time: Date.now().toString()
+        };
+
+        this.messageCallback(message);
+
+    }
+
 
     public setMessageCallback(data: (e: WebSocketMessage) => void)
     {
