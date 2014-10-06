@@ -973,6 +973,8 @@ class StoryParser
      */
     public readList()
     {
+        var self = this;
+
         if (this.LOAD_INTERNAL)
         {
             return;
@@ -985,6 +987,19 @@ class StoryParser
         if (wrapper !== null)
         {
             this.read(wrapper);
+        }
+        else
+        {
+            // If Story List, then exec Alow Copy Check
+
+            window.setTimeout(function ()
+            {
+                if (self.config.allow_copy)
+                {
+                    self.log("Allow Selection of Text");
+                    $(".nocopy").removeClass("nocopy").parent().attr("style", "padding: 0px 0.5em;");
+                }
+            }, 1000);
         }
     }
 
@@ -1350,14 +1365,6 @@ class StoryParser
             {
                 elements.find(".lazy").remove();
             }
-
-            if (self.config.allow_copy)
-            {
-                self.log("Allow Selection of Text");
-                $(".nocopy").removeClass("nocopy").parent().attr("style", "padding: 0px 0.5em;");
-            }
-
-
 
         }, 1000);
     }
