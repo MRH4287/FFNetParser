@@ -285,13 +285,14 @@
                     label: 'Normal Background-Color: ',
                     attributes:
                     {
-                        size: 50
+                        size: 50,
+                        placeholder: "Click to change Color"
                     },
                     customOptions: function (element) 
                     {
                         element.colorpicker({
                             colorFormat: "#HEX"
-                        });
+                        }).after('<small style="margin-left:10px">Click field to change color</small>');
                     }
                 },
                 {
@@ -301,13 +302,14 @@
                     label: 'MouseOver Background-Color: ',
                     attributes:
                     {
-                        size: 50
+                        size: 50,
+                        placeholder: "Click to change Color"
                     },
                     customOptions: function (element) 
                     {
                         element.colorpicker({
                             colorFormat: "#HEX"
-                        });
+                        }).after('<small style="margin-left:10px">Click field to change color</small>');
                     }
                 },
                 {
@@ -317,13 +319,14 @@
                     label: 'Odd Background-Color: ',
                     attributes:
                     {
-                        size: 50
+                        size: 50,
+                        placeholder: "Click to change Color"
                     },
                     customOptions: function (element) 
                     {
                         element.colorpicker({
                             colorFormat: "#HEX"
-                        });
+                        }).after('<small style="margin-left:10px">Click field to change color</small>');
                     }
                 },
                 {
@@ -339,13 +342,14 @@
                     label: 'Reading Help Background Color: ',
                     attributes:
                     {
-                        size: 50
+                        size: 50,
+                        placeholder: "Click to change Color"
                     },
                     customOptions: function (element)
                     {
                         element.colorpicker({
                             colorFormat: "#HEX"
-                        });
+                        }).after('<small style="margin-left:10px">Click field to change color</small>');
                     }
                 },
                 {
@@ -355,13 +359,14 @@
                     label: 'Reading Help Text Color: ',
                     attributes:
                     {
-                        size: 50
+                        size: 50,
+                        placeholder: "Click to change Color"
                     },
                     customOptions: function (element)
                     {
                         element.colorpicker({
                             colorFormat: "#HEX"
-                        });
+                        }).after('<small style="margin-left:10px">Click field to change color</small>');
                     }
                 },
                 {
@@ -695,7 +700,7 @@
                         .val(data.value())
                         .colorpicker({
                             colorFormat: "#HEX"
-                        });
+                        }).after('<small style="margin-left:10px">Click field to change color</small>');
 
                     if (typeof (data.result) === "undefined")
                     {
@@ -798,12 +803,14 @@
     {
         var saveButtonContainer = $('<div class="fflist-buttonContainer"></div>');
 
-        $('<input class="btn" type="button" value="Save"></input>')
-            .button({
+        $('<input class="btn btn-danger" type="button" value="Save"></input>')
+            /*.button({
                 icons: {
                     primary: "ui-icon-check"
                 }
-            }).addClass("ffnetSaveButton").appendTo(saveButtonContainer);
+            })
+            */
+        .addClass("ffnetSaveButton").appendTo(saveButtonContainer);
 
         return saveButtonContainer;
     }
@@ -933,26 +940,53 @@
         var container = $("<div></div>").appendTo(this.guiContainer);
 
 
+        var count = 0;
+
         $.each(this.config.marker, function (name, marker)
         {
             self.gui_add_form(name, marker, container);
+
+            count++;
         });
+
+
+        if (count === 0)
+        {
+            // No marker found. Add Notification:
+
+            var infoContainer = $('<div class="ffnet-InfoContainer"></div>').appendTo(container);
+            infoContainer.append('<p>There are currently no Filter defined.<p>');
+            infoContainer.append($('<button class="btn btn-primary">Create Filter</button>').click(function ()
+            {
+                $("#ffnet-addNewFilter").trigger("click");
+            })).append('<span>&nbsp;</span>')
+                .append($('<button class="btn btn-default">Import</button>').click(function ()
+                {
+                    $("#ffnet-ImportButton").trigger("click");
+                }));
+
+
+
+        }
+
 
         this.log("GUI - Markers added");
 
         // --------------------------------------------------------------------------------------------------------------------------
-
+        
         var filterButtonContainer = saveButtonContainer.clone();
         filterButtonContainer.appendTo(this.guiContainer);
 
-        $('<input class="btn" type="button" value="Add Field"></input>')
-            .button({
+        $('<input class="btn brn-default" id="ffnet-addNewFilter" type="button" value="Add new Filter"></input>')
+            /*.button({
                 icons: {
                     primary: "ui-icon-plusthick"
                 }
-            })
+            }) */
             .click(function ()
             {
+                $(".ffnet-InfoContainer").fadeOut();
+
                 self.gui_add_form('New-Form ' + (self.addCount++),
                     {
                         name: null,
@@ -980,12 +1014,14 @@
             }).appendTo(filterButtonContainer);
 
 
-        $('<input class="btn" type="button" value="Import Filter"></input>')
+        $('<input class="btn btn-default" id="ffnet-ImportButton" type="button" value="Import Filter"></input>')
+            /*
             .button({
                 icons: {
                     primary: "ui-icon-plusthick"
                 }
             })
+            */
             .click(function (event)
             {
                 event.preventDefault();
@@ -1253,7 +1289,8 @@
                     label: 'Color: ',
                     attributes:
                     {
-                        id: 'fflist-' + name + '-color'
+                        id: 'fflist-' + name + '-color',
+                        placeholder: "Click to change Color"
                     }
                 },
                 {
@@ -1266,7 +1303,8 @@
                     label: 'Mouse Over Color: ',
                     attributes:
                     {
-                        id: 'fflist-' + name + '-mouseOver'
+                        id: 'fflist-' + name + '-mouseOver',
+                        placeholder: "Click to change Color"
                     }
                 },
                 {
@@ -1279,7 +1317,8 @@
                     label: 'Info Text Color: ',
                     attributes:
                     {
-                        id: 'fflist-' + name + '-text_color'
+                        id: 'fflist-' + name + '-text_color',
+                        placeholder: "Click to change Color"
                     }
                 },
                 {
@@ -1387,8 +1426,8 @@
                             );
 
                         $('<div style="display:inline-block; width: 10%"></div>').appendTo(elementContainer).append(
-                            $('<button class="btn">Export</button>')
-                                .button()
+                            $('<button class="btn btn-default">Export</button>')
+                                //.button()
                                 .click(function (event)
                                 {
                                     event.preventDefault();
@@ -1968,7 +2007,7 @@
 
             this.gui_show(function ()
             {
-                
+
                 self.parser.chat.disconnect();
 
             });
