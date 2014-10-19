@@ -22,7 +22,8 @@ module.exports = function (grunt) {
             'build/ParagraphMenu.js',
             'build/ExtentionBaseClass.js',
             'build/GUIHandler.js',
-            'build/LiveChatHandler.js'
+            'build/LiveChatHandler.js',
+            'build/UpgradeHandler.js'
         ],
         filesToPack:
         [

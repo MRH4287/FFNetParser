@@ -19,6 +19,7 @@ interface MarkerConfig
     mouseOver: string;
     print_story: boolean;
     search_story: boolean;
+    keep_searching: boolean;
     ignoreColor: boolean;
     background: string;
     text_color: string;
@@ -29,7 +30,6 @@ interface MarkerConfig
 interface RequestQueueData
 {
     url: string;
-    keywords: string[];
     headline: string;
     config: MarkerConfig;
     element: JQuery;
@@ -93,6 +93,9 @@ interface Config
     token: string;
     markerBackup: { [index: string]: MarkerConfig };
     storyReminder: { [index: string]: StoryReminderData };
+
+    upgradeTags: { [index: string]: UpgradeTag };
+
 }
 
 interface StoryReminderData
@@ -151,4 +154,9 @@ interface WebSocketMessage
     Data: string;
     Sender: string;
     Time: string;
+}
+
+interface UpgradeTag
+{
+    lastRun: number
 }

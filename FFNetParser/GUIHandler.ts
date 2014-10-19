@@ -1001,6 +1001,7 @@
                         mouseOver: '#FFFFFF',
                         background: null,
                         search_story: false,
+                        keep_searching: false,
                         mark_chapter: false,
                         print_story: false,
                         mention_in_headline: true,
@@ -1358,6 +1359,15 @@
                     label: 'List Storys: '
                 },
                 {
+                    name: 'keep_searching',
+                    type: GUIElementType.Checkbox,
+                    value: function ()
+                    {
+                        return marker.keep_searching;
+                    },
+                    label: 'Keep Searching: '
+                },
+                {
                     name: 'mention_in_headline',
                     type: GUIElementType.Checkbox,
                     value: function ()
@@ -1475,6 +1485,7 @@
                         mouseOver: data.instances['mouseOver'].val(),
                         print_story: data.instances['print_story'].is(':checked'),
                         search_story: data.instances['search_story'].is(':checked'),
+                        keep_searching: data.instances['keep_searching'].is(':checked'),
                         ignoreColor: data.instances['ignoreColor'].is(':checked'),
                         background: data.instances['background'].val(),
                         text_color: data.instances['text_color'].val(),

@@ -49,6 +49,12 @@ class StoryParser
     public chat: LiveChatHandler = new LiveChatHandler(this);
 
     /**
+     * Handler for Upgrades to the Config Values 
+     */
+    public upgrade: UpgradeHandler = new UpgradeHandler(this);
+
+
+    /**
      * The Paragraph Menu of the current Page
      */
     public paragramMenu: ParagraphMenu = null;
@@ -111,7 +117,9 @@ class StoryParser
         marker: {},
         token: undefined,
         markerBackup: {},
-        storyReminder: {}
+        storyReminder: {},
+
+        upgradeTags: {}
     };
 
     /**
@@ -409,6 +417,8 @@ class StoryParser
         });
 
 
+        // Check Upgrade Tags:
+        this.upgrade.handleTags();
 
 
         // Check if we use HTTPS
@@ -549,7 +559,7 @@ class StoryParser
 
             // Add User Interface
             table.append(
-                $('<a></a>').addClass('menu-link').html('Reparse Stories').attr('href', '#').click(function (e)
+                $('<a></a>').addClass('menu-link').html('Rerun Filter').attr('href', '#').click(function (e)
                 {
                     self.readAll();
                     e.preventDefault();
@@ -1153,11 +1163,12 @@ class StoryParser
 
                     self.elementCallback(self, config, element, textEl, headline, info, page);
 
-                } else if (config.search_story)
+                } 
+
+                if ((!found && config.search_story) || config.keep_searching)
                 {
                     var parseData: RequestQueueData = {
                         url: link,
-                        keywords: config.keywords,
                         headline: headline,
                         config: config,
                         element: element,
@@ -1432,13 +1443,6 @@ class StoryParser
             url = data.url;
         }
 
-        var keywords = data.keywords;
-
-        if (typeof (keywords) === "undefined")
-        {
-            console.warn('No Keywords!');
-        }
-
         var self = this;
 
         var executeNext = function ()
@@ -1460,7 +1464,7 @@ class StoryParser
             executeNext();
         };
 
-        self.parse(url, keywords, callback, 0, executeNext);
+        self.parse(url, data.config, callback, 0, executeNext);
 
     }
 
@@ -1472,7 +1476,7 @@ class StoryParser
      *   @param i Recursive Depth
      *   @param executeNext Callback for executing next element in the queue
      */
-    private parse(url: string, keywords: string[], callback: (StoryInfo) => void, i: number, executeNext: () => void)
+    private parse(url: string, markerConfig: MarkerConfig, callback: (StoryInfo) => void, i: number, executeNext: () => void)
     {
 
         if (i >= this.config.story_search_depth)
@@ -1519,7 +1523,7 @@ class StoryParser
 
             var sentence = null;
 
-            if ((sentence = self.parseSite(body, keywords)) != null)
+            if ((sentence = self.parseSite(body, markerConfig.keywords, markerConfig.ignore)) != null)
             {
                 var storyName = self.getStoryName(url);
                 callback({
@@ -1529,7 +1533,9 @@ class StoryParser
                     'sentence': sentence
                 });
 
-            } else
+            } 
+
+            if (sentence == null || markerConfig.keep_searching)
             {
                 //console.log('find next el');
                 var next = body.find('button:contains(Next)').first();
@@ -1543,7 +1549,7 @@ class StoryParser
 
                     if (data != null)
                     {
-                        self.parse(data, keywords, callback, i + 1, executeNext);
+                        self.parse(data, markerConfig, callback, i + 1, executeNext);
                     }
                 }
                 //console.log('Content not found in: ', url);
@@ -1585,9 +1591,10 @@ class StoryParser
      *   @see _parse
      *   @param body Body Element of the loaded page
      *   @param keywords What Keywords to look for
+     *   @param ignore Ignore Keywords
      *   @result Matching Sentence or null
      */
-    private parseSite(body: JQuery, keywords: string[]): string
+    private parseSite(body: JQuery, keywords: string[], ignore: string[]): string
     {
         var storyEl = body.find('.storytext');
 
@@ -1603,7 +1610,7 @@ class StoryParser
 
             $.each(keywords, function (k, word)
             {
-                if (!result)
+                if (result === null)
                 {
                     try
                     {
@@ -1640,6 +1647,36 @@ class StoryParser
                     }
                 }
             });
+
+            if (result !== null)
+            {
+                $.each(ignore, function (k, word)
+                {
+                    if (result === null)
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        var wordReg = new RegExp(word, "i");
+                        if (wordReg.test(storyText))
+                        {
+                            self.log("Found Ignore Statemant: ", word);
+
+                            result = null;
+                            return;
+                        }
+                    } catch (e)
+                    {
+                        console.warn(e);
+                    }
+
+                });
+            }
+
+
+
             return result;
         }
 
@@ -3381,6 +3418,7 @@ class StoryParser
                                 search_story: el.SearchStroy,
                                 mark_chapter: el.MarkChapter,
                                 print_story: el.PrintStory,
+                                keep_searching: false,
                                 mention_in_headline: el.MentionInHeadline,
                                 background: el.Background,
                                 text_color: el.TextColor,
