@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="chrome.d.ts" />
@@ -55,12 +56,14 @@
     <TypeScriptCompile Include="LiveChatHandler.ts" />
     <TypeScriptCompile Include="ParagraphMenu.ts" />
     <TypeScriptCompile Include="Types.ts" />
+    <TypeScriptCompile Include="UpgradeHandler.ts" />
     <TypeScriptCompile Include="userscript.ts" />
     <TypeScriptCompile Include="jquery.colorpicker.d.ts" />
     <TypeScriptCompile Include="jquery.d.ts" />
     <TypeScriptCompile Include="jqueryui.d.ts" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Gruntfile.js" />
     <Content Include="includeTemplate.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

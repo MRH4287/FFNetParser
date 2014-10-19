@@ -963,6 +963,11 @@
                 .append($('<button class="btn btn-default">Import</button>').click(function ()
                 {
                     $("#ffnet-ImportButton").trigger("click");
+                })).append('<span>&nbsp;</span>')
+                .append($('<button class="btn btn-default">Need Help?</button>').click(function ()
+                {
+                    var win = window.open("https://github.com/MRH4287/FFNetParser/wiki/Filter", '_blank');
+                    win.focus();
                 }));
 
 
