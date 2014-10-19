@@ -1652,7 +1652,7 @@ class StoryParser
             {
                 $.each(ignore, function (k, word)
                 {
-                    if (result === null)
+                    if ((result === null) || (word === "") || (word === " "))
                     {
                         return;
                     }
