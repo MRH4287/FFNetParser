@@ -1427,10 +1427,17 @@ class StoryParser
             console.info('Execute Queue on ' + i + ': ', queue);
         }
 
+        if ((this.handledStorySearch === null) || (this.handledStorySearch === undefined))
+        {
+            this.handledStorySearch = [];
+        }
+
+        /*
         if (i === 0)
         {
             this.handledStorySearch = [];
         }
+        */
 
         if (i >= queue.length)
         {
