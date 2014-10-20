@@ -32,7 +32,8 @@ module.exports = function (grunt) {
             'LICENSE.txt',
             'manifest.json',
             'jquery-1.10.2.min.map',
-            'style.css'
+            'style.css',
+            'logoMain.png'
         ],
 
         concat: {
