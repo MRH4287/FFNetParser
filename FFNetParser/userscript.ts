@@ -8,6 +8,7 @@
 /// <reference path="GUIHandler.ts" />
 /// <reference path="LiveChatHandler.ts" /> 
 /// <reference path="ExtentionBaseClass.ts" /> 
+/// <reference path="UpgradeHandler.ts" /> 
 class StoryParser
 {
     /** 
@@ -181,6 +182,11 @@ class StoryParser
      * The Container for the GUI
      */
     private guiContainer: JQuery = null;
+
+    /**
+     * The list of elements that are handles by the Story Search
+     */
+    private handledStorySearch: string[] = null;
 
 
     /**
@@ -1421,6 +1427,11 @@ class StoryParser
             console.info('Execute Queue on ' + i + ': ', queue);
         }
 
+        if (i === 0)
+        {
+            this.handledStorySearch = [];
+        }
+
         if (i >= queue.length)
         {
             return;
@@ -1429,6 +1440,8 @@ class StoryParser
         var data = queue[i];
 
         var url: string;
+
+
 
         // Check for ScriptInsert Page:
         if (data.url.indexOf("?url=") === -1)
@@ -1449,6 +1462,22 @@ class StoryParser
         {
             self.doParse(queue, page, i + 1);
         };
+
+        if (this.handledStorySearch.indexOf(url) !== -1)
+        {
+            if (this.DEBUG)
+            {
+                this.log("Chapter was searched before. Abort...", url);
+            }
+
+            executeNext();
+            return;
+        }
+        else
+        {
+            this.handledStorySearch.push(url);
+        }
+
 
         var callback = function (info)
         {
@@ -1698,15 +1727,22 @@ class StoryParser
     {
         var foundWhere = info.chapter;
 
-        if (!(headline in self.eList))
+        if (!(page in self.eList))
+        {
+            self.eList[page] = {};
+        }
+
+        if (!(headline in self.eList[page]))
         {
             self.eList[page][headline] = [];
         }
+
         self.eList[page][headline].push(info);
 
         if (self.DEBUG)
         {
-            console.info("Element Callback for ", headline, info);
+            this.info("Element Callback for ", headline, info);
+            this.log("Found at page: ", page);
         }
 
         if ((self.dataConfig["displayOnly"] !== undefined) && (self.dataConfig["displayOnly"] === headline))
