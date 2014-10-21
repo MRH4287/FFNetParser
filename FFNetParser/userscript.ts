@@ -1442,14 +1442,24 @@ class StoryParser
      */
     private doParse(queue: RequestQueueData[], page: number, initiated: number = -1, i = 0)
     {
+        if (queue.length === 0)
+        {
+
+            this.log("Empty Request Queue. Abort");
+
+            return;
+        }
 
         if (i >= queue.length)
         {
-            // Thr Queue is finished. Close all Requests.
-            var firstID = Number(queue[0].element.attr("data-ElementIdent"));
-            delete this.requestsPending[firstID];
+            if (typeof (queue[0]) !== undefined)
+            {
+                // Thr Queue is finished. Close all Requests.
+                var firstID = Number(queue[0].element.attr("data-ElementIdent"));
+                delete this.requestsPending[firstID];
+            }
 
-           this.log("Queue finished.", firstID);
+            this.log("Queue finished.", firstID);
 
             return;
         }
@@ -1458,11 +1468,17 @@ class StoryParser
 
         var url: string;
 
+        if (typeof (data) === undefined)
+        {
+            this.log("Data not defined. Abort - ", page, initiated);
+            return;
+        }
+
         var elementID = Number(data.element.attr("data-ElementIdent"));
 
         if (this.DEBUG)
         {
-            console.info('Execute Queue for ' + elementID + ', i: ' + i + ', page: '+ page +', initated: '+initiated, data, queue);
+            console.info('Execute Queue for ' + elementID + ', i: ' + i + ', page: ' + page + ', initated: ' + initiated, data, queue);
         }
 
         // Check if there is a pending Request:
@@ -1541,7 +1557,7 @@ class StoryParser
      *   @param elementID The ID of the main Element
      *   @param initiated The Time this Request was initiated
      */
-    private parse(url: string, markerConfig: MarkerConfig, callback: (StoryInfo) => void, i: number, executeNext: () => void, elementID: number, initiated:number)
+    private parse(url: string, markerConfig: MarkerConfig, callback: (StoryInfo) => void, i: number, executeNext: () => void, elementID: number, initiated: number)
     {
 
         if (i >= this.config.story_search_depth)
