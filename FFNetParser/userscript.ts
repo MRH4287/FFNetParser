@@ -429,7 +429,7 @@ class StoryParser
 
                 $.each(self.config, function (name, oldValue)
                 {
-                    if (typeof (result[name]) !== undefined)
+                    if (result[name] !== undefined)
                     {
                         self.log("Key: '" + name + "'", oldValue, result[name]);
 
