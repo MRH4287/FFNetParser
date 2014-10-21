@@ -563,6 +563,67 @@
                     type: GUIElementType.Checkbox,
                     label: 'Disable Synchronization Feature: ',
                     value: function () { return self.config.disable_sync; }
+                },
+                {
+                    name: 'chrome_sync',
+                    type: GUIElementType.Checkbox,
+                    label: 'Use Chrome to Synchronize Data: ',
+                    value: function () { return self.config.chrome_sync; },
+                    customOptions: function (el)
+                    {
+                        if (typeof (chrome) === undefined)
+                        {
+                            el.prop("disabled", true).attr("title", "Only available in Chrome");
+                        }
+                        else
+                        {
+                            el.change(function ()
+                            {
+                                if (el.is(":checked"))
+                                {
+                                    if (confirm("If you enable Sync, your local storage will be overwritten by Cloud Storage. " +
+                                        "If there is none, your config is uploaded instead. Are you sure?"))
+                                    {
+                                        var wait = $("<span>&nbsp; Please wait ...</span>");
+                                        el.after(wait);
+
+
+                                        // Load Config from the Chrome Server:
+                                        chrome.storage.sync.get(function (result: Config)
+                                        {
+                                            wait.remove();
+
+                                            self.log("Got Data from Chrome Server: ", result);
+
+                                            $.each(self.config, function (name, oldValue)
+                                            {
+                                                if (typeof (result[name]) !== undefined)
+                                                {
+                                                    self.log("Key: '" + name + "'", oldValue, result[name]);
+
+                                                    self.config[name] = result[name];
+                                                }
+                                            });
+                                        });
+
+
+                                    }
+                                    else
+                                    {
+                                        el.prop("checked", false);
+                                    }
+
+
+                                }
+
+
+                            });
+
+
+
+                        }
+
+                    }
                 }
 
             ]);

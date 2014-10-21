@@ -107,7 +107,7 @@ class StoryParser
         disable_highlighter: false,
         disable_parahraphMenu: false,
         disable_sync: true,
-
+        chrome_sync: false,
 
         // Do not change below this line:
         storage_key: "ffnet-storycache",
@@ -346,7 +346,6 @@ class StoryParser
             console.warn(ex);
         }
 
-
         // Check for Config Values:
 
         if ((this.config["pocket_user"] === undefined) || (this.config["pocket_user"] === ""))
@@ -417,6 +416,85 @@ class StoryParser
             }
         }
 
+
+        // Google Storage Sync:
+        if ((typeof (chrome) !== undefined) && (this.config.chrome_sync))
+        {
+            console.info("Load Config from Chrome Server");
+
+            // Load Config from the Chrome Server:
+            chrome.storage.sync.get(function (result: Config)
+            {
+                self.log("Got Data from Chrome Server: ", result);
+
+                $.each(self.config, function (name, oldValue)
+                {
+                    if (typeof (result[name]) !== undefined)
+                    {
+                        self.log("Key: '" + name + "'", oldValue, result[name]);
+
+                        self.config[name] = result[name];
+                    }
+                });
+            });
+
+
+            chrome.storage.onChanged.addListener(function (changes, namespace)
+            {
+                if (namespace !== "sync")
+                {
+                    return;
+                }
+
+                $.each(changes, function (key, storageChange)
+                {
+
+                    var storageChange = changes[key];
+                    console.log('Storage key "%s" changed. ' +
+                        'Old value was "%s", new value is "%s".',
+                        key,
+                        storageChange.oldValue,
+                        storageChange.newValue);
+
+                    if (self.config[key] === storageChange.oldValue)
+                    {
+                        self.config[key] = storageChange.newValue;
+                    }
+                    else if (self.config[key] !== storageChange.newValue)
+                    {
+                        // Use local Value for UpgradeTags
+                        if (key !== "upgradeTags")
+                        {
+
+                            console.warn("Conflict with Cloud Storage! Use data from Cloud Storage.");
+                            try
+                            {
+                                localStorage[self.config.storage_key + "_Conflict" + Date.now()] = JSON.stringify(self.config);
+
+                            } catch (e)
+                            {
+
+                            }
+
+                            self.config[key] = storageChange.newValue;
+
+                        }
+                        else
+                        {
+                            var val = <{ [index: string]: UpgradeTag }>storageChange.newValue;
+                            $.each(val, function (key, val)
+                            {
+                                if (!(key in self.config.upgradeTags))
+                                {
+                                    self.config.upgradeTags[key] = val;
+                                }
+                            });
+                        }
+
+                    }
+                });
+            });
+        }
 
 
         // Load all the config Values that are listed in the _config Array at startup
@@ -3645,6 +3723,16 @@ class StoryParser
         try
         {
             localStorage[this.config.config_key] = JSON.stringify(this.config);
+
+            // Save to Chrome Sync API:
+            if (typeof (chrome) !== undefined && (this.config.chrome_sync === true))
+            {
+                chrome.storage.sync.set(this.config, function ()
+                {
+                    console.info("Config saved to Cloud!");
+                });
+            }
+
 
         } catch (e)
         {

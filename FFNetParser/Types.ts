@@ -83,6 +83,7 @@ interface Config
     disable_highlighter: boolean;
     disable_parahraphMenu: boolean;
     disable_sync: boolean;
+    chrome_sync: boolean;
 
     storage_key: string;
     config_key: string;
