@@ -183,11 +183,17 @@ class StoryParser
      */
     private guiContainer: JQuery = null;
 
-    /**
-     * The list of elements that are handles by the Story Search
-     */
-    private handledStorySearch: string[] = null;
 
+    /**
+     * The List of pendig requests
+     * Index: ElementID - data-ElementIdent Attribute
+     */
+    private requestsPending: { [index: number]: number } = {};
+
+    /**
+     * The Last used for an Element in the List 
+     */
+    private lastElementID: number = 0;
 
     /**
      *   Resets Config to the default setting
@@ -1028,6 +1034,14 @@ class StoryParser
 
         this.log("Parse all PageWrapper");
 
+        // Reset Handled Stories:
+        $.each(self.requestsPending, function (elementID, data)
+        {
+            self.log("Remove pending Request for ElementID", elementID);
+
+            delete self.requestsPending[elementID];
+        });
+
         $.each(this.wrapperList, function (page: number, wrapper: JQuery)
         {
             self.log("Parse Page: ", page);
@@ -1048,7 +1062,6 @@ class StoryParser
         {
             return;
         }
-
         var page = Number(container.attr("data-page"));
 
         this.log("Read List for Page: ", page);
@@ -1082,6 +1095,12 @@ class StoryParser
             var storyName = self.getStoryName(link);
 
             var requestQueue: RequestQueueData[] = [];
+
+            // Set ItemID used for the Pendig Requests List:
+            if (!element.is("[data-ElementIdent]"))
+            {
+                element.attr("data-ElementIdent", self.lastElementID++);
+            }
 
             if (self.config.hide_non_english_storys && (text.indexOf('english') === -1))
             {
@@ -1169,7 +1188,7 @@ class StoryParser
 
                     self.elementCallback(self, config, element, textEl, headline, info, page);
 
-                } 
+                }
 
                 if ((!found && config.search_story) || config.keep_searching)
                 {
@@ -1416,31 +1435,22 @@ class StoryParser
     /**
      *   Starts Recursive Parsing of stories
      *   @param queue List of Stories to parse
+     *   @param initiated The Time when the search was started
      *   @param page The Page of the Search
      *   @param i What element in the queue should be parsed
      *   @remark Don't specify the second Argument for initial parsing
      */
-    private doParse(queue: RequestQueueData[], page: number, i = 0)
+    private doParse(queue: RequestQueueData[], page: number, initiated: number = -1, i = 0)
     {
-        if (this.DEBUG)
-        {
-            console.info('Execute Queue on ' + i + ': ', queue);
-        }
-
-        if ((this.handledStorySearch === null) || (this.handledStorySearch === undefined))
-        {
-            this.handledStorySearch = [];
-        }
-
-        /*
-        if (i === 0)
-        {
-            this.handledStorySearch = [];
-        }
-        */
 
         if (i >= queue.length)
         {
+            // Thr Queue is finished. Close all Requests.
+            var firstID = Number(queue[0].element.attr("data-ElementIdent"));
+            delete this.requestsPending[firstID];
+
+           this.log("Queue finished.", firstID);
+
             return;
         }
 
@@ -1448,6 +1458,38 @@ class StoryParser
 
         var url: string;
 
+        var elementID = Number(data.element.attr("data-ElementIdent"));
+
+        if (this.DEBUG)
+        {
+            console.info('Execute Queue for ' + elementID + ', i: ' + i + ', page: '+ page +', initated: '+initiated, data, queue);
+        }
+
+        // Check if there is a pending Request:
+        if (elementID in this.requestsPending)
+        {
+            // Check if it is the same Request as the current one:
+            if (this.requestsPending[elementID] !== initiated)
+            {
+                this.info("Stopping InStorySearch Request. Not the last triggered Request: ", elementID, initiated);
+                return;
+            }
+        }
+        else 
+        {
+            if (i === 0)
+            {
+                // ElementID not in pending Requests:
+                initiated = Date.now();
+                this.log("Add pending Request: ", elementID, initiated);
+                this.requestsPending[elementID] = initiated;
+            }
+            else
+            {
+                this.info("Stopping InStorySearch Request. ElementID not in pending Requests: ", elementID, initiated);
+                return;
+            }
+        }
 
 
         // Check for ScriptInsert Page:
@@ -1467,23 +1509,8 @@ class StoryParser
 
         var executeNext = function ()
         {
-            self.doParse(queue, page, i + 1);
+            self.doParse(queue, page, initiated, i + 1);
         };
-
-        if (this.handledStorySearch.indexOf(url) !== -1)
-        {
-            if (this.DEBUG)
-            {
-                this.log("Chapter was searched before. Abort...", url);
-            }
-
-            executeNext();
-            return;
-        }
-        else
-        {
-            this.handledStorySearch.push(url);
-        }
 
 
         var callback = function (info)
@@ -1500,19 +1527,21 @@ class StoryParser
             executeNext();
         };
 
-        self.parse(url, data.config, callback, 0, executeNext);
+        self.parse(url, data.config, callback, 0, executeNext, elementID, initiated);
 
     }
 
     /**
      *   Recursive Parsing function
      *   @param url URL to Story
-     *   @param keyword  Keywords for parsing
+     *   @param markerConfig The Config for the correspondig Marker
      *   @param callback Callback in case of a found entry
      *   @param i Recursive Depth
      *   @param executeNext Callback for executing next element in the queue
+     *   @param elementID The ID of the main Element
+     *   @param initiated The Time this Request was initiated
      */
-    private parse(url: string, markerConfig: MarkerConfig, callback: (StoryInfo) => void, i: number, executeNext: () => void)
+    private parse(url: string, markerConfig: MarkerConfig, callback: (StoryInfo) => void, i: number, executeNext: () => void, elementID: number, initiated:number)
     {
 
         if (i >= this.config.story_search_depth)
@@ -1555,6 +1584,16 @@ class StoryParser
 
             }
 
+            /*
+            // Check if the pending Request match:
+            if (!(elementID in self.requestsPending) || (self.requestsPending[elementID] !== initiated))
+            {
+                self.log("Stop Chapter Search. Request ID not in pending: ", elementID, self.requestsPending);
+                executeNext();
+                return;
+            }
+            */
+
             var body = $(text);
 
             var sentence = null;
@@ -1566,10 +1605,10 @@ class StoryParser
                     'name': storyName,
                     'url': url,
                     'chapter': (i + 1),
-                    'sentence': sentence
+                    'sentence': (self.DEBUG ? ("[" + initiated + "] ") : "") + sentence
                 });
 
-            } 
+            }
 
             if (sentence == null || markerConfig.keep_searching)
             {
@@ -1585,7 +1624,7 @@ class StoryParser
 
                     if (data != null)
                     {
-                        self.parse(data, markerConfig, callback, i + 1, executeNext);
+                        self.parse(data, markerConfig, callback, i + 1, executeNext, elementID, initiated);
                     }
                 }
                 //console.log('Content not found in: ', url);
