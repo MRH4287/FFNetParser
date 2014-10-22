@@ -36,6 +36,26 @@
         });
 
 
+        // Update 5.2.9 - Implementation of new Highlighter System
+        this.registerTag("highlighter_config", function ()
+        {
+            $.each(self.config.highlighter, function(link, element)
+            {
+                if (typeof (element) !== "object")
+                {
+                    if (self.DEBUG)
+                    {
+                        console.log("Updated old Highlighter Object");
+                    }
+
+                    self.config.highlighter[link] = { image: String(element), hide: false };
+                }
+
+            });
+
+            self.parser.save_config();
+        });
+
     }
 
 
