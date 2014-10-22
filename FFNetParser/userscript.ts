@@ -115,10 +115,13 @@ class StoryParser
         dataStorage_key: "ffnet-dataStore",
 
         highlighter: {},
+        highlighterPrefabs: {},
         marker: {},
         token: undefined,
         markerBackup: {},
         storyReminder: {},
+
+
 
         upgradeTags: {}
     };
@@ -1322,11 +1325,13 @@ class StoryParser
                         console.log("Context Menu for ", element, " clicked");
                     }
 
-                    self.GUI.toggleStoryConfig({
+
+                    self.GUI.showStoryPrefabList({
                         url: link,
-                        // element: element,
+                        element: element,
                         name: storyName
                     });
+
 
                 });
 
@@ -1339,17 +1344,6 @@ class StoryParser
                     if (self.DEBUG)
                     {
                         console.info("Highlight Element Found: ", element);
-                    }
-
-                    // Update old Format
-                    if (typeof (self.config['highlighter'][link]) !== "object")
-                    {
-                        if (self.DEBUG)
-                        {
-                            console.log("Updated old Highlighter Object");
-                        }
-
-                        self.config['highlighter'][link] = { image: self.config['highlighter'][link], hide: false };
                     }
 
                     if (self.config['highlighter'][link].hide)
@@ -1366,14 +1360,18 @@ class StoryParser
                         self.hidden[page]++;
                     }
 
+                    var imageLink = self.config.highlighter[link].image;
 
-                    var img = $("<img></img>").attr("src", self.config['highlighter'][link].image)
-                        .css("width", "20px")
-                        .css("height", "20px")
-                        .css("margin-left", "15px")
-                        .addClass("parser-msg");
+                    if ((imageLink !== undefined) && (imageLink !== null) && (imageLink !== "") && (imageLink !== " "))
+                    {
+                        var img = $("<img></img>").attr("src", self.config['highlighter'][link].image)
+                            .css("width", "20px")
+                            .css("height", "20px")
+                            .css("margin-left", "15px")
+                            .addClass("parser-msg");
 
-                    element.find("a").last().after(img);
+                        element.find("a").last().after(img);
+                    }
 
                 }
             }
@@ -2267,17 +2265,6 @@ class StoryParser
             if (this.DEBUG)
             {
                 console.info("Highlight Element Found");
-            }
-
-            // Update old Format
-            if (typeof (this.config['highlighter'][document.location.pathname]) !== "object")
-            {
-                if (this.DEBUG)
-                {
-                    console.log("Updated old Highlighter Object");
-                }
-
-                this.config['highlighter'][document.location.pathname] = { image: this.config['highlighter'][document.location.pathname], hide: false };
             }
 
             var img = $("<img></img>").attr("src", this.config['highlighter'][document.location.pathname].image)

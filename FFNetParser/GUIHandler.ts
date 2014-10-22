@@ -866,13 +866,13 @@
         var saveButtonContainer = $('<div class="fflist-buttonContainer"></div>');
 
         $('<input class="btn btn-danger" type="button" value="Save"></input>')
-            /*.button({
-                icons: {
-                    primary: "ui-icon-check"
-                }
-            })
-            */
-        .addClass("ffnetSaveButton").appendTo(saveButtonContainer);
+        /*.button({
+            icons: {
+                primary: "ui-icon-check"
+            }
+        })
+        */
+            .addClass("ffnetSaveButton").appendTo(saveButtonContainer);
 
         return saveButtonContainer;
     }
@@ -1040,16 +1040,16 @@
         this.log("GUI - Markers added");
 
         // --------------------------------------------------------------------------------------------------------------------------
-        
+
         var filterButtonContainer = saveButtonContainer.clone();
         filterButtonContainer.appendTo(this.guiContainer);
 
         $('<input class="btn brn-default" id="ffnet-addNewFilter" type="button" value="Add new Filter"></input>')
-            /*.button({
-                icons: {
-                    primary: "ui-icon-plusthick"
-                }
-            }) */
+        /*.button({
+            icons: {
+                primary: "ui-icon-plusthick"
+            }
+        }) */
             .click(function ()
             {
                 $(".ffnet-InfoContainer").fadeOut();
@@ -1083,13 +1083,13 @@
 
 
         $('<input class="btn btn-default" id="ffnet-ImportButton" type="button" value="Import Filter"></input>')
-            /*
-            .button({
-                icons: {
-                    primary: "ui-icon-plusthick"
-                }
-            })
-            */
+        /*
+        .button({
+            icons: {
+                primary: "ui-icon-plusthick"
+            }
+        })
+        */
             .click(function (event)
             {
                 event.preventDefault();
@@ -1504,7 +1504,7 @@
 
                         $('<div style="display:inline-block; width: 10%"></div>').appendTo(elementContainer).append(
                             $('<button class="btn btn-default">Export</button>')
-                                //.button()
+                            //.button()
                                 .click(function (event)
                                 {
                                     event.preventDefault();
@@ -1925,6 +1925,77 @@
         }
 
     }
+
+    /**
+     *   Shows the Highlighter Prefab Config
+     *   @param storyInfo Infos about the story
+     */
+
+    public showStoryPrefabList(storyInfo: StoryInfo)
+    {
+        var self = this;
+
+        var lastID = Number($(".ffnet-HighlighterContainer").attr("data-elementident"));
+        var currentID = Number(storyInfo.element.attr("data-elementident"));
+
+        $(".ffnet-HighlighterContainer").remove();
+
+        if (lastID === currentID)
+        {
+            return;
+        }
+        
+
+        var container = $('<div class="ffnet-HighlighterContainer"></div>').appendTo($("body"));
+        container.position({ of: storyInfo.element.find(".context-menu"), my: "right top", at: "right bottom", collision: "flip flip" })
+            .attr("data-elementident", currentID);
+
+
+        var listContainer = $('<div class="ffNet-HighlighterListContainer"></div>').appendTo(container);
+
+
+        // Add Element:
+
+        var element = $('<div class="ffnet-HighlighterListElement"></div>').append(
+            $('<div class="color" style="background-color:red"></div><div class="name">Nope</div>')
+            ).appendTo(listContainer);
+
+
+         $('<div class="ffnet-HighlighterListElement"></div>').append(
+            $('<div class="color" style="background-color:yellow"></div><div class="name">Maybe</div>')
+            ).appendTo(listContainer);
+
+
+        $('<div class="ffnet-HighlighterListElement"></div>').append(
+            $('<div class="color" style="background-color:green"></div><div class="name">Good</div>')
+            ).appendTo(listContainer);
+
+
+        $('<div class="ffnet-HighlighterListElement"></div>').append(
+            $('<div class="color" style="background-color:gray"></div><div class="name">Custom</div>')
+            ).click(function (ev)
+            {
+                ev.preventDefault();
+                $(".ffnet-HighlighterContainer").remove();
+
+                self.toggleStoryConfig(storyInfo);
+            }).appendTo(listContainer);
+
+
+        listContainer.append("<hr />")
+            .append($('<div class="ffnet-HighlighterListElement" style="padding-top: 5px; text-align:center">Cusomize Settings</div>')
+                .click(function (ev)
+                {
+                    ev.preventDefault();
+                    $(".ffnet-HighlighterContainer").remove();
+
+                    console.log("Todo: Here should be something ....");
+                })
+            );
+
+
+    }
+
 
     /**
      *   Open or closes the GUI for the Live Chat

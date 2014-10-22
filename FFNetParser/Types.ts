@@ -4,7 +4,8 @@ interface StoryInfo
     url: string;
     chapter?: number;
     sentence?: string;
-
+    // Used in Highlighter Config
+    element?: JQuery;
 }
 
 interface MarkerConfig
@@ -89,7 +90,8 @@ interface Config
     config_key: string;
     dataStorage_key: string;
 
-    highlighter: any;
+    highlighter: { [index: string]: HighlighterConfig };
+    highlighterPrefabs: { [index: string]: MarkerConfig };
     marker: { [index: string]: MarkerConfig };
     token: string;
     markerBackup: { [index: string]: MarkerConfig };
@@ -109,6 +111,16 @@ interface StoryReminderData
     time: number;
     url: string;
 }
+
+interface HighlighterConfig
+{
+    image: string;
+    hide: boolean;
+    prefab?: string;
+    note?: string;
+    custom?: MarkerConfig;
+}
+
 
 enum GUIElementType
 {
