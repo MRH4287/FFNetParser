@@ -569,6 +569,7 @@
                     type: GUIElementType.Checkbox,
                     label: 'Use Chrome to Synchronize Data: ',
                     value: function () { return self.config.chrome_sync; },
+                    debugOnly: true,
                     customOptions: function (el)
                     {
                         if (typeof (chrome) === undefined)
