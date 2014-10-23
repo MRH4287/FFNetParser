@@ -101,7 +101,7 @@
         if (this.config.upgradeTags === undefined)
         {
             this.log("Upgrade Handler: Initializing Upgrade Tags Variable");
-            this.parser.save_config();
+            this.parser.save_config(false);
 
             this.config.upgradeTags = {};
         }

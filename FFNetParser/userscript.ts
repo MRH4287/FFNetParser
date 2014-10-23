@@ -207,7 +207,7 @@ class StoryParser
         {
             // Generates Random Token
             this.config["token"] = Math.random().toString().split(".")[1];
-            this.save_config();
+            this.save_config(false);
         }
 
         var token = this.config.token;
