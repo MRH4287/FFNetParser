@@ -1074,7 +1074,8 @@
                         mention_in_headline: true,
                         text_color: '#686868',
                         revision: -1,
-                        ignoreColor: false
+                        ignoreColor: false,
+                        image: null
                     }, container
                     , true // Display Big
                     );
@@ -1444,6 +1445,16 @@
                     label: 'Mention in Headline: '
                 },
                 {
+                    name: 'image',
+                    type: GUIElementType.Input,
+                    value: function ()
+                    {
+                        return marker.image;
+                    },
+                    label: 'Info Image (Path): ',
+                    debugOnly: true
+                },
+                {
                     name: '',
                     type: GUIElementType.Button,
                     value: function ()
@@ -1556,6 +1567,7 @@
                         ignoreColor: data.instances['ignoreColor'].is(':checked'),
                         background: data.instances['background'].val(),
                         text_color: data.instances['text_color'].val(),
+                        image: data.instances['image'].val(),
                         revision: ((typeof (self.config.marker[name]) === "undefined") || (typeof (self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
                     };
 
@@ -1978,7 +1990,7 @@
                 ev.preventDefault();
                 $(".ffnet-HighlighterContainer").remove();
 
-                self.toggleStoryConfig(storyInfo);
+               // self.toggleStoryConfig(storyInfo);
             }).appendTo(listContainer);
 
 

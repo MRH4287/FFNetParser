@@ -36,10 +36,20 @@
         });
 
 
-        // Update 5.2.9 - Implementation of new Highlighter System
-        this.registerTag("highlighter_config", function ()
+        // Update 5.2.9 - Adds Images to Filter && Implementation of new Highlighter System
+        this.registerTag("filter_Image_highlighter_5.2.9", function ()
         {
-            $.each(self.config.highlighter, function(link, element)
+
+            $.each(self.config.marker, function (name: string, data: MarkerConfig)
+            {
+                if (data.image === undefined)
+                {
+                    self.config.marker[name].image = null;
+                }
+            });
+
+
+            $.each(self.config.highlighter, function (link, element)
             {
                 if (typeof (element) !== "object")
                 {
@@ -48,13 +58,39 @@
                         console.log("Updated old Highlighter Object");
                     }
 
-                    self.config.highlighter[link] = { image: String(element), hide: false };
+                    self.config.highlighter[link] =
+                    {
+                        image: String(element),
+                        hide: false
+                    };
                 }
+
+                if ((self.config.highlighter[link].custom === undefined) && (self.config.highlighter[link].prefab === undefined))
+                {
+                    self.config.highlighter[link].custom = {
+                        background: null,
+                        color: null,
+                        display: !self.config.highlighter[link].hide,
+                        ignoreColor: null,
+                        image: self.config.highlighter[link].image,
+                        mark_chapter: null,
+                        mouseOver: null,
+                        name: "Legacy-Custom",
+                        note: null,
+                        text_color: null
+                    };
+
+                    self.config.highlighter[link].hide = null,
+                    self.config.highlighter[link].image = null;
+                }
+
+
 
             });
 
             self.parser.save_config();
         });
+
 
     }
 
@@ -85,8 +121,8 @@
                 self.log("Upgrade Handler: Executing IfExist Handler for Tag: ", name);
 
                 data.ifExist(self);
-            }    
-            
+            }
+
 
             self.config.upgradeTags[name] = {
                 lastRun: Date.now()
@@ -116,7 +152,7 @@
             ifNotExist: ifNotExist,
             ifExist: ifExist
         };
-    } 
+    }
 
     public removeTag(name: string)
     {

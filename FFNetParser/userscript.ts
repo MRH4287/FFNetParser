@@ -1341,38 +1341,7 @@ class StoryParser
                 // Highlighter found:
                 if (self.config['highlighter'][link] !== undefined)
                 {
-                    if (self.DEBUG)
-                    {
-                        console.info("Highlight Element Found: ", element);
-                    }
-
-                    if (self.config['highlighter'][link].hide)
-                    {
-                        if (self.DEBUG)
-                        {
-                            console.log("Hide Entry because of Story Config: ", link);
-                        }
-                        self.hiddenElements[link] = "storyConfig";
-
-                        element.attr("data-hiddenBy", "storyConfig");
-
-                        element.hide();
-                        self.hidden[page]++;
-                    }
-
-                    var imageLink = self.config.highlighter[link].image;
-
-                    if ((imageLink !== undefined) && (imageLink !== null) && (imageLink !== "") && (imageLink !== " "))
-                    {
-                        var img = $("<img></img>").attr("src", self.config['highlighter'][link].image)
-                            .css("width", "20px")
-                            .css("height", "20px")
-                            .css("margin-left", "15px")
-                            .addClass("parser-msg");
-
-                        element.find("a").last().after(img);
-                    }
-
+                    self.highlighterCallback(self, self.config.highlighter[link], element, link, page);
                 }
             }
 
@@ -1480,6 +1449,8 @@ class StoryParser
 
         }, 1000);
     }
+
+
 
     /**
      *   Gets the name of a story from a Link
@@ -1935,6 +1906,17 @@ class StoryParser
                     .css('background-position', 'right');
             }
 
+            if ((config.image !== undefined) && (config.image !== null) && (config.image !== "") && (config.image !== " "))
+            {
+                var img = $("<img></img>").attr("src", config.image)
+                    .css("width", "20px")
+                    .css("height", "20px")
+                    .css("margin-left", "15px")
+                    .addClass("parser-msg");
+
+                element.find("a").last().after(img);
+            }
+
             if (config.mark_chapter)
             {
                 element.find('a').first().after(
@@ -2004,6 +1986,120 @@ class StoryParser
 
         self.updateList(page);
     }
+
+
+    private highlighterCallback(self: StoryParser, config: HighlighterConfig, element: JQuery, link: string, page: number)
+    {
+
+        if (self.DEBUG)
+        {
+            console.info("Highlight Element Found: ", element);
+        }
+
+        // Collect Data:
+        var mod: ModificationBase;
+
+        if ((config.prefab !== undefined) && (config.prefab !== "") && (config.prefab !== " "))
+        {
+            if (self.config.highlighterPrefabs[config.prefab] !== undefined)
+            {
+                mod = self.config.highlighterPrefabs[config.prefab];
+            }
+            else
+            {
+                console.warn("Found Highlighter for Story '%s' but the refferenced Prefab '%s' was not found!", link, config.prefab);
+                return;
+            }
+        }
+        else if (config.custom !== undefined)
+        {
+            mod = config.custom;
+        }
+        else
+        {
+            // This shouldn't be neccessary, because of the Upgrade Handler
+            // But if that fails, we have a extra safety rope :3
+
+            mod = {
+                name: "Legacy-Custom",
+                background: null,
+                color: null,
+                display: !config.hide,
+                ignoreColor: null,
+                image: config.image,
+                mark_chapter: null,
+                mouseOver: null,
+                text_color: null
+            };
+        }
+
+
+
+        if (!mod.display)
+        {
+            if (self.DEBUG)
+            {
+                console.log("Hide Entry because of Story Config: ", link, mod);
+            }
+            self.hiddenElements[link] = "storyConfig";
+
+            element.attr("data-hiddenBy", "storyConfig");
+
+            element.hide();
+            self.hidden[page]++;
+        }
+        else
+        {
+            if ((mod.image !== undefined) && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
+            {
+                var img = $("<img></img>").attr("src", mod.image)
+                    .css("width", "20px")
+                    .css("height", "20px")
+                    .css("margin-left", "15px")
+                    .addClass("parser-msg");
+
+                element.find("a").last().after(img);
+            }
+
+            if ((mod.background !== null) && (mod.background !== ""))
+            {
+                element.css('background-image', 'url(' + mod.background + ')')
+                    .css('background-repeat', 'no-repeat')
+                    .css('background-position', 'right');
+            }
+
+            if (mod.mark_chapter)
+            {
+                element.find('a').first().after(
+                    $("<span class=\"parser-msg\"> <b>{" + mod.name + "}</b></span>")
+                    );
+            }
+
+            if (!mod.ignoreColor && mod.text_color !== null)
+            {
+                element.find(".z-padtop2").css('color', mod.text_color);
+            }
+
+            var color: string = mod.color;
+            var colorMo: string = mod.mouseOver;
+
+
+            if (!mod.ignoreColor)
+            {
+                if (self.DEBUG)
+                {
+                    console.log("[HighlighterCallback] Change Color of Line: ", element);
+                }
+
+                self.updateColor(element, color, colorMo, false);
+            }
+
+
+
+            self.updateList(page);
+        }
+    }
+
 
     /**
      *   Updates the List of found elements
@@ -3582,6 +3678,7 @@ class StoryParser
                                 mark_chapter: el.MarkChapter,
                                 print_story: el.PrintStory,
                                 keep_searching: false,
+                                image: null,
                                 mention_in_headline: el.MentionInHeadline,
                                 background: el.Background,
                                 text_color: el.TextColor,

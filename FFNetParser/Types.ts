@@ -8,23 +8,29 @@ interface StoryInfo
     element?: JQuery;
 }
 
-interface MarkerConfig
+interface MarkerConfig extends ModificationBase
 {
-    name: string;
-    color: string;
     ignore: string[];
-    keywords: string[];
-    mark_chapter: boolean;
+    keywords: string[]; 
     mention_in_headline: boolean;
-    display: boolean;
-    mouseOver: string;
     print_story: boolean;
     search_story: boolean;
-    keep_searching: boolean;
+    keep_searching: boolean;  
+    revision?: number;
+}
+
+interface ModificationBase
+{
+    name: string; 
+    display: boolean;
+    color: string;
+    mark_chapter: boolean;
+    mouseOver: string;
     ignoreColor: boolean;
     background: string;
     text_color: string;
-    revision?: number;
+    image: string;
+    note?: string;
 }
 
 
@@ -91,7 +97,7 @@ interface Config
     dataStorage_key: string;
 
     highlighter: { [index: string]: HighlighterConfig };
-    highlighterPrefabs: { [index: string]: MarkerConfig };
+    highlighterPrefabs: { [index: string]: ModificationBase };
     marker: { [index: string]: MarkerConfig };
     token: string;
     markerBackup: { [index: string]: MarkerConfig };
@@ -117,8 +123,7 @@ interface HighlighterConfig
     image: string;
     hide: boolean;
     prefab?: string;
-    note?: string;
-    custom?: MarkerConfig;
+    custom?: ModificationBase;
 }
 
 
