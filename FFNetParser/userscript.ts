@@ -1296,7 +1296,7 @@ class StoryParser
 
             if (self.config['hide_images'])
             {
-                element.find('img').hide();
+                element.find('img').not(".parser-msg").hide();
             }
 
             // Highlighter:
@@ -3804,14 +3804,14 @@ class StoryParser
     /**
      *   Save Config
      */
-    public save_config()
+    public save_config(saveToCloud = true)
     {
         try
         {
             localStorage[this.config.config_key] = JSON.stringify(this.config);
 
             // Save to Chrome Sync API:
-            if (typeof (chrome) !== undefined && (this.config.chrome_sync === true))
+            if (typeof (chrome) !== undefined && (this.config.chrome_sync === true) && saveToCloud)
             {
                 chrome.storage.sync.set(this.config, function ()
                 {

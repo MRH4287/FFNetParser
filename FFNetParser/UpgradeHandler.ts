@@ -128,7 +128,7 @@
                 lastRun: Date.now()
             };
 
-            self.parser.save_config();
+            self.parser.save_config(false);
         });
 
     }
