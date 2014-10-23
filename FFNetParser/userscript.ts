@@ -1908,6 +1908,8 @@ class StoryParser
 
             if ((config.image !== undefined) && (config.image !== null) && (config.image !== "") && (config.image !== " "))
             {
+                self.log("Adds Filter-Image to Element: ", element, config);
+
                 var img = $("<img></img>").attr("src", config.image)
                     .css("width", "20px")
                     .css("height", "20px")
