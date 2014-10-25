@@ -472,7 +472,7 @@ class StoryParser
                             console.warn("Conflict with Cloud Storage! Use data from Cloud Storage.");
                             try
                             {
-                                localStorage[self.config.storage_key + "_Conflict" + Date.now()] = JSON.stringify(self.config);
+                                //localStorage[self.config.storage_key + "_Conflict" + Date.now()] = JSON.stringify(self.config);
 
                             } catch (e)
                             {
@@ -2001,7 +2001,7 @@ class StoryParser
         // Collect Data:
         var mod: ModificationBase;
 
-        if ((config.prefab !== undefined) && (config.prefab !== "") && (config.prefab !== " "))
+        if ((config.prefab !== undefined) && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
         {
             if (self.config.highlighterPrefabs[config.prefab] !== undefined)
             {
@@ -2013,9 +2013,10 @@ class StoryParser
                 return;
             }
         }
-        else if (config.custom !== undefined)
+        else if ((config.custom !== undefined) && (config.custom !== null))
         {
             mod = config.custom;
+            mod.name = "Custom Highlighter";
         }
         else
         {
@@ -2031,7 +2032,9 @@ class StoryParser
                 image: config.image,
                 mark_chapter: null,
                 mouseOver: null,
-                text_color: null
+                text_color: null,
+                note: null,
+                highlight_color: null
             };
         }
 
@@ -2347,11 +2350,17 @@ class StoryParser
         contextMenu.click(function ()
         {
 
-            self.GUI.toggleStoryConfig({
+            self.GUI.showStoryPrefabList({
                 url: document.location.pathname,
-                //element: element,
+                element: field,
                 name: field.text()
             });
+
+           /* self.GUI.toggleStoryConfig({
+                url: document.location.pathname,
+                //element: element,
+                name: field.text() 
+            }, false);*/
 
         });
 
@@ -3681,6 +3690,8 @@ class StoryParser
                                 print_story: el.PrintStory,
                                 keep_searching: false,
                                 image: null,
+                                note: null,
+                                highlight_color: null,
                                 mention_in_headline: el.MentionInHeadline,
                                 background: el.Background,
                                 text_color: el.TextColor,

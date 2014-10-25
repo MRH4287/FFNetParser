@@ -60,6 +60,19 @@ module.exports = function (grunt) {
 
                 ], //<%= pkg.name %>
                 dest: 'ffnetlist.user.js' //<%= pkg.name %>
+            },
+            big:
+            {
+                src: [
+                    'build/header.js',
+                    'lib/jquery-1.10.2.js',
+                    'lib/jquery-ui.min.js',
+                    'lib/jquery-colorpicker.min.js',
+                    'build/package.js',
+                    'lib/footer.js'
+
+                ], //<%= pkg.name %>
+                dest: 'ffnetlist.user.js' //<%= pkg.name %>
             }
 
         },
@@ -88,7 +101,7 @@ module.exports = function (grunt) {
                     module: 'amd', //or commonjs
                     target: 'es5', //or es3
                     basePath: 'FFNetParser',
-                    sourceMap: true,
+                    sourceMap: false,
                     declaration: true
                 }
             }
@@ -236,6 +249,20 @@ module.exports = function (grunt) {
           'less',
           'copy:style'
       ]);
+
+    grunt.registerTask('big',
+     [
+         'clean:build',
+         'tslint',
+         'typescript',
+         'replace:header',
+         'gitinfo',
+         'replace:userscript',
+         'concat:userscript',
+         'concat:big',
+         'less',
+         'copy:style'
+     ]);
 
     grunt.registerTask('style',
       [

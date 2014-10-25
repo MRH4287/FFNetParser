@@ -77,7 +77,8 @@
                         mouseOver: null,
                         name: "Legacy-Custom",
                         note: null,
-                        text_color: null
+                        text_color: null,
+                        highlight_color: null
                     };
 
                     self.config.highlighter[link].hide = null,

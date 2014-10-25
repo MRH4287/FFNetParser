@@ -268,9 +268,6 @@ abbr[data-original-title] {
     margin-top: 5px;
     
     padding: 5px;
-
-
-
 }
 
 .ffnet-HighlighterListElement
@@ -324,17 +321,27 @@ abbr[data-original-title] {
 }
 
 
+.ffnet-HighlighterHeadline
+{
+    width: 100%;
+    height:25px;
+    line-height: 25px;
+    text-align: center;
+    background-color: #f86a00;
+    .gradient(#fed203, #f86a00);
+    .border_radius(5px);
+    padding:3px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    .clickable;
+}
+
 
 
 
 /*  Common  */
 .gradient(@from, @to, @start: 0.0, @end: 1.0) when (isnumber(@start)) and (isnumber(@end)) {
     background-image: linear-gradient(@from, @to);
-    /*background-image: linear-gradient(center top, @from percentage(@start), @to percentage(@end));*/
-    /* background-image: -o-linear-gradient(center top, @from percentage(@start), @to percentage(@end));
-    background-image: -moz-linear-gradient(center top, @from percentage(@start), @to percentage(@end));
-    background-image: -webkit-linear-gradient(center top, @from percentage(@start), @to percentage(@end));
-    background-image: -ms-linear-gradient(center top, @from percentage(@start), @to percentage(@end));*/
     background-image: -webkit-gradient( linear, center top, center bottom, color-stop(@start, @from), color-stop(@end, @to) );
 }
 

@@ -280,7 +280,7 @@
                 },
                 {
                     name: 'color_normal',
-                    type: GUIElementType.Input,
+                    type: GUIElementType.Color,
                     value: function () { return self.config.color_normal; },
                     label: 'Normal Background-Color: ',
                     attributes:
@@ -290,14 +290,16 @@
                     },
                     customOptions: function (element) 
                     {
+                        /*
                         element.colorpicker({
                             colorFormat: "#HEX"
                         }).after('<small style="margin-left:10px">Click field to change color</small>');
+                        */
                     }
                 },
                 {
                     name: 'color_mouse_over',
-                    type: GUIElementType.Input,
+                    type: GUIElementType.Color,
                     value: function () { return self.config.color_mouse_over; },
                     label: 'MouseOver Background-Color: ',
                     attributes:
@@ -307,14 +309,16 @@
                     },
                     customOptions: function (element) 
                     {
+                        /*
                         element.colorpicker({
                             colorFormat: "#HEX"
                         }).after('<small style="margin-left:10px">Click field to change color</small>');
+                        */
                     }
                 },
                 {
                     name: 'color_odd_color',
-                    type: GUIElementType.Input,
+                    type: GUIElementType.Color,
                     value: function () { return self.config.color_odd_color; },
                     label: 'Odd Background-Color: ',
                     attributes:
@@ -324,9 +328,11 @@
                     },
                     customOptions: function (element) 
                     {
+                        /*
                         element.colorpicker({
                             colorFormat: "#HEX"
                         }).after('<small style="margin-left:10px">Click field to change color</small>');
+                        */
                     }
                 },
                 {
@@ -337,7 +343,7 @@
                 },
                 {
                     name: 'readingHelp_backgroundColor',
-                    type: GUIElementType.Input,
+                    type: GUIElementType.Color,
                     value: function () { return self.config.readingHelp_backgroundColor; },
                     label: 'Reading Help Background Color: ',
                     attributes:
@@ -347,14 +353,16 @@
                     },
                     customOptions: function (element)
                     {
+                        /*
                         element.colorpicker({
                             colorFormat: "#HEX"
                         }).after('<small style="margin-left:10px">Click field to change color</small>');
+                        */
                     }
                 },
                 {
                     name: 'readingHelp_color',
-                    type: GUIElementType.Input,
+                    type: GUIElementType.Color,
                     value: function () { return self.config.readingHelp_color; },
                     label: 'Reading Help Text Color: ',
                     attributes:
@@ -364,9 +372,11 @@
                     },
                     customOptions: function (element)
                     {
+                        /*
                         element.colorpicker({
                             colorFormat: "#HEX"
                         }).after('<small style="margin-left:10px">Click field to change color</small>');
+                        */
                     }
                 },
                 {
@@ -758,10 +768,39 @@
                 case GUIElementType.Color:
 
                     element = $('<input type="text" id="' + id + '"/>')
-                        .val(data.value())
-                        .colorpicker({
-                            colorFormat: "#HEX"
-                        }).after('<small style="margin-left:10px">Click field to change color</small>');
+                        .val(data.value());
+
+                    // Because i want to append something, i need to do that after the element was appended to the List
+                    // In order to do that, i need to wrap the CustomOptions Function
+                    var co = data.customOptions;
+                    data.customOptions = function (el)
+                    {
+                        var colorPreview = $('<div></div>')
+                            .css("width", "15px")
+                            .css("height", "15px")
+                            .css("border", "1px solid black")
+                            .css("display", "inline-block")
+                            .css("background-color", data.value());
+
+                        el.change((e) =>
+                        {
+                            colorPreview.css("background-color", String(data.result(element)));
+                        })
+                            .after('&nbsp;<small style="margin-left:10px">Click field to change color</small>')
+                            .after(
+                            colorPreview
+                            );
+
+                        if (typeof (co) === "function")
+                        {
+                            co(el);
+                        }
+
+                    };                        
+
+                    element.colorpicker({
+                        colorFormat: "#HEX"
+                    });
 
                     if (typeof (data.result) === "undefined")
                     {
@@ -808,6 +847,12 @@
                     element.css(key, value);
                 });
             }
+
+            if (data.debugOnly)
+            {
+                data.label = "[" + data.label + "]";
+            }
+
 
             parent.append(
                 $('<tr></tr>').append(
@@ -1074,7 +1119,9 @@
                         text_color: '#686868',
                         revision: -1,
                         ignoreColor: false,
-                        image: null
+                        image: null,
+                        note: null,
+                        highlight_color: null
                     }, container
                     , true // Display Big
                     );
@@ -1390,6 +1437,21 @@
                     }
                 },
                 {
+                    name: 'highlight_color',
+                    type: GUIElementType.Color,
+                    value: function ()
+                    {
+                        return marker.highlight_color;
+                    },
+                    label: 'Highlight Color: ',
+                    attributes:
+                    {
+                        id: 'fflist-' + name + '-highlight_color',
+                        placeholder: "Click to change Color"
+                    },
+                    debugOnly: true
+                },
+                {
                     name: 'background',
                     type: GUIElementType.Input,
                     value: function ()
@@ -1451,6 +1513,16 @@
                         return marker.image;
                     },
                     label: 'Info Image (Path): ',
+                    debugOnly: true
+                },
+                {
+                    name: 'note',
+                    type: GUIElementType.Input,
+                    value: function ()
+                    {
+                        return marker.note;
+                    },
+                    label: 'Note: ',
                     debugOnly: true
                 },
                 {
@@ -1567,6 +1639,8 @@
                         background: data.instances['background'].val(),
                         text_color: data.instances['text_color'].val(),
                         image: data.instances['image'].val(),
+                        note: data.instances['note'].val(),
+                        highlight_color: data.instances['highlight_color'].val(),
                         revision: ((typeof (self.config.marker[name]) === "undefined") || (typeof (self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
                     };
 
@@ -1774,8 +1848,9 @@
     /**
      *   Open or closes the GUI for the Story Config
      *   @param storyInfo Infos about the story
+     *   @param managePresets Should the option to edit Presets be displayed
      */
-    public toggleStoryConfig(storyInfo: StoryInfo)
+    public toggleStoryConfig(storyInfo: StoryInfo, managePresets: boolean = false)
     {
         var self = this;
 
@@ -1804,7 +1879,7 @@
             {
                 if (this.DEBUG)
                 {
-                    console.warn("_toggleStoryConfig: No Parameter given!");
+                    console.warn("toggleStoryConfig: No Parameter given!");
                 }
 
                 return;
@@ -1818,23 +1893,156 @@
             this.guiContainer.html('');
 
 
-            // Set Position:
-            //_guiContainer.css("position", "fixed");
+            var saveButton = $('<button class="saveButton btn btn-warning">Save</button>');
+
+            // Manage Presets:
+
+            var presetElementContainer = $("<div></div>");
+            var presetContainer = $('<div></div>').append(presetElementContainer);
+
+
+            var customElementContainer = $('<div></div>');
+            var customContainer = $('<div></div>').append(customElementContainer);
+
+            if (!managePresets)
+            {
+                presetContainer.hide();
+            }
+            else
+            {
+                customContainer.hide();
+            }
+
+            $('<div class="ffnet-HighlighterHeadline">Manage Presets</div>')
+                .click((e) =>
+                {
+                    e.preventDefault();
+
+                    if (presetContainer.is(":visible"))
+                    {
+                        presetContainer.slideUp();
+                        customContainer.slideDown();
+                    }
+                    else
+                    {
+                        presetContainer.slideDown();
+                        customContainer.slideUp();
+                    }
+                })
+                .appendTo(this.guiContainer);
+
+            $.each(this.config.highlighterPrefabs, (name, el) =>
+            {
+                this.gui_add_highlighterForm(name, el, presetElementContainer, false, false);
+
+            });
+
+            presetContainer.append(
+                $('<div style="margin-top: 10px; text-align:center"></div>')
+                    .append($('<button class="btn btn-primary">Add new Preset</button>').
+                        click((e) =>
+                        {
+                            e.preventDefault();
+
+                            var name = "NewHighlighter-" + (this.addCount++);
+
+                            this.gui_add_highlighterForm(name,
+                                {
+                                    background: null,
+                                    color: null,
+                                    display: true,
+                                    highlight_color: null,
+                                    ignoreColor: true,
+                                    image: null,
+                                    mark_chapter: false,
+                                    mouseOver: null,
+                                    name: name,
+                                    note: null,
+                                    text_color: null
+
+                                },
+                                presetElementContainer, false, true);
+
+
+                        })
+                    ).append(saveButton.clone())
+                );
+
+            this.guiContainer.append(presetContainer);
+
+            $('<div class="ffnet-HighlighterHeadline">Custom Config</div>')
+                .click((e) =>
+                {
+                    e.preventDefault();
+
+                    if (!customContainer.is(":visible"))
+                    {
+                        presetContainer.slideUp();
+                        customContainer.slideDown();
+                    }
+                    else
+                    {
+                        presetContainer.slideDown();
+                        customContainer.slideUp();
+                    }
+                })
+                .appendTo(this.guiContainer);
+
+            this.guiContainer.append(customContainer);
+
+
+
+            customContainer.append(
+                $('<div style="margin-top: 10px; text-align:center"></div>').append(
+                    saveButton.clone())
+                );
+
+            var usedData: ModificationBase;
+            if (this.config.highlighter[storyInfo.url] === undefined || this.config.highlighter[storyInfo.url].custom === null)
+            {
+                usedData = {
+                    background: null,
+                    color: null,
+                    display: true,
+                    highlight_color: null,
+                    ignoreColor: true,
+                    image: null,
+                    mark_chapter: false,
+                    mouseOver: null,
+                    name: storyInfo.url,
+                    note: null,
+                    text_color: null
+                };
+
+            }
+            else
+            {
+                usedData = this.config.highlighter[storyInfo.url].custom;
+            }
+
+
+            this.gui_add_highlighterForm(storyInfo.url, usedData, customElementContainer, true, true);
+
+            if (managePresets)
+            {
+                customContainer.append("<p><strong>In order to active the Custom Options, you have to click on the Button 'Custom' in the Dropdown List</strong></p>");
+            }
+
+            $(".saveButton").click((e) =>
+            {
+                e.preventDefault();
+
+                this.saveAll();
+                this.parser.save_config();
+
+                this.guiContainer.css("position", "absolute");
+                this.gui_hide();
+                this.parser.readAll();
+                this.parser.enableInStoryHighlighter();
+
+            });
 
             /*
-            $('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
-                $('<input class="btn" type="button" value="Close"></input>').click(function ()
-                {
-                    if (confirm("All unsaved changes will be deleted!"))
-                    {
-                        _guiContainer.css("position", "absolute");
-                        _gui_hide();
-                    }
-
-                })
-            ).appendTo(_guiContainer);
-            */
-
             this.guiContainer.append("<p>This Menu allows you to set story specific options for:</p>");
             this.guiContainer.append(storyInfo.name);
             this.guiContainer.append("<hr />");
@@ -1928,6 +2136,7 @@
                     })
                 );
 
+    */
 
             this.log("Display Content");
 
@@ -1955,7 +2164,7 @@
         {
             return;
         }
-        
+
 
         var container = $('<div class="ffnet-HighlighterContainer"></div>').appendTo($("body"));
         container.position({ of: storyInfo.element.find(".context-menu"), my: "right top", at: "right bottom", collision: "flip flip" })
@@ -1967,44 +2176,534 @@
 
         // Add Element:
 
-        var element = $('<div class="ffnet-HighlighterListElement"></div>').append(
-            $('<div class="color" style="background-color:red"></div><div class="name">Nope</div>')
-            ).appendTo(listContainer);
+        var selectElement = (name: string) =>
+        {
+            $(".ffnet-HighlighterContainer").remove();
+
+            if (this.config.highlighter[storyInfo.url] === undefined)
+            {
+                this.config.highlighter[storyInfo.url] =
+                {
+                    custom: null,
+                    hide: null,
+                    image: null,
+                    prefab: null
+                };
+            }
+
+            this.config.highlighter[storyInfo.url].prefab = name;
+
+            this.parser.save_config();
+            this.parser.read(storyInfo.element.parent());
+
+        };
+
+        $.each(this.config.highlighterPrefabs, (name: string, data: ModificationBase) =>
+        {
+            var element = $('<div class="ffnet-HighlighterListElement"></div>')
+                .append(
+                $('<div class="color"></div>')
+                    .css("background-color", data.highlight_color)
+                )
+                .append(
+                $('<div class="name" ></div >')
+                    .text(name)
+                )
+                .click((e) =>
+                {
+                    e.preventDefault();
+                    selectElement(name);
+                })
+                .appendTo(listContainer);
+
+            if (this.config.highlighter[storyInfo.url] !== undefined && this.config.highlighter[storyInfo.url].prefab === name)
+            {
+                element.addClass("selected");
+            }
 
 
-         $('<div class="ffnet-HighlighterListElement"></div>').append(
-            $('<div class="color" style="background-color:yellow"></div><div class="name">Maybe</div>')
-            ).appendTo(listContainer);
+        });
 
+        var color = "gray";
 
-        $('<div class="ffnet-HighlighterListElement"></div>').append(
-            $('<div class="color" style="background-color:green"></div><div class="name">Good</div>')
-            ).appendTo(listContainer);
+        if (this.config.highlighter[storyInfo.url] !== undefined &&
+            this.config.highlighter[storyInfo.url].custom !== undefined &&
+            this.config.highlighter[storyInfo.url].custom !== null)
+        {
+            color = this.config.highlighter[storyInfo.url].custom.highlight_color;
+        }
 
-
-        $('<div class="ffnet-HighlighterListElement"></div>').append(
-            $('<div class="color" style="background-color:gray"></div><div class="name">Custom</div>')
+        var customElement = $('<div class="ffnet-HighlighterListElement"></div>').append(
+            $('<div class="color">')
+                .css("background-color", color)
+            )
+            .append($('</div><div class="name">Custom</div>')
             ).click(function (ev)
             {
                 ev.preventDefault();
                 $(".ffnet-HighlighterContainer").remove();
 
-               // self.toggleStoryConfig(storyInfo);
+                if (self.config.highlighter[storyInfo.url] !== undefined)
+                {
+                    self.config.highlighter[storyInfo.url].prefab = "";
+                }
+
+                self.toggleStoryConfig(storyInfo, false);
+            }).appendTo(listContainer);
+
+        if (this.config.highlighter[storyInfo.url] !== undefined &&
+            (this.config.highlighter[storyInfo.url].prefab === undefined || this.config.highlighter[storyInfo.url].prefab === null ||
+            this.config.highlighter[storyInfo.url].prefab === "" || this.config.highlighter[storyInfo.url].prefab === " ") &&
+            this.config.highlighter[storyInfo.url].custom !== undefined && this.config.highlighter[storyInfo.url].custom !== null)
+        {
+            customElement.addClass("selected");
+        }
+
+
+        $('<div class="ffnet-HighlighterListElement"></div>').append(
+            $('<div class="color">X</div>')
+                .css("background-color", "red")
+                .css("text-align", "center")
+            )
+            .append($('<div class="name" style="top:0px">Reset</div>')
+            ).click(function (ev)
+            {
+                ev.preventDefault();
+                $(".ffnet-HighlighterContainer").remove();
+
+                if (self.config.highlighter[storyInfo.url] !== undefined)
+                {
+                    if (confirm("Do you really want to remove this Highlighter?"))
+                    {
+                        delete self.config.highlighter[storyInfo.url];
+
+                        self.parser.save_config();
+                        self.parser.read(storyInfo.element.parent());
+                    }
+                }
+                else
+                {
+                    alert("There is nothing to reset. To close the box, just click on the Edit Icon again");
+                }
+
             }).appendTo(listContainer);
 
 
+
         listContainer.append("<hr />")
-            .append($('<div class="ffnet-HighlighterListElement" style="padding-top: 5px; text-align:center">Cusomize Settings</div>')
+            .append($('<div class="ffnet-HighlighterListElement" style="padding-top: 5px; text-align:center">Customize Settings</div>')
                 .click(function (ev)
                 {
                     ev.preventDefault();
                     $(".ffnet-HighlighterContainer").remove();
 
-                    console.log("Todo: Here should be something ....");
+                    self.toggleStoryConfig(storyInfo, true);
                 })
             );
 
 
+    }
+
+
+
+    /**
+     *   Add a form for Highlighter input
+     *   @param name Name of the Input field
+     *   @param config Highlighter Config
+     *   @param mainContainer Container for addition
+     *   @param Custom Add Element for the Custom Element
+     *   @param displayBig Don't minimize Element after adding
+     */
+    private gui_add_highlighterForm(name: string, config: ModificationBase, mainContainer: JQuery, custom: boolean, displayBig: boolean = false)
+    {
+        var self = this;
+
+        this.log("Highlighter Add Form: ", name);
+
+        var radius = 10;
+
+        var height = '35';
+
+        if (displayBig)
+        {
+            height = 'auto'; //580;
+        }
+
+        var replace = new RegExp("[/.\-]", "g");
+        var UID = name.replace(replace, "");
+
+        var container = $('<div class="fflist-filterField"></div>')
+            .css('height', height + 'px')
+
+
+            .appendTo(mainContainer)
+            .hide();
+
+        if (!displayBig)
+        {
+            container.css("cursor", "pointer")
+                .attr('title', "Click to Edit")
+
+                .click(function ()
+                {
+                    container.css('height', 'auto');
+                    container.css("cursor", "auto");
+                    container.removeAttr("title")
+                        .unbind();
+
+                });
+
+        }
+
+
+        var table = $('<table width="100%"></table>').appendTo(container);
+
+        this.registerGUI(name, () =>
+        {
+            if (!custom)
+            {
+                if (this.config.highlighterPrefabs[name] === undefined)
+                {
+                    return {};
+                }
+                else
+                {
+
+                    return this.config.highlighterPrefabs[name];
+                }
+            }
+            else
+            {
+                if (this.config.highlighter[name].custom === undefined)
+                {
+                    return {};
+                }
+                else
+                {
+                    return this.config.highlighter[name].custom;
+                }
+            }
+
+        },
+            [
+                {
+                    name: 'name',
+                    type: GUIElementType.Input,
+                    label: "Name: ",
+                    value: function ()
+                    {
+                        return name;
+                    },
+                    attributes:
+                    {
+                        size: 50
+                    },
+                    customOptions: (el) =>
+                    {
+                        if (custom)
+                        {
+                            el.prop("disabled", true)
+                                .attr("title", "This field can't be changed");
+                        }
+                    }
+                },
+                {
+                    name: 'display',
+                    type: GUIElementType.Checkbox,
+                    label: 'Display Found Entries: ',
+                    value: function ()
+                    {
+                        return config.display;
+                    }
+                },
+                {
+                    name: 'ignoreColor',
+                    type: GUIElementType.Checkbox,
+                    label: 'Ignore Color Settings:',
+                    value: function ()
+                    {
+                        return config.ignoreColor;
+                    },
+                    customOptions: function (checkbox)
+                    {
+                        var check = function ()
+                        {
+                            if (checkbox.is(":checked"))
+                            {
+                                $('#fflist-' + UID + '-color')
+                                    .add('#fflist-' + UID + '-mouseOver')
+                                    .add('#fflist-' + UID + '-text_color')
+                                    .attr("disabled", "disabled");
+                            }
+                            else
+                            {
+                                $('#fflist-' + UID + '-color')
+                                    .add('#fflist-' + UID + '-mouseOver')
+                                    .add('#fflist-' + UID + '-text_color')
+                                    .removeAttr("disabled");
+                            }
+                        };
+
+                        checkbox.change(function ()
+                        {
+                            check();
+                        });
+
+                        window.setTimeout(check, 10);
+                    }
+                },
+                {
+                    name: 'color',
+                    type: GUIElementType.Color,
+                    value: function ()
+                    {
+                        return config.color;
+                    },
+                    label: 'Color: ',
+                    attributes:
+                    {
+                        id: 'fflist-' + UID + '-color',
+                        placeholder: "Click to change Color"
+                    }
+                },
+                {
+                    name: 'mouseOver',
+                    type: GUIElementType.Color,
+                    value: function ()
+                    {
+                        return config.mouseOver;
+                    },
+                    label: 'Mouse Over Color: ',
+                    attributes:
+                    {
+                        id: 'fflist-' + UID + '-mouseOver',
+                        placeholder: "Click to change Color"
+                    }
+                },
+                {
+                    name: 'text_color',
+                    type: GUIElementType.Color,
+                    value: function ()
+                    {
+                        return config.text_color;
+                    },
+                    label: 'Info Text Color: ',
+                    attributes:
+                    {
+                        id: 'fflist-' + UID + '-text_color',
+                        placeholder: "Click to change Color"
+                    }
+                },
+                {
+                    name: 'highlight_color',
+                    type: GUIElementType.Color,
+                    value: function ()
+                    {
+                        return config.highlight_color;
+                    },
+                    label: 'Highlight Color: ',
+                    attributes:
+                    {
+                        id: 'fflist-' + UID + '-highlight_color',
+                        placeholder: "Click to change Color"
+                    }
+                },
+                {
+                    name: 'background',
+                    type: GUIElementType.Input,
+                    value: function ()
+                    {
+                        return config.background;
+                    },
+                    label: 'Background Image (Path): '
+                },
+                {
+                    name: 'mark_chapter',
+                    type: GUIElementType.Checkbox,
+                    value: function ()
+                    {
+                        return config.mark_chapter;
+                    },
+                    label: 'Mark Chaper: '
+                },
+                {
+                    name: 'image',
+                    type: GUIElementType.Input,
+                    value: function ()
+                    {
+                        return config.image;
+                    },
+                    label: 'Info Image (Path): '
+                },
+                {
+                    name: 'note',
+                    type: GUIElementType.Input,
+                    value: function ()
+                    {
+                        return config.note;
+                    },
+                    label: 'Note: ',
+                    debugOnly: true
+                },
+                {
+                    name: '',
+                    type: GUIElementType.Button,
+                    value: function ()
+                    {
+                        return 'Remove';
+                    },
+                    label: '',
+                    callback: function ()
+                    {
+                        self.guiData[name].instances['name'].val('');
+
+                        container.fadeOut(function ()
+                        {
+                            container.remove();
+                        });
+
+                    },
+                    customOptions: (el) =>
+                    {
+                        if (custom)
+                        {
+                            el.remove();
+                        }
+
+                    }
+                },
+                {
+                    name: '',
+                    type: GUIElementType.Custom,
+                    value: function ()
+                    {
+                        return '';
+                    },
+                    result: function ()
+                    {
+                        return null;
+                    },
+                    label: '',
+                    customElement: function ()
+                    {
+                        var elementContainer = $("<div></div>");
+                        $('<div style="display:inline-block; width: 80%"></div>').appendTo(elementContainer).append(
+
+                            $('<img src="' + self.parser.getUrl('glyphicons_369_collapse_top.png') + '" alt="Minimize"></img>').click(function ()
+                            {
+
+                                container
+                                    .unbind()
+                                    .css("cursor", "pointer")
+                                    .css("height", "35px")
+                                    .attr('title', "Click to Edit");
+
+                                setTimeout(function ()
+                                {
+                                    container.click(function ()
+                                    {
+                                        container.css('height', 'auto');
+                                        container.css("cursor", "auto");
+                                        container.removeAttr("title");
+
+                                    });
+
+                                }, 100);
+                            }).css("cursor", "pointer")
+                            );
+
+                        $('<div style="display:inline-block; width: 10%"></div>').appendTo(elementContainer).append(
+                            $('<button class="btn btn-default">Export</button>')
+                            //.button()
+                                .click(function (event)
+                                {
+                                    event.preventDefault();
+
+                                    // Create Dialog:
+                                    var dialog = $('<div></div>').attr("title", "Export Data for Element " + config.name)
+                                        .append(
+                                        $("<pre></pre>").text(JSON.stringify(config))
+                                        ).appendTo($("body"));
+
+                                    dialog.dialog({
+                                        close: function (event, ui) 
+                                        {
+                                            dialog.remove();
+                                        }
+                                    });
+                                })
+                            );
+
+                        return elementContainer;
+                    }
+                }
+            ], false, (data) =>
+            {
+
+                if (!custom && typeof (this.config.highlighterPrefabs[data.name]) !== "undefined")
+                {
+                    delete this.config.highlighterPrefabs[data.name];
+                }
+
+                var name = data.instances['name'].val();
+                if (name === "")
+                {
+                    return;
+                }
+
+                var config: ModificationBase =
+                    {
+                        name: name,
+                        color: data.instances['color'].val(),
+                        mark_chapter: data.instances['mark_chapter'].is(':checked'),
+                        display: data.instances['display'].is(':checked'),
+                        mouseOver: data.instances['mouseOver'].val(),
+                        ignoreColor: data.instances['ignoreColor'].is(':checked'),
+                        background: data.instances['background'].val(),
+                        text_color: data.instances['text_color'].val(),
+                        image: data.instances['image'].val(),
+                        note: data.instances['note'].val(),
+                        highlight_color: data.instances['highlight_color'].val()
+                    };
+
+                if (config.text_color === "")
+                {
+                    config.text_color = "#686868";
+                }
+
+                if (this.DEBUG)
+                {
+                    console.log("Filter '" + name + "' saved: ", config);
+                }
+
+                if (!custom)
+                {
+
+                    this.config.highlighterPrefabs[name] = config;
+                }
+                else
+                {
+                    if (this.config.highlighter[name] === undefined)
+                    {
+                        this.config.highlighter[name] = {
+                            custom: null,
+                            hide: null,
+                            image: null,
+                            prefab: null
+                        };
+                    }
+
+                    this.config.highlighter[name].custom = config;
+                }
+
+            });
+
+        this.renderGUIElement(name, table);
+
+
+        container.fadeIn();
+
+        this.log("Form added");
     }
 
 

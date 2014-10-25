@@ -21,7 +21,7 @@ interface MarkerConfig extends ModificationBase
 
 interface ModificationBase
 {
-    name: string; 
+    name: string;
     display: boolean;
     color: string;
     mark_chapter: boolean;
@@ -31,6 +31,7 @@ interface ModificationBase
     text_color: string;
     image: string;
     note?: string;
+    highlight_color: string;
 }
 
 
