@@ -424,24 +424,27 @@ class StoryParser
         // Google Storage Sync:
         if ((typeof (chrome) !== undefined) && (this.config.chrome_sync))
         {
-            console.info("Load Config from Chrome Server");
-
-            // Load Config from the Chrome Server:
-            chrome.storage.sync.get(function (result: Config)
+            window.setTimeout(function ()
             {
-                self.log("Got Data from Chrome Server: ", result);
+                console.info("Load Config from Chrome Server");
 
-                $.each(self.config, function (name, oldValue)
+                // Load Config from the Chrome Server:
+                chrome.storage.sync.get(function (result: Config)
                 {
-                    if (result[name] !== undefined)
+                    self.log("Got Data from Chrome Server: ", result);
+
+                    $.each(self.config, function (name, oldValue)
                     {
-                        self.log("Key: '" + name + "'", oldValue, result[name]);
+                        if (result[name] !== undefined)
+                        {
+                            self.log("Key: '" + name + "'", oldValue, result[name]);
 
-                        self.config[name] = result[name];
-                    }
+                            self.config[name] = result[name];
+                        }
+                    });
                 });
-            });
 
+            }, 2000);
 
             chrome.storage.onChanged.addListener(function (changes, namespace)
             {

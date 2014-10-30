@@ -94,6 +94,92 @@
             self.parser.save_config();
         });
 
+        this.registerTag("highlighter_defaultValues", function ()
+        {
+
+            var highlighterDefault =
+                {
+                    "Hide":
+                    {
+                        "background": "",
+                        "color": "",
+                        "customPriority":
+                        {
+                            "background": 1,
+                            "color": 1,
+                            "highlight_color": 1,
+                            "mouseOver": 1,
+                            "text_color": 1
+                        },
+                        "display": false,
+                        "highlight_color": "#ff0000",
+                        "ignoreColor": true,
+                        "image": "",
+                        "mark_chapter": false,
+                        "mouseOver": "",
+                        "name": "Hide",
+                        "note": "",
+                        "text_color": "#686868"
+                    },
+                    "Bad":
+                    {
+                        "background": "",
+                        "color": "",
+                        "customPriority":
+                        {
+                            "background": 1,
+                            "color": 1,
+                            "highlight_color": 1,
+                            "mouseOver": 1,
+                            "text_color": 1
+                        },
+                        "display": true,
+                        "highlight_color": "#ff8500",
+                        "ignoreColor": true,
+                        "image": "https://www.mrh-development.de/FanFictionUserScript/SSLProxy/?url=6.gif",
+                        "mark_chapter": true,
+                        "mouseOver": "",
+                        "name": "Bad",
+                        "note": "",
+                        "priority": 1,
+                        "text_color": "#686868"
+                    },
+                    "Good":
+                    {
+                        "background": "",
+                        "color": "",
+                        "customPriority":
+                        {
+                            "background": 1,
+                            "color": 1,
+                            "highlight_color": 1,
+                            "mouseOver": 1,
+                            "text_color": 1
+                        },
+                        "display": true,
+                        "highlight_color": "#43ff00",
+                        "ignoreColor": true,
+                        "image": "https://www.mrh-development.de/FanFictionUserScript/SSLProxy/?url=5.gif",
+                        "mark_chapter": true,
+                        "mouseOver": "",
+                        "name": "Good",
+                        "note": "",
+                        "priority": 1,
+                        "text_color": "#686868"
+                    }
+                };
+
+            $.each(highlighterDefault, function (name, element)
+            {
+                if (self.config.highlighterPrefabs[name] === undefined)
+                {
+                    self.config.highlighterPrefabs[name] = element;
+                }
+            });
+
+            self.parser.save_config(true);
+
+        });
 
     }
 
@@ -113,15 +199,20 @@
 
         $.each(this.registeredTags, function (name: string, data: { ifNotExist?: (self: UpgradeHandler) => void; ifExist?: (self: UpgradeHandler) => void })
         {
+            if (self.DEBUG)
+            {
+                console.log("Upgrade Handler: Checking Tag - ", name);
+            }
+
             if (self.config.upgradeTags[name] === undefined && data.ifNotExist !== undefined)
             {
-                self.log("Upgrade Handler: Executing IfNotExist Handler for Tag: ", name);
+                console.log("Upgrade Handler: Executing IfNotExist Handler for Tag: ", name);
 
                 data.ifNotExist(self);
             }
             else if (self.config.upgradeTags[name] !== undefined && data.ifExist !== undefined)
             {
-                self.log("Upgrade Handler: Executing IfExist Handler for Tag: ", name);
+                console.log("Upgrade Handler: Executing IfExist Handler for Tag: ", name);
 
                 data.ifExist(self);
             }
