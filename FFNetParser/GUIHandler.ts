@@ -1342,7 +1342,7 @@
                     customOptions: function (input)
                     {
                         input.parent().append(
-                            '<br><span style="font-size: small;">Seperated with ", "</span>'
+                            '<br><span style="font-size: small;">Separated by ", "</span>'
                             );
                     }
                 },
@@ -1365,7 +1365,7 @@
                     customOptions: function (input)
                     {
                         input.parent().append(
-                            '<br><span style="font-size: small;">Seperated with ", "</span>'
+                            '<br><span style="font-size: small;">Separated by ", "</span>'
                             );
                     }
                 },
@@ -1877,11 +1877,11 @@
                         ignoreColor: data.instances['ignoreColor'].is(':checked'),
                         background: data.instances['background'].val(),
                         text_color: data.instances['text_color'].val(),
-                        image: data.instances['image'].val(),
-                        note: data.instances['note'].val(),
+                        image: (data.instances['image'] !== undefined) ? data.instances['image'].val() : null,
+                        note: (data.instances['note'] !== undefined) ? data.instances['note'].val() : null,
                         priority: priority,
                         customPriority: customPriority,
-                        highlight_color: data.instances['highlight_color'].val(),
+                        highlight_color: (data.instances['highlight_color'] !== undefined) ? data.instances['highlight_color'].val() : null,
                         revision: ((typeof (self.config.marker[name]) === "undefined") || (typeof (self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
                     };
 
