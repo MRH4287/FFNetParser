@@ -3133,7 +3133,7 @@
                         background: data.instances['background'].val(),
                         text_color: data.instances['text_color'].val(),
                         image: data.instances['image'].val(),
-                        note: data.instances['note'].val(),
+                        note: (data.instances['note'] !== undefined) ? data.instances['note'].val() : null,
                         priority: priority,
                         customPriority: customPriority,
                         highlight_color: data.instances['highlight_color'].val()
