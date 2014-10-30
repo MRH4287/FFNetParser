@@ -102,6 +102,7 @@ interface Config
     disable_highlighter: boolean;
     disable_parahraphMenu: boolean;
     disable_sync: boolean;
+    disable_default_coloring: boolean;
     chrome_sync: boolean;
 
     storage_key: string;

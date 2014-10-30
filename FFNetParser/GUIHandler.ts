@@ -575,6 +575,12 @@
                     value: function () { return self.config.disable_sync; }
                 },
                 {
+                    name: 'disable_default_coloring',
+                    type: GUIElementType.Checkbox,
+                    label: '<abbr title="This disables the color change in the Story-List. Do not affect Filter / Highlighter">Disable the default Coloration</abbr>: ',
+                    value: function () { return self.config.disable_default_coloring; }
+                },
+                {
                     name: 'chrome_sync',
                     type: GUIElementType.Checkbox,
                     label: 'Use Chrome to Synchronize Data: ',
@@ -1285,6 +1291,9 @@
 
         }
 
+        var replace = new RegExp("[ /.\-]", "g");
+        var UID = name.replace(replace, "");
+
 
         var table = $('<table width="100%"></table>').appendTo(container);
 
@@ -1373,9 +1382,6 @@
                         var label: JQuery;
                         var element: JQuery;
 
-                        var replace = new RegExp("[ /.\-]", "g");
-                        var UID = name.replace(replace, "");
-
 
                         for (var i = 1; i <= 5; i++)
                         {
@@ -1457,8 +1463,6 @@
                     label: "Custom Priority",
                     customElement: function (data: GUIElement): JQuery
                     {
-                        var replace = new RegExp("[ /.\-]", "g");
-                        var UID = name.replace(replace, "");
 
                         var defaultValues: ModififcationPriority = {
                             background: 1,
@@ -1501,6 +1505,7 @@
                             background: "Background Image"
                         };
 
+
                         $.each(options, function (name, description)
                         {
                             $('<div class="lineHeight" style="margin-top:5px"></div>')
@@ -1513,9 +1518,7 @@
                             var label: JQuery;
                             var element: JQuery;
 
-                            var replace = new RegExp("[ /.\-]", "g");
-                            var UID = name.replace(replace, "");
-
+                            
 
                             for (var i = 0; i <= 5; i++)
                             {
@@ -1560,20 +1563,22 @@
                     },
                     customOptions: function (checkbox)
                     {
+                        
+
                         var check = function ()
                         {
                             if (checkbox.is(":checked"))
                             {
-                                $('#fflist-' + name + '-color')
-                                    .add('#fflist-' + name + '-mouseOver')
-                                    .add('#fflist-' + name + '-text_color')
+                                $('#fflist-' + UID + '-color')
+                                    .add('#fflist-' + UID + '-mouseOver')
+                                    .add('#fflist-' + UID + '-text_color')
                                     .attr("disabled", "disabled");
                             }
                             else
                             {
-                                $('#fflist-' + name + '-color')
-                                    .add('#fflist-' + name + '-mouseOver')
-                                    .add('#fflist-' + name + '-text_color')
+                                $('#fflist-' + UID + '-color')
+                                    .add('#fflist-' + UID + '-mouseOver')
+                                    .add('#fflist-' + UID + '-text_color')
                                     .removeAttr("disabled");
                             }
                         };
@@ -1596,7 +1601,7 @@
                     label: 'Color: ',
                     attributes:
                     {
-                        id: 'fflist-' + name + '-color',
+                        id: 'fflist-' + UID + '-color',
                         placeholder: "Click to change Color"
                     }
                 },
@@ -1610,7 +1615,7 @@
                     label: 'Mouse Over Color: ',
                     attributes:
                     {
-                        id: 'fflist-' + name + '-mouseOver',
+                        id: 'fflist-' + UID + '-mouseOver',
                         placeholder: "Click to change Color"
                     }
                 },
@@ -1624,7 +1629,7 @@
                     label: 'Info Text Color: ',
                     attributes:
                     {
-                        id: 'fflist-' + name + '-text_color',
+                        id: 'fflist-' + UID + '-text_color',
                         placeholder: "Click to change Color"
                     }
                 },
@@ -1638,7 +1643,7 @@
                     label: 'Highlight Color: ',
                     attributes:
                     {
-                        id: 'fflist-' + name + '-highlight_color',
+                        id: 'fflist-' + UID + '-highlight_color',
                         placeholder: "Click to change Color"
                     },
                     debugOnly: true
@@ -2657,6 +2662,190 @@
                     }
                 },
                 {
+                    name: 'priority',
+                    type: GUIElementType.Custom,
+                    label: "Priority: ",
+                    customElement: function (data: GUIElement): JQuery
+                    {
+
+                        var container = $('<div class="form-horizontal"></div>');
+
+                        var elementContainer: JQuery;
+                        var label: JQuery;
+                        var element: JQuery;
+
+
+                        for (var i = 1; i <= 5; i++)
+                        {
+                            label = $('<label class="radio-inline lineHeight"></label>').appendTo(container);
+
+                            element = $('<input type="radio"></input>')
+                                .attr("name", "ffnet-" + UID + "-priority")
+                                .attr("id", "ffnet-" + UID + "-priority-" + i)
+                                .attr("value", i)
+                                .appendTo(label);
+
+                            label.append(i);
+
+                            if (data.value() === i)
+                            {
+                                element.prop("checked", true);
+                            }
+
+                        }
+
+                        // Custom:
+
+                        label = $('<label class="radio-inline lineHeight"></label>').appendTo(container);
+
+                        element = $('<input type="radio"></input>')
+                            .attr("name", "ffnet-" + UID + "-priority")
+                            .attr("id", "ffnet-" + UID + "-priority-Custom")
+                            .attr("value", -1)
+                            .appendTo(label);
+
+                        label.append("Custom");
+
+                        if (data.value() === -1)
+                        {
+                            element.prop("checked", true);
+                        }
+
+                        container.find("input").change(function (e)
+                        {
+                            var currentSelected = $(this).parent().find("input").filter(":checked");
+                            if (currentSelected.length === 0)
+                            {
+                                console.warn("There should be something selected ... :/");
+                            }
+                            else
+                            {
+                                if (Number(currentSelected.val()) === -1)
+                                {
+                                    $("#ffnet-" + UID + "-customPriorityCotainer").slideDown();
+                                }
+                                else
+                                {
+                                    $("#ffnet-" + UID + "-customPriorityCotainer").slideUp();
+                                }
+                            }
+
+                        });
+
+
+                        return container;
+
+                    },
+                    result: function (el)
+                    {
+                        // Not used!
+
+                        return null;
+                    },
+                    value: function ()
+                    {
+                        return config.priority;
+                    }
+
+
+                },
+                {
+                    name: "customPriority",
+                    type: GUIElementType.Custom,
+                    label: "Custom Priority",
+                    customElement: function (data: GUIElement): JQuery
+                    {
+
+                        var defaultValues: ModififcationPriority = {
+                            background: 1,
+                            color: 1,
+                            highlight_color: 1,
+                            mouseOver: 1,
+                            text_color: 1
+                        };
+
+                        var value: ModififcationPriority = data.value();
+                        if ((value === undefined) || (value === null))
+                        {
+                            value = defaultValues;
+                        }
+                        else
+                        {
+                            $.each(value, function (name, element)
+                            {
+                                if ((element === undefined) || (element === null))
+                                {
+                                    value[name] = defaultValues[name];
+                                }
+                            });
+                        }
+
+
+                        var mainContainer = $('<div></div>')
+                            .attr("id", "ffnet-" + UID + "-customPriorityCotainer");
+
+                        if (config.priority !== -1)
+                        {
+                            mainContainer.hide();
+                        }
+
+                        var options = {
+                            color: "Color",
+                            mouseOver: "Mouse Over Color",
+                            text_color: "Info Text Color",
+                            highlight_color: "Highlight Color",
+                            background: "Background Image"
+                        };
+
+
+                        $.each(options, function (name, description)
+                        {
+                            $('<div class="lineHeight" style="margin-top:5px"></div>')
+                                .text(description + ": ")
+                                .appendTo(mainContainer);
+
+                            var container = $('<div class="form-horizontal"></div>').appendTo(mainContainer);
+
+                            var elementContainer: JQuery;
+                            var label: JQuery;
+                            var element: JQuery;
+
+
+
+                            for (var i = 0; i <= 5; i++)
+                            {
+                                label = $('<label class="radio-inline lineHeight"></label>').appendTo(container);
+
+                                element = $('<input type="radio"></input>')
+                                    .attr("name", "ffnet-" + UID + "-customPrioritry-" + name)
+                                    .attr("id", "ffnet-" + UID + "-customPrioritry-" + name + i)
+                                    .attr("data-priorityName", name)
+                                    .attr("value", i)
+                                    .appendTo(label);
+
+                                label.append((i !== 0) ? i : "Disable");
+
+                                if (value[name] === i)
+                                {
+                                    element.prop("checked", true);
+                                }
+
+                            }
+                        });
+
+                        return mainContainer;
+                    },
+                    result: function (el)
+                    {
+                        // Not used!
+                    },
+                    value: function ()
+                    {
+                        return config.customPriority;
+                    }
+
+                },
+                {
                     name: 'ignoreColor',
                     type: GUIElementType.Checkbox,
                     label: 'Ignore Color Settings:',
@@ -2891,11 +3080,47 @@
                     return;
                 }
 
+                // Priority:
                 var priority: number = 1;
                 var selectedPriority = data.instances['priority'].find(":checked");
 
                 priority = Number(selectedPriority.val());
-                var customPriority: ModififcationPriority = null;
+
+                // CustomPriority
+
+                var customPriority: ModififcationPriority =
+                    {
+                        color: null,
+                        background: null,
+                        highlight_color: null,
+                        mouseOver: null,
+                        text_color: null
+
+                    };
+
+                var el = data.instances['customPriority'];
+
+                $.each(customPriority, function (name, _)
+                {
+                    var elements = el.find('[data-priorityName="' + name + '"]');
+                    if (elements.length === 0)
+                    {
+                        console.warn("Can't find Elements for Priority:", name, el);
+                    }
+                    else
+                    {
+                        customPriority[name] = Number(elements.filter(":checked").val());
+                    }
+
+                    if (customPriority[name] === null || customPriority[name] === undefined || customPriority[name] === NaN || customPriority[name] < 0)
+                    {
+                        customPriority[name] = 1;
+                    }
+
+
+                });
+
+                // ...
 
                 var config: ModificationBase =
                     {

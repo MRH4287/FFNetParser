@@ -107,6 +107,7 @@ class StoryParser
         disable_highlighter: false,
         disable_parahraphMenu: false,
         disable_sync: true,
+        disable_default_coloring: false,
         chrome_sync: false,
 
         // Do not change below this line:
@@ -1367,7 +1368,10 @@ class StoryParser
                 }
                 else
                 {
-                    self.updateColor(element, color, colorMo, true);
+                    if (!self.config.disable_default_coloring)
+                    {
+                        self.updateColor(element, color, -1, colorMo, -1);
+                    }
                 }
 
 
@@ -1899,11 +1903,46 @@ class StoryParser
             self.hidden[page] += 1;
         } else
         {
+            var priority: ModififcationPriority;
+            if (config.priority !== -1)
+            {
+                priority = {
+                    background: config.priority,
+                    color: config.priority,
+                    highlight_color: config.priority,
+                    mouseOver: config.priority,
+                    text_color: config.priority
+                };
+            }
+            else
+            {
+                if ((config.customPriority !== undefined) && (config.customPriority !== null))
+                {
+                    priority = config.customPriority;
+                }
+                else
+                {
+                    console.warn("Custom Priority set for Element. But Config is not defined!", config);
+
+                    priority = {
+                        background: 1,
+                        color: 1,
+                        highlight_color: 1,
+                        mouseOver: 1,
+                        text_color: 1
+                    };
+                }
+            }
+
+
             if ((config.background !== null) && (config.background !== ""))
             {
-                element.css('background-image', 'url(' + config.background + ')')
-                    .css('background-repeat', 'no-repeat')
-                    .css('background-position', 'right');
+                this.updateAttributeWithPriority(element, "background", priority.background, function ()
+                {
+                    element.css('background-image', 'url(' + config.background + ')')
+                        .css('background-repeat', 'no-repeat')
+                        .css('background-position', 'right');
+                });
             }
 
             if ((config.image !== undefined) && (config.image !== null) && (config.image !== "") && (config.image !== " "))
@@ -1929,7 +1968,7 @@ class StoryParser
 
             if (!config.ignoreColor && config.text_color != null)
             {
-                textEl.css('color', config.text_color);
+                this.updateAttributeWithPriority(textEl, "color", priority.text_color, config.text_color);
             }
 
             var color: string = config.color;
@@ -1981,7 +2020,7 @@ class StoryParser
                     console.log("[ElementCallback] Change Color of Line: ", element);
                 }
 
-                self.updateColor(element, color, colorMo, false);
+                self.updateColor(element, color, priority.color, colorMo, priority.mouseOver);
             }
 
         }
@@ -2057,6 +2096,38 @@ class StoryParser
         }
         else
         {
+            var priority: ModififcationPriority;
+            if (mod.priority !== -1)
+            {
+                priority = {
+                    background: mod.priority,
+                    color: mod.priority,
+                    highlight_color: mod.priority,
+                    mouseOver: mod.priority,
+                    text_color: mod.priority
+                };
+            }
+            else
+            {
+                if ((mod.customPriority !== undefined) && (mod.customPriority !== null))
+                {
+                    priority = mod.customPriority;
+                }
+                else
+                {
+                    console.warn("Custom Priority set for Element. But Config is not defined!", config);
+
+                    priority = {
+                        background: 1,
+                        color: 1,
+                        highlight_color: 1,
+                        mouseOver: 1,
+                        text_color: 1
+                    };
+                }
+            }
+
+
             if ((mod.image !== undefined) && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
             {
                 var img = $("<img></img>").attr("src", mod.image)
@@ -2070,9 +2141,13 @@ class StoryParser
 
             if ((mod.background !== null) && (mod.background !== ""))
             {
-                element.css('background-image', 'url(' + mod.background + ')')
-                    .css('background-repeat', 'no-repeat')
-                    .css('background-position', 'right');
+                this.updateAttributeWithPriority(element, "background", priority.background, function ()
+                {
+
+                    element.css('background-image', 'url(' + mod.background + ')')
+                        .css('background-repeat', 'no-repeat')
+                        .css('background-position', 'right');
+                });
             }
 
             if (mod.mark_chapter)
@@ -2084,7 +2159,8 @@ class StoryParser
 
             if (!mod.ignoreColor && mod.text_color !== null)
             {
-                element.find(".z-padtop2").css('color', mod.text_color);
+                var textEl = element.find(".z-padtop2");
+                this.updateAttributeWithPriority(textEl, "color", priority.text_color, mod.text_color);
             }
 
             var color: string = mod.color;
@@ -2098,7 +2174,7 @@ class StoryParser
                     console.log("[HighlighterCallback] Change Color of Line: ", element);
                 }
 
-                self.updateColor(element, color, colorMo, false);
+                self.updateColor(element, color, priority.color, colorMo, priority.mouseOver);
             }
 
 
@@ -2247,11 +2323,6 @@ class StoryParser
             var color = self.config.color_normal;
             var colorMo = self.config.color_mouse_over;
 
-            if (el.is('.hidden'))
-            {
-                return;
-            }
-
             if (odd)
             {
                 color = self.config.color_odd_color;
@@ -2263,7 +2334,10 @@ class StoryParser
 
             if (!el.is('[data-color]'))
             {
-                self.updateColor(el, color, colorMo, true);
+                if (!self.config.disable_default_coloring)
+                {
+                    self.updateColor(el, color, -1, colorMo, -1);
+                }
             }
 
             /*
@@ -2287,30 +2361,83 @@ class StoryParser
      *   Updates the Color of a specifiy Element in the list
      *   @param element HTML-Instance of found element
      *   @param color The Color to set the Element to
+     *   @param colorPriority The Priority of the Color
      *   @param colorMo The color used for the Mouse Over effect
-     *   @param notSetAttr Don't set the HTML-Attribute
+     *   @param colorMoPriority The priority of the Mouse Over Color 
      */
-    private updateColor(element: JQuery, color: string, colorMo: string, notSetAttr: boolean)
+    private updateColor(element: JQuery, color: string, colorPriority: number, colorMo: string, colorMoPriority: number)
     {
         //console.log("Update Color called! " + color + ", " + colorMo + ", " + notSetAttr);
 
-        element.css('background-color', color);
-
-        if (notSetAttr === false)
+        this.updateAttributeWithPriority(element, 'color', colorPriority, function ()
         {
+            element.css("background-color", color);
             element.attr("data-color", color);
+        });
+
+
+        this.updateAttributeWithPriority(element, 'mouseovercolor', colorMoPriority, function ()
+        {
+            element.unbind("mouseenter").unbind("mouseleave");
+
+            element.mouseenter(function ()
+            {
+                $(this).css('background-color', colorMo);
+            }).mouseleave(function ()
+                {
+                    $(this).css('background-color', color);
+                });
+
+            
             element.attr("data-mouseOverColor", colorMo);
+        });
+
+    }
+
+    /**
+     * Updates a property if the Priority if higher or equals to the current Priority
+     * @param element The Target Element for the Manipulation
+     * @param attribute The name of the Attrbute. If value is not a function, this is the name of the CSS Property
+     * @param newPriority The Priority of the new Value
+     * @param value The new value OR a callback Function with the result
+     */
+    private updateAttributeWithPriority(element: JQuery, attribute: string, newPriority: number, value: any)
+    {
+        var regEx = new RegExp("[ \-\_\.]", "g");
+        var attributeName = "data-priority-" + attribute.replace(regEx, "");
+
+        var current = element.attr(attributeName);
+        var currentPriority: number = -100000;
+
+        // 0 means disabled!
+        if (newPriority === 0)
+        {
+            return;
         }
 
-        element.unbind("mouseenter").unbind("mouseleave");
-
-        element.mouseenter(function ()
+        if (current !== undefined)
         {
-            $(this).css('background-color', colorMo);
-        }).mouseleave(function ()
+            currentPriority = Number(current);
+        }
+
+        if (currentPriority === NaN)
+        {
+            currentPriority = -100000;
+        }
+
+        if (newPriority >= currentPriority)
+        {
+            if (typeof (value) === "function")
             {
-                $(this).css('background-color', color);
-            });
+                value(element);
+            }
+            else
+            {
+                element.css(attribute, value);
+            }
+
+            element.attr(attributeName, newPriority);
+        }
     }
 
 
