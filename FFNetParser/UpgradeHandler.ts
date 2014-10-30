@@ -76,6 +76,8 @@
                         mark_chapter: null,
                         mouseOver: null,
                         name: "Legacy-Custom",
+                        priority: 1,
+                        customPriority: null,
                         note: null,
                         text_color: null,
                         highlight_color: null

@@ -2033,7 +2033,9 @@ class StoryParser
                 mark_chapter: null,
                 mouseOver: null,
                 text_color: null,
+                priority: 1,
                 note: null,
+                customPriority: null,
                 highlight_color: null
             };
         }
@@ -3691,6 +3693,8 @@ class StoryParser
                                 keep_searching: false,
                                 image: null,
                                 note: null,
+                                priority: 1,
+                                customPriority: null,
                                 highlight_color: null,
                                 mention_in_headline: el.MentionInHeadline,
                                 background: el.Background,

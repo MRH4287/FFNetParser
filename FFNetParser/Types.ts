@@ -32,6 +32,17 @@ interface ModificationBase
     image: string;
     note?: string;
     highlight_color: string;
+    priority: number;
+    customPriority: ModififcationPriority;
+}
+
+interface ModififcationPriority
+{
+    color: number;
+    mouseOver: number;
+    text_color: number;
+    highlight_color: number;
+    background: number;
 }
 
 
