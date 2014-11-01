@@ -2462,13 +2462,19 @@ class StoryParser
         var body = $("body");
         var field = body.find('#profile_top').first().find("b").first();
 
-        body.find(".highlight-msg").remove();
+        if (field.length === 0)
+        {
+            return;
+        }
 
-        var contextMenu = $('<div class="highlight-msg"></div>')
+        body.find(".parser-msg").remove();
+
+        var contextMenu = $("<div></div>")
             .css("width", "20px")
             .css("height", "20px")
             .css("float", "right")
             .addClass("parser-msg")
+            .addClass("context-menu")
             .append(
             $("<img></img>")
                 .attr("src", this.getUrl("edit.gif"))
@@ -2484,7 +2490,7 @@ class StoryParser
 
             self.GUI.showStoryPrefabList({
                 url: document.location.pathname,
-                element: field,
+                element: body.find('#profile_top'),
                 name: field.text()
             });
 
@@ -2506,13 +2512,133 @@ class StoryParser
                 console.info("Highlight Element Found");
             }
 
-            var img = $("<img></img>").attr("src", this.config['highlighter'][document.location.pathname].image)
-                .css("width", "20px")
-                .css("height", "20px")
-                .css("margin-left", "15px")
-                .addClass("highlight-msg");
+            var config = this.config['highlighter'][document.location.pathname];
 
-            field.after(img);
+
+            // Collect Data:
+            var mod: ModificationBase;
+
+            if ((config.prefab !== undefined) && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
+            {
+                if (self.config.highlighterPrefabs[config.prefab] !== undefined)
+                {
+                    mod = self.config.highlighterPrefabs[config.prefab];
+                }
+                else
+                {
+                    console.warn("Found Highlighter for Story '%s' but the refferenced Prefab '%s' was not found!", document.location.pathname, config.prefab);
+                    return;
+                }
+            }
+            else if ((config.custom !== undefined) && (config.custom !== null))
+            {
+                mod = config.custom;
+                mod.name = "Custom Highlighter";
+            }
+            else
+            {
+                // This shouldn't be neccessary, because of the Upgrade Handler
+                // But if that fails, we have a extra safety rope :3
+
+                mod = {
+                    name: "Legacy-Custom",
+                    background: null,
+                    color: null,
+                    display: !config.hide,
+                    ignoreColor: null,
+                    image: config.image,
+                    mark_chapter: null,
+                    mouseOver: null,
+                    text_color: null,
+                    priority: 1,
+                    note: null,
+                    customPriority: null,
+                    highlight_color: null
+                };
+            }
+
+            var priority: ModififcationPriority;
+            if (mod.priority !== -1)
+            {
+                priority = {
+                    background: mod.priority,
+                    color: mod.priority,
+                    highlight_color: mod.priority,
+                    mouseOver: mod.priority,
+                    text_color: mod.priority
+                };
+            }
+            else
+            {
+                if ((mod.customPriority !== undefined) && (mod.customPriority !== null))
+                {
+                    priority = mod.customPriority;
+                }
+                else
+                {
+                    console.warn("Custom Priority set for Element. But Config is not defined!", config);
+
+                    priority = {
+                        background: 1,
+                        color: 1,
+                        highlight_color: 1,
+                        mouseOver: 1,
+                        text_color: 1
+                    };
+                }
+            }
+
+
+            if ((mod.image !== undefined) && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
+            {
+                var img = $("<img></img>").attr("src", mod.image)
+                    .css("width", "20px")
+                    .css("height", "20px")
+                    .css("margin-left", "15px")
+                    .addClass("highlight-msg")
+                    .addClass("parser-msg");
+
+                field.after(img);
+            }
+
+            if ((mod.background !== null) && (mod.background !== ""))
+            {
+                this.updateAttributeWithPriority(body.find('#profile_top'), "background", priority.background, function ()
+                {
+
+                    body.find('#profile_top').css('background-image', 'url(' + mod.background + ')')
+                        .css('background-repeat', 'no-repeat')
+                        .css('background-position', 'right');
+                });
+            }
+
+            if (mod.mark_chapter)
+            {
+                body.find('#profile_top').find('.icon-mail-1').first().after(
+                    $("<span class=\"parser-msg\"> <b>{" + mod.name + "}</b></span>")
+                    );
+            }
+
+
+            if (!mod.ignoreColor && mod.text_color !== null)
+            {
+                var textEl = body.find('#profile_top').children().filter("span").last();
+                this.updateAttributeWithPriority(textEl, "color", priority.text_color, mod.text_color);
+            }
+
+            var color: string = mod.color;
+            var colorMo: string = mod.mouseOver;
+
+
+            if (!mod.ignoreColor)
+            {
+                if (self.DEBUG)
+                {
+                    console.log("[HighlighterCallback] Change Color of Line: ", body.find('#profile_top'));
+                }
+
+                self.updateColor(body.find('#profile_top'), color, priority.color, colorMo, priority.mouseOver);
+            }
 
         }
 

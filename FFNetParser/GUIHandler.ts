@@ -2440,6 +2440,7 @@
 
             this.parser.save_config();
             this.parser.read(storyInfo.element.parent());
+            this.parser.enableInStoryHighlighter();
 
         };
 
@@ -2524,6 +2525,7 @@
 
                         self.parser.save_config();
                         self.parser.read(storyInfo.element.parent());
+                        self.parser.enableInStoryHighlighter();
                     }
                 }
                 else
