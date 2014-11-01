@@ -27,7 +27,7 @@ test('Story Add Highlighter Edit', function ()
 {
     var element = $("#profile_top").first();
 
-    var container = element.find(".highlight-msg");
+    var container = element.find(".parser-msg");
 
     equal(container.length, 1, "There has to be an Edit Button for the Highlighter");
     equal(container.find("img").length, 1, "The Container has to contain the Edit Image");
