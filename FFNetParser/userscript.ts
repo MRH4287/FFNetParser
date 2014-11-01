@@ -2157,6 +2157,7 @@ class StoryParser
             {
                 element.find('a').first().after(
                     $("<span class=\"parser-msg\"> <b>{" + mod.name + "}</b></span>")
+                        .attr("title", mod.note)
                     );
             }
 
@@ -2391,7 +2392,7 @@ class StoryParser
                     $(this).css('background-color', color);
                 });
 
-            
+
             element.attr("data-mouseOverColor", colorMo);
         });
 
@@ -2494,11 +2495,11 @@ class StoryParser
                 name: field.text()
             });
 
-           /* self.GUI.toggleStoryConfig({
-                url: document.location.pathname,
-                //element: element,
-                name: field.text() 
-            }, false);*/
+            /* self.GUI.toggleStoryConfig({
+                 url: document.location.pathname,
+                 //element: element,
+                 name: field.text() 
+             }, false);*/
 
         });
 
@@ -2616,6 +2617,7 @@ class StoryParser
             {
                 body.find('#profile_top').find('.icon-mail-1').first().after(
                     $("<span class=\"parser-msg\"> <b>{" + mod.name + "}</b></span>")
+                        .attr("title", mod.note)
                     );
             }
 
