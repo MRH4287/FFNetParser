@@ -1710,7 +1710,41 @@
                         return marker.image;
                     },
                     label: 'Info Image (Path): ',
-                    debugOnly: true
+                    customOptions: (el) =>
+                    {
+                        var container = $("<div></div>");
+                        el.after(container);
+
+                        var image = $("<img></img>")
+                            .css("width", "30px")
+                            .css("height", "30px")
+                            .css("margin-left", "5px")
+                            .css("border", "1px solid black")
+                            .css("display", "inline-block")
+                            .addClass("clickable");
+
+                        image.clone()
+                            .attr("src", self.parser.getUrl("none.gif"))
+                            .appendTo(container)
+                            .attr("title", "Clear Selection")
+                            .click(function ()
+                            {
+                                el.val("");
+                            });
+
+                        for (var i = 1; i <= 6; i++)
+                        {
+                            image.clone()
+                                .attr("src", self.parser.getUrl(i + ".gif"))
+                                .appendTo(container)
+                                .attr("title", "Click to select this Image")
+                                .click(function ()
+                                {
+                                    el.val($(this).attr("src"));
+                                });
+                        }
+
+                    }
                 },
                 {
                     name: 'note',
@@ -2964,7 +2998,40 @@
                     {
                         return config.image;
                     },
-                    label: 'Info Image (Path): '
+                    label: 'Info Image (Path): ',
+                    customOptions: (el) =>
+                    {
+                        var container = $("<div></div>");
+                        el.after(container);
+
+                        var image = $("<img></img>")
+                            .css("width", "30px")
+                            .css("height", "30px")
+                            .css("margin-left", "5px")
+                            .css("border", "1px solid black")
+                            .css("display", "inline-block")
+                            .addClass("clickable");
+
+                        image.clone()
+                            .attr("src", self.parser.getUrl("none.gif"))
+                            .appendTo(container)
+                            .click(function ()
+                            {
+                                el.val("");
+                            });
+
+                        for (var i = 1; i <= 6; i++)
+                        {
+                            image.clone()
+                                .attr("src", self.parser.getUrl(i + ".gif"))
+                                .appendTo(container)
+                                .click(function ()
+                                {
+                                    el.val($(this).attr("src"));
+                                });
+                        }
+
+                    }
                 },
                 {
                     name: 'note',
