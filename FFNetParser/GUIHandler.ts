@@ -205,13 +205,13 @@
                     name: 'mark_M_storys',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.mark_M_storys; },
-                    label: 'Mark "M" rated Storys: '
+                    label: 'Mark "M" rated Stories: '
                 },
                 {
                     name: 'hide_non_english_storys',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.hide_non_english_storys; },
-                    label: 'Hide non English Storys: '
+                    label: 'Hide non English Stories: '
                 },
                 {
                     name: 'allow_copy',
@@ -433,7 +433,7 @@
                 {
                     name: 'api_url',
                     type: GUIElementType.Custom,
-                    label: 'Server Backend Address: ',
+                    label: 'Server Back-end Address: ',
                     value: function () { return ''; },
                     debugOnly: true,
                     result: function (element)
@@ -463,7 +463,7 @@
                 {
                     name: 'api_webSocketServerAddress',
                     type: GUIElementType.Custom,
-                    label: 'Live-Chat Backend Address: ',
+                    label: 'Live-Chat Back-end Address: ',
                     value: function () { return ''; },
                     debugOnly: true,
                     result: function (element)
@@ -1664,7 +1664,7 @@
                     {
                         return marker.search_story;
                     },
-                    label: 'Search in Storys: '
+                    label: 'Search in Stories: '
                 },
                 {
                     name: 'mark_chapter',
@@ -1673,7 +1673,7 @@
                     {
                         return marker.mark_chapter;
                     },
-                    label: 'Mark Chaper: '
+                    label: 'Mark Chapter: '
                 },
                 {
                     name: 'print_story',
@@ -1682,7 +1682,7 @@
                     {
                         return marker.print_story;
                     },
-                    label: 'List Storys: '
+                    label: 'List Stories: '
                 },
                 {
                     name: 'keep_searching',
@@ -2005,7 +2005,7 @@
 
             "Reset Config": function ()
             {
-                if (confirm('Are you shure to overwrite the Config? This will overwrite all your changes!'))
+                if (confirm('Are you sure to overwrite the Config? This will overwrite all your changes!'))
                 {
                     $(this).dialog("close");
 
@@ -2058,7 +2058,7 @@
     }
 
     /**
-     *   Open "Save Config" Submenu
+     *   Open "Save Config" Sub-menu
      */
     public openSaveConfig()
     {
@@ -2304,7 +2304,7 @@
 
             if (managePresets)
             {
-                customContainer.append("<p><strong>In order to active the Custom Options, you have to click on the Button 'Custom' in the Dropdown List</strong></p>");
+                customContainer.append("<p><strong>In order to active the Custom Options, you have to click on the Button 'Custom' in the Drop-down List</strong></p>");
             }
 
             $(".saveButton").click((e) =>
@@ -2989,7 +2989,7 @@
                     {
                         return config.mark_chapter;
                     },
-                    label: 'Mark Chaper: '
+                    label: 'Mark Chapter: '
                 },
                 {
                     name: 'image',

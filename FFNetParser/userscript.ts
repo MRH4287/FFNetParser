@@ -379,7 +379,7 @@ class StoryParser
                 // Creates Warning for new Feature:
 
                 var text = "<b>Please Read!</b><br />";
-                text += "In one of the previous version, a new feature has been implemented. Whith this Feature activated, you don't have to manually install new Versions. ";
+                text += "In one of the previous version, a new feature has been implemented. With this Feature activated, you don't have to manually install new Versions. ";
                 text += "Newer Versions will be saved in your Local Storage and then executed. Because of that, the Version Number displayed in your UserScript Manager ";
                 text += "can be wrong. To Display the Version Number, check your Menu.";
                 text += "Do you want to activate this Feature?";
@@ -851,7 +851,7 @@ class StoryParser
                                 $('<a href="#">Delete</a>').click(function (e)
                                 {
                                     e.preventDefault();
-                                    if (confirm("Do you realy want to delete that element?"))
+                                    if (confirm("Do you really want to delete that element?"))
                                     {
                                         delete self.config.storyReminder[_];
                                         self.save_config();
