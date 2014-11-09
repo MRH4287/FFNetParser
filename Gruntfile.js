@@ -1,5 +1,6 @@
 /*global module:false*/
-module.exports = function (grunt) {
+module.exports = function (grunt)
+{
 
     // Project configuration.
     grunt.initConfig({
@@ -33,7 +34,8 @@ module.exports = function (grunt) {
             'manifest.json',
             'jquery-1.10.2.min.map',
             'style.css',
-            'logoMain.png'
+            'logoMain.png',
+            'logoDev.png'
         ],
 
         concat: {
@@ -164,6 +166,15 @@ module.exports = function (grunt) {
             {
                 src: '<%= filesToPack %>',
                 dest: 'Chrome'
+            },
+            manifestBackup:
+            {
+                src: 'manifest.json',
+                dest: 'manifestBase.json'
+            }, manifestRestore:
+            {
+                src: 'manifestBase.json',
+                dest: 'manifest.json'
             }
         },
         less: {
@@ -208,6 +219,10 @@ module.exports = function (grunt) {
             chrome:
             {
                 src: "Chrome"
+            },
+            manifestBase:
+            {
+                src: ["manifestBase.json"]
             }
         },
         qunit:
@@ -217,6 +232,22 @@ module.exports = function (grunt) {
                 timeout: 5000
             },
             all: ['test/*.html']
+        },
+        update_json:
+        {
+            options:
+            {
+                indent: '\t'
+            },
+            manifestDev:
+            {
+                src: 'manifestDev.json',
+                dest: 'manifest.json',
+                fields: [
+                    'key',
+                    'icons'
+                ]
+            }
         }
     });
 
@@ -233,6 +264,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-update-json');
 
     // Default task.
     grunt.registerTask('default',
@@ -271,13 +303,43 @@ module.exports = function (grunt) {
       ]);
 
 
-    grunt.registerTask('package',
-	[
-		'default',
-		'qunit', // Start the Unit Tests
-		//'exec',
-		//'clean:chrome',
-		'compress'
-	]);
+    grunt.registerTask('packageDefault',
+     [
+         'default',
+         'copy:manifest',
+         'qunit',
+         'compress'
+     ]);
 
+    grunt.registerTask('packageDev',
+    [
+        'big',
+        'qunit',
+        'copy:manifestBackup',
+        'update_json:manifestDev',
+        'compress',
+        'copy:manifestRestore',
+        'clean:manifestBase'
+    ]);
+
+    grunt.registerTask('devSwitch', function ()
+    {
+        var branch = grunt.config.get("gitinfo").local.branch.current.name;
+        console.log("Current Branch: %s", branch);
+
+        if (branch !== "dev")
+        {
+            grunt.task.run(['packageDefault']);
+        }
+        else
+        {
+            grunt.task.run(['packageDev']);
+        }
+    });
+
+    grunt.registerTask('package',
+        [
+            'gitinfo',
+            'devSwitch'
+        ]);
 };

@@ -5,6 +5,8 @@ ffnetlist.user.js
 style.css
 *.pem
 *.crx
+manifestBase.json
+publish.zip
 
 
 ## Ignore Visual Studio temporary files, build results, and
