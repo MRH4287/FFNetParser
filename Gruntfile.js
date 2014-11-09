@@ -306,7 +306,6 @@ module.exports = function (grunt)
     grunt.registerTask('packageDefault',
      [
          'default',
-         'copy:manifest',
          'qunit',
          'compress'
      ]);
