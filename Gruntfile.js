@@ -248,7 +248,13 @@ module.exports = function (grunt)
                     'icons'
                 ]
             }
-        }
+        },
+        language:
+            {
+                files: {
+                    src: ['FFNetParser/*.ts']
+                }
+            }
     });
 
     // These plugins provide necessary tasks.
@@ -341,4 +347,84 @@ module.exports = function (grunt)
             'gitinfo',
             'devSwitch'
         ]);
+
+
+    // Language Implementation
+
+
+    grunt.registerMultiTask('language', 'Handles Language Definitions', function ()
+    {
+        var options = this.options({
+            output: "build/langage.json",
+            verbose: true
+        });
+
+        var text = {};
+
+
+        this.files.forEach(function (file)
+        {
+            file.src.filter(function (filepath)
+            {
+                if (!grunt.file.exists(filepath))
+                {
+                    grunt.log.warn('Source file "' + filepath + '" not found.');
+                    return false;
+                }
+                else
+                {
+                    if (options.verbose)
+                    {
+                        grunt.log.writeln("Check for Language Files: " + filepath);
+                    }
+                    var content = grunt.file.read(filepath);
+                    var lines = content.split('\n');
+
+                    
+
+                    for (var lineNumber in lines)
+                    {
+                        var line = Number(lineNumber) + 1;
+
+                        var reg = /_\(["']([^)]+)["']\)/mgi;
+                        var matches = lines[lineNumber].match(reg);
+
+                        for (var key in matches)
+                        {
+                            var el = matches[key].trim();
+
+                            var reg = /_\(["']([^)]+)["']\)/mgi;
+                            var groups = reg.exec(el);
+                            var langKey = groups[1];
+
+                            if (options.verbose)
+                            {
+                                grunt.log.writeln("Found Language Key: '" + langKey + "' in File: '" + filepath + ":" + line + "'");
+                            }
+
+                            if (typeof (text[langKey]) === "undefined")
+                            {
+                                text[langKey] = [];
+                            }
+                            text[langKey].push(filepath + "#L" + line);
+
+                        }
+                    }
+
+                    return true;
+                }
+            });
+
+        });
+
+        // Write results to file:
+        grunt.log.writeln("Write Language File to: '" + options.output + "'");
+
+        var json = JSON.stringify(text, null, 4);
+        grunt.file.write(options.output, json);
+
+    });
+
+
+
 };

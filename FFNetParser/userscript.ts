@@ -656,24 +656,24 @@ class StoryParser
 
             // Add User Interface
             table.append(
-                $('<a></a>').addClass('menu-link').html('Rerun Filter').attr('href', '#').click(function (e)
+                $('<a></a>').addClass('menu-link').html(self._('Rerun Filter')).attr('href', '#').click(function (e)
                 {
                     self.readAll();
                     e.preventDefault();
 
-                }).attr('title', 'Parse the Stories again')
+                }).attr('title', self._('Parse the Stories again'))
                 ).append(
-                $('<a></a>').addClass('menu-link').html('Menu').attr('href', '#').click(function (e)
+                $('<a></a>').addClass('menu-link').html(self._('Menu')).attr('href', '#').click(function (e)
                 {
                     self.GUI.gui();
                     e.preventDefault();
 
                 }).attr('title', 'Open Config Menu')
                 ).append(
-                $('<a></a>').addClass('menu-link').html('Filter Collection')
+                $('<a></a>').addClass('menu-link').html(self._('Filter Collection'))
                     .attr('href', 'http://filter.mrh-development.de')
                     .attr("target", "_blank")
-                    .attr('title', 'Open The Filter Collection')
+                    .attr('title', self._('Open The Filter Collection'))
                 );
 
         }
@@ -694,7 +694,7 @@ class StoryParser
                 .css("border-radius", "5px")
                 .addClass("ffnetMessageContainer")
                 .addClass("clickable")
-                .attr("title", "Advanced Messaging Features. Sorry, this is not a PM Button :-(")
+                .attr("title", self._("Advanced Messaging Features. Sorry, this is not a PM Button :-("))
                 .appendTo(menulinks);
 
 
@@ -744,7 +744,7 @@ class StoryParser
             });
 
             innerContainer.append(
-                $("<div>Message Menu (Script)</div>")
+                $("<div>" + self._('Message Menu (Script)') + "</div>")
                     .css("font-weight", "bold")
                     .css("margin-bottom", "10px")
                 );
@@ -758,7 +758,7 @@ class StoryParser
 
 
             innerContainer.append(
-                $('<div><span class="ffnet-messageCount">' + count + "</span> Message(s)</div>")
+                $('<div><span class="ffnet-messageCount">' + count + "</span> " + self._('Message(s)') + "</div>")
                     .addClass("menuItem")
                     .click(function ()
                     {
@@ -770,7 +770,7 @@ class StoryParser
                 );
 
             innerContainer.append(
-                $("<div>Give Feedback</div>")
+                $("<div>" + self._('Give Feedback') + "</div>")
                     .addClass("menuItem")
                     .click(function ()
                     {
@@ -780,7 +780,7 @@ class StoryParser
                     })
                 );
 
-            var liveChatContainer = $("<div>Live Chat</div>")
+            var liveChatContainer = $("<div>" + self._('Live Chat') + "</div>")
                 .addClass("menuItem")
                 .click(function ()
                 {
@@ -793,7 +793,7 @@ class StoryParser
 
             if (!this.chat.Available)
             {
-                liveChatContainer.unbind("click").attr("title", "This Feature is not available in your Browser. Sorry!");
+                liveChatContainer.unbind("click").attr("title", self._("This Feature is not available in your Browser. Sorry!"));
             }
 
             innerContainer.append(liveChatContainer);
@@ -814,7 +814,7 @@ class StoryParser
                     .css("border-radius", "5px")
                     .addClass("ffnetStoryReminderContainer")
                     .addClass("clickable")
-                    .attr("title", "Saved Story Reminder")
+                    .attr("title", self._("Saved Story Reminder"))
                     .appendTo(menulinks);
 
                 sRImageContainer.append(
@@ -831,7 +831,8 @@ class StoryParser
                     event.preventDefault();
 
                     var table = $('<table class="table table-hover table-responsive table-border"></table>');
-                    table.append("<tr><th>ID</th><th>Name</th><th>Chapter</th><th>Time</th><th>Visited</th><th>Options</th></tr>");
+                    table.append("<tr><th>" + self._('ID') + '</th><th>' + self._('Name') + '</th><th>' + self._('Chapter') +
+                        '</th><th>' + self._('Time') + '</th><th>' + self._('Visited') + '</th><th>' + self._('Options') + "</th></tr>");
 
                     $.each(self.config.storyReminder, function (_, el: StoryReminderData)
                     {
@@ -845,13 +846,13 @@ class StoryParser
                             ).append(
                             $("<td></td>").text((new Date(el.time)).toLocaleString())
                             ).append(
-                            $("<td></td>").text((el.visited) ? "Yes" : "No")
+                            $("<td></td>").text((el.visited) ? self._("Yes") : self._("No"))
                             ).append(
                             $("<td></td>").append(
-                                $('<a href="#">Delete</a>').click(function (e)
+                                $('<a href="#">' + self._('Delete') + '</a>').click(function (e)
                                 {
                                     e.preventDefault();
-                                    if (confirm("Do you really want to delete that element?"))
+                                    if (confirm(self._("Do you really want to delete that element?")))
                                     {
                                         delete self.config.storyReminder[_];
                                         self.save_config();
@@ -874,7 +875,7 @@ class StoryParser
 
 
                     // Create Dialog:
-                    var dialog = $('<div></div>').attr("title", "Saved Story Reminder")
+                    var dialog = $('<div></div>').attr("title", self._("Saved Story Reminder"))
                         .append(
                         table
                         ).appendTo($("body"));
@@ -928,7 +929,7 @@ class StoryParser
             }
 
             var input = $("<select></select>")
-                .attr("title", "Display Only Elements that match a specific Filter")
+                .attr("title", self._("Display Only Elements that match a specific Filter"))
                 .change(function ()
                 {
                     var selected = input.children().filter(":selected").attr('value');
@@ -951,7 +952,7 @@ class StoryParser
 
                 }).addClass("filter_select");
 
-            var noneEntry = $('<option value="off">Display: Everything</option>').appendTo(input);
+            var noneEntry = $('<option value="off">' + self._('Display: Everything') + '</option>').appendTo(input);
 
             if (this.dataConfig["displayOnly"] === undefined)
             {
@@ -4249,6 +4250,21 @@ class StoryParser
                 console.info(a, b, c);
             }
         }
+    }
+
+
+    // ---------- Localization
+
+    /**
+     *   Returns the Language Value for a specific Key
+     *   @param key The Key to search for
+     *   @result Value in selected Language 
+     */
+    public _(key: string): string
+    {
+
+        return key;
+
     }
 
 }

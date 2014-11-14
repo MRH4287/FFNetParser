@@ -90,4 +90,15 @@
     }
 
 
+    /**
+     *   Returns the Language Value for a specific Key
+     *   @param key The Key to search for
+     *   @result Value in selected Language 
+     */
+    public _(key: string): string
+    {
+       return this.parser._(key);
+    }
+
+
 }

@@ -194,7 +194,7 @@
                 {
                     name: "story_search_depth",
                     type: GUIElementType.Input,
-                    label: "Max Search depth: ",
+                    label: self._("Max Search depth: "),
                     value: function () { return self.config.story_search_depth; },
                     attributes:
                     {
@@ -205,19 +205,19 @@
                     name: 'mark_M_storys',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.mark_M_storys; },
-                    label: 'Mark "M" rated Stories: '
+                    label: self._('Mark "M" rated Stories: ')
                 },
                 {
                     name: 'hide_non_english_storys',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.hide_non_english_storys; },
-                    label: 'Hide non English Stories: '
+                    label: self._('Hide non English Stories: ')
                 },
                 {
                     name: 'allow_copy',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.allow_copy; },
-                    label: 'Allow the selection of Text: '
+                    label: self._('Allow the selection of Text: ')
                 },
                 {
                     name: "endless_enable",
@@ -226,7 +226,7 @@
                     {
                         return self.config.endless_enable;
                     },
-                    label: "Enable EndlessMode: "
+                    label: self._("Enable EndlessMode: ")
                 },
                 {
                     name: "endless_forceClickAfter",
@@ -235,7 +235,7 @@
                     {
                         return self.config.endless_forceClickAfter;
                     },
-                    label: "Number of Chapters/Pages after which the user is forced to manually go to the next one: "
+                    label: self._("Number of Chapters/Pages after which the user is forced to manually go to the next one: ")
                 }
 
             ]
@@ -244,7 +244,7 @@
         this.registerCategory(
             {
                 name: "story",
-                title: "Story Settings",
+                title: self._("Story Settings"),
                 elements: storyData
             });
 
@@ -254,25 +254,25 @@
                     name: 'hide_images',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.hide_images; },
-                    label: 'Hide Story Images: '
+                    label: self._('Hide Story Images: ')
                 },
                 {
                     name: 'hide_lazy_images',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.hide_lazy_images; },
-                    label: 'Hide <abbr title="Images that are loaded after the first run. Mostly Story Images, not User Images">lazy</abbr> images: '
+                    label: '<abbr title="' + self._('Hide Images that are loaded after the first run. Mostly Story Images, not User Images') + '">' + self._("Hide lazy images") + '</abbr>'
                 },
                 {
                     name: 'disable_image_hover',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.disable_image_hover; },
-                    label: 'Disable Image Hover Effect: '
+                    label: self._('Disable Image Hover Effect: ')
                 },
                 {
                     name: 'content_width',
                     type: GUIElementType.Input,
                     value: function () { return self.config.content_width; },
-                    label: 'Content Width: ',
+                    label: self._('Content Width: '),
                     attributes:
                     {
                         size: 50
@@ -282,11 +282,11 @@
                     name: 'color_normal',
                     type: GUIElementType.Color,
                     value: function () { return self.config.color_normal; },
-                    label: 'Normal Background-Color: ',
+                    label: self._('Normal Background-Color: '),
                     attributes:
                     {
                         size: 50,
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     },
                     customOptions: function (element) 
                     {
@@ -301,11 +301,11 @@
                     name: 'color_mouse_over',
                     type: GUIElementType.Color,
                     value: function () { return self.config.color_mouse_over; },
-                    label: 'MouseOver Background-Color: ',
+                    label: self._('MouseOver Background-Color: '),
                     attributes:
                     {
                         size: 50,
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     },
                     customOptions: function (element) 
                     {
@@ -320,11 +320,11 @@
                     name: 'color_odd_color',
                     type: GUIElementType.Color,
                     value: function () { return self.config.color_odd_color; },
-                    label: 'Odd Background-Color: ',
+                    label: self._('Odd Background-Color: '),
                     attributes:
                     {
                         size: 50,
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     },
                     customOptions: function (element) 
                     {
@@ -339,17 +339,17 @@
                     name: 'readingHelp_enabled',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.readingHelp_enabled; },
-                    label: 'Enable the Reading Help: '
+                    label: self._('Enable the Reading Help: ')
                 },
                 {
                     name: 'readingHelp_backgroundColor',
                     type: GUIElementType.Color,
                     value: function () { return self.config.readingHelp_backgroundColor; },
-                    label: 'Reading Help Background Color: ',
+                    label: self._('Reading Help Background Color: '),
                     attributes:
                     {
                         size: 50,
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     },
                     customOptions: function (element)
                     {
@@ -364,11 +364,11 @@
                     name: 'readingHelp_color',
                     type: GUIElementType.Color,
                     value: function () { return self.config.readingHelp_color; },
-                    label: 'Reading Help Text Color: ',
+                    label: self._('Reading Help Text Color: '),
                     attributes:
                     {
                         size: 50,
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     },
                     customOptions: function (element)
                     {
@@ -383,7 +383,7 @@
                     name: 'enable_chapter_review_ratio',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.enable_chapter_review_ratio; },
-                    label: 'Enable the Chapter/Review Ratio Info: '
+                    label: self._('Enable the Chapter/Review Ratio Info: ')
                 }
             ]);
 
@@ -391,7 +391,7 @@
         this.registerCategory(
             {
                 name: "layout",
-                title: "Layout Settings",
+                title: self._("Layout Settings"),
                 elements: layoutData
             });
 
@@ -401,12 +401,12 @@
                     name: '',
                     type: GUIElementType.Text,
                     label: "--------",
-                    value: function () { return ' ---- <a href="http://www.getpocket.com">Pocket</a> Settings ----'; }
+                    value: function () { return ' ---- <a href="http://www.getpocket.com">Pocket</a> ' + self._('Settings') + ' ----'; }
                 },
                 {
                     name: 'pocket_user',
                     type: GUIElementType.Input,
-                    label: 'Username: ',
+                    label: self._('Username: '),
                     value: function () { return self.config.pocket_user; },
                     attributes:
                     {
@@ -416,7 +416,7 @@
                 {
                     name: 'pocket_password',
                     type: GUIElementType.Input,
-                    label: 'Password: ',
+                    label: self._('Password: '),
                     value: function () { return self.config.pocket_password; },
                     attributes:
                     {
@@ -428,12 +428,12 @@
                     name: '',
                     type: GUIElementType.Text,
                     label: "--------",
-                    value: function () { return ' ---- API Settings ----'; }
+                    value: function () { return self._(' ---- API Settings ----'); }
                 },
                 {
                     name: 'api_url',
                     type: GUIElementType.Custom,
-                    label: 'Server Back-end Address: ',
+                    label: self._('Server Back-end Address: '),
                     value: function () { return ''; },
                     debugOnly: true,
                     result: function (element)
@@ -493,7 +493,7 @@
                 {
                     name: 'api_checkForUpdates',
                     type: GUIElementType.Checkbox,
-                    label: 'Check for Updates: ',
+                    label: self._('Check for Updates: '),
                     value: function () { return self.config.api_checkForUpdates; },
                     customOptions: function (checkbox)
                     {
@@ -514,22 +514,22 @@
                 {
                     name: 'api_autoIncludeNewVersion',
                     type: GUIElementType.Checkbox,
-                    label: 'Auto Update: ',
+                    label: self._('Auto Update: '),
                     value: function () { return self.config.api_autoIncludeNewVersion; },
                     customOptions: function (element)
                     {
                         // Only Check if the Script is not loaded over Chrome!
                         if (typeof (chrome) !== "undefined")
                         {
-                            element.removeProp("checked").prop("disabled", "disabled").attr("title", "The Update-Feature is disabled in the Chrome Version. " +
-                                "Chrome updates the Script for you! If you have problems, please send me a Message.");
+                            element.removeProp("checked").prop("disabled", "disabled").attr("title", self._("The Update-Feature is disabled in the Chrome Version. " +
+                                "Chrome updates the Script for you! If you have problems, please send me a Message."));
                         }
                     }
                 },
                 {
                     name: 'token',
                     type: GUIElementType.Input,
-                    label: '<abbr title="Used for identification on the Web-Service (e.g. Synchronization)">Token</abbr>: ',
+                    label: '<abbr title="' + self._('Used for identification on the Web-Service [e.g. Synchronization]') + '">' + self._('Token') + '</abbr>: ',
                     value: function () { return self.config.token; },
                     attributes:
                     {
@@ -553,43 +553,43 @@
                 {
                     name: 'disable_highlighter',
                     type: GUIElementType.Checkbox,
-                    label: '<abbr title="Disable the Story Highlighter Feature.">Disable Highlighter</abbr>: ',
+                    label: '<abbr title="' + self._('Disable the Story Highlighter Feature.') + '">' + self._('Disable Highlighter') + '</abbr>: ',
                     value: function () { return self.config.disable_highlighter; }
                 },
                 {
                     name: 'disable_cache',
                     type: GUIElementType.Checkbox,
-                    label: '<abbr title="Disable the Caching function used for the in Story search.">Disable Cache</abbr>: ',
+                    label: '<abbr title="' + self._('Disable the Caching function used for the in Story search.') + '">' + self._('Disable Cache') + '</abbr>: ',
                     value: function () { return self.config.disable_cache; }
                 },
                 {
                     name: 'disable_parahraphMenu',
                     type: GUIElementType.Checkbox,
-                    label: '<abbr title="Disable the Paragraph Menu.">Disable Paragraph Menu</abbr>: ',
+                    label: '<abbr title="' + self._('Disable the Paragraph Menu.') + '">' + self._('Disable Paragraph Menu') + '</abbr>: ',
                     value: function () { return self.config.disable_parahraphMenu; }
                 },
                 {
                     name: 'disable_sync',
                     type: GUIElementType.Checkbox,
-                    label: 'Disable Synchronization Feature: ',
+                    label: self._('Disable Synchronization Feature: '),
                     value: function () { return self.config.disable_sync; }
                 },
                 {
                     name: 'disable_default_coloring',
                     type: GUIElementType.Checkbox,
-                    label: '<abbr title="This disables the color change in the Story-List. Do not affect Filter / Highlighter">Disable the default Coloration</abbr>: ',
+                    label: '<abbr title="' + self._('This disables the color change in the Story-List. Do not affect Filter / Highlighter') + '">' + self._('Disable the default Coloration') + '</abbr>: ',
                     value: function () { return self.config.disable_default_coloring; }
                 },
                 {
                     name: 'chrome_sync',
                     type: GUIElementType.Checkbox,
-                    label: 'Use Chrome to Synchronize Data: ',
+                    label: self._('Use Chrome to Synchronize Data: '),
                     value: function () { return self.config.chrome_sync; },
                     customOptions: function (el)
                     {
                         if (typeof (chrome) === undefined)
                         {
-                            el.prop("disabled", true).attr("title", "Only available in Chrome");
+                            el.prop("disabled", true).attr("title", self._("Only available in Chrome"));
                         }
                         else
                         {
@@ -597,10 +597,10 @@
                             {
                                 if (el.is(":checked"))
                                 {
-                                    if (confirm("If you enable Sync, your local storage will be overwritten by Cloud Storage. " +
-                                        "If there is none, your config is uploaded instead. Are you sure?"))
+                                    if (confirm(self._("If you enable Sync, your local storage will be overwritten by Cloud Storage. " +
+                                        "If there is none, your config is uploaded instead. Are you sure?")))
                                     {
-                                        var wait = $("<span>&nbsp; Please wait ...</span>");
+                                        var wait = $("<span>&nbsp; " + self._('Please wait ...') + "</span>");
                                         el.after(wait);
 
 
@@ -648,7 +648,7 @@
         this.registerCategory(
             {
                 name: "advanced",
-                title: "Advanced Settings",
+                title: self._("Advanced Settings"),
                 elements: advancedData
             });
 
@@ -792,7 +792,7 @@
                         {
                             colorPreview.css("background-color", String(data.result(element)));
                         })
-                            .after('&nbsp;<small style="margin-left:10px">Click field to change color</small>')
+                            .after('&nbsp;<small style="margin-left:10px">' + self._("Click field to change color") + '</small>')
                             .after(
                             colorPreview
                             );
@@ -832,7 +832,7 @@
                     }
                     else
                     {
-                        element = $('<p style="color: red; text-size: 15px">Missing Custom Element!</p>');
+                        element = $('<p style="color: red; text-size: 15px">' + self._('Missing Custom Element!') + '</p>');
                     }
 
                     break;
@@ -915,7 +915,7 @@
     {
         var saveButtonContainer = $('<div class="fflist-buttonContainer"></div>');
 
-        $('<input class="btn btn-danger" type="button" value="Save"></input>')
+        $('<input class="btn btn-danger" type="button" value="' + this._("Save") + '"></input>')
         /*.button({
             icons: {
                 primary: "ui-icon-check"
@@ -1067,16 +1067,16 @@
             // No marker found. Add Notification:
 
             var infoContainer = $('<div class="ffnet-InfoContainer"></div>').appendTo(container);
-            infoContainer.append('<p>There are currently no Filter defined.<p>');
-            infoContainer.append($('<button class="btn btn-primary">Create Filter</button>').click(function ()
+            infoContainer.append(self._('<p>There are currently no Filter defined.<p>'));
+            infoContainer.append($('<button class="btn btn-primary">' + self._('Create Filter') + '</button>').click(function ()
             {
                 $("#ffnet-addNewFilter").trigger("click");
             })).append('<span>&nbsp;</span>')
-                .append($('<button class="btn btn-default">Import</button>').click(function ()
+                .append($('<button class="btn btn-default">' + self._('Import') + '</button>').click(function ()
                 {
                     $("#ffnet-ImportButton").trigger("click");
                 })).append('<span>&nbsp;</span>')
-                .append($('<button class="btn btn-default">Need Help?</button>').click(function ()
+                .append($('<button class="btn btn-default">' + self._('Need Help?') + '</button>').click(function ()
                 {
                     var win = window.open("https://github.com/MRH4287/FFNetParser/wiki/Filter", '_blank');
                     win.focus();
@@ -1094,7 +1094,7 @@
         var filterButtonContainer = saveButtonContainer.clone();
         filterButtonContainer.appendTo(this.guiContainer);
 
-        $('<input class="btn brn-default" id="ffnet-addNewFilter" type="button" value="Add new Filter"></input>')
+        $('<input class="btn brn-default" id="ffnet-addNewFilter" type="button" value="' + self._('Add new Filter') + '"></input>')
         /*.button({
             icons: {
                 primary: "ui-icon-plusthick"
@@ -1137,7 +1137,7 @@
             }).appendTo(filterButtonContainer);
 
 
-        $('<input class="btn btn-default" id="ffnet-ImportButton" type="button" value="Import Filter"></input>')
+        $('<input class="btn btn-default" id="ffnet-ImportButton" type="button" value="' + self._('Import Filter') + '"></input>')
         /*
         .button({
             icons: {
@@ -1151,12 +1151,12 @@
 
 
                 // Create Dialog:
-                var dialog = $('<div></div>').attr("title", "Import Filter")
+                var dialog = $('<div></div>').attr("title", self._("Import Filter"))
                     .append(
                     $('<textarea rows="5" cols="20" class="FilterInput"></textarea>')
                     )
                     .append(
-                    $('<button class="btn">Save</button>')
+                    $('<button class="btn">' + self._('Save') + '</button>')
                         .button()
                         .click(function (e)
                         {
@@ -1317,7 +1317,7 @@
                 {
                     name: 'display',
                     type: GUIElementType.Checkbox,
-                    label: 'Display Found Entries: ',
+                    label: self._('Display Found Entries: '),
                     value: function ()
                     {
                         return marker.display;
@@ -1326,7 +1326,7 @@
                 {
                     name: 'keywords',
                     type: GUIElementType.Input,
-                    label: 'Keywords: ',
+                    label: self._('Keywords: '),
                     value: function ()
                     {
                         return marker.keywords.join(', ');
@@ -1342,14 +1342,14 @@
                     customOptions: function (input)
                     {
                         input.parent().append(
-                            '<br><span style="font-size: small;">Separated by ", "</span>'
+                            '<br><span style="font-size: small;">' + self._('Separated by ", "') + '</span>'
                             );
                     }
                 },
                 {
                     name: 'ignore',
                     type: GUIElementType.Input,
-                    label: 'Ignore when: ',
+                    label: self._('Ignore when: '),
                     value: function ()
                     {
                         return marker.ignore.join(', ');
@@ -1365,14 +1365,14 @@
                     customOptions: function (input)
                     {
                         input.parent().append(
-                            '<br><span style="font-size: small;">Separated by ", "</span>'
+                            '<br><span style="font-size: small;">' + self._('Separated by ", "') + '</span>'
                             );
                     }
                 },
                 {
                     name: 'priority',
                     type: GUIElementType.Custom,
-                    label: "Priority: ",
+                    label: self._("Priority: "),
                     customElement: function (data: GUIElement): JQuery
                     {
 
@@ -1412,7 +1412,7 @@
                             .attr("value", -1)
                             .appendTo(label);
 
-                        label.append("Custom");
+                        label.append(self._("Custom"));
 
                         if (data.value() === -1)
                         {
@@ -1460,7 +1460,7 @@
                 {
                     name: "customPriority",
                     type: GUIElementType.Custom,
-                    label: "Custom Priority",
+                    label: self._("Custom Priority"),
                     customElement: function (data: GUIElement): JQuery
                     {
 
@@ -1472,7 +1472,7 @@
                             text_color: 1
                         };
 
-                        var value : ModififcationPriority = data.value();
+                        var value: ModififcationPriority = data.value();
                         if ((value === undefined) || (value === null))
                         {
                             value = defaultValues;
@@ -1498,11 +1498,11 @@
                         }
 
                         var options = {
-                            color: "Color",
-                            mouseOver: "Mouse Over Color",
-                            text_color: "Info Text Color",
-                            highlight_color: "Highlight Color",
-                            background: "Background Image"
+                            color: self._("Color"),
+                            mouseOver: self._("Mouse Over Color"),
+                            text_color: self._("Info Text Color"),
+                            highlight_color: self._("Highlight Color"),
+                            background: self._("Background Image")
                         };
 
 
@@ -1518,7 +1518,7 @@
                             var label: JQuery;
                             var element: JQuery;
 
-                            
+
 
                             for (var i = 0; i <= 5; i++)
                             {
@@ -1531,7 +1531,7 @@
                                     .attr("value", i)
                                     .appendTo(label);
 
-                                label.append((i !== 0) ? i : "Disable");
+                                label.append((i !== 0) ? i : self._("Disable"));
 
                                 if (value[name] === i)
                                 {
@@ -1556,14 +1556,14 @@
                 {
                     name: 'ignoreColor',
                     type: GUIElementType.Checkbox,
-                    label: 'Ignore Color Settings:',
+                    label: self._('Ignore Color Settings:'),
                     value: function ()
                     {
                         return marker.ignoreColor;
                     },
                     customOptions: function (checkbox)
                     {
-                        
+
 
                         var check = function ()
                         {
@@ -1598,11 +1598,11 @@
                     {
                         return marker.color;
                     },
-                    label: 'Color: ',
+                    label: self._('Color: '),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-color',
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     }
                 },
                 {
@@ -1612,11 +1612,11 @@
                     {
                         return marker.mouseOver;
                     },
-                    label: 'Mouse Over Color: ',
+                    label: self._('Mouse Over Color: '),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-mouseOver',
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     }
                 },
                 {
@@ -1626,11 +1626,11 @@
                     {
                         return marker.text_color;
                     },
-                    label: 'Info Text Color: ',
+                    label: self._('Info Text Color: '),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-text_color',
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     }
                 },
                 {
@@ -1640,11 +1640,11 @@
                     {
                         return marker.highlight_color;
                     },
-                    label: 'Highlight Color: ',
+                    label: self._('Highlight Color: '),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-highlight_color',
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     },
                     debugOnly: true
                 },
@@ -1655,7 +1655,7 @@
                     {
                         return marker.background;
                     },
-                    label: 'Background Image (Path): '
+                    label: self._('Background Image (Path): ')
                 },
                 {
                     name: 'search_story',
@@ -1664,7 +1664,7 @@
                     {
                         return marker.search_story;
                     },
-                    label: 'Search in Stories: '
+                    label: self._('Search in Stories: ')
                 },
                 {
                     name: 'mark_chapter',
@@ -1673,7 +1673,7 @@
                     {
                         return marker.mark_chapter;
                     },
-                    label: 'Mark Chapter: '
+                    label: self._('Mark Chapter: ')
                 },
                 {
                     name: 'print_story',
@@ -1682,7 +1682,7 @@
                     {
                         return marker.print_story;
                     },
-                    label: 'List Stories: '
+                    label: self._('List Stories: ')
                 },
                 {
                     name: 'keep_searching',
@@ -1691,7 +1691,7 @@
                     {
                         return marker.keep_searching;
                     },
-                    label: 'Keep Searching: '
+                    label: self._('Keep Searching: ')
                 },
                 {
                     name: 'mention_in_headline',
@@ -1700,7 +1700,7 @@
                     {
                         return marker.mention_in_headline;
                     },
-                    label: 'Mention in Headline: '
+                    label: self._('Mention in Headline: ')
                 },
                 {
                     name: 'image',
@@ -1709,7 +1709,7 @@
                     {
                         return marker.image;
                     },
-                    label: 'Info Image (Path): ',
+                    label: self._('Info Image (Path): '),
                     customOptions: (el) =>
                     {
                         var container = $("<div></div>");
@@ -1726,7 +1726,7 @@
                         image.clone()
                             .attr("src", self.parser.getUrl("none.gif"))
                             .appendTo(container)
-                            .attr("title", "Clear Selection")
+                            .attr("title", self._("Clear Selection"))
                             .click(function ()
                             {
                                 el.val("");
@@ -1737,7 +1737,7 @@
                             image.clone()
                                 .attr("src", self.parser.getUrl(i + ".gif"))
                                 .appendTo(container)
-                                .attr("title", "Click to select this Image")
+                                .attr("title", self._("Click to select this Image"))
                                 .click(function ()
                                 {
                                     el.val($(this).attr("src"));
@@ -1753,7 +1753,7 @@
                     {
                         return marker.note;
                     },
-                    label: 'Note: ',
+                    label: self._('Note: '),
                     debugOnly: true
                 },
                 {
@@ -1761,7 +1761,7 @@
                     type: GUIElementType.Button,
                     value: function ()
                     {
-                        return 'Remove';
+                        return self._('Remove');
                     },
                     label: '',
                     callback: function ()
@@ -1792,7 +1792,7 @@
                         var elementContainer = $("<div></div>");
                         $('<div style="display:inline-block; width: 80%"></div>').appendTo(elementContainer).append(
 
-                            $('<img src="' + self.parser.getUrl('glyphicons_369_collapse_top.png') + '" alt="Minimize"></img>').click(function ()
+                            $('<img src="' + self.parser.getUrl('glyphicons_369_collapse_top.png') + '" alt="' + self._('Minimize') + '"></img>').click(function ()
                             {
 
                                 container
@@ -1816,14 +1816,14 @@
                             );
 
                         $('<div style="display:inline-block; width: 10%"></div>').appendTo(elementContainer).append(
-                            $('<button class="btn btn-default">Export</button>')
+                            $('<button class="btn btn-default">' + self._('Export') + '</button>')
                             //.button()
                                 .click(function (event)
                                 {
                                     event.preventDefault();
 
                                     // Create Dialog:
-                                    var dialog = $('<div></div>').attr("title", "Export Data for Element " + marker.name)
+                                    var dialog = $('<div></div>').attr("title", self._("Export Data for Element: ") + marker.name)
                                         .append(
                                         $("<pre></pre>").text(JSON.stringify(marker))
                                         ).appendTo($("body"));
@@ -1974,7 +1974,7 @@
 
             "Synchronization": function ()
             {
-                if (confirm("All unsaved changes will be deleted!"))
+                if (confirm(self._("All unsaved changes will be deleted!")))
                 {
                     self.gui_hide();
 
@@ -1984,7 +1984,7 @@
 
             "Config Import / Export": function ()
             {
-                if (confirm("All unsaved changes will be deleted!"))
+                if (confirm(self._("All unsaved changes will be deleted!")))
                 {
                     self.openSaveConfig();
                 }
@@ -1993,7 +1993,7 @@
             "Menu": function ()
             {
                 // Reopen:
-                if (confirm("All unsaved changes will be deleted!"))
+                if (confirm(self._("All unsaved changes will be deleted!")))
                 {
                     self.gui_hide();
 
@@ -2005,7 +2005,7 @@
 
             "Reset Config": function ()
             {
-                if (confirm('Are you sure to overwrite the Config? This will overwrite all your changes!'))
+                if (confirm(self._('Are you sure to overwrite the Config? This will overwrite all your changes!')))
                 {
                     $(this).dialog("close");
 
@@ -2106,7 +2106,7 @@
                 .appendTo(this.guiContainer);
 
             this.guiContainer.append(
-                $('<input class="btn" type="button" value="Set" />')
+                $('<input class="btn" type="button" value="' + self._('Set') + '" />')
                     .click(function ()
                     {
                         self.parser.setConfig(neu.val());
@@ -2168,7 +2168,7 @@
             this.guiContainer.html('');
 
 
-            var saveButton = $('<button class="saveButton btn btn-warning">Save</button>');
+            var saveButton = $('<button class="saveButton btn btn-warning">' + self._('Save') + '</button>');
 
             // Manage Presets:
 
@@ -2188,7 +2188,7 @@
                 customContainer.hide();
             }
 
-            $('<div class="ffnet-HighlighterHeadline">Manage Presets</div>')
+            $('<div class="ffnet-HighlighterHeadline">' + self._('Manage Presets') + '</div>')
                 .click((e) =>
                 {
                     e.preventDefault();
@@ -2214,7 +2214,7 @@
 
             presetContainer.append(
                 $('<div style="margin-top: 10px; text-align:center"></div>')
-                    .append($('<button class="btn btn-primary">Add new Preset</button>').
+                    .append($('<button class="btn btn-primary">' + self._('Add new Preset') + '</button>').
                         click((e) =>
                         {
                             e.preventDefault();
@@ -2247,7 +2247,7 @@
 
             this.guiContainer.append(presetContainer);
 
-            $('<div class="ffnet-HighlighterHeadline">Custom Config</div>')
+            $('<div class="ffnet-HighlighterHeadline">' + self._('Custom Config') + '</div>')
                 .click((e) =>
                 {
                     e.preventDefault();
@@ -2304,7 +2304,7 @@
 
             if (managePresets)
             {
-                customContainer.append("<p><strong>In order to active the Custom Options, you have to click on the Button 'Custom' in the Drop-down List</strong></p>");
+                customContainer.append("<p><strong>" + self._("In order to active the Custom Options, you have to click on the Button 'Custom' in the Drop-down List") + "</strong></p>");
             }
 
             $(".saveButton").click((e) =>
@@ -2553,7 +2553,7 @@
 
                 if (self.config.highlighter[storyInfo.url] !== undefined)
                 {
-                    if (confirm("Do you really want to remove this Highlighter?"))
+                    if (confirm(self._("Do you really want to remove this Highlighter?")))
                     {
                         delete self.config.highlighter[storyInfo.url];
 
@@ -2564,7 +2564,7 @@
                 }
                 else
                 {
-                    alert("There is nothing to reset. To close the box, just click on the Edit Icon again");
+                    alert(self._("There is nothing to reset. To close the box, just click on the Edit Icon again"));
                 }
 
             }).appendTo(listContainer);
@@ -2572,7 +2572,7 @@
 
 
         listContainer.append("<hr />")
-            .append($('<div class="ffnet-HighlighterListElement" style="padding-top: 5px; text-align:center">Customize Settings</div>')
+            .append($('<div class="ffnet-HighlighterListElement" style="padding-top: 5px; text-align:center">' + self._('Customize Settings') + '</div>')
                 .click(function (ev)
                 {
                     ev.preventDefault();
@@ -2623,7 +2623,7 @@
         if (!displayBig)
         {
             container.css("cursor", "pointer")
-                .attr('title', "Click to Edit")
+                .attr('title', self._("Click to Edit"))
 
                 .click(function ()
                 {
@@ -2670,7 +2670,7 @@
                 {
                     name: 'name',
                     type: GUIElementType.Input,
-                    label: "Name: ",
+                    label: self._("Name: "),
                     value: function ()
                     {
                         return name;
@@ -2684,14 +2684,14 @@
                         if (custom)
                         {
                             el.prop("disabled", true)
-                                .attr("title", "This field can't be changed");
+                                .attr("title", self._("This field can't be changed"));
                         }
                     }
                 },
                 {
                     name: 'display',
                     type: GUIElementType.Checkbox,
-                    label: 'Display Found Entries: ',
+                    label: self._('Display Found Entries: '),
                     value: function ()
                     {
                         return config.display;
@@ -2700,7 +2700,7 @@
                 {
                     name: 'priority',
                     type: GUIElementType.Custom,
-                    label: "Priority: ",
+                    label: self._("Priority: "),
                     customElement: function (data: GUIElement): JQuery
                     {
 
@@ -2740,7 +2740,7 @@
                             .attr("value", -1)
                             .appendTo(label);
 
-                        label.append("Custom");
+                        label.append(self._("Custom"));
 
                         if (data.value() === -1)
                         {
@@ -2788,7 +2788,7 @@
                 {
                     name: "customPriority",
                     type: GUIElementType.Custom,
-                    label: "Custom Priority",
+                    label: self._("Custom Priority"),
                     customElement: function (data: GUIElement): JQuery
                     {
 
@@ -2826,11 +2826,11 @@
                         }
 
                         var options = {
-                            color: "Color",
-                            mouseOver: "Mouse Over Color",
-                            text_color: "Info Text Color",
-                            highlight_color: "Highlight Color",
-                            background: "Background Image"
+                            color: self._("Color"),
+                            mouseOver: self._("Mouse Over Color"),
+                            text_color: self._("Info Text Color"),
+                            highlight_color: self._("Highlight Color"),
+                            background: self._("Background Image")
                         };
 
 
@@ -2859,7 +2859,7 @@
                                     .attr("value", i)
                                     .appendTo(label);
 
-                                label.append((i !== 0) ? i : "Disable");
+                                label.append((i !== 0) ? i : self._("Disable"));
 
                                 if (value[name] === i)
                                 {
@@ -2884,7 +2884,7 @@
                 {
                     name: 'ignoreColor',
                     type: GUIElementType.Checkbox,
-                    label: 'Ignore Color Settings:',
+                    label: self._('Ignore Color Settings:'),
                     value: function ()
                     {
                         return config.ignoreColor;
@@ -2924,11 +2924,11 @@
                     {
                         return config.color;
                     },
-                    label: 'Color: ',
+                    label: self._('Color: '),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-color',
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     }
                 },
                 {
@@ -2938,11 +2938,11 @@
                     {
                         return config.mouseOver;
                     },
-                    label: 'Mouse Over Color: ',
+                    label: self._('Mouse Over Color: '),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-mouseOver',
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     }
                 },
                 {
@@ -2952,11 +2952,11 @@
                     {
                         return config.text_color;
                     },
-                    label: 'Info Text Color: ',
+                    label: self._('Info Text Color: '),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-text_color',
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     }
                 },
                 {
@@ -2966,11 +2966,11 @@
                     {
                         return config.highlight_color;
                     },
-                    label: 'Highlight Color: ',
+                    label: self._('Highlight Color: '),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-highlight_color',
-                        placeholder: "Click to change Color"
+                        placeholder: self._("Click to change Color")
                     }
                 },
                 {
@@ -2980,7 +2980,7 @@
                     {
                         return config.background;
                     },
-                    label: 'Background Image (Path): '
+                    label: self._('Background Image (Path): ')
                 },
                 {
                     name: 'mark_chapter',
@@ -2989,7 +2989,7 @@
                     {
                         return config.mark_chapter;
                     },
-                    label: 'Mark Chapter: '
+                    label: self._('Mark Chapter: ')
                 },
                 {
                     name: 'image',
@@ -2998,7 +2998,7 @@
                     {
                         return config.image;
                     },
-                    label: 'Info Image (Path): ',
+                    label: self._('Info Image (Path): '),
                     customOptions: (el) =>
                     {
                         var container = $("<div></div>");
@@ -3040,7 +3040,7 @@
                     {
                         return config.note;
                     },
-                    label: 'Note: ',
+                    label: self._('Note: '),
                     debugOnly: true
                 },
                 {
@@ -3048,7 +3048,7 @@
                     type: GUIElementType.Button,
                     value: function ()
                     {
-                        return 'Remove';
+                        return self._('Remove');
                     },
                     label: '',
                     callback: function ()
@@ -3087,14 +3087,14 @@
                         var elementContainer = $("<div></div>");
                         $('<div style="display:inline-block; width: 80%"></div>').appendTo(elementContainer).append(
 
-                            $('<img src="' + self.parser.getUrl('glyphicons_369_collapse_top.png') + '" alt="Minimize"></img>').click(function ()
+                            $('<img src="' + self.parser.getUrl('glyphicons_369_collapse_top.png') + '" alt="' + self._('Minimize') + '"></img>').click(function ()
                             {
 
                                 container
                                     .unbind()
                                     .css("cursor", "pointer")
                                     .css("height", "35px")
-                                    .attr('title', "Click to Edit");
+                                    .attr('title', self._("Click to Edit"));
 
                                 setTimeout(function ()
                                 {
@@ -3111,14 +3111,14 @@
                             );
 
                         $('<div style="display:inline-block; width: 10%"></div>').appendTo(elementContainer).append(
-                            $('<button class="btn btn-default">Export</button>')
+                            $('<button class="btn btn-default">' + self._('Export') + '</button>')
                             //.button()
                                 .click(function (event)
                                 {
                                     event.preventDefault();
 
                                     // Create Dialog:
-                                    var dialog = $('<div></div>').attr("title", "Export Data for Element " + config.name)
+                                    var dialog = $('<div></div>').attr("title", self._("Export Data for Element: ") + config.name)
                                         .append(
                                         $("<pre></pre>").text(JSON.stringify(config))
                                         ).appendTo($("body"));
@@ -3280,7 +3280,7 @@
         {
             if (!this.parser.chat.Available)
             {
-                alert("This Feature is not enabled in your Browser. Needed: WebSocket");
+                alert(self._("This Feature is not enabled in your Browser. Needed: WebSocket"));
                 return;
             }
 
@@ -3292,19 +3292,19 @@
 
             this.guiContainer.html('');
 
-            this.guiContainer.append('<h2 style="text-align:center: magin-bottom: 10px">Live Chat Feature:</h2>');
+            this.guiContainer.append('<h2 style="text-align:center: magin-bottom: 10px">' + self._('Live Chat Feature:') + '</h2>');
 
             var chatContainer = $("<div></div>").appendTo(this.guiContainer).hide();
 
             var connectBox = $("<div></div>").appendTo(this.guiContainer);
-            connectBox.append("<p>This Feature allows you to connect to the Live-Chat.<p>")
-                .append("<p>If you need help or just want to talk, you are welcome!</p>")
-                .append("<p>I can't be online all the time. I am living in Europe, so please have this in mind</p>")
-                .append("<hr /><p>The Connection is made using an Encrypted Connection to my Server.</p>")
-                .append('<p>Every Message is sent to my <abbr title="irc.esper.net#FanfictionStoryParser">IRC-Channel</abbr></p>')
+            connectBox.append("<p>" + self._("This Feature allows you to connect to the Live-Chat.") + "<p>")
+                .append("<p>" + self._("If you need help or just want to talk, you are welcome!") + "</p>")
+                .append("<p>" + self._("I can't be online all the time. I am living in Europe, so please have this in mind") + "</p>")
+                .append("<hr /><p>" + self._("The Connection is made using an Encrypted Connection to my Server.") + "</p>")
+                .append('<p><abbr title="irc.esper.net#FanfictionStoryParser">' + self._('Every Message is sent to my IRC-Channel') + '</abbr></p>')
                 .append(
                 $('<div style="text-align:center"></div>').append(
-                    $('<button class="btn btn-primary">Connect</button>')
+                    $('<button class="btn btn-primary">' + self._('Connect') + '</button>')
                         .click(function (e)
                         {
                             e.preventDefault();
@@ -3352,20 +3352,20 @@
                 $('<div class="ChatInputContainer"></div>')
                     .append(input)
                     .append(
-                    $('<button class="btn btn-primary">Send</button>').click(function (e)
+                    $('<button class="btn btn-primary">' + self._('Send') + '</button>').click(function (e)
                     {
                         send();
                     })
                     )
                 )
-                .append('<hr/><p style="text-align:center">Advanced Features:</p>')
+                .append('<hr/><p style="text-align:center">' + self._('Advanced Features:') + '</p>')
                 .append(
-                $('<button class="btn btn-warning">Send Config-Data</button>')
+                $('<button class="btn btn-warning">' + self._('Send Config-Data') + '</button>')
                     .click(function (e)
                     {
                         e.preventDefault();
 
-                        if (confirm("This Option allows you to send your Config-Data to the Server. This helps me to help you :3  Do you REALY want to send this?"))
+                        if (confirm(self._("This Option allows you to send your Config-Data to the Server. This helps me to help you :3  Do you REALY want to send this?")))
                         {
                             self.parser.chat.sendConfigData();
                         }
@@ -3435,11 +3435,11 @@
             $('<p></p>')
                 .append($('<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>'))
                 .append(
-                "<b>Synchronization</b><br/>This System synchronizes the local Filter Settings with the Web Service.<br />" +
-                "This data can be retrieved from every Machine, that has the same Token.<br />" +
-                "<b>If you use this, you agree, that the data transfered is saved on the web service!</b><br />" +
-                "<b>Use at own risk! Make backups if possible.</b><br />" +
-                "<br /><b>Your Token: " + self.config.token + "</b><br/><b>Progress:</b><br />"
+                self._("<b>Synchronization</b><br/>This System synchronizes the local Filter Settings with the Web Service.<br />" +
+                    "This data can be retrieved from every Machine, that has the same Token.<br />" +
+                    "<b>If you use this, you agree, that the data transfered is saved on the web service!</b><br />" +
+                    "<b>Use at own risk! Make backups if possible.</b><br />") +
+                '<br /><b>' + self._("Your Token: ") + self.config.token + '</b><br/><b>' + self._("Progress:") + '</b><br />'
 
                 ).append(progressBar)
             ).appendTo($("body"));
@@ -3472,7 +3472,7 @@
                                 $('<p></p>')
                                     .append($('<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>'))
                                     .append(
-                                    "<b>Synchronization</b><br/>Sync Complete! <br /><br />"
+                                    "<b>" + self._('Synchronization') + '</b><br/>' + self._('Sync Complete!') + "<br /><br />"
                                     ).append(progressBar)
                                 ).appendTo($("body"));
 
@@ -3531,7 +3531,7 @@
             $('<p></p>')
                 .append($('<span class="" style="float: left; margin: 0 7px 20px 0;"></span>'))
                 .append(
-                "<b>Messages:</b><br/><br />"
+                "<b>" + this._('Messages:') + "</b><br/><br />"
                 )
                 .append(messages)
             ).appendTo($("body"));
@@ -3556,7 +3556,7 @@
     public feedbackGUI()
     {
         var self = this;
-        var types = ["Bug", "Feature Request", "Question", "Other"];
+        var types = [self._("Bug"), self._("Feature Request"), self._("Question"), self._("Other")];
 
         var inputType = $("<select></select>");
         $.each(types, function (_, type)
@@ -3584,6 +3584,7 @@
 
                 .append("<br /><b>Message:</b><br />")
                 .append(inputMessage)
+                .append("<small>Please write English OR German!</small>")
 
             ).appendTo($("body"));
 

@@ -39,7 +39,7 @@
             if (typeof (self.messageCallback) !== "undefined")
             {
                 var message: WebSocketMessage = {
-                    Data: "Connected to Server",
+                    Data: self._("Connected to Server"),
                     Sender: "System",
                     Time: Date.now().toString(),
                     Type: "Chat"
@@ -61,7 +61,7 @@
 
             if (typeof (self.onError) !== "undefined")
             {
-                self.onError("Error with the Socket Connection! Please reload the page and try again!");
+                self.onError(self._("Error with the Socket Connection! Please reload the page and try again!"));
             } 
 
         };
@@ -169,7 +169,7 @@
         this.send(data);
 
         var message: WebSocketMessage = {
-            Data: "Config-Data sent to Server",
+            Data: this._("Config-Data sent to Server"),
             Sender: "System",
             Type: "Chat",
             Time: Date.now().toString()
