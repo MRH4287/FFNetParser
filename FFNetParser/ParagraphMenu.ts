@@ -1,8 +1,9 @@
 ﻿/**
  * The Class for the Story Remainer Menu
  */
-class ParagraphMenu extends ExtentionBaseClass
+class ParagraphMenu
 {
+    private parser: StoryParser = null;
 
     private menu: JQuery = null;
     private button: JQuery = null;
@@ -12,7 +13,7 @@ class ParagraphMenu extends ExtentionBaseClass
 
     constructor(parser: StoryParser)
     {
-        super(parser);
+        this.parser = parser;
 
         parser.log("Paragraph Menu loading ...");
 
@@ -58,17 +59,17 @@ class ParagraphMenu extends ExtentionBaseClass
         var self = this;
 
         this.menu = $('<div class="paragraphMenu"></div>').appendTo($("body"));
-        this.button = $('<div class="button">' + self._('Menu') + ' ▼</div>').appendTo(this.menu);
+        this.button = $('<div class="button">' + self.parser._('Menu') + ' ▼</div>').appendTo(this.menu);
         this.menuElement = $("<ul></ul>").appendTo(this.menu);
 
-        $("<li>" + self._('Save Position') + "</li>").appendTo(this.menuElement).click(function ()
+        $("<li>" + self.parser._('Save Position') + "</li>").appendTo(this.menuElement).click(function ()
         {
             self.menuElement.fadeOut();
 
             self.saveStoryPosition();
         });
 
-        $("<li>" + self._('Get Link to this Position') + "</li>").appendTo(this.menuElement)
+        $("<li>" + self.parser._('Get Link to this Position') + "</li>").appendTo(this.menuElement)
             .click(function (event)
             {
                 event.preventDefault();
@@ -83,7 +84,7 @@ class ParagraphMenu extends ExtentionBaseClass
 
 
                 // Create Dialog:
-                var dialog = $('<div></div>').attr("title", self._("Link for this Position"))
+                var dialog = $('<div></div>').attr("title", self.parser._("Link for this Position"))
                     .append(
                     $("<pre></pre>").text(url + "#paragraph=" + paragraphNumber)
                     ).appendTo($("body"));
@@ -135,7 +136,7 @@ class ParagraphMenu extends ExtentionBaseClass
 
         if (typeof (this.parser.config.storyReminder[storyID]) !== "undefined")
         {
-            if (!confirm(this._('There is already a reminder for this StoryID. Overwrite?')))
+            if (!confirm(this.parser._('There is already a reminder for this StoryID. Overwrite?')))
             {
                 return;
             }
