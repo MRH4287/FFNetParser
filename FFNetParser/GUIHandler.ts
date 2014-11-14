@@ -3435,10 +3435,10 @@
             $('<p></p>')
                 .append($('<span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>'))
                 .append(
-                self._("<b>Synchronization</b><br/>This System synchronizes the local Filter Settings with the Web Service.<br />" +
-                    "This data can be retrieved from every Machine, that has the same Token.<br />" +
-                    "<b>If you use this, you agree, that the data transfered is saved on the web service!</b><br />" +
-                    "<b>Use at own risk! Make backups if possible.</b><br />") +
+                "<b>" + self._('Synchronization') + "</b><br/>" + self._('This System synchronizes the local Filter Settings with the Web Service.') + "<br />" +
+                self._('"This data can be retrieved from every Machine, that has the same Token.') + "<br />" +
+                "<b>" + self._('If you use this, you agree, that the data transfered is saved on the web service!') + "</b><br />" +
+                "<b>" + self._('Use at own risk! Make backups if possible.') +  "</b><br />" +
                 '<br /><b>' + self._("Your Token: ") + self.config.token + '</b><br/><b>' + self._("Progress:") + '</b><br />'
 
                 ).append(progressBar)

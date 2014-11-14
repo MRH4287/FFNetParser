@@ -324,7 +324,8 @@ module.exports = function (grunt)
         'update_json:manifestDev',
         'compress',
         'copy:manifestRestore',
-        'clean:manifestBase'
+        'clean:manifestBase',
+        'language'
     ]);
 
     grunt.registerTask('devSwitch', function ()
