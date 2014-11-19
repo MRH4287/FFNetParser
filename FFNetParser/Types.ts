@@ -11,11 +11,11 @@ interface StoryInfo
 interface MarkerConfig extends ModificationBase
 {
     ignore: string[];
-    keywords: string[]; 
+    keywords: string[];
     mention_in_headline: boolean;
     print_story: boolean;
     search_story: boolean;
-    keep_searching: boolean;  
+    keep_searching: boolean;
     revision?: number;
 }
 
@@ -155,7 +155,10 @@ interface GUIElement
     css?: {};
     attributes?: {};
     callback?: (e: JQueryEventObject) => void;
-    values?: string[];
+    values?: {
+        name: string;
+        id: string;
+    }[];
     customOptions?: (element: JQuery) => void;
     customElement?: (data: GUIElement) => JQuery;
     result?: (element: JQuery) => any;

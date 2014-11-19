@@ -547,9 +547,51 @@
                 elements: apiData
             });
 
+        var availableLanguages: { name: string; id: string; }[] = [];
+        if (this.parser.availableLanguges !== null)
+        {
+            $.each(this.parser.availableLanguges, function (__, lang: LanguageData)
+            {
+                availableLanguages.push({
+                    id: lang.LanguageCode,
+                    name: lang.Name
+                });
+
+            });
+
+        }
+        else
+        {
+            availableLanguages.push({
+                id: "en",
+                name: "Data not availble!"
+            });
+        }
+
+
 
         var advancedData = this.registerGUI("config-advanced", this.config,
             [
+                {
+                    name: 'language',
+                    type: GUIElementType.Combobox,
+                    label: self._('Language'),
+                    value: function () { return self.config.language; },
+                    values: availableLanguages,
+                    customOptions: function (element: JQuery)
+                    {
+                        element.change(function ()
+                        {
+                            var selected = element.val();
+
+                            if (selected !== self.config.language)
+                            {
+                                self.parser.api_getLanguage(selected, undefined, true, true);
+                            }
+
+                        });
+                    }
+                },
                 {
                     name: 'disable_highlighter',
                     type: GUIElementType.Checkbox,
@@ -744,7 +786,11 @@
                     {
                         $.each(data.values, function (_, option)
                         {
-                            $("<option/>").text(option).appendTo(element);
+                            var el = $("<option/>").attr("value", option.id).text(option.name).appendTo(element);
+                            if (option.id === data.value())
+                            {
+                                el.prop("selected", true);
+                            }
                         });
                     }
 
@@ -752,7 +798,7 @@
                     {
                         data.result = function (e)
                         {
-                            element.val();
+                           return element.val();
                         };
                     }
 
@@ -955,12 +1001,12 @@
             .attr("data-target", target).click(this.buttonLogic).appendTo(container);
     };
 
-    private getCategory = function (name, id, container)
+    private getCategory (name, id, container)
     {
         var cat = $("<div></div>").addClass("ffnet_Config_Category").addClass(id).appendTo(container);
         var headline = $("<div></div>").addClass("headline").appendTo(cat);
         var backField = $("<div></div>").addClass("back").appendTo(headline);
-        var backButton = $('<button class="btn">Back</back>').click(this.backLogic).appendTo(backField);
+        var backButton = $('<button class="btn">' + this._('Back') + '</back>').click(this.backLogic).appendTo(backField);
         var textField = $("<div></div>").appendTo(headline).text(name);
 
         var table = $('<table width="100%"></table>').appendTo(cat);
@@ -974,9 +1020,7 @@
             };
 
         return result;
-    };
-
-
+    }
 
     // ----------
 
@@ -1971,7 +2015,7 @@
             };
         }
 
-        
+
         var buttons = {
 
             "Synchronization": function ()
@@ -3440,7 +3484,7 @@
                 "<b>" + self._('Synchronization') + "</b><br/>" + self._('This System synchronizes the local Filter Settings with the Web Service.') + "<br />" +
                 self._('"This data can be retrieved from every Machine, that has the same Token.') + "<br />" +
                 "<b>" + self._('If you use this, you agree, that the data transfered is saved on the web service!') + "</b><br />" +
-                "<b>" + self._('Use at own risk! Make backups if possible.') +  "</b><br />" +
+                "<b>" + self._('Use at own risk! Make backups if possible.') + "</b><br />" +
                 '<br /><b>' + self._("Your Token: ") + self.config.token + '</b><br/><b>' + self._("Progress:") + '</b><br />'
 
                 ).append(progressBar)

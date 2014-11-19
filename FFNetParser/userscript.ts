@@ -203,7 +203,12 @@ class StoryParser
     /**
      *  The currently selected Language
      */
-    private currentLanguage: { [index: string]: string } = null;
+    public currentLanguage: { [index: string]: string } = null;
+
+    /**
+     * The List of Available Language Elements
+     **/
+    public availableLanguges: LanguageData[] = null;
 
 
     /**
@@ -552,6 +557,11 @@ class StoryParser
         }
 
         // Language:
+        this.api_getLanguageList(function (res)
+        {
+            self.availableLanguges = res;
+        });
+
         if (this.config.language !== 'en')
         {
             // Get the new Language from the Server:
