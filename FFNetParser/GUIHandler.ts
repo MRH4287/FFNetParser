@@ -194,7 +194,7 @@
                 {
                     name: "story_search_depth",
                     type: GUIElementType.Input,
-                    label: self._("Max Search depth: "),
+                    label: self._("Max Search depth"),
                     value: function () { return self.config.story_search_depth; },
                     attributes:
                     {
@@ -205,19 +205,19 @@
                     name: 'mark_M_storys',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.mark_M_storys; },
-                    label: self._('Mark "M" rated Stories: ')
+                    label: self._('Mark "M" rated Stories')
                 },
                 {
                     name: 'hide_non_english_storys',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.hide_non_english_storys; },
-                    label: self._('Hide non English Stories: ')
+                    label: self._('Hide non English Stories')
                 },
                 {
                     name: 'allow_copy',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.allow_copy; },
-                    label: self._('Allow the selection of Text: ')
+                    label: self._('Allow the selection of Text')
                 },
                 {
                     name: "endless_enable",
@@ -226,7 +226,7 @@
                     {
                         return self.config.endless_enable;
                     },
-                    label: self._("Enable EndlessMode: ")
+                    label: self._("Enable EndlessMode")
                 },
                 {
                     name: "endless_forceClickAfter",
@@ -235,7 +235,7 @@
                     {
                         return self.config.endless_forceClickAfter;
                     },
-                    label: self._("Number of Chapters/Pages after which the user is forced to manually go to the next one: ")
+                    label: self._("Number of Chapters/Pages after which the user is forced to manually go to the next one")
                 }
 
             ]
@@ -254,7 +254,7 @@
                     name: 'hide_images',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.hide_images; },
-                    label: self._('Hide Story Images: ')
+                    label: self._('Hide Story Images')
                 },
                 {
                     name: 'hide_lazy_images',
@@ -266,13 +266,13 @@
                     name: 'disable_image_hover',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.disable_image_hover; },
-                    label: self._('Disable Image Hover Effect: ')
+                    label: self._('Disable Image Hover Effect')
                 },
                 {
                     name: 'content_width',
                     type: GUIElementType.Input,
                     value: function () { return self.config.content_width; },
-                    label: self._('Content Width: '),
+                    label: self._('Content Width'),
                     attributes:
                     {
                         size: 50
@@ -282,7 +282,7 @@
                     name: 'color_normal',
                     type: GUIElementType.Color,
                     value: function () { return self.config.color_normal; },
-                    label: self._('Normal Background-Color: '),
+                    label: self._('Normal Background-Color'),
                     attributes:
                     {
                         size: 50,
@@ -301,7 +301,7 @@
                     name: 'color_mouse_over',
                     type: GUIElementType.Color,
                     value: function () { return self.config.color_mouse_over; },
-                    label: self._('MouseOver Background-Color: '),
+                    label: self._('MouseOver Background-Color'),
                     attributes:
                     {
                         size: 50,
@@ -320,7 +320,7 @@
                     name: 'color_odd_color',
                     type: GUIElementType.Color,
                     value: function () { return self.config.color_odd_color; },
-                    label: self._('Odd Background-Color: '),
+                    label: self._('Odd Background-Color'),
                     attributes:
                     {
                         size: 50,
@@ -339,13 +339,13 @@
                     name: 'readingHelp_enabled',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.readingHelp_enabled; },
-                    label: self._('Enable the Reading Help: ')
+                    label: self._('Enable the Reading Help')
                 },
                 {
                     name: 'readingHelp_backgroundColor',
                     type: GUIElementType.Color,
                     value: function () { return self.config.readingHelp_backgroundColor; },
-                    label: self._('Reading Help Background Color: '),
+                    label: self._('Reading Help Background Color'),
                     attributes:
                     {
                         size: 50,
@@ -364,7 +364,7 @@
                     name: 'readingHelp_color',
                     type: GUIElementType.Color,
                     value: function () { return self.config.readingHelp_color; },
-                    label: self._('Reading Help Text Color: '),
+                    label: self._('Reading Help Text Color'),
                     attributes:
                     {
                         size: 50,
@@ -383,7 +383,7 @@
                     name: 'enable_chapter_review_ratio',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.enable_chapter_review_ratio; },
-                    label: self._('Enable the Chapter/Review Ratio Info: ')
+                    label: self._('Enable the Chapter/Review Ratio Info')
                 }
             ]);
 
@@ -406,7 +406,7 @@
                 {
                     name: 'pocket_user',
                     type: GUIElementType.Input,
-                    label: self._('Username: '),
+                    label: self._('Username'),
                     value: function () { return self.config.pocket_user; },
                     attributes:
                     {
@@ -416,7 +416,7 @@
                 {
                     name: 'pocket_password',
                     type: GUIElementType.Input,
-                    label: self._('Password: '),
+                    label: self._('Password'),
                     value: function () { return self.config.pocket_password; },
                     attributes:
                     {
@@ -433,7 +433,7 @@
                 {
                     name: 'api_url',
                     type: GUIElementType.Custom,
-                    label: self._('Server Back-end Address: '),
+                    label: self._('Server Back-end Address'),
                     value: function () { return ''; },
                     debugOnly: true,
                     result: function (element)
@@ -463,7 +463,7 @@
                 {
                     name: 'api_webSocketServerAddress',
                     type: GUIElementType.Custom,
-                    label: 'Live-Chat Back-end Address: ',
+                    label: 'Live-Chat Back-end Address',
                     value: function () { return ''; },
                     debugOnly: true,
                     result: function (element)
@@ -493,7 +493,7 @@
                 {
                     name: 'api_checkForUpdates',
                     type: GUIElementType.Checkbox,
-                    label: self._('Check for Updates: '),
+                    label: self._('Check for Updates'),
                     value: function () { return self.config.api_checkForUpdates; },
                     customOptions: function (checkbox)
                     {
@@ -514,7 +514,7 @@
                 {
                     name: 'api_autoIncludeNewVersion',
                     type: GUIElementType.Checkbox,
-                    label: self._('Auto Update: '),
+                    label: self._('Auto Update'),
                     value: function () { return self.config.api_autoIncludeNewVersion; },
                     customOptions: function (element)
                     {
@@ -553,37 +553,37 @@
                 {
                     name: 'disable_highlighter',
                     type: GUIElementType.Checkbox,
-                    label: '<abbr title="' + self._('Disable the Story Highlighter Feature.') + '">' + self._('Disable Highlighter') + '</abbr>: ',
+                    label: '<abbr title="' + self._('Disable the Story Highlighter Feature.') + '">' + self._('Disable Highlighter') + '</abbr>',
                     value: function () { return self.config.disable_highlighter; }
                 },
                 {
                     name: 'disable_cache',
                     type: GUIElementType.Checkbox,
-                    label: '<abbr title="' + self._('Disable the Caching function used for the in Story search.') + '">' + self._('Disable Cache') + '</abbr>: ',
+                    label: '<abbr title="' + self._('Disable the Caching function used for the in Story search.') + '">' + self._('Disable Cache') + '</abbr>',
                     value: function () { return self.config.disable_cache; }
                 },
                 {
                     name: 'disable_parahraphMenu',
                     type: GUIElementType.Checkbox,
-                    label: '<abbr title="' + self._('Disable the Paragraph Menu.') + '">' + self._('Disable Paragraph Menu') + '</abbr>: ',
+                    label: '<abbr title="' + self._('Disable the Paragraph Menu.') + '">' + self._('Disable Paragraph Menu') + '</abbr>',
                     value: function () { return self.config.disable_parahraphMenu; }
                 },
                 {
                     name: 'disable_sync',
                     type: GUIElementType.Checkbox,
-                    label: self._('Disable Synchronization Feature: '),
+                    label: self._('Disable Synchronization Feature'),
                     value: function () { return self.config.disable_sync; }
                 },
                 {
                     name: 'disable_default_coloring',
                     type: GUIElementType.Checkbox,
-                    label: '<abbr title="' + self._('This disables the color change in the Story-List. Do not affect Filter / Highlighter') + '">' + self._('Disable the default Coloration') + '</abbr>: ',
+                    label: '<abbr title="' + self._('This disables the color change in the Story-List. Do not affect Filter / Highlighter') + '">' + self._('Disable the default Coloration') + '</abbr>',
                     value: function () { return self.config.disable_default_coloring; }
                 },
                 {
                     name: 'chrome_sync',
                     type: GUIElementType.Checkbox,
-                    label: self._('Use Chrome to Synchronize Data: '),
+                    label: self._('Use Chrome to Synchronize Data'),
                     value: function () { return self.config.chrome_sync; },
                     customOptions: function (el)
                     {
@@ -1067,7 +1067,7 @@
             // No marker found. Add Notification:
 
             var infoContainer = $('<div class="ffnet-InfoContainer"></div>').appendTo(container);
-            infoContainer.append(self._('<p>There are currently no Filter defined.<p>'));
+            infoContainer.append('<p>' + self._('There are currently no Filter defined.') + '</p>');
             infoContainer.append($('<button class="btn btn-primary">' + self._('Create Filter') + '</button>').click(function ()
             {
                 $("#ffnet-addNewFilter").trigger("click");
@@ -1304,7 +1304,7 @@
                 {
                     name: 'name',
                     type: GUIElementType.Input,
-                    label: "Name: ",
+                    label: self._('Name'),
                     value: function ()
                     {
                         return name;
@@ -1317,7 +1317,7 @@
                 {
                     name: 'display',
                     type: GUIElementType.Checkbox,
-                    label: self._('Display Found Entries: '),
+                    label: self._('Display Found Entries'),
                     value: function ()
                     {
                         return marker.display;
@@ -1326,7 +1326,7 @@
                 {
                     name: 'keywords',
                     type: GUIElementType.Input,
-                    label: self._('Keywords: '),
+                    label: self._('Keywords'),
                     value: function ()
                     {
                         return marker.keywords.join(', ');
@@ -1349,7 +1349,7 @@
                 {
                     name: 'ignore',
                     type: GUIElementType.Input,
-                    label: self._('Ignore when: '),
+                    label: self._('Ignore when'),
                     value: function ()
                     {
                         return marker.ignore.join(', ');
@@ -1372,7 +1372,7 @@
                 {
                     name: 'priority',
                     type: GUIElementType.Custom,
-                    label: self._("Priority: "),
+                    label: self._("Priority"),
                     customElement: function (data: GUIElement): JQuery
                     {
 
@@ -1556,7 +1556,7 @@
                 {
                     name: 'ignoreColor',
                     type: GUIElementType.Checkbox,
-                    label: self._('Ignore Color Settings:'),
+                    label: self._('Ignore Color Settings'),
                     value: function ()
                     {
                         return marker.ignoreColor;
@@ -1598,7 +1598,7 @@
                     {
                         return marker.color;
                     },
-                    label: self._('Color: '),
+                    label: self._('Color'),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-color',
@@ -1612,7 +1612,7 @@
                     {
                         return marker.mouseOver;
                     },
-                    label: self._('Mouse Over Color: '),
+                    label: self._('Mouse Over Color'),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-mouseOver',
@@ -1626,7 +1626,7 @@
                     {
                         return marker.text_color;
                     },
-                    label: self._('Info Text Color: '),
+                    label: self._('Info Text Color'),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-text_color',
@@ -1640,7 +1640,7 @@
                     {
                         return marker.highlight_color;
                     },
-                    label: self._('Highlight Color: '),
+                    label: self._('Highlight Color'),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-highlight_color',
@@ -1655,7 +1655,7 @@
                     {
                         return marker.background;
                     },
-                    label: self._('Background Image (Path): ')
+                    label: self._('Background Image')
                 },
                 {
                     name: 'search_story',
@@ -1664,7 +1664,7 @@
                     {
                         return marker.search_story;
                     },
-                    label: self._('Search in Stories: ')
+                    label: self._('Search in Stories')
                 },
                 {
                     name: 'mark_chapter',
@@ -1673,7 +1673,7 @@
                     {
                         return marker.mark_chapter;
                     },
-                    label: self._('Mark Chapter: ')
+                    label: self._('Mark Chapter')
                 },
                 {
                     name: 'print_story',
@@ -1682,7 +1682,7 @@
                     {
                         return marker.print_story;
                     },
-                    label: self._('List Stories: ')
+                    label: self._('List Stories')
                 },
                 {
                     name: 'keep_searching',
@@ -1691,7 +1691,7 @@
                     {
                         return marker.keep_searching;
                     },
-                    label: self._('Keep Searching: ')
+                    label: self._('Keep Searching')
                 },
                 {
                     name: 'mention_in_headline',
@@ -1700,7 +1700,7 @@
                     {
                         return marker.mention_in_headline;
                     },
-                    label: self._('Mention in Headline: ')
+                    label: self._('Mention in Headline')
                 },
                 {
                     name: 'image',
@@ -1709,7 +1709,7 @@
                     {
                         return marker.image;
                     },
-                    label: self._('Info Image (Path): '),
+                    label: self._('Info Image'),
                     customOptions: (el) =>
                     {
                         var container = $("<div></div>");
@@ -1753,7 +1753,7 @@
                     {
                         return marker.note;
                     },
-                    label: self._('Note: '),
+                    label: self._('Note'),
                     debugOnly: true
                 },
                 {
@@ -1958,18 +1958,20 @@
      */
     private gui_show(closeCallback: () => void = null)
     {
+        var self = this;
+
         if (closeCallback === null)
         {
             closeCallback = function ()
             {
-                if (confirm("All unsaved changes will be deleted!"))
+                if (confirm(self._("All unsaved changes will be deleted!")))
                 {
                     $(this).dialog("close");
                 }
             };
         }
 
-        var self = this;
+        
         var buttons = {
 
             "Synchronization": function ()
@@ -2670,7 +2672,7 @@
                 {
                     name: 'name',
                     type: GUIElementType.Input,
-                    label: self._("Name: "),
+                    label: self._("Name"),
                     value: function ()
                     {
                         return name;
@@ -2691,7 +2693,7 @@
                 {
                     name: 'display',
                     type: GUIElementType.Checkbox,
-                    label: self._('Display Found Entries: '),
+                    label: self._('Display Found Entries'),
                     value: function ()
                     {
                         return config.display;
@@ -2700,7 +2702,7 @@
                 {
                     name: 'priority',
                     type: GUIElementType.Custom,
-                    label: self._("Priority: "),
+                    label: self._("Priority"),
                     customElement: function (data: GUIElement): JQuery
                     {
 
@@ -2884,7 +2886,7 @@
                 {
                     name: 'ignoreColor',
                     type: GUIElementType.Checkbox,
-                    label: self._('Ignore Color Settings:'),
+                    label: self._('Ignore Color Settings'),
                     value: function ()
                     {
                         return config.ignoreColor;
@@ -2924,7 +2926,7 @@
                     {
                         return config.color;
                     },
-                    label: self._('Color: '),
+                    label: self._('Color'),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-color',
@@ -2938,7 +2940,7 @@
                     {
                         return config.mouseOver;
                     },
-                    label: self._('Mouse Over Color: '),
+                    label: self._('Mouse Over Color'),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-mouseOver',
@@ -2952,7 +2954,7 @@
                     {
                         return config.text_color;
                     },
-                    label: self._('Info Text Color: '),
+                    label: self._('Info Text Color'),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-text_color',
@@ -2966,7 +2968,7 @@
                     {
                         return config.highlight_color;
                     },
-                    label: self._('Highlight Color: '),
+                    label: self._('Highlight Color'),
                     attributes:
                     {
                         id: 'fflist-' + UID + '-highlight_color',
@@ -2980,7 +2982,7 @@
                     {
                         return config.background;
                     },
-                    label: self._('Background Image (Path): ')
+                    label: self._('Background Image')
                 },
                 {
                     name: 'mark_chapter',
@@ -2989,7 +2991,7 @@
                     {
                         return config.mark_chapter;
                     },
-                    label: self._('Mark Chapter: ')
+                    label: self._('Mark Chapter')
                 },
                 {
                     name: 'image',
@@ -2998,7 +3000,7 @@
                     {
                         return config.image;
                     },
-                    label: self._('Info Image (Path): '),
+                    label: self._('Info Image'),
                     customOptions: (el) =>
                     {
                         var container = $("<div></div>");
@@ -3040,7 +3042,7 @@
                     {
                         return config.note;
                     },
-                    label: self._('Note: '),
+                    label: self._('Note'),
                     debugOnly: true
                 },
                 {

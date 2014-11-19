@@ -71,6 +71,7 @@ class StoryParser
         mark_M_storys: true,                    // Mark every Story Rated as M
         hide_non_english_storys: true,          // Hide all Storys, that are not in english
         allow_copy: false,
+        language: 'en',
 
         // Layout:
         color_normal: "#FFFFFF",
@@ -198,6 +199,12 @@ class StoryParser
      * The Last used for an Element in the List 
      */
     private lastElementID: number = 0;
+
+    /**
+     *  The currently selected Language
+     */
+    private currentLanguage: { [index: string]: string } = null;
+
 
     /**
      *   Resets Config to the default setting
@@ -535,6 +542,13 @@ class StoryParser
         {
             console.log("Update Check done.");
             console.log("Pre GUI Update");
+        }
+
+        // Language:
+        if (this.config.language !== 'en')
+        {
+            // Get the new Language from the Server:
+            this.api_getLanguage(this.config.language, undefined, true, true);
         }
 
         // Add jQueryUI to the Page:        
@@ -3613,6 +3627,115 @@ class StoryParser
     }
 
     /**
+     *  Loads the List of available Languages from the Server
+     *  @param callback The Callback with the Result
+     */
+    public api_getLanguageList(callback?: (response: LanguageData[]) => void)
+    {
+        if (this.DEBUG)
+        {
+            console.log("Requesting Language List from Server");
+        }
+
+        var self = this;
+        this.apiRequest({ command: "getLanguageList", data: this.BRANCH }, function (res)
+        {
+            var result = <LanguageData[]>JSON.parse(res);
+
+            self.log("Got Language List:", result);
+
+            if (callback !== undefined)
+            {
+                callback(result);
+            }
+
+        });
+    }
+
+    /**
+     *  Requests a specific Language from the Server
+     *  @param languageCode The Language Code of the wanted Language
+     *  @param callback The callback with the results
+     *  @param apply Should the current Language be changed?
+     *  @param save Should the Language saved to the Config?
+     */
+    public api_getLanguage(languageCode: string, callback?: (response: LanguageData) => void, apply: boolean = false, save: boolean = true)
+    {
+        if (languageCode === this.config.language)
+        {
+            if (this.dataConfig["language"] !== undefined)
+            {
+                this.log("Get Language from Cache ...");
+
+                this.currentLanguage = this.dataConfig["language"];
+                return;
+            }
+        }
+
+        if (languageCode === 'en')
+        {
+            if (this.dataConfig["language"] !== undefined)
+            {
+                delete this.dataConfig["language"]; 
+            }
+
+            this.currentLanguage = null;
+
+            this.save_config(false);
+            return;
+        }
+
+        if (this.DEBUG)
+        {
+            console.log("Requesting Language from Server", languageCode);
+        }
+
+        var self = this;
+        this.apiRequest({ command: "getLanguage", data: languageCode }, function (res)
+        {
+            var result = <LanguageData>JSON.parse(res);
+
+            self.log("Got Language: ", result);
+
+            if (callback !== undefined)
+            {
+                callback(result);
+            }
+
+
+            if (apply === true)
+            {
+                var data: { [index: string]: string } = {};
+
+                $.each(result.Values, function (_, el: { Key: string; Value: string; })
+                {
+                    data[el.Key] = el.Value;
+                });
+
+                self.currentLanguage = data;
+            }
+
+            if (save === true)
+            {
+                self.dataConfig["language"] = data;
+
+                self.log("Save Language-Data to Cache");
+
+                self.save_config(false);
+            }
+            else if (self.dataConfig["language"] !== undefined)
+            {
+                delete self.dataConfig["language"];
+
+                self.save_config(false);
+            }
+
+
+        });
+    }
+
+
+    /**
      *   Updates the current script to the newest Version
      */
     public api_updateScript()
@@ -4262,6 +4385,14 @@ class StoryParser
      */
     public _(key: string): string
     {
+        if (this.currentLanguage !== undefined
+            && this.currentLanguage !== null
+            && this.currentLanguage[key] !== undefined
+            && this.currentLanguage[key] !== "")
+        {
+            return this.currentLanguage[key];
+        }
+
 
         return key;
 

@@ -65,6 +65,7 @@ interface Config
     mark_M_storys: boolean;
     hide_non_english_storys: boolean;
     allow_copy: boolean;
+    language: string;
 
 
     // Layout:
@@ -190,4 +191,13 @@ interface WebSocketMessage
 interface UpgradeTag
 {
     lastRun: number
+}
+
+interface LanguageData
+{
+    LanguageCode: string;
+    Name: string;
+    LastModified?: number;
+    LastModifiedBy?: string;
+    Values?: { Key: string; Value: string; }[];
 }
