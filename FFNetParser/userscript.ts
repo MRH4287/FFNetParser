@@ -357,6 +357,13 @@ class StoryParser
             console.warn(ex);
         }
 
+        // Check for DEBUG-Mode
+        if ((this.config['debug'] !== undefined) || (this.BRANCH === "dev"))
+        {
+            this.DEBUG = true;
+        }
+
+
         // Check for Config Values:
 
         if ((this.config["pocket_user"] === undefined) || (this.config["pocket_user"] === ""))
@@ -551,6 +558,7 @@ class StoryParser
             this.api_getLanguage(this.config.language, undefined, true, true);
         }
 
+
         // Add jQueryUI to the Page:        
         var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
         $("head").append(block);
@@ -579,14 +587,6 @@ class StoryParser
         // Check if the current Page is a User Specific Page:
         var locationRegEx = new RegExp("\/u\/[0-9]+\/");
         this.inUsersPage = locationRegEx.test(location.href);
-
-
-
-        // Check for DEBUG-Mode
-        if ((this.config['debug'] !== undefined) || (this.BRANCH === "dev"))
-        {
-            this.DEBUG = true;
-        }
 
 
         if (this.DEBUG)
@@ -2272,12 +2272,12 @@ class StoryParser
         }
 
         var list = $('<div id=\'mrhOutput\'></div>')
-            .html('<div><b>Page: ' + page + '</b></div>' + text + ' <i>All hidden elements:</i> ').append(
+            .html('<div><b>' + self._('Page') + ': ' + page + '</b></div>' + text + ' <i>' + self._('All hidden elements:') + '</i> ').append(
             $("<u></u>").text(self.hidden[page]).click(
                 function (e)
                 {
                     // Build Dialog
-                    var dialog = $('<div title="Hidden Elements"></div>');
+                    var dialog = $('<div title="' + self._('Hidden Elements') + '"></div>');
                     var table = $("<table></table>").appendTo(dialog);
 
                     $.each(self.hiddenElements[page], function (key, value)
@@ -2308,7 +2308,7 @@ class StoryParser
                 }
 
                 )
-                .attr("title", "Show the reasons for hiding")
+                .attr("title", self._("Show the reasons for hiding"))
                 .addClass("clickable")
             )
             .css('margin-bottom', '10px')
@@ -2316,7 +2316,7 @@ class StoryParser
 
         if (hiddenByStoryConfig.length > 0)
         {
-            list.append($('<a href="#">Show Elements hidden by Story Config</a>').click(function (e)
+            list.append($('<a href="#">' + self._('Show Elements hidden by Story Config') + '</a>').click(function (e)
             {
                 hiddenByStoryConfig.slideDown();
                 e.preventDefault();
@@ -3661,6 +3661,11 @@ class StoryParser
      */
     public api_getLanguage(languageCode: string, callback?: (response: LanguageData) => void, apply: boolean = false, save: boolean = true)
     {
+        if (this.DEBUG)
+        {
+            console.info("Language Check for: ", languageCode);
+        }
+
         if (languageCode === this.config.language)
         {
             if (this.dataConfig["language"] !== undefined)
@@ -3670,6 +3675,11 @@ class StoryParser
                 this.currentLanguage = this.dataConfig["language"];
                 return;
             }
+            else
+            {
+                this.log("No local Language Data. Requesting from Server ...", this.dataConfig);
+            }
+
         }
 
         if (languageCode === 'en')
@@ -3721,13 +3731,13 @@ class StoryParser
 
                 self.log("Save Language-Data to Cache");
 
-                self.save_config(false);
+                self.save_dataStore();
             }
             else if (self.dataConfig["language"] !== undefined)
             {
                 delete self.dataConfig["language"];
 
-                self.save_config(false);
+                self.save_dataStore();
             }
 
 

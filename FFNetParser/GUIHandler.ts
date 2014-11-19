@@ -428,7 +428,7 @@
                     name: '',
                     type: GUIElementType.Text,
                     label: "--------",
-                    value: function () { return self._(' ---- API Settings ----'); }
+                    value: function () { return ' ---- ' + self._('API Settings') + ' ----'; }
                 },
                 {
                     name: 'api_url',
@@ -529,7 +529,7 @@
                 {
                     name: 'token',
                     type: GUIElementType.Input,
-                    label: '<abbr title="' + self._('Used for identification on the Web-Service [e.g. Synchronization]') + '">' + self._('Token') + '</abbr>: ',
+                    label: '<abbr title="' + self._('Used for identification on the Web-Service [e.g. Synchronization]') + '">' + self._('Token') + '</abbr> ',
                     value: function () { return self.config.token; },
                     attributes:
                     {
@@ -543,7 +543,7 @@
         this.registerCategory(
             {
                 name: "api",
-                title: "API Settings",
+                title: self._("API Settings"),
                 elements: apiData
             });
 
@@ -1295,7 +1295,7 @@
         var UID = name.replace(replace, "");
 
 
-        var table = $('<table width="100%"></table>').appendTo(container);
+        var table = $('<table width="100%" cellpadding="5"></table>').appendTo(container);
 
         var self = this;
 
@@ -2639,7 +2639,7 @@
         }
 
 
-        var table = $('<table width="100%"></table>').appendTo(container);
+        var table = $('<table width="100%" cellpadding="5"></table>').appendTo(container);
 
         this.registerGUI(name, () =>
         {
@@ -3087,7 +3087,7 @@
                     customElement: function ()
                     {
                         var elementContainer = $("<div></div>");
-                        $('<div style="display:inline-block; width: 80%"></div>').appendTo(elementContainer).append(
+                        $('<div style="display:inline-block; width: 50%"></div>').appendTo(elementContainer).append(
 
                             $('<img src="' + self.parser.getUrl('glyphicons_369_collapse_top.png') + '" alt="' + self._('Minimize') + '"></img>').click(function ()
                             {
@@ -3112,7 +3112,7 @@
                             }).css("cursor", "pointer")
                             );
 
-                        $('<div style="display:inline-block; width: 10%"></div>').appendTo(elementContainer).append(
+                        $('<div style="display:inline-block; width: 40%"></div>').appendTo(elementContainer).append(
                             $('<button class="btn btn-default">' + self._('Export') + '</button>')
                             //.button()
                                 .click(function (event)
