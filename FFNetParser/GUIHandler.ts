@@ -623,6 +623,12 @@
                     value: function () { return self.config.disable_default_coloring; }
                 },
                 {
+                    name: 'disable_inStory_parsing',
+                    type: GUIElementType.Checkbox,
+                    label: self._('Disable the parsing of Stories'),
+                    value: function () { return self.config.disable_inStory_parsing; }
+                },
+                {
                     name: 'chrome_sync',
                     type: GUIElementType.Checkbox,
                     label: self._('Use Chrome to Synchronize Data'),
@@ -1009,7 +1015,7 @@
         var backButton = $('<button class="btn">' + this._('Back') + '</back>').click(this.backLogic).appendTo(backField);
         var textField = $("<div></div>").appendTo(headline).text(name);
 
-        var table = $('<table width="100%"></table>').appendTo(cat);
+        var table = $('<table width="100%" cellpadding="5"></table>').appendTo(cat);
 
 
         var result =

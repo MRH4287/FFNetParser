@@ -109,6 +109,7 @@ class StoryParser
         disable_parahraphMenu: false,
         disable_sync: true,
         disable_default_coloring: false,
+        disable_inStory_parsing: false,
         chrome_sync: false,
 
         // Do not change below this line:
@@ -2518,6 +2519,11 @@ class StoryParser
      **/
     public readStory()
     {
+        if (this.config.disable_inStory_parsing)
+        {
+            return;
+        }
+
         var storyElements = $(".storytext");
         if (storyElements.length < 1)
         {
