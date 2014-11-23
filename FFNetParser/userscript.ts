@@ -2967,6 +2967,7 @@ class StoryParser
     */
     public enablePocketSave()
     {
+        var self = this;
 
         if (this.LOAD_INTERNAL)
         {
@@ -2988,11 +2989,11 @@ class StoryParser
 
 
         var options = {
-            'all': "From this chapter to the End",
-            '1': "One Chapter",
-            '2': "Two Chapters",
-            '5': "Five Chapters",
-            '10': "Ten Chapters"
+            'all': this._("From this chapter to the End"),
+            '1': this._("One Chapter"),
+            '2': this._("Two Chapters"),
+            '5': this._("Five Chapters"),
+            '10': this._("Ten Chapters")
         };
 
         var select = $("<select></select>")
@@ -3000,7 +3001,7 @@ class StoryParser
             .change(function ()
             {
                 $("#ffnet-pocket-save-button").removeAttr("disabled")
-                    .html("Save To Pocket");
+                    .html(self._("Save To Pocket"));
 
             });
 
@@ -3014,10 +3015,10 @@ class StoryParser
 
         });
 
-        var self = this;
+
 
         field.after(
-            $('<button class="btn">Save To Pocket</button>')
+            $('<button class="btn">' + this._('Save To Pocket') + '</button>')
                 .click(function ()
                 {
                     var option = select.children().filter(":selected").first().attr("value");
