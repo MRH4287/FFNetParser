@@ -1132,6 +1132,9 @@ class StoryParser
                     $(".nocopy").removeClass("nocopy").parent().attr("style", "padding: 0px 0.5em;");
                 }
             }, 1000);
+
+            this.readStory();
+
         }
     }
 
@@ -1866,6 +1869,9 @@ class StoryParser
      */
     private elementCallback(self: StoryParser, config: MarkerConfig, element: JQuery, textEl: JQuery, headline: string, info: StoryInfo, page: number)
     {
+        var isStory = $(".storytext").length > 0;
+        var isStoryText = element.is(".storytext");
+
         var foundWhere = info.chapter;
 
         if (!(page in self.eList))
@@ -1884,39 +1890,42 @@ class StoryParser
         {
             this.info("Element Callback for ", headline, info);
             this.log("Found at page: ", page);
+            this.log("IsStory: " + isStory + " - IsStoryText: " + isStoryText);
         }
 
-        if ((self.dataConfig["displayOnly"] !== undefined) && (self.dataConfig["displayOnly"] === headline))
+        if (!isStory)
         {
-            if (self.DEBUG)
+            if ((self.dataConfig["displayOnly"] !== undefined) && (self.dataConfig["displayOnly"] === headline))
             {
-                console.info("Display Only Mode: Match found for", element);
+                if (self.DEBUG)
+                {
+                    console.info("Display Only Mode: Match found for", element);
+                }
+
+                window.setTimeout(function ()
+                {
+                    element.show();
+                }, 100);
+
+                self.hidden[page] -= 1;
             }
-
-            window.setTimeout(function ()
+            else if (self.dataConfig["displayOnly"] !== undefined)
             {
-                element.show();
-            }, 100);
+                // Hide this Element because the Only Mode do not match
 
-            self.hidden[page] -= 1;
-        }
-        else if (self.dataConfig["displayOnly"] !== undefined)
-        {
-            // Hide this Element because the Only Mode do not match
+                if (self.DEBUG)
+                {
+                    console.log("Hide Element because of 'displayOnly' ", info);
+                }
 
-            if (self.DEBUG)
-            {
-                console.log("Hide Element because of 'displayOnly' ", info);
+                self.hiddenElements[page][info.url] = "displayOnly";
+
+                element.hide();
+                self.hidden[page] += 1;
             }
-
-            self.hiddenElements[page][info.url] = "displayOnly";
-
-            element.hide();
-            self.hidden[page] += 1;
         }
 
-
-        if (!config.display)
+        if (!isStory && !config.display)
         {
             if (self.DEBUG)
             {
@@ -1963,7 +1972,7 @@ class StoryParser
             }
 
 
-            if ((config.background !== null) && (config.background !== ""))
+            if (!isStoryText && (config.background !== null) && (config.background !== ""))
             {
                 this.updateAttributeWithPriority(element, "background", priority.background, function ()
                 {
@@ -1973,7 +1982,7 @@ class StoryParser
                 });
             }
 
-            if ((config.image !== undefined) && (config.image !== null) && (config.image !== "") && (config.image !== " "))
+            if (!isStoryText && (config.image !== undefined) && (config.image !== null) && (config.image !== "") && (config.image !== " "))
             {
                 self.log("Adds Filter-Image to Element: ", element, config);
 
@@ -1983,28 +1992,56 @@ class StoryParser
                     .css("margin-left", "15px")
                     .addClass("parser-msg");
 
-                element.find("a").last().after(img);
+                if (!isStory)
+                {
+                    element.find("a").last().after(img);
+                }
+                else
+                {
+                    var appendTo = element.children().filter("a").last();
+                    self.log("Add Image to Story ...", appendTo, img);
+
+                    appendTo.after(img);
+                }
             }
 
             if (config.mark_chapter)
             {
-                element.find('a').first().after(
-                    $("<span class=\"parser-msg\"> <b>[" + headline + "-" + foundWhere + "]</b></span>")
-                        .attr("title", info.sentence)
-                    );
+                var markerAppend = $("<span class=\"parser-msg\"> <b>[" + headline + "-" + foundWhere + "]</b></span>")
+                    .attr("title", info.sentence);
+
+                if (!isStory)
+                {
+                    element.find('a').first().after(markerAppend);
+                }
+                else if (!isStoryText)
+                {
+                    element.children().filter('a').last().after(markerAppend);
+                }
+                else
+                {
+                    element.prepend(markerAppend);
+                }
+
             }
 
-            if (!config.ignoreColor && config.text_color != null)
+            if (!isStoryText && !config.ignoreColor && config.text_color != null)
             {
                 this.updateAttributeWithPriority(textEl, "color", priority.text_color, config.text_color);
             }
+
+            var linkCheckReg = new RegExp("<a [^>]*\"[^\">]+$", "i");
 
             var color: string = config.color;
             var colorMo: string = config.mouseOver;
 
             $.each(config.keywords, function (key, keyword)
             {
-                var el = element.find('div').first();
+                var el = (!isStory) ? element.find('div').first() : element.children().filter("div").last();
+                if (el.length === 0)
+                {
+                    return;
+                }
                 var reg = new RegExp(keyword, "i");
                 var text = el.html();
 
@@ -2032,16 +2069,23 @@ class StoryParser
                         behind = erg[3];
                     }
 
+                    if (linkCheckReg.test(front))
+                    {
+                        // We are within a Link .. continue
+                        return;
+                    }
+
                     replace = front + '<span class="ffnet-story-highlighter" style="color:black; font-weight:bold">' + replace + '</span>' + behind;
 
                     text = text.replace(new RegExp(keyword, "i"), replace);
+
                 }
 
                 el.html(text);
 
             });
 
-            if (!config.ignoreColor)
+            if (!isStoryText && !config.ignoreColor)
             {
                 if (self.DEBUG)
                 {
@@ -2469,6 +2513,116 @@ class StoryParser
         }
     }
 
+    /**
+     *  Reads the content of the Story itself
+     **/
+    public readStory()
+    {
+        var storyElements = $(".storytext");
+        if (storyElements.length < 1)
+        {
+            // We are not in a Story ...
+            return;
+        }
+
+        var self = this;
+
+        var handleElement = function (element : JQuery)
+        {
+            // Remove old Elements
+            element.find('.parser-msg').remove();
+
+            element.attr("data-parsed", "true");
+
+            var text = element.html();
+
+            $.each(self.config.marker, function (headline: string, config: MarkerConfig)
+            {
+
+                var ignore = false;
+                $.each(config.ignore, function (i: number, marker: string)
+                {
+                    try
+                    {
+                        var reg = new RegExp(marker, "i");
+
+                        if ((marker !== "") && reg.test(text))
+                        {
+                            self.log("Ignore Story because of Ignore Filter: ", marker, config);
+
+                            // Ignore this Element
+                            ignore = true;
+                            return;
+                        }
+                    } catch (e)
+                    {
+                        console.warn(e);
+                    }
+                });
+
+                if (ignore)
+                {
+                    return;
+                }
+
+                var found = false;
+
+                $.each(config.keywords, function (i: number, marker: string)
+                {
+                    var reg = new RegExp(marker, "i");
+
+                    if (!found)
+                    {
+                        if (reg.test(text))
+                        {
+                            found = true;
+                        }
+                    }
+                });
+
+                if (found)
+                {
+                    var reg = new RegExp(".+/s/([0-9]+)/(?:([0-9]+)/?)?(?:([^#]+)/?)?");
+
+                    var result = reg.exec(location.href);
+
+                    var chapter = Number(element.attr("data-page"));
+                    if (isNaN(chapter))
+                    {
+                        chapter = 0;
+                    }
+
+                    var info: StoryInfo = {
+                        url: self.getLinkToPageNumber(chapter),
+                        chapter: chapter,
+                        name: result[3],
+                        element: element,
+                        sentence: null
+                    };
+
+                    window.setTimeout(function ()
+                    {
+                        self.elementCallback(self, config, element, element.children().filter("span").last(), headline, info, chapter);
+
+                    }, 500);
+
+                }
+
+            });
+        };
+
+        handleElement($("#profile_top"));
+
+        $.each(storyElements.not('[data-parsed]'), function (index, element: JQuery)
+        {
+            element = $(element);
+
+            handleElement(element);
+        });
+
+
+    }
+
 
     /**
     *   Enables the In Story Highlighter (Story View)
@@ -2813,6 +2967,7 @@ class StoryParser
     */
     public enablePocketSave()
     {
+
         if (this.LOAD_INTERNAL)
         {
             return;
@@ -3143,7 +3298,7 @@ class StoryParser
 
             return domain + href.replace(regex, "$1=" + page);
         }
-        else
+        else if ($('button:contains(Next)').length > 0)
         {
             var next = $('button:contains(Next)').first();
 
@@ -3152,6 +3307,23 @@ class StoryParser
             regex = new RegExp("s/([0-9]+)/[0-9]+/");
 
             return domain + url.replace(regex, "s/$1/" + page + "/");
+        }
+        else
+        {
+            // Try to parse the current Location:
+            regex = new RegExp("s/([0-9]+)/([0-9]+)/");
+            var result = regex.exec(document.location.href);
+
+            if (result.length === 3)
+            {
+                return domain + document.location.href.replace(regex, "s/$1/" + page + "/");
+            }
+            else
+            {
+                console.warn("Can't get Link to Chapter! If this happens often, please report!");
+                return document.location.href;
+            }
+
         }
     }
 
@@ -3251,6 +3423,8 @@ class StoryParser
                         .attr("style", $("#storytext").attr("style"));
 
                     chapter.slideDown();
+
+                    self.readStory();
 
                     window.setTimeout(function ()
                     {
@@ -3696,7 +3870,7 @@ class StoryParser
         {
             if (this.dataConfig["language"] !== undefined)
             {
-                delete this.dataConfig["language"]; 
+                delete this.dataConfig["language"];
             }
 
             this.currentLanguage = null;
