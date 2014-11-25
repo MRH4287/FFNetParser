@@ -3731,7 +3731,8 @@ class StoryParser
                     Nested: (sessionStorage["ffnet-mutex"] !== undefined) ? true : false,
                     Branch: this.BRANCH,
                     Page: window.location.href,
-                    Chrome: (typeof (chrome) !== "undefined")
+                    Chrome: (typeof (chrome) !== "undefined"),
+                    Language: this.config.language
                 };
 
             if (this.DEBUG)
