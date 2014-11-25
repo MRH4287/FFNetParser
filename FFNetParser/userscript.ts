@@ -3323,7 +3323,7 @@ class StoryParser
 
             if (result.length === 3)
             {
-                return domain + document.location.href.replace(regex, "s/$1/" + page + "/");
+                return document.location.href.replace(regex, "s/$1/" + page + "/");
             }
             else
             {
