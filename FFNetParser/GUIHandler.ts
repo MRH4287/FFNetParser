@@ -189,8 +189,45 @@
 
         var self = this;
 
+        var sortFunctions: {
+            name: string;
+            id: string;
+        }[] = [];
+
+        $.each(this.parser.sortMap, (index, element: SortFunctionDefinition) =>
+        {
+            sortFunctions.push({
+                id: index,
+                name: element.Name
+            });
+
+        });
+
         var storyData = this.registerGUI("config-story", this.config,
             [
+                {
+                    name: 'sortFunction',
+                    type: GUIElementType.Combobox,
+                    label: self._('Sort Elements by'),
+                    value: function ()
+                    {
+                        return self.config.sortFunction;
+                    },
+                    values: sortFunctions,
+                    customOptions: function (element: JQuery)
+                    {
+                        element.change(function ()
+                        {
+                            var value = element.val();
+                            if (self.parser.sortMap[value] !== undefined)
+                            {
+                                self.parser.sortStories(self.parser.sortMap[value].Function);
+                            }
+                            
+                        });
+
+                    }
+                },
                 {
                     name: "story_search_depth",
                     type: GUIElementType.Input,

@@ -66,6 +66,7 @@ interface Config
     hide_non_english_storys: boolean;
     allow_copy: boolean;
     language: string;
+    sortFunction: string;
 
 
     // Layout:
@@ -204,4 +205,10 @@ interface LanguageData
     LastModified?: number;
     LastModifiedBy?: string;
     Values?: { Key: string; Value: string; }[];
+}
+
+interface SortFunctionDefinition
+{
+    Name: string;
+    Function: (element: JQuery[]) => JQuery[];
 }

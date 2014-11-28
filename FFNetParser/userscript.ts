@@ -72,6 +72,7 @@ class StoryParser
         hide_non_english_storys: true,          // Hide all Storys, that are not in english
         allow_copy: false,
         language: 'en',
+        sortFunction: 'default',
 
         // Layout:
         color_normal: "#FFFFFF",
@@ -210,6 +211,45 @@ class StoryParser
      * The List of Available Language Elements
      **/
     public availableLanguges: LanguageData[] = null;
+
+
+    /**
+     *  The name mapping for the Sort Function
+     **/
+    public sortMap: { [index: string]: SortFunctionDefinition } =
+    {
+        "default":
+        {
+            Function: this.sort_elementIdent,
+            Name: this._('Default Sorting')
+        },
+        "defaultDESC":
+        {
+            Function: this.sort_elementIdent_DESC,
+            Name: this._('Default Sorting [Descending]')
+        },
+        "suggestion":
+        {
+            Function: this.sort_suggestionLevel,
+            Name: this._('Suggested [Lowest Value Up]')
+        },
+        "suggestionDESC":
+        {
+            Function: this.sort_suggestionLevel_DESC,
+            Name: this._('Suggested [Highest Value Up]')
+        },
+        "chapterReviewRatio":
+        {
+            Function: this.sort_chapterReviewRatio,
+            Name: this._('Chapter/Review Rating')
+        },
+        "chapterReviewRatingDESC":
+        {
+            Function: this.sort_chapterReviewRatio_DESC,
+            Name: this._('Chapter/Review Rating [Descending]')
+        }
+    };
+
 
 
     /**
@@ -1216,6 +1256,9 @@ class StoryParser
                 element.attr("data-ElementIdent", self.lastElementID++);
             }
 
+            // Remove Suggestion Level:
+            element.attr("data-suggestionLevel", "0");
+
             if (self.config.hide_non_english_storys && (text.indexOf('english') === -1))
             {
                 if (self.DEBUG)
@@ -1419,6 +1462,22 @@ class StoryParser
 
 
         });
+
+        // Sort Elements:
+        if (this.config.sortFunction !== undefined && this.config.sortFunction !== 'default')
+        {
+            if (this.sortMap[this.config.sortFunction] !== undefined)
+            {
+                var sortfunction = this.sortMap[this.config.sortFunction];
+                this.sortStories(sortfunction.Function, container);
+            }
+            else
+            {
+                console.warn("Unknown SortFunction: ", this.config.sortFunction);
+                this.config.sortFunction = 'default';
+                this.save_config(false);
+            }
+        }
 
         if (this.DEBUG)
         {
@@ -1972,6 +2031,27 @@ class StoryParser
                 }
             }
 
+            // Suggestion Level
+            if (!isStory)
+            {
+                // Get the old SuggestionLevel:
+                var suggestionLevel = 1;
+                $.each(priority, (name, data) =>
+                {
+                    if (data !== -1)
+                    {
+                        suggestionLevel *= data;
+                    }
+                });
+
+                if (element.is("[data-suggestionLevel]"))
+                {
+                    suggestionLevel = Number(element.attr("data-suggestionLevel")) + suggestionLevel;
+                }
+
+                element.attr("data-suggestionLevel", suggestionLevel);
+            }
+
 
             if (!isStoryText && (config.background !== null) && (config.background !== ""))
             {
@@ -2200,6 +2280,26 @@ class StoryParser
                 }
             }
 
+            // Suggestion Level
+
+            // Get the old SuggestionLevel:
+            var suggestionLevel = 1;
+            $.each(priority, (name, data) =>
+            {
+                if (data !== -1)
+                {
+                    suggestionLevel *= data;
+                }
+            });
+
+            if (element.is("[data-suggestionLevel]"))
+            {
+                suggestionLevel = Number(element.attr("data-suggestionLevel")) + suggestionLevel;
+            }
+
+            element.attr("data-suggestionLevel", suggestionLevel);
+
+
 
             if ((mod.image !== undefined) && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
             {
@@ -2251,6 +2351,22 @@ class StoryParser
                 self.updateColor(element, color, priority.color, colorMo, priority.mouseOver);
             }
 
+
+            // Sorting
+            if (this.config.sortFunction !== undefined && this.config.sortFunction !== 'default')
+            {
+                if (this.sortMap[this.config.sortFunction] !== undefined)
+                {
+                    var sortfunction = this.sortMap[this.config.sortFunction];
+                    this.sortStories(sortfunction.Function);
+                }
+                else
+                {
+                    console.warn("Unknown SortFunction: ", this.config.sortFunction);
+                    this.config.sortFunction = 'default';
+                    this.save_config(false);
+                }
+            }
 
 
             self.updateList(page);
@@ -2533,7 +2649,7 @@ class StoryParser
 
         var self = this;
 
-        var handleElement = function (element : JQuery)
+        var handleElement = function (element: JQuery)
         {
             // Remove old Elements
             element.find('.parser-msg').remove();
@@ -2923,6 +3039,8 @@ class StoryParser
      */
     private manageChapterReviewRatio(element: JQuery): void
     {
+        element.attr("data-chapterReviewRatio", 0);
+
         if (this.config.enable_chapter_review_ratio)
         {
             var reg = new RegExp(".+Chapters: ?([0-9]+).*Reviews: ?([0-9]+).*");
@@ -2962,9 +3080,10 @@ class StoryParser
                     .text(" - Chapter/Review Ratio: 1/" + (fixed))
                     .appendTo(parent);
 
+                element.attr("data-chapterReviewRatio", fixed);
+
             }
         }
-
     }
 
 
@@ -3505,102 +3624,116 @@ class StoryParser
     }
 
 
-    /*
-    private loadPage(loadPrev = false)
-    {
-        var base = null;
+    // ---- Sort Function -------
 
-        if (this.currentPage == null)
+    public sortStories(sortFunction: (list: JQuery[]) => JQuery[], container?: JQuery)
+    {
+        this.log("Sort Stories", sortFunction, container);
+
+        if (sortFunction === undefined)
         {
-            base = $("#myform");
+            console.log("No Sort Function defined. Abort");
+            return;
+        }
+
+        var handleElement = function (elementContainer: JQuery)
+        {
+            var elements = elementContainer.children().detach();
+            var list: JQuery[] = [];
+            $.each(elements, (i, el) =>
+            {
+                list.push(el);
+            });
+
+            var newList = sortFunction(list);
+
+            $.each(newList, (i, element) =>
+            {
+                elementContainer.append(element);
+
+            });
+
+        };
+
+        if (container === undefined)
+        {
+            var pages = $(".ffNetPageWrapper");
+
+            $.each(pages, (index, page: JQuery) =>
+            {
+                page = $(page);
+
+                handleElement(page);
+            });
         }
         else
         {
-            base = this.currentPage.find("#myform").first();
+            handleElement(container);
         }
+    }
 
-
-
-        // Wrapper moved to _createPageWrapper
-        var self = this;
-
-        this.getPageContent(base, loadPrev, function (elements, data)
+    public sort_elementIdent(list: JQuery[]): JQuery[]
+    {
+        list.sort((a: JQuery, b: JQuery) =>
         {
-            // Add elements to DOM:
-            if (elements.length > 0)
-            {
-                var last = $(".ffNetPageWrapper").last();
-
-                var page = self.getCurrentPage(data);
-                var wrapper = self.createWrapper(page);
-
-                last.after(wrapper);
-
-                self.element = elements;
-
-                elements.appendTo(wrapper);
-
-                window.setTimeout(function ()
-                {
-                    self.readList(wrapper.children());
-
-                }, 200);
-
-                $("#myform").find("center").html(data.find("#myform").find("center").last().html());
-
-                // Hide last Page: 
-                last.slideUp();
-
-
-                self.currentPage = data;
-            }
-
+            return Number($(a).attr("data-elementident")) - Number($(b).attr("data-elementident"));
         });
+
+        return list;
     }
 
-
-
-
-    private loadNextPage()
+    public sort_elementIdent_DESC(list: JQuery[]): JQuery[]
     {
-        this.loadPage(false);
-    }
-
-    private loadPrevPage()
-    {
-        this.loadPage(true);
-    }
-
-    private getNextPage(base: JQuery): string
-    {
-        var container = base.find("center").last();
-
-        var current = container.find("b").first();
-        var next = current.next("a");
-
-        if (next.length > 0)
+        list.sort((a: JQuery, b: JQuery) =>
         {
-            return next.attr("href");
-        }
+            return Number($(b).attr("data-elementident")) - Number($(a).attr("data-elementident"));
+        });
 
-        return null;
+        return list;
     }
 
-    private getPrevPage(base: JQuery): string
+    public sort_suggestionLevel(list: JQuery[]): JQuery[]
     {
-        var container = base.find("center").last();
-
-        var current = container.find("b").first();
-        var prev = current.prev("a");
-
-        if (prev.length > 0)
+        list.sort((a: JQuery, b: JQuery) =>
         {
-            return prev.attr("href");
-        }
+            return Number($(a).attr("data-suggestionLevel")) - Number($(b).attr("data-suggestionLevel"));
+        });
 
-        return null;
+        return list;
     }
-    */
+
+
+    public sort_suggestionLevel_DESC(list: JQuery[]): JQuery[]
+    {
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            return Number($(b).attr("data-suggestionLevel")) - Number($(a).attr("data-suggestionLevel"));
+        });
+
+        return list;
+    }
+
+
+    public sort_chapterReviewRatio(list: JQuery[]): JQuery[]
+    {
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            return Number($(a).attr("data-chapterReviewRatio")) - Number($(b).attr("data-chapterReviewRatio"));
+        });
+
+        return list;
+    }
+
+    public sort_chapterReviewRatio_DESC(list: JQuery[]): JQuery[]
+    {
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            return Number($(b).attr("data-chapterReviewRatio")) - Number($(a).attr("data-chapterReviewRatio"));
+        });
+
+        return list;
+    }
+
 
 
     // ----- API-Interface ------
