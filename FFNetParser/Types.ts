@@ -106,6 +106,7 @@ interface Config
     disable_sync: boolean;
     disable_default_coloring: boolean;
     disable_inStory_parsing: boolean;
+    disable_resort_after_filter_match: boolean;
     chrome_sync: boolean;
 
     storage_key: string;

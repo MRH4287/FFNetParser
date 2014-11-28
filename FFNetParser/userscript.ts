@@ -111,6 +111,7 @@ class StoryParser
         disable_sync: true,
         disable_default_coloring: false,
         disable_inStory_parsing: false,
+        disable_resort_after_filter_match: false,
         chrome_sync: false,
 
         // Do not change below this line:
@@ -2174,6 +2175,24 @@ class StoryParser
                 }
 
                 self.updateColor(element, color, priority.color, colorMo, priority.mouseOver);
+            }
+
+
+            // Sorting
+            if (!this.config.disable_resort_after_filter_match && !isStory && this.config.sortFunction !== undefined && this.config.sortFunction !== 'default')
+            {
+                if (this.sortMap[this.config.sortFunction] !== undefined)
+                {
+                    var sortfunction = this.sortMap[this.config.sortFunction];
+                    this.sortStories(sortfunction.Function, element.parent());
+                }
+                else
+                {
+                    console.warn("Unknown SortFunction: ", this.config.sortFunction);
+                    this.config.sortFunction = 'default';
+                    this.save_config(false);
+                }
+
             }
 
         }

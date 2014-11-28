@@ -223,7 +223,7 @@
                             {
                                 self.parser.sortStories(self.parser.sortMap[value].Function);
                             }
-                            
+
                         });
 
                     }
@@ -666,6 +666,13 @@
                     value: function () { return self.config.disable_inStory_parsing; }
                 },
                 {
+                    name: 'disable_resort_after_filter_match',
+                    type: GUIElementType.Checkbox,
+                    label: self._('Disable the resorting of Elements after a Filter match'),
+                    value: function () { return self.config.disable_resort_after_filter_match; }
+
+                },
+                {
                     name: 'chrome_sync',
                     type: GUIElementType.Checkbox,
                     label: self._('Use Chrome to Synchronize Data'),
@@ -841,7 +848,7 @@
                     {
                         data.result = function (e)
                         {
-                           return element.val();
+                            return element.val();
                         };
                     }
 
@@ -1044,7 +1051,7 @@
             .attr("data-target", target).click(this.buttonLogic).appendTo(container);
     };
 
-    private getCategory (name, id, container)
+    private getCategory(name, id, container)
     {
         var cat = $("<div></div>").addClass("ffnet_Config_Category").addClass(id).appendTo(container);
         var headline = $("<div></div>").addClass("headline").appendTo(cat);
