@@ -203,11 +203,11 @@ module.exports = function (grunt)
         },
         exec:
         {
-            buildCrx:
+            update:
             {
-                command: 'buildcrx.bat',
+                command: 'git pull origin <%= gitinfo.local.branch.current.name %>',
                 stdout: true,
-                stderr: false
+                stderr: true
             }
         },
         clean:
@@ -349,6 +349,15 @@ module.exports = function (grunt)
             'devSwitch'
         ]);
 
+    // AutoUpdate 
+    grunt.registerTask('update',
+        [
+            'gitinfo',
+            'exec:update',
+            'big'
+        ]);
+
+
 
     // Language Implementation
 
@@ -381,7 +390,7 @@ module.exports = function (grunt)
                     var content = grunt.file.read(filepath);
                     var lines = content.split('\n');
 
-                    
+
 
                     for (var lineNumber in lines)
                     {
