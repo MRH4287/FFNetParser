@@ -2541,13 +2541,12 @@ class StoryParser
                 odd = true;
             }
 
-            if (!el.is('[data-color]'))
+
+            if (!self.config.disable_default_coloring)
             {
-                if (!self.config.disable_default_coloring)
-                {
-                    self.updateColor(el, color, -1, colorMo, -1);
-                }
+                self.updateColor(el, color, -1, colorMo, -1);
             }
+
 
             /*
             if (_found.indexOf(storyName) == -1)
@@ -3655,6 +3654,8 @@ class StoryParser
             return;
         }
 
+        var self = this;
+
         var handleElement = function (elementContainer: JQuery)
         {
             var elements = elementContainer.children().detach();
@@ -3671,6 +3672,8 @@ class StoryParser
                 elementContainer.append(element);
 
             });
+
+            self.updateListColor();
 
         };
 
