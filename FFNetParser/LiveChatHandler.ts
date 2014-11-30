@@ -47,6 +47,8 @@
 
 
                 self.messageCallback(message);
+
+                self.updateUserList();
             }
 
         };
@@ -65,6 +67,42 @@
             } 
 
         };
+
+    }
+
+    public updateUserList()
+    {
+        if (this.connected && ($('.ChatUserInfo').length > 0))
+        {
+            var self = this;
+            this.parser.api_getLiveChatInfo(function (res)
+            {
+                var count = res.Users.length + res.WebUsers.length;
+
+                var users: string[] = [];
+
+                $.each(res.Users, function (i, userName)
+                {
+                    users.push(userName);
+                });
+
+                $.each(res.WebUsers, function (i, userName)
+                {
+                    users.push('[Web] ' + userName);
+                });
+
+                $('.ChatUserInfo').text(self._('Online') + ': (' + count + ')')
+                    .attr("title", users.join(', '));
+
+                window.setTimeout(function ()
+                {
+                    self.updateUserList();
+                }, 5000);
+            });
+
+
+
+        }
 
     }
 

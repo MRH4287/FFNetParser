@@ -3388,7 +3388,11 @@
 
             this.guiContainer.html('');
 
-            this.guiContainer.append('<h2 style="text-align:center: magin-bottom: 10px">' + self._('Live Chat Feature:') + '</h2>');
+            var userList = $('<span>' + self._('Online') +': (?)</span>')
+                .addClass('ChatUserInfo');
+
+            this.guiContainer.append($('<h2 style="text-align:center: magin-bottom: 10px">' + self._('Live Chat Feature:') + '</h2>').append(userList));
+
 
             var chatContainer = $("<div></div>").appendTo(this.guiContainer).hide();
 

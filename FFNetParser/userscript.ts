@@ -801,6 +801,19 @@ class StoryParser
                         .css("left", (pos.left - 100) + "px")
                         .show();
 
+                    self.api_getLiveChatInfo(function (res)
+                    {
+                        if (res.DevInRoom)
+                        {
+                            $(".liveChatButton").addClass("online");
+                        }
+                        else
+                        {
+                            $(".liveChatButton").removeClass("online");
+                        }
+                    });
+
+
                 }
                 else
                 {
@@ -847,7 +860,7 @@ class StoryParser
                 );
 
             var liveChatContainer = $("<div>" + self._('Live Chat') + "</div>")
-                .addClass("menuItem")
+                .addClass("menuItem liveChatButton")
                 .click(function ()
                 {
 
@@ -3972,6 +3985,51 @@ class StoryParser
         }
 
     }
+
+
+    public api_getLiveChatInfo(callback?: (response: { Users: string[]; WebUsers: string[]; DevInRoom: boolean; }) => void)
+    {
+        if (this.DEBUG)
+        {
+            console.log("Requesting Live-Chat Info ....");
+        }
+
+        var self = this;
+
+        this.apiRequest(
+            {
+                command: "liveChatInfo",
+                data: this.BRANCH
+            },
+            function (res)
+            {
+                if (self.DEBUG)
+                {
+                    self.log("Got Live-Chat Info Response from Server: ", res);
+                }
+
+                try
+                {
+                    var data = <{ Users: string[]; WebUsers: string[]; DevInRoom: boolean; }>JSON.parse(res);
+
+                    if (callback !== undefined)
+                    {
+                        callback(data);
+                    }
+                    else
+                    {
+                        console.log(data);
+                    }
+
+                } catch (e)
+                {
+                    console.warn("Error in Function: 'api_getLiveChatInfo': ", e);
+                }
+
+            });
+
+    }
+
 
     /**
      *  Loads the List of available Languages from the Server
