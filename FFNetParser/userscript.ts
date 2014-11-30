@@ -227,27 +227,97 @@ class StoryParser
         "defaultDESC":
         {
             Function: this.sort_elementIdent_DESC,
-            Name: this._('Default Sorting [Descending]')
+            Name: this._('Default Sorting [Inverted]')
         },
         "suggestion":
         {
             Function: this.sort_suggestionLevel,
-            Name: this._('Suggested [Lowest Value Up]')
+            Name: this._('Suggested [Lowest Up]')
         },
         "suggestionDESC":
         {
             Function: this.sort_suggestionLevel_DESC,
-            Name: this._('Suggested [Highest Value Up]')
+            Name: this._('Suggested [Highest Up]')
+        },
+        "chapters":
+        {
+            Function: this.sort_chapterCount,
+            Name: this._('Chapter Count [Lowest Up]')
+        },
+        "chaptersDESC":
+        {
+            Function: this.sort_chapterCount_DESC,
+            Name: this._("Chapter Count [Highest Up]")
+        },
+        "words":
+        {
+            Function: this.sort_wordsCount,
+            Name: this._("Word Count [Lowest Up]")
+        },
+        "wordsDESC":
+        {
+            Function: this.sort_wordsCount_DESC,
+            Name: this._("Word Count [Highest Up]")
+        },
+        "followers":
+        {
+            Function: this.sort_Follows,
+            Name: this._("Followers [Lowest Up]")
+        },
+        "followersDESC":
+        {
+            Function: this.sort_Follows_DESC,
+            Name: this._("Followers [Highest Up]")
+        },
+        "favs":
+        {
+            Function: this.sort_Favs,
+            Name: this._("Favs [Lowest Up]")
+        },
+        "favsDESC":
+        {
+            Function: this.sort_Favs_DESC,
+            Name: this._("Favs [Highest Up]")
+        },
+        "publishTime":
+        {
+            Function: this.sort_publishTime,
+            Name: this._("Publish Time [Oldest Up]")
+        },
+        "publishTimeDESC":
+        {
+            Function: this.sort_publishTime_DESC,
+            Name: this._("Publish Time [Newest Up]")
+        },
+        "updateTime":
+        {
+            Function: this.sort_updateTime,
+            Name: this._("Update Time [Oldest Up]")
+        },
+        "updateTimeDESC":
+        {
+            Function: this.sort_updateTime_DESC,
+            Name: this._("Update Time [Newest Up]")
+        },
+        "reviews":
+        {
+            Function: this.sort_reviews,
+            Name: this._("Review Count [Lowest Up]")
+        },
+        "reviewsDESC":
+        {
+            Function: this.sort_reviews_DESC,
+            Name: this._("Review Count [Highest Up]")
         },
         "chapterReviewRatio":
         {
             Function: this.sort_chapterReviewRatio,
-            Name: this._('Chapter/Review Rating')
+            Name: this._('Chapter/Review Ratio')
         },
         "chapterReviewRatingDESC":
         {
             Function: this.sort_chapterReviewRatio_DESC,
-            Name: this._('Chapter/Review Rating [Descending]')
+            Name: this._('Chapter/Review Ratio [Descending]')
         }
     };
 
@@ -805,11 +875,12 @@ class StoryParser
                     {
                         if (res.DevInRoom)
                         {
-                            $(".liveChatButton").addClass("online");
+                            $(".liveChatButton").addClass("online")
+                            .attr("title", self._('The Dev is currently online.'));
                         }
                         else
                         {
-                            $(".liveChatButton").removeClass("online");
+                            $(".liveChatButton").removeClass("online").removeAttr("title");
                         }
                     });
 
@@ -3671,7 +3742,7 @@ class StoryParser
 
         var handleElement = function (elementContainer: JQuery)
         {
-            var elements = elementContainer.children().detach();
+            var elements = elementContainer.children().filter(".z-list").detach();
             var list: JQuery[] = [];
             $.each(elements, (i, el) =>
             {
@@ -3769,6 +3840,584 @@ class StoryParser
         return list;
     }
 
+    public sort_chapterCount(list: JQuery[]): JQuery[]
+    {
+        var regex = new RegExp("Chapters: ([0-9,.]+)", "i");
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-chapterCount]"))
+            {
+                numA = Number(a.attr("data-chapterCount"));
+            }
+            else
+            {
+                var dataA = regex.exec(a.find(".z-indent").html());
+                numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
+
+                a.attr("data-chapterCount", numA);
+            }
+
+            if (b.is("[data-chapterCount]"))
+            {
+                numB = Number(b.attr("data-chapterCount"));
+            }
+            else
+            {
+                var dataB = regex.exec(b.find(".z-indent").html());
+                numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
+
+                b.attr("data-chapterCount", numB);
+            }
+
+            return numA - numB;
+        });
+
+        return list;
+    }
+
+
+    public sort_chapterCount_DESC(list: JQuery[]): JQuery[]
+    {
+        var regex = new RegExp("Chapters: ([0-9,.]+)", "i");
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-chapterCount]"))
+            {
+                numA = Number(a.attr("data-chapterCount"));
+            }
+            else
+            {
+                var dataA = regex.exec(a.find(".z-indent").html());
+                numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
+
+                a.attr("data-chapterCount", numA);
+            }
+
+            if (b.is("[data-chapterCount]"))
+            {
+                numB = Number(b.attr("data-chapterCount"));
+            }
+            else
+            {
+                var dataB = regex.exec(b.find(".z-indent").html());
+                numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
+
+                b.attr("data-chapterCount", numB);
+            }
+
+            return numB - numA;
+        });
+
+        return list;
+    }
+
+    public sort_wordsCount(list: JQuery[]): JQuery[]
+    {
+        var regex = new RegExp("Words: ([0-9,.]+)", "i");
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-wordCount]"))
+            {
+                numA = Number(a.attr("data-wordCount"));
+            }
+            else
+            {
+                var dataA = regex.exec(a.find(".z-indent").html());
+                numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
+
+                a.attr("data-wordCount", numA);
+            }
+
+            if (b.is("[data-wordCount]"))
+            {
+                numB = Number(b.attr("data-wordCount"));
+            }
+            else
+            {
+                var dataB = regex.exec(b.find(".z-indent").html());
+                numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
+
+                b.attr("data-wordCount", numB);
+            }
+
+            return numA - numB;
+        });
+
+        return list;
+    }
+
+
+    public sort_wordsCount_DESC(list: JQuery[]): JQuery[]
+    {
+        var regex = new RegExp("Words: ([0-9,.]+)", "i");
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-wordCount]"))
+            {
+                numA = Number(a.attr("data-wordCount"));
+            }
+            else
+            {
+                var dataA = regex.exec(a.find(".z-indent").html());
+                numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
+
+                a.attr("data-wordCount", numA);
+            }
+
+            if (b.is("[data-wordCount]"))
+            {
+                numB = Number(b.attr("data-wordCount"));
+            }
+            else
+            {
+                var dataB = regex.exec(b.find(".z-indent").html());
+                numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
+
+                b.attr("data-wordCount", numB);
+            }
+
+
+            return numB - numA;
+        });
+
+        return list;
+    }
+
+    public sort_Follows(list: JQuery[]): JQuery[]
+    {
+        var regex = new RegExp("Follows: ([0-9,.]+)", "i");
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-follows]"))
+            {
+                numA = Number(a.attr("data-follows"));
+            }
+            else
+            {
+                var dataA = regex.exec(a.find(".z-indent").html());
+                numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
+
+                a.attr("data-follows", numA);
+            }
+
+            if (b.is("[data-follows]"))
+            {
+                numB = Number(b.attr("data-follows"));
+            }
+            else
+            {
+                var dataB = regex.exec(b.find(".z-indent").html());
+                numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
+
+                b.attr("data-follows", numB);
+            }
+
+            return numA - numB;
+        });
+
+        return list;
+    }
+
+
+    public sort_Follows_DESC(list: JQuery[]): JQuery[]
+    {
+        var regex = new RegExp("Follows: ([0-9,.]+)", "i");
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-follows]"))
+            {
+                numA = Number(a.attr("data-follows"));
+            }
+            else
+            {
+                var dataA = regex.exec(a.find(".z-indent").html());
+                numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
+
+                a.attr("data-follows", numA);
+            }
+
+            if (b.is("[data-follows]"))
+            {
+                numB = Number(b.attr("data-follows"));
+            }
+            else
+            {
+                var dataB = regex.exec(b.find(".z-indent").html());
+                numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
+
+                b.attr("data-follows", numB);
+            }
+
+            return numB - numA;
+        });
+
+        return list;
+    }
+
+    public sort_Favs(list: JQuery[]): JQuery[]
+    {
+        var regex = new RegExp("Favs: ([0-9,.]+)", "i");
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-favs]"))
+            {
+                numA = Number(a.attr("data-favs"));
+            }
+            else
+            {
+                var dataA = regex.exec(a.find(".z-indent").html());
+                numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
+
+                a.attr("data-favs", numA);
+            }
+
+            if (b.is("[data-favs]"))
+            {
+                numB = Number(b.attr("data-favs"));
+            }
+            else
+            {
+                var dataB = regex.exec(b.find(".z-indent").html());
+                numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
+
+                b.attr("data-favs", numB);
+            }
+
+            return numA - numB;
+        });
+
+        return list;
+    }
+
+
+    public sort_Favs_DESC(list: JQuery[]): JQuery[]
+    {
+        var regex = new RegExp("Favs: ([0-9,.]+)", "i");
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-favs]"))
+            {
+                numA = Number(a.attr("data-favs"));
+            }
+            else
+            {
+                var dataA = regex.exec(a.find(".z-indent").html());
+                numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
+
+                a.attr("data-favs", numA);
+            }
+
+            if (b.is("[data-favs]"))
+            {
+                numB = Number(b.attr("data-favs"));
+            }
+            else
+            {
+                var dataB = regex.exec(b.find(".z-indent").html());
+                numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
+
+                b.attr("data-favs", numB);
+            }
+
+            return numB - numA;
+        });
+
+        return list;
+    }
+
+
+    public sort_reviews(list: JQuery[]): JQuery[]
+    {
+        var regex = new RegExp("Reviews: ([0-9,.]+)", "i");
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-reviews]"))
+            {
+                numA = Number(a.attr("data-reviews"));
+            }
+            else
+            {
+                var dataA = regex.exec(a.find(".z-indent").html());
+                numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
+
+                a.attr("data-reviews", numA);
+            }
+
+            if (b.is("[data-reviews]"))
+            {
+                numB = Number(b.attr("data-reviews"));
+            }
+            else
+            {
+                var dataB = regex.exec(b.find(".z-indent").html());
+                numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
+
+                b.attr("data-reviews", numB);
+            }
+
+            return numA - numB;
+        });
+
+        return list;
+    }
+
+
+    public sort_reviews_DESC(list: JQuery[]): JQuery[]
+    {
+        var regex = new RegExp("Reviews: ([0-9,.]+)", "i");
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-reviews]"))
+            {
+                numA = Number(a.attr("data-reviews"));
+            }
+            else
+            {
+                var dataA = regex.exec(a.find(".z-indent").html());
+                numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
+
+                a.attr("data-reviews", numA);
+            }
+
+            if (b.is("[data-reviews]"))
+            {
+                numB = Number(b.attr("data-reviews"));
+            }
+            else
+            {
+                var dataB = regex.exec(b.find(".z-indent").html());
+                numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
+
+                b.attr("data-reviews", numB);
+            }
+
+
+            return numB - numA;
+        });
+
+        return list;
+    }
+
+
+    public sort_publishTime(list: JQuery[]): JQuery[]
+    {
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-publishTime]"))
+            {
+                numA = Number(a.attr("data-publishTime"));
+            }
+            else
+            {
+                var dataA = a.find('span[data-xutime]');
+                numA = (dataA.length === 1) ? Number(dataA.first().attr('data-xutime')) : Number(dataA.last().attr('data-xutime'));
+
+                a.attr("data-publishTime", numA);
+            }
+
+            if (b.is("[data-publishTime]"))
+            {
+                numB = Number(b.attr("data-publishTime"));
+            }
+            else
+            {
+                var dataB = a.find('span[data-xutime]');
+                numB = (dataB.length === 1) ? Number(dataB.first().attr('data-xutime')) : Number(dataB.last().attr('data-xutime'));
+
+                b.attr("data-publishTime", numB);
+            }
+
+            return numA - numB;
+        });
+
+        return list;
+    }
+
+    public sort_publishTime_DESC(list: JQuery[]): JQuery[]
+    {
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-publishTime]"))
+            {
+                numA = Number(a.attr("data-publishTime"));
+            }
+            else
+            {
+                var dataA = a.find('span[data-xutime]');
+                numA = (dataA.length === 1) ? Number(dataA.first().attr('data-xutime')) : Number(dataA.last().attr('data-xutime'));
+
+                a.attr("data-publishTime", numA);
+            }
+
+            if (b.is("[data-publishTime]"))
+            {
+                numB = Number(b.attr("data-publishTime"));
+            }
+            else
+            {
+                var dataB = a.find('span[data-xutime]');
+                numB = (dataB.length === 1) ? Number(dataB.first().attr('data-xutime')) : Number(dataB.last().attr('data-xutime'));
+
+                b.attr("data-publishTime", numB);
+            }
+
+            return numB - numA;
+        });
+
+        return list;
+    }
+
+    public sort_updateTime(list: JQuery[]): JQuery[]
+    {
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-updateTime]"))
+            {
+                numA = Number(a.attr("data-updateTime"));
+            }
+            else
+            {
+                var dataA = a.find('span[data-xutime]');
+                numA = (dataA.length === 1) ? 9999999999 : Number(dataA.first().attr('data-xutime'));
+
+                a.attr("data-updateTime", numA);
+            }
+
+            if (b.is("[data-updateTime]"))
+            {
+                numB = Number(b.attr("data-updateTime"));
+            }
+            else
+            {
+                var dataB = a.find('span[data-xutime]');
+                numB = (dataB.length === 1) ? 9999999999 : Number(dataB.first().attr('data-xutime'));
+
+                b.attr("data-updateTime", numB);
+            }
+
+            return numA - numB;
+        });
+
+        return list;
+    }
+
+    public sort_updateTime_DESC(list: JQuery[]): JQuery[]
+    {
+
+        list.sort((a: JQuery, b: JQuery) =>
+        {
+            a = $(a);
+            b = $(b);
+
+            var numA;
+            var numB;
+            if (a.is("[data-updateTime]"))
+            {
+                numA = Number(a.attr("data-updateTime"));
+            }
+            else
+            {
+                var dataA = a.find('span[data-xutime]');
+                numA = (dataA.length === 1) ? 9999999999 : Number(dataA.first().attr('data-xutime'));
+
+                a.attr("data-updateTime", numA);
+            }
+
+            if (b.is("[data-updateTime]"))
+            {
+                numB = Number(b.attr("data-updateTime"));
+            }
+            else
+            {
+                var dataB = a.find('span[data-xutime]');
+                numB = (dataB.length === 1) ? 9999999999 : Number(dataB.first().attr('data-xutime'));
+
+                b.attr("data-updateTime", numB);
+            }
+
+            return numB - numA;
+        });
+
+        return list;
+    }
 
 
     // ----- API-Interface ------
