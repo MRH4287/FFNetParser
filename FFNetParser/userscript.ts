@@ -9,6 +9,10 @@
 /// <reference path="LiveChatHandler.ts" /> 
 /// <reference path="ExtentionBaseClass.ts" /> 
 /// <reference path="UpgradeHandler.ts" /> 
+
+/// <reference path="GameEngine/Interfaces/GameHandler.d.ts" /> 
+
+
 class StoryParser
 {
     /** 
@@ -705,6 +709,7 @@ class StoryParser
             // Use this because of the new HTTPS Restrictions ...
             this.api_getStyles();
         }
+
 
         // Check if the current Page is a User Specific Page:
         var locationRegEx = new RegExp("\/u\/[0-9]+\/");

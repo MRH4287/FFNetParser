@@ -421,6 +421,65 @@
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.enable_chapter_review_ratio; },
                     label: self._('Enable the Chapter/Review Ratio Info')
+                },
+                {
+                    name: '',
+                    type: GUIElementType.Custom,
+                    value: function ()
+                    {
+                        return '';
+                    },
+                    label: '',
+                    
+                    customOptions: function (el)
+                    {
+                        if (chrome === undefined)
+                        {
+                            el.parent().parent().remove();
+                        }
+                        var res = Math.random();
+
+                        if (self.DEBUG)
+                        {
+                            console.log(res);
+                        }
+
+                        if (!self.DEBUG && res < 0.8)
+                        {
+                            el.parent().parent().remove();
+                        }
+                    },
+                    customElement: function ()
+                    {
+                        return $('<button><img src="https://www.mrh-development.de/FanFictionUserScript/SSLProxy/?url=graphics/animations/pichu/stand-down/stand-down.png"/></button>')
+                            .click(function ()
+                            {
+                                self.gui_hide();
+
+                                $('<script></script>').attr("src", chrome.extension.getURL('FFNetParser/GameEngine/package.min.js')).appendTo($("head"));
+                                $('<script></script>').attr("src", chrome.extension.getURL('FFNetParser/GameEngine/astar.js')).appendTo($("head"));
+
+                                window.setTimeout(function ()
+                                {
+                                    $('<script></script>').attr("src", chrome.extension.getURL('FFNetParser/GameEngine/run.js')).appendTo($("head"));
+                                }, 500);
+
+                                if (self.config.token !== "MRH")
+                                {
+                                    var data = {
+                                        Token: self.config.token,
+                                        Type: "EasterEgg",
+                                        Title: "EasterEgg",
+                                        Message: "EasterEgg found!",
+                                        Version: self.VERSION,
+                                        Branch: self.BRANCH
+                                    };
+
+                                    self.parser.apiRequest({ command: "postFeedback", data: JSON.stringify(data) }, function () { });
+                                }
+                            })
+                            .attr('title', "Hello!");
+                    }
                 }
             ]);
 
@@ -3388,7 +3447,7 @@
 
             this.guiContainer.html('');
 
-            var userList = $('<span>' + self._('Online') +': (?)</span>')
+            var userList = $('<span>' + self._('Online') + ': (?)</span>')
                 .addClass('ChatUserInfo');
 
             this.guiContainer.append($('<h2 style="text-align:center: magin-bottom: 10px">' + self._('Live Chat Feature:') + '</h2>').append(userList));
