@@ -3450,7 +3450,9 @@ class StoryParser
             // We are in a Story ....
             pageNumber = $("#chap_select").children().filter("[selected]");
 
-            return Number(pageNumber.attr("value"));
+            var page = Number(pageNumber.attr("value"));
+
+            return (isNaN(page) ? 1 : page);
         }
     }
 
