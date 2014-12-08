@@ -23,7 +23,8 @@
     "web_accessible_resources": [
         "jquery-1.10.2.min.map",
         "ffnetlist.js.map",
-        "style.css"
+        "style.css",
+        "FFNetParser/*"
     ],
     "externally_connectable": {
         "matches": [ "*://*.fanfiction.net/*", "*://*.fictionpress.com/*" ]
