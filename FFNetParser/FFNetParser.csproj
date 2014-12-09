@@ -52,6 +52,20 @@
   <ItemGroup>
     <TypeScriptCompile Include="chrome.d.ts" />
     <TypeScriptCompile Include="ExtentionBaseClass.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\animationHandler.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\astar.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\eventHandler.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\GameHandler.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\interfaces.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\javaScriptHandler.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\MultiplayerHandler.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\NPCHandler.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\pathHandler.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\playerManager.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\Profiler.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\Renderer.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\scriptHandler.d.ts" />
+    <TypeScriptCompile Include="GameEngine\Interfaces\windowManager.d.ts" />
     <TypeScriptCompile Include="GUIHandler.ts" />
     <TypeScriptCompile Include="LiveChatHandler.ts" />
     <TypeScriptCompile Include="ParagraphMenu.ts" />
@@ -63,9 +77,13 @@
     <TypeScriptCompile Include="jqueryui.d.ts" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="GameEngine\astar.js" />
+    <Content Include="GameEngine\package.min.js" />
+    <Content Include="GameEngine\run.js" />
     <Content Include="Gruntfile.js" />
     <Content Include="includeTemplate.js" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
