@@ -2824,7 +2824,7 @@ class StoryParser
                     var info: StoryInfo = {
                         url: self.getLinkToPageNumber(chapter),
                         chapter: chapter,
-                        name: result[3],
+                        name: (result !== null && result.length > 3) ? result[3] : "Unknown",
                         element: element,
                         sentence: null
                     };
@@ -3520,8 +3520,14 @@ class StoryParser
     public getLinkToPageNumber(page: number): string
     {
         var domainRegex = new RegExp("https?://[^/]+");
-        var domain = domainRegex.exec(location.href)[0];
+        var domainData = domainRegex.exec(location.href);
+        if (domainData === null || domainData.length === 0)
+        {
+            console.warn("Can't get the current Location. Reason: Domain unknown. Possible Explaination: Loaded locally");
+            return document.location.href;
+        }
 
+        var domain = domainData[0];
 
         // Regex used to get the Pagenumber
         var regex = new RegExp("([?|&]p)=[0-9]+");

@@ -1,6 +1,14 @@
+QUnit.config.autostart = false;
+
+window.setTimeout(function ()
+{
+    QUnit.start();
+
+}, 1000);
+
 test('dependencied', function ()
 {
-   // expect(1);
+    // expect(1);
     notEqual(jQuery, undefined, "JQuery has to be defined");
     notEqual($, undefined, "$ has to be defined");
     notEqual($.ui, undefined, "$.ui has to be defined");
@@ -27,10 +35,41 @@ test('Story Add Highlighter Edit', function ()
 {
     var element = $("#profile_top").first();
 
-    var container = element.find(".parser-msg");
+    var container = element.find(".context-menu");
 
-    equal(container.length, 1, "There has to be an Edit Button for the Highlighter");
+    ok(container.length, 1, "There has to be an Edit Button for the Highlighter");
     equal(container.find("img").length, 1, "The Container has to contain the Edit Image");
+});
+
+
+test('Filter', function (assert)
+{
+
+    var container = $("#profile_top");
+    equal(container.length, 1, "There is a Story-Info Container");
+
+    var tag = container.find("span.parser-msg");
+    equal(tag.length, 1, "There is a Filter Tag in the Container");
+    equal(tag.text(), " [Test-Data-0]", "The Value of the Filer-Tag is correct")
+
+    var element = container.find('.ffnet-story-highlighter');
+    equal(element.length, 1, "There is a marked word in the Container");
+    equal(element.text(), "Lorem", "The Word 'Lorem' is marked");
+
+
+});
+
+
+test('InStoryFilterOptions', function (assert)
+{
+    var container = $(".storytext");
+    equal(container.length, 1, "There is a Story-Text Container");
+
+    var tag = container.find("span.parser-msg");
+    equal(tag.length, 1, "There is a Filter Tag in the Container");
+    equal(tag.text(), " [Test-Data-1]", "The Value of the Filer-Tag is correct")
+
+
 });
 
 test('Pocket Feature', function ()
@@ -50,7 +89,7 @@ test('Pocket Feature', function ()
 
 test('basic test', function ()
 {
-  //expect(1);
-  ok(true, 'this had better work.');
+    //expect(1);
+    ok(true, 'this had better work.');
 });
 

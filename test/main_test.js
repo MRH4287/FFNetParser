@@ -1,3 +1,11 @@
+QUnit.config.autostart = false;
+
+window.setTimeout(function ()
+{
+    QUnit.start();
+
+}, 1000);
+
 test('dependencied', function ()
 {
    // expect(1);
@@ -73,6 +81,20 @@ test('Story Mark Keywords', function ()
 
 });
 
+test('ChapterReviewRatio', function ()
+{
+    var element = $(".z-list").first().find(".z-padtop2");
+
+    equal(element.length, 1, "There is a Element with the Class 'z-padtop2'");
+
+    var children = element.children().filter(".parser-msg");
+
+    ok(children.length > 0, "There needs to be at least one Element of Type 'parser-msg'");
+    equal(children.last().text(), " - Chapter/Review Ratio: 1/0.25", "The Ratio needs to match the expected Value");
+
+
+});
+
 test('Story Add Highlighter Edit', function ()
 {
     var element = $(".z-list").first();
@@ -84,7 +106,7 @@ test('Story Add Highlighter Edit', function ()
 });
 
 // Can't Test because of timing issues
-/*
+
 test('Story-ImageRemoval', function ()
 {
     var element = $(".z-list").first();
@@ -95,7 +117,7 @@ test('Story-ImageRemoval', function ()
 
 });
 
-*/
+
 
 
 test('basic test', function ()
