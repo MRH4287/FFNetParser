@@ -881,7 +881,7 @@ class StoryParser
                         if (res.DevInRoom)
                         {
                             $(".liveChatButton").addClass("online")
-                            .attr("title", self._('The Dev is currently online.'));
+                                .attr("title", self._('The Dev is currently online.'));
                         }
                         else
                         {
@@ -1336,7 +1336,8 @@ class StoryParser
             var colorMo = self.config.color_mouse_over;
             var link = element.find('a').first().attr('href');
 
-            var storyName = self.getStoryName(link);
+            var storyInfo = self.getStoryInfo(link);
+            var storyName = storyInfo.Name;
 
             var requestQueue: RequestQueueData[] = [];
 
@@ -1344,6 +1345,12 @@ class StoryParser
             if (!element.is("[data-ElementIdent]"))
             {
                 element.attr("data-ElementIdent", self.lastElementID++);
+            }
+
+            // Set StoryID:
+            if (!element.is("[data-StoryID]"))
+            {
+                element.attr("data-StoryID", storyInfo.ID);
             }
 
             // Remove Suggestion Level:
@@ -1638,29 +1645,34 @@ class StoryParser
 
 
     /**
-     *   Gets the name of a story from a Link
+     *   Gets the Information of a story from a Link
      *   @param link Link to story
      *   @result Name of Story
      */
-    private getStoryName(link: string): string
+    private getStoryInfo(link: string): { Chapter: string; Name: string; ID: string }
     {
-        var storyNameReg = /\/s\/[0-9]+\/[0-9]+\/(.+)/;
+        var data: { Chapter: string; Name: string; ID: string } = { Chapter: null, ID: null, Name: null };
+
+        var storyNameReg = /\/s\/([0-9]+)\/([0-9]+)\/(.+)/;
         var result = storyNameReg.exec(link);
 
         if ((result != null) && (result.length > 1))
         {
-            return result[1];
+            data.ID = result[1];
+            data.Chapter = result[2];
+            data.Name = result[3];
+
+            return data;
         } else
         {
             storyNameReg = /\/[^\/]+\/(.+)/;
             result = storyNameReg.exec(link);
             if ((result != null) && (result.length > 1))
             {
-                return result[1];
-            } else
-            {
-                return "None";
+                data.Name = result[1];
             }
+
+            return data;
         }
     }
 
@@ -1848,7 +1860,9 @@ class StoryParser
 
             if ((sentence = self.parseSite(body, markerConfig.keywords, markerConfig.ignore)) != null)
             {
-                var storyName = self.getStoryName(url);
+                var storyInfo = self.getStoryInfo(url);
+                var storyName = storyInfo.Name;
+
                 callback({
                     'name': storyName,
                     'url': url,
@@ -2564,7 +2578,7 @@ class StoryParser
                         table.append(
                             $("<tr></tr>").append(
                                 $("<th></th>").append(
-                                    $("<a></a>").text(self.getStoryName(key))
+                                    $("<a></a>").text(self.getStoryInfo(key).Name)
                                         .attr("href", key)
                                     )
                                 )
@@ -2617,7 +2631,8 @@ class StoryParser
         {
             var el = $(e);
             var link = el.find('a').first().attr('href');
-            var storyName = self.getStoryName(link);
+            var storyInfo = self.getStoryInfo(link);
+            var storyName = storyInfo.Name;
             var color = self.config.color_normal;
             var colorMo = self.config.color_mouse_over;
 
@@ -3192,6 +3207,48 @@ class StoryParser
             }
         }
     }
+
+
+    /**
+     *  Manages the Read Chapter Info Feature
+     *  Unfinished Test Function   
+     */
+    private manageReadChaptersInfo()
+    {
+        var elements = $(".z-list[data-storyid]");
+        var ids = [];
+
+        var idELMap: { [index: string]: JQuery } = {};
+
+        elements.each(function (i, el)
+        {
+            var element = $(el);
+            var id = element.attr("data-StoryId");
+
+            ids.push(id);
+            idELMap[id] = element;
+        });
+
+        var self = this;
+
+        this.api_getReadChapters(ids, function (result)
+        {
+            $.each(result, function (id: string, chapters: number[])
+            {
+                if (idELMap[id] !== undefined)
+                {
+                    self.log("Chapter Read for Story: " + id, chapters);
+
+
+                }
+            });
+
+
+
+        });
+
+    }
+
 
 
     /**
@@ -5222,6 +5279,44 @@ class StoryParser
         this.apiRequest({ command: "readMessages", data: this.config.token }, function (result)
         {
         });
+
+    }
+
+    /**
+    *   Gets the Information of all read Chapters of a certain Story
+    *   @param storyIDs The List of StoryIds to check
+    *   @param callback The Callback Function with the Server Information
+    */
+    public api_getReadChapters(storyIDs: string[], callback: (result: { [index: string]: number[] }) => void)
+    {
+        var request =
+            {
+                Token: this.config.token,
+                Chapters: storyIDs
+            };
+
+        this.apiRequest(
+            {
+                command: "getStoryInfo",
+                data: JSON.stringify(request)
+            },
+            function (res)
+            {
+                var data = <{
+                    Data: { Key: string; Value: number[] }[]
+                }> JSON.parse(res);
+                var result: { [index: string]: number[] } = {};
+
+                $.each(data.Data, function (i, line)
+                {
+                    var line = data.Data[i];
+
+                    result[line.Key] = line.Value;
+                });
+
+                callback(result);
+            });
+
 
     }
 
