@@ -3264,9 +3264,8 @@ class StoryParser
 
         var self = this;
 
-        this.api_getReadChapters(ids, function (result)
+        this.api_getReadChapters(ids, function (result, lastChapters)
         {
-
             $.each(result, function (id: string, chapters: number[])
             {
                 if (!isStory)
@@ -3280,7 +3279,7 @@ class StoryParser
 
                         var insert = $('<span class="ffnetReadChapterInfo"></span>')
                             .html("<b>" + chapters.length + "</b>/")
-                            .attr("title", "Chapters: " + chapters.join(", "));
+                            .attr("title", "Chapters: " + chapters.join(", ") + " - Last Chapter opened: " + lastChapters[id]);
 
                         var text = textContainer.html();
 
@@ -3304,7 +3303,9 @@ class StoryParser
 
                     });
 
+                    var infoContainer = $("#profile_top").find(".xgray");
 
+                    infoContainer.html(infoContainer.html().replace("- Words", "- Last Read Chapter: " + lastChapters[id] + " - Words"));
 
                 }
             });
@@ -5369,7 +5370,7 @@ class StoryParser
     *   @param storyIDs The List of StoryIds to check
     *   @param callback The Callback Function with the Server Information
     */
-    public api_getReadChapters(storyIDs: string[], callback: (result: { [index: string]: number[] }) => void)
+    public api_getReadChapters(storyIDs: string[], callback: (result: { [index: string]: number[] }, lastChapter: { [index: string]: number }) => void)
     {
         var request =
             {
@@ -5385,18 +5386,25 @@ class StoryParser
             function (res)
             {
                 var data = <{
-                    Data: { Key: string; Value: number[] }[]
+                    Data: { Key: string; Value: number[] }[];
+                    LastChapter: {
+                        Key: string; Value: string;
+                    }
                 }> JSON.parse(res);
                 var result: { [index: string]: number[] } = {};
+                var lastChapter: { [index: string]: number } = {};
 
                 $.each(data.Data, function (i, line)
                 {
-                    var line = data.Data[i];
-
                     result[line.Key] = line.Value;
                 });
 
-                callback(result);
+                $.each(data.LastChapter, function (i, line)
+                {
+                    lastChapter[line.Key] = line.Value;
+                });
+
+                callback(result, lastChapter);
             });
 
 
