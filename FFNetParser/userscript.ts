@@ -87,6 +87,7 @@ class StoryParser
         disable_image_hover: false,
         content_width: "90%",
         enable_chapter_review_ratio: false,
+        enable_read_chapter_info: false,
 
         // Reading Help:
         readingHelp_enabled: false,
@@ -1554,11 +1555,14 @@ class StoryParser
 
             // Chapter Review Ratio
             self.manageChapterReviewRatio(element);
+            
 
             self.doParse(requestQueue, page);
 
 
         });
+
+        self.manageReadChaptersInfo();
 
         // Sort Elements:
         if (this.config.sortFunction !== undefined && this.config.sortFunction !== 'default')
@@ -3213,9 +3217,15 @@ class StoryParser
      *  Manages the Read Chapter Info Feature
      *  Unfinished Test Function   
      */
-    private manageReadChaptersInfo()
+    private manageReadChaptersInfo(overwrite: boolean = false)
     {
+        if (!overwrite && this.config.enable_read_chapter_info === false)
+        {
+            return;
+        }
+
         var elements = $(".z-list[data-storyid]");
+
         var ids = [];
 
         var idELMap: { [index: string]: JQuery } = {};
@@ -3237,9 +3247,20 @@ class StoryParser
             {
                 if (idELMap[id] !== undefined)
                 {
+                    var element = idELMap[id];
+                    var textContainer = element.find(".z-padtop2").last();
+
+                    element.find(".ffnetReadChapterInfo").remove();
+
+                    var insert = $('<span class="ffnetReadChapterInfo"></span>')
+                        .html("<b>" + chapters.length + "</b>/")
+                        .attr("title", "Chapters: " + chapters.join(", "));
+
+                    var text = textContainer.html();
+
+                    textContainer.html(text.replace("Chapters: ", "Chapters: " + insert[0].outerHTML));
+
                     self.log("Chapter Read for Story: " + id, chapters);
-
-
                 }
             });
 
@@ -4609,7 +4630,7 @@ class StoryParser
      */
     public api_checkVersion()
     {
-        if ((this.config.api_checkForUpdates))
+        if ((this.config.api_checkForUpdates || this.config.enable_read_chapter_info))
         {
             var statisticData =
                 {
@@ -4622,7 +4643,7 @@ class StoryParser
                     Language: this.config.language
                 };
 
-            if (this.DEBUG)
+            if (this.DEBUG && this.config.api_checkForUpdates)
             {
                 console.info("Check for Updates ...");
                 console.log("Sending Statistic Data: ", statisticData);
@@ -4634,6 +4655,22 @@ class StoryParser
 
             this.apiRequest({ command: "getVersion", data: requestData }, function (res)
             {
+                if (!self.config.api_checkForUpdates)
+                {
+                    // This is needed.
+                    // If the Update System is deactivated, but the Read Chapter Info Function is activated.
+                    // In that case, the Update Info is ignored.
+
+                    return;
+                }
+
+                if (chrome !== undefined)
+                {
+                    self.log("Ignore Update Info on Chrome Devices");
+
+                    return;
+                }
+
                 if (self.DEBUG)
                 {
                     console.log("Version Received: ", res);
@@ -4654,7 +4691,7 @@ class StoryParser
                 {
                     if (!self.config.api_autoIncludeNewVersion)
                     {
-                        $(".menulinks").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser (" + version.version + ")]");
+                        $(".menulink").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser (" + version.version + ")]");
                     }
                     else
                     {

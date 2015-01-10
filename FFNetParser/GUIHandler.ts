@@ -423,6 +423,12 @@
                     label: self._('Enable the Chapter/Review Ratio Info')
                 },
                 {
+                    name: 'enable_read_chapter_info',
+                    type: GUIElementType.Checkbox,
+                    value: function () { return self.config.enable_read_chapter_info; },
+                    label: self._('Enable Read-Chapter-Info')
+                },
+                {
                     name: '',
                     type: GUIElementType.Custom,
                     value: function ()

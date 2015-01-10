@@ -78,6 +78,7 @@ interface Config
     disable_image_hover: boolean;
     content_width: string;
     enable_chapter_review_ratio: boolean;
+    enable_read_chapter_info: boolean;
 
     // Reading Aid:
     readingHelp_enabled: boolean;
