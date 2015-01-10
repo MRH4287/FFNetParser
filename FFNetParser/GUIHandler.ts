@@ -429,6 +429,16 @@
                     label: self._('Enable Read-Chapter-Info')
                 },
                 {
+                    name: 'reading_info_ChapterMarker',
+                    type: GUIElementType.Input,
+                    value: function () { return self.config.reading_info_ChapterMarker; },
+                    label: self._('Read Chapter - Chapter Name Template'),
+                    customOptions: function (el: JQuery)
+                    {
+                        el.after("<br/><small>" + self._("The Text '{Name}' is replaced by the Chapter Name") + "</small>");
+                    }
+                },
+                {
                     name: '',
                     type: GUIElementType.Custom,
                     value: function ()

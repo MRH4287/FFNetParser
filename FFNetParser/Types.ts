@@ -79,6 +79,7 @@ interface Config
     content_width: string;
     enable_chapter_review_ratio: boolean;
     enable_read_chapter_info: boolean;
+    reading_info_ChapterMarker: string;
 
     // Reading Aid:
     readingHelp_enabled: boolean;

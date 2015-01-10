@@ -88,6 +88,7 @@ class StoryParser
         content_width: "90%",
         enable_chapter_review_ratio: false,
         enable_read_chapter_info: false,
+        reading_info_ChapterMarker: '[R] {Name}',
 
         // Reading Help:
         readingHelp_enabled: false,
@@ -1267,6 +1268,8 @@ class StoryParser
 
             this.readStory();
 
+            this.manageReadChaptersInfo();
+
         }
     }
 
@@ -1555,7 +1558,7 @@ class StoryParser
 
             // Chapter Review Ratio
             self.manageChapterReviewRatio(element);
-            
+
 
             self.doParse(requestQueue, page);
 
@@ -3224,43 +3227,85 @@ class StoryParser
             return;
         }
 
-        var elements = $(".z-list[data-storyid]");
+        var isStory = ($(".z-list").length === 0);
 
-        var ids = [];
+        var elements = undefined;
+        var ids: string[] = [];
 
-        var idELMap: { [index: string]: JQuery } = {};
-
-        elements.each(function (i, el)
+        if (!isStory)
         {
-            var element = $(el);
-            var id = element.attr("data-StoryId");
+            elements = $(".z-list[data-storyid]");
 
-            ids.push(id);
-            idELMap[id] = element;
-        });
+
+            var idELMap: { [index: string]: JQuery } = {};
+
+            elements.each(function (i, el)
+            {
+                var element = $(el);
+                var id = element.attr("data-StoryId");
+
+                ids.push(id);
+                idELMap[id] = element;
+            });
+        }
+        else
+        {
+            var info = this.getStoryInfo(document.location.href);
+
+            if (info.ID !== null)
+            {
+                ids.push(info.ID);
+            }
+            else
+            {
+                return;
+            }
+        }
 
         var self = this;
 
         this.api_getReadChapters(ids, function (result)
         {
+
             $.each(result, function (id: string, chapters: number[])
             {
-                if (idELMap[id] !== undefined)
+                if (!isStory)
                 {
-                    var element = idELMap[id];
-                    var textContainer = element.find(".z-padtop2").last();
+                    if (idELMap[id] !== undefined)
+                    {
+                        var element = idELMap[id];
+                        var textContainer = element.find(".z-padtop2").last();
 
-                    element.find(".ffnetReadChapterInfo").remove();
+                        element.find(".ffnetReadChapterInfo").remove();
 
-                    var insert = $('<span class="ffnetReadChapterInfo"></span>')
-                        .html("<b>" + chapters.length + "</b>/")
-                        .attr("title", "Chapters: " + chapters.join(", "));
+                        var insert = $('<span class="ffnetReadChapterInfo"></span>')
+                            .html("<b>" + chapters.length + "</b>/")
+                            .attr("title", "Chapters: " + chapters.join(", "));
 
-                    var text = textContainer.html();
+                        var text = textContainer.html();
 
-                    textContainer.html(text.replace("Chapters: ", "Chapters: " + insert[0].outerHTML));
+                        textContainer.html(text.replace("Chapters: ", "Chapters: " + insert[0].outerHTML));
 
-                    self.log("Chapter Read for Story: " + id, chapters);
+                        self.log("Chapter Read for Story: " + id, chapters);
+                    }
+                }
+                else
+                {
+                    var chapterSelects = $('select[id="chap_select"]');
+                    chapterSelects.children().each(function (i, el) 
+                    {
+                        var element = $(el);
+
+                        if (chapters.indexOf(Number(element.attr("value"))) !== -1)
+                        {
+                            element.text(self.config.reading_info_ChapterMarker.replace("{Name}", element.text()));
+                        }
+
+
+                    });
+
+
+
                 }
             });
 
