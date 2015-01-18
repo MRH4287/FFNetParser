@@ -3542,7 +3542,12 @@ class StoryParser
     }
 
 
-    private getPageContent(url: string, callback: (page: JQuery) => void)
+    /**
+     * Loads the Content of a Page  and returns the Data as JQuery Object
+     * @param url The Request URI
+     * @param callback The callback Function
+     */
+    public getPageContent(url: string, callback: (page: JQuery) => void)
     {
         if (this.DEBUG)
         {

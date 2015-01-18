@@ -97,7 +97,7 @@ module.exports = function (grunt)
         },
         typescript: {
             base: {
-                src: ['FFNetParser/*.ts'],
+                src: ['FFNetParser/*.ts', 'FFNetParser/standalone/*.ts'],
                 dest: 'build',
                 options: {
                     module: 'amd', //or commonjs
@@ -166,6 +166,28 @@ module.exports = function (grunt)
             {
                 src: '<%= filesToPack %>',
                 dest: 'Chrome'
+            },
+            standalone:
+            {
+                src: 'FFNetParser/standalone/start.html',
+                dest: 'build/standalone/start.html'
+            },
+            standaloneCode:
+            {
+                src: 'build/package.js',
+                dest: 'build/standalone/main.js'
+            }, standaloneStyle:
+            {
+                src: 'build/style.css',
+                dest: 'build/standalone/style.css'
+            }, standaloneLibs:
+            {
+                src: ['lib/*.js'],
+                dest: 'build/standalone/'
+            }, standaloneServer:
+            {
+                src: 'FFNetParser/standalone/Server.js',
+                dest: 'build/standalone/Server.js'
             },
             manifestBackup:
             {
@@ -327,6 +349,17 @@ module.exports = function (grunt)
         'clean:manifestBase',
         'language'
     ]);
+
+    grunt.registerTask('standalone',
+        [
+            'default',
+            'copy:standalone',
+            'copy:standaloneCode',
+            'copy:standaloneStyle',
+            'copy:standaloneLibs',
+            'copy:standaloneServer'
+        ]);
+
 
     grunt.registerTask('devSwitch', function ()
     {

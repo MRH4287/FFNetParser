@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="chrome.d.ts" />
@@ -69,6 +68,7 @@
     <TypeScriptCompile Include="GUIHandler.ts" />
     <TypeScriptCompile Include="LiveChatHandler.ts" />
     <TypeScriptCompile Include="ParagraphMenu.ts" />
+    <TypeScriptCompile Include="standalone\Standalone.ts" />
     <TypeScriptCompile Include="Types.ts" />
     <TypeScriptCompile Include="UpgradeHandler.ts" />
     <TypeScriptCompile Include="userscript.ts" />
@@ -80,8 +80,9 @@
     <Content Include="GameEngine\astar.js" />
     <Content Include="GameEngine\package.min.js" />
     <Content Include="GameEngine\run.js" />
-    <Content Include="Gruntfile.js" />
     <Content Include="includeTemplate.js" />
+    <Content Include="standalone\Server.js" />
+    <Content Include="standalone\start.html" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
