@@ -5468,7 +5468,7 @@ class StoryParser
     /**
      *   Save Config
      */
-    public save_config(saveToCloud = true)
+    public save_config(saveToCloud = true) : boolean
     {
         try
         {
@@ -5483,11 +5483,14 @@ class StoryParser
                 });
             }
 
+            return true;
 
         } catch (e)
         {
             console.warn(e);
             console.log("Current Config: ", this.config);
+
+            return false;
         }
 
     }

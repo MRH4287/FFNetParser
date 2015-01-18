@@ -1402,10 +1402,15 @@
 
             */
 
-            self.parser.save_config();
+            if (self.parser.save_config())
+            {
 
-            self.log("Config Saved Successfully");
-
+                self.log("Config Saved Successfully");
+            }
+            else
+            {
+                alert("Warning: An error occured while saving your Config. Your changes may not be saved! Please check the Console for more Information.");
+            }
 
 
             self.gui_hide();
