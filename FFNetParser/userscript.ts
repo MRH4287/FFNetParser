@@ -3595,17 +3595,33 @@ class StoryParser
         return wrapper;
     }
 
-    private createPageWrapper(): JQuery
+    private createPageWrapper(elements: JQuery = null, currentPage: number = null): JQuery
     {
         // Wrap the current Page into a PageWrapper
-        var currentPage = this.getCurrentPage();
+
+        if (currentPage === undefined || currentPage === null)
+        {
+            currentPage = this.getCurrentPage();
+        }
+
+        var ignoreUserPage = false;
 
         if (this.DEBUG)
         {
             console.log("Current Page: ", currentPage);
         }
 
-        if ($(".z-list").length !== 0)
+        if (elements === null || elements === undefined)
+        {
+            elements = $(".z-list");
+        }
+        else
+        {
+            this.log("Explicit Data specified for Page Wrapper");
+            ignoreUserPage = true;
+        }
+
+        if (elements.length !== 0)
         {
 
             var wrapper = $(".ffNetPageWrapper");
@@ -3614,18 +3630,25 @@ class StoryParser
                 wrapper = this.createWrapper(currentPage);
             }
 
-            var notWrapped = $('.z-list[data-wrapped!="wrapped"]');
+            var notWrapped = elements.filter('[data-wrapped!="wrapped"]');
 
-            if (this.inUsersPage)
+            if (!ignoreUserPage && this.inUsersPage)
             {
-                notWrapped = notWrapped.filter("#st_inside > .z-list");
+                notWrapped = notWrapped.filter(".mystories");
+
+                // Create wrapper for Favs:
+                this.log("Create Page Wrapper for Favs");
+
+                var favWrapper = this.createPageWrapper(elements.filter('.favstories'), 2);
+
+                this.read(favWrapper);
             }
 
             if (notWrapped.length !== 0)
             {
                 if (this.DEBUG)
                 {
-                    console.log("Not Wrapped Elements found");
+                    console.log("Not Wrapped Elements found:", notWrapped);
                 }
 
 
@@ -5468,7 +5491,7 @@ class StoryParser
     /**
      *   Save Config
      */
-    public save_config(saveToCloud = true) : boolean
+    public save_config(saveToCloud = true): boolean
     {
         try
         {
