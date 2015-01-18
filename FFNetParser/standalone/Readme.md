@@ -25,7 +25,7 @@ Currently it only works with a Server and Client running on two Systems.
  The Server is able to request Data from fanfiction.net and can relay that data to my Script.
 
 
- ## How to use this?
+## How to use this?
 
 
  Compile the Userscript with the command `grunt standalone`.
@@ -40,7 +40,7 @@ Currently it only works with a Server and Client running on two Systems.
  Run the `start.html` to use the local Version.
 
 
- ## How to run this on a Tablet or Phone?
+## How to run this on a Tablet or Phone?
 
 
  Currently there is no easy way to run this on a Phone or Tablet.
@@ -52,7 +52,8 @@ Currently it only works with a Server and Client running on two Systems.
  You can change it in the `Standalone.js`.
 
 
- ## Why isn't it working?
+
+## Why isn't it working?
 
  * Is the IP correct?
  * Is the Firewall blocking the Port?
@@ -62,7 +63,7 @@ Currently it only works with a Server and Client running on two Systems.
  If you still have questions, send me a message.
 
  
- ## Important
+## Important
 
  This is still in development. It may not work at all.
 
