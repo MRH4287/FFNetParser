@@ -58,11 +58,15 @@ class StoryParser
      */
     public upgrade: UpgradeHandler = new UpgradeHandler(this);
 
-
     /**
      * The Paragraph Menu of the current Page
      */
     public paragramMenu: ParagraphMenu = null;
+
+    /**
+     *  The API used for connecting to Github
+     */
+    public githubAPi: GithubAPI = new GithubAPI(this);
 
 
     /**
@@ -109,6 +113,8 @@ class StoryParser
         api_checkForUpdates: true,
         api_autoIncludeNewVersion: true,
         api_webSocketServerAddress: "wss://www.mrh-development.de:8182",
+        api_github_url: "https://www.mrh-development.de/api/ffgithub",
+        api_github_requestStart_url: "https://www.mrh-development.de/FFNetGithub/RedirectToAccessSite/",
 
         // advanced Features:
         disable_cache: false,
@@ -180,7 +186,7 @@ class StoryParser
     /**
      * Use the Cross-Origin-Resource-Sharing Feature
      */
-    private useCORS = false;
+    public useCORS = false;
 
     /**
      * Use the HTTPS Connection

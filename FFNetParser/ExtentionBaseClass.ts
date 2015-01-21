@@ -1,4 +1,6 @@
-﻿class ExtentionBaseClass
+﻿/// <reference path="userscript.ts" />
+
+class ExtentionBaseClass
 {
     public parser: StoryParser;
 

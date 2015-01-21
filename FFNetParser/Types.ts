@@ -1,62 +1,4 @@
-interface StoryInfo
-{
-    name: string;
-    url: string;
-    chapter?: number;
-    sentence?: string;
-    // Used in Highlighter Config
-    element?: JQuery;
-}
-
-interface MarkerConfig extends ModificationBase
-{
-    ignore: string[];
-    keywords: string[];
-    mention_in_headline: boolean;
-    print_story: boolean;
-    search_story: boolean;
-    keep_searching: boolean;
-    revision?: number;
-}
-
-interface ModificationBase
-{
-    name: string;
-    display: boolean;
-    color: string;
-    mark_chapter: boolean;
-    mouseOver: string;
-    ignoreColor: boolean;
-    background: string;
-    text_color: string;
-    image: string;
-    note?: string;
-    highlight_color: string;
-    priority: number;
-    customPriority: ModififcationPriority;
-}
-
-interface ModififcationPriority
-{
-    color: number;
-    mouseOver: number;
-    text_color: number;
-    highlight_color: number;
-    background: number;
-}
-
-
-interface RequestQueueData
-{
-    url: string;
-    headline: string;
-    config: MarkerConfig;
-    element: JQuery;
-    textEl: JQuery;
-    info: StoryInfo;
-    storyName: string;
-
-}
+// ---- Config -----
 
 interface Config
 {
@@ -100,6 +42,8 @@ interface Config
     api_checkForUpdates: boolean;
     api_autoIncludeNewVersion: boolean;
     api_webSocketServerAddress: string;
+    api_github_url: string;
+    api_github_requestStart_url: string;
 
     // advanced Features:
     disable_cache: boolean;
@@ -126,6 +70,44 @@ interface Config
 
 }
 
+
+interface MarkerConfig extends ModificationBase
+{
+    ignore: string[];
+    keywords: string[];
+    mention_in_headline: boolean;
+    print_story: boolean;
+    search_story: boolean;
+    keep_searching: boolean;
+    revision?: number;
+}
+
+interface ModificationBase
+{
+    name: string;
+    display: boolean;
+    color: string;
+    mark_chapter: boolean;
+    mouseOver: string;
+    ignoreColor: boolean;
+    background: string;
+    text_color: string;
+    image: string;
+    note?: string;
+    highlight_color: string;
+    priority: number;
+    customPriority: ModififcationPriority;
+}
+
+interface ModififcationPriority
+{
+    color: number;
+    mouseOver: number;
+    text_color: number;
+    highlight_color: number;
+    background: number;
+}
+
 interface StoryReminderData
 {
     name: string;
@@ -145,6 +127,51 @@ interface HighlighterConfig
     custom?: ModificationBase;
 }
 
+interface UpgradeTag
+{
+    lastRun: number
+}
+
+interface FollowUserData
+{
+    ID: number;
+    Name: string;
+
+    /**
+     *  The Timestamp of the Follow
+     */
+    Followed: number;
+
+    FollowStories: boolean;
+    FollowFavs: boolean;
+
+}
+
+// ----- Request Handling -----
+
+interface RequestQueueData
+{
+    url: string;
+    headline: string;
+    config: MarkerConfig;
+    element: JQuery;
+    textEl: JQuery;
+    info: StoryInfo;
+    storyName: string;
+}
+
+interface StoryInfo
+{
+    name: string;
+    url: string;
+    chapter?: number;
+    sentence?: string;
+    // Used in Highlighter Config
+    element?: JQuery;
+}
+
+
+// -----  GUI Elements --------
 
 enum GUIElementType
 {
@@ -188,17 +215,14 @@ interface GUICategory
     elements: GUIData;
 }
 
+// ------- API Functions -------
+
 interface WebSocketMessage
 {
     Type: string;
     Data: string;
     Sender: string;
     Time: string;
-}
-
-interface UpgradeTag
-{
-    lastRun: number
 }
 
 interface LanguageData
@@ -215,3 +239,16 @@ interface SortFunctionDefinition
     Name: string;
     Function: (element: JQuery[]) => JQuery[];
 }
+
+interface GistData
+{
+    id: string;
+    url: string;
+    description: string;
+    "public": boolean;
+    valid: boolean;
+    owner: string;
+    files: string[];
+
+}
+

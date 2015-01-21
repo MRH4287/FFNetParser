@@ -1,4 +1,6 @@
-﻿class UpgradeHandler extends ExtentionBaseClass
+﻿/// <reference path="userscript.ts" />
+
+class UpgradeHandler extends ExtentionBaseClass
 {
     private registeredTags: { [index: string]: { ifNotExist?: (self: UpgradeHandler) => void; ifExist?: (self: UpgradeHandler) => void } } = {};
 

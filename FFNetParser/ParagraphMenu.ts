@@ -1,4 +1,6 @@
-﻿/**
+﻿/// <reference path="userscript.ts" />
+
+/**
  * The Class for the Story Remainer Menu
  */
 class ParagraphMenu

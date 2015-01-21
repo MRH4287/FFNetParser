@@ -1,4 +1,6 @@
-﻿class LiveChatHandler extends ExtentionBaseClass
+﻿/// <reference path="userscript.ts" />
+
+class LiveChatHandler extends ExtentionBaseClass
 {
     public constructor(parser: StoryParser)
     {

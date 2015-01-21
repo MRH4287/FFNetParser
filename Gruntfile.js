@@ -24,7 +24,8 @@ module.exports = function (grunt)
             'build/ExtentionBaseClass.js',
             'build/GUIHandler.js',
             'build/LiveChatHandler.js',
-            'build/UpgradeHandler.js'
+            'build/UpgradeHandler.js',
+            'build/GithubAPI.js'
         ],
         filesToPack:
         [

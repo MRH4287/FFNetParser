@@ -1,4 +1,6 @@
-﻿class GUIHandler extends ExtentionBaseClass
+﻿/// <reference path="userscript.ts" />
+
+class GUIHandler extends ExtentionBaseClass
 {
     public constructor(parser: StoryParser)
     {
@@ -446,7 +448,7 @@
                         return '';
                     },
                     label: '',
-                    
+
                     customOptions: function (el)
                     {
                         if (chrome === undefined)
@@ -598,6 +600,66 @@
                             $("<button>Local</button>").click(function ()
                             {
                                 $('#fflist-api_webSocketServerAddress').val("ws://127.0.0.1:8182");
+                            })
+                            );
+                    }
+                },
+                {
+                    name: 'api_github_url',
+                    type: GUIElementType.Custom,
+                    label: 'Github API-URL',
+                    value: function () { return ''; },
+                    debugOnly: true,
+                    result: function (element)
+                    {
+                        return element.find('.dataContainer').first().val();
+                    },
+                    customElement: function ()
+                    {
+                        return $('<span></span>').
+                            append(
+                            $('<input type="text" class="dataContainer ffnetparser_InputField" id="fflist-api_github_url" />')
+                                .attr('size', '50')
+                                .val(self.config.api_github_url)
+                            ).append(
+                            $("<button>Default</button>").click(function ()
+                            {
+                                $('#fflist-api_github_url').val("https://www.mrh-development.de/api/ffgithub");
+                            })
+                            ).append(
+                            $("<button>Local</button>").click(function ()
+                            {
+                                $('#fflist-api_github_url').val("https://localhost:44300/api/ffgithub");
+                            })
+                            );
+                    }
+                },
+                {
+                    name: 'api_github_requestStart_url',
+                    type: GUIElementType.Custom,
+                    label: 'Github Request URL',
+                    value: function () { return ''; },
+                    debugOnly: true,
+                    result: function (element)
+                    {
+                        return element.find('.dataContainer').first().val();
+                    },
+                    customElement: function ()
+                    {
+                        return $('<span></span>').
+                            append(
+                            $('<input type="text" class="dataContainer ffnetparser_InputField" id="fflist-api_github_requestStart_url" />')
+                                .attr('size', '50')
+                                .val(self.config.api_github_requestStart_url)
+                            ).append(
+                            $("<button>Default</button>").click(function ()
+                            {
+                                $('#fflist-api_github_requestStart_url').val("https://www.mrh-development.de/FFNetGithub/RedirectToAccessSite/");
+                            })
+                            ).append(
+                            $("<button>Local</button>").click(function ()
+                            {
+                                $('#fflist-api_github_requestStart_url').val("https://localhost:44300/FFNetGithub/RedirectToAccessSite/");
                             })
                             );
                     }
@@ -2269,19 +2331,27 @@
             ).appendTo(_guiContainer);
             */
 
-            this.guiContainer.append('<label for="ffnet-config-display">Your current Config:</label><br/>');
+            var accordion = $("<div></div>").appendTo(this.guiContainer);
+
+            // -------- Manual Import -------------
+
+            accordion.append("<h3>" + this._("Manual Import") + "</h3>");
+
+            var manualContainer = $("<div></div>").appendTo(accordion);
+
+            manualContainer.append('<label for="ffnet-config-display">Your current Config:</label><br/>');
 
             var old = $('<textarea id="ffnet-config-display" style="width:90%; height: 100px;"></textarea>')
                 .val(this.parser.getConfig())
-                .appendTo(this.guiContainer);
+                .appendTo(manualContainer);
 
 
-            this.guiContainer.append('<br/><label for="ffnet-config-set">Import Config:</label><br/>');
+            manualContainer.append('<br/><label for="ffnet-config-set">Import Config:</label><br/>');
 
             var neu = $('<textarea id="ffnet-config-set" style="width:90%; height: 100px;"></textarea>')
-                .appendTo(this.guiContainer);
+                .appendTo(manualContainer);
 
-            this.guiContainer.append(
+            manualContainer.append(
                 $('<input class="btn" type="button" value="' + self._('Set') + '" />')
                     .click(function ()
                     {
@@ -2290,6 +2360,349 @@
                         self.parser.readAll();
                     })
                 );
+
+
+            // ----------- Github API -------------
+
+            accordion.append("<h3>" + this._("Github Gist") + "</h3>");
+
+            var githubContainer = $("<div></div>").appendTo(accordion);
+
+
+            var gistInfo: GistData[] = null;
+            var gistSelect = $('<select style="margin-top:5px; margin-bottom:10px"></select>').prop("disabled", true);
+            var selectedGist: GistData = null;
+
+            var authButton = $('<button class="btn btn-primary">Start</button>')
+                .click(() =>
+                {
+                    this.parser.githubAPi.Auth(() =>
+                    {
+                        authButton.text("Success!");
+                        authButton.prop("disabled", true);
+
+                        this.parser.githubAPi.GetGists((data) =>
+                        {
+                            gistInfo = data;
+
+                            $.each(gistInfo, (i, el: GistData) =>
+                            {
+                                var option = $("<option></option>")
+                                    .attr("value", el.id)
+                                    .text(el.description + " @" + el.owner);
+
+                                gistSelect.append(option);
+                            });
+
+                            gistChangeCallback();
+                            gistSelect.prop("disabled", false);
+                            createGistButton.prop("disabled", false);
+                            updateOrImportFromGistButton.prop("disabled", false);
+
+                        });
+                    });
+                });
+
+            var infoDescription = $("<td></td>");
+            var infoFiles = $("<td></td>");
+            var infoId = $("<td></td>");
+            var infoOwner = $("<td></td>");
+            var infoPublic = $("<td></td>");
+            var infoUrl = $("<td></td>");
+            var infoValid = $("<td></td>");
+
+            var importButton = $('<button class="btn btn-success">' + this._("Import") + '</button>').prop("disabled", true);
+            var updateButton = $('<button class="btn btn-warn">' + this._("Update") + '</button>').prop("disabled", true);
+            var createButton = $('<button class="btn btn-success">' + this._("Create") + '</button>').prop("disabled", true);
+
+            var gistDataContainer = $("<div></div>")
+                .append(
+                $('<table width="100%" cellpadding="5"></table>').append(
+                    $('<tbody style="font-size:small"></tbody>')
+                        .append($("<tr></tr>")
+                            .append("<th>" + this._('ID') + "</th>")
+                            .append(infoId)
+                        ).append($("<tr></tr>")
+                            .append("<th>" + this._('Description') + "</th>")
+                            .append(infoDescription)
+                        ).append($("<tr></tr>")
+                            .append("<th>" + this._('Owner') + "</th>")
+                            .append(infoOwner)
+                        ).append($("<tr></tr>")
+                            .append("<th>" + this._('Public') + "</th>")
+                            .append(infoPublic)
+                        ).append($("<tr></tr>")
+                            .append("<th>" + this._('Files') + "</th>")
+                            .append(infoFiles)
+                        ).append($("<tr></tr>")
+                            .append("<th>" + this._('Url') + "</th>")
+                            .append(infoUrl)
+                        ).append($("<tr></tr>")
+                            .append("<th>" + this._('Valid') + "</th>")
+                            .append(infoValid)
+                        )
+                    )
+                );
+
+            var gistChangeCallback = () =>
+            {
+                var currentID = gistSelect.val();
+
+                var info: GistData = null;
+
+                $.each(gistInfo, (i, el: GistData) =>
+                {
+                    if (el.id.toString() === currentID)
+                    {
+                        info = el;
+                        return;
+                    }
+                });
+
+                if (info === null)
+                {
+                    console.log("Github GUI - Invalid Data!");
+                    return false;
+                }
+
+                selectedGist = info;
+
+                infoDescription.text(info.description);
+                infoFiles.text(info.files.join(", "));
+                infoId.text(info.id);
+                infoOwner.text(info.owner);
+                infoPublic.text(info.public ? this._("Yes") : this._("No"));
+                infoUrl.html('<a href="https://gist.github.com/' + info.owner + '/' + info.id + '">' + info.url + '</a>');
+                infoValid.text(info.valid ? this._("Yes") : this._("No") + " - " + this._("No file called 'config.json' found!"))
+                    .css("font-weight", info.valid ? "" : "bold");
+
+                importButton.prop("disabled", !info.valid);
+                updateButton.prop("disabled", !info.valid);
+            };
+
+            gistSelect.change((e) =>
+            {
+                e.preventDefault();
+
+                gistChangeCallback();
+            });
+
+
+
+
+
+
+            // ----------- Create New Gist --------------
+
+
+            var newGistContainer: JQuery[] = [];
+
+            var descriptionInput = $('<input id="githubGistDescription" type="text" value="Fanfiction Story Parser Config"/>');
+            var isPublicInput = $('<input id="githubGistPublic" type="checkbox">');
+
+            newGistContainer.push(
+                $("<tr></tr>")
+                    .append("<th>3. Insert Information</th>")
+                    .append(($("<td></td>").append(
+                        '<label for="githubGistDescription">' + this._('Description') + ': </label>'
+                        ).append(descriptionInput)
+                        .append(
+                        '<label for="githubGistDescription">' + this._('Public') + ': </label>'
+                        ).append(isPublicInput)
+                    ))
+                );
+
+            newGistContainer.push(
+                $("<tr></tr>")
+                    .append("<th>4. Send</th>")
+                    .append(($("<td></td>").append(
+                        $('<button class="btn btn-primary">' + this._('Create Gist') + '</button>').
+                            click((e) =>
+                            {
+                                e.preventDefault();
+
+                                if (confirm("Do you want to save your Config to Github?"))
+                                {
+                                    this.parser.githubAPi.CreateNewConfigGist(descriptionInput.val(), isPublicInput.is(":checked"), (data: GistData) =>
+                                    {
+                                        if (confirm("Config Uploaded. Do you want to look at it on Github?"))
+                                        {
+                                            window.open("https://gist.github.com/" + data.owner + "/" + data.id);
+                                        }
+                                    });
+                                }
+
+                            })
+
+                        )
+                    ))
+                );
+
+
+
+
+            // ------------  Import / Update ------------
+
+
+
+            var importUpdateContainer: JQuery[] = [];
+
+            importUpdateContainer.push(
+                $("<tr></tr>")
+                    .append("<th>3. Select Gist</th>")
+                    .append(($("<td></td>").append(gistSelect))
+                    )
+                );
+
+            importUpdateContainer.push(
+                $("<tr></tr>")
+                    .append("<th></th>")
+                    .append($("<td></td>").append(gistDataContainer))
+                );
+
+            importUpdateContainer.push(
+                $("<tr></tr>")
+                    .append("<th>4. Select Option</th>")
+                    .append(
+                    $("<td></td>")
+                        .append(importButton)
+                        .append(updateButton)
+                    )
+                );
+
+
+            importButton.click((e) =>
+            {
+                e.preventDefault();
+
+                if (selectedGist !== undefined && selectedGist !== null)
+                {
+                    if (confirm("Do you realy want to overwrite your local config with the one from Github? Everything will be lost!"))
+                    {
+                        this.parser.githubAPi.GetConfig(selectedGist.id, (externalConfig: string) =>
+                        {
+                            var newConfig = JSON.parse(externalConfig);
+
+                            this.config = newConfig;
+                            this.parser.save_config(true);
+
+                            alert("Config loaded!");
+                        });
+                    }
+                }
+                else
+                {
+                    alert("Select a Gist from the List first!");
+                }
+
+            });
+
+
+            updateButton.click((e) =>
+            {
+                e.preventDefault();
+
+                if (selectedGist !== undefined && selectedGist !== null)
+                {
+                    if (confirm("Do you want to save your Config to Github?"))
+                    {
+                        this.parser.githubAPi.UpdateConfigGist(selectedGist.id, (data: GistData) =>
+                        {
+                            if (confirm("Config Uploaded. Do you want to look at it on Github?"))
+                            {
+                                window.open("https://gist.github.com/" + data.owner + "/" + data.id);
+                            }
+                        });
+                    }
+                }
+                else
+                {
+                    alert("Select a Gist from the List first!");
+                }
+
+            });
+
+
+            //--------------------------------------------------
+
+            var createGistButton = $('<button class="btn">' + this._('Create new Gist') + '</button>').click((e) =>
+            {
+                e.preventDefault();
+
+                $.each(newGistContainer, (i, el: JQuery) =>
+                {
+                    el.show();
+                });
+
+                $.each(importUpdateContainer, (i, el: JQuery) =>
+                {
+                    el.hide();
+                });
+            }).prop("disabled", true);
+
+            var updateOrImportFromGistButton = $('<button class="btn">' + this._('Update or Import from Gist') + '</button>').click((e) =>
+            {
+                e.preventDefault();
+
+                $.each(newGistContainer, (i, el: JQuery) =>
+                {
+                    el.hide();
+                });
+
+                $.each(importUpdateContainer, (i, el: JQuery) =>
+                {
+                    el.show();
+                });
+            }).prop("disabled", true);
+
+            var tbody = $("<tbody></tbody>")
+                .append(
+                $("<tr></tr>")
+                    .append("<th>1. Authenticate</th>")
+                    .append($("<td></td>").append(authButton))
+                ).append(
+                $("<tr></tr>")
+                    .append("<th>2. Choose Option</th>")
+                    .append($("<td></td>")
+                        .append(
+                        createGistButton
+                        ).append(
+                        updateOrImportFromGistButton
+                        )
+                    )
+                );
+
+            $.each(newGistContainer, (i, el: JQuery) =>
+            {
+                el.hide();
+
+                tbody.append(el);
+            });
+
+            $.each(importUpdateContainer, (i, el: JQuery) =>
+            {
+                el.hide();
+
+                tbody.append(el);
+            });
+
+
+            $('<table width="100%" cellpadding="5" cellspacing="5"></table>').appendTo(githubContainer)
+                .append(
+                tbody
+                );
+
+
+
+
+
+
+
+
+            // --- Call the Accordion Script ---
+            accordion.accordion({
+                heightStyle: "content"
+            });
 
             this.gui_show();
         }
