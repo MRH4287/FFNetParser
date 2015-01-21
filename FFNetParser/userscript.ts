@@ -5501,6 +5501,12 @@ class StoryParser
     {
         try
         {
+            if (this.config.config_key === undefined)
+            {
+                console.warn("Config Key is Undefined!");
+                return false;
+            }
+
             localStorage[this.config.config_key] = JSON.stringify(this.config);
 
             // Save to Chrome Sync API:

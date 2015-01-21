@@ -2583,7 +2583,9 @@ class GUIHandler extends ExtentionBaseClass
                         {
                             var newConfig = JSON.parse(externalConfig);
 
-                            this.config = newConfig;
+                            this.log("New Config: ", newConfig);
+
+                            this.parser.config = newConfig;
                             this.parser.save_config(true);
 
                             alert("Config loaded!");
