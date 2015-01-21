@@ -840,15 +840,17 @@ class GUIHandler extends ExtentionBaseClass
 
                                             self.log("Got Data from Chrome Server: ", result);
 
-                                            $.each(self.config, function (name, oldValue)
+                                            $.each(self.parser.config, function (name, oldValue)
                                             {
                                                 if (result[name] !== undefined)
                                                 {
                                                     self.log("Key: '" + name + "'", oldValue, result[name]);
 
-                                                    self.config[name] = result[name];
+                                                    self.parser.config[name] = result[name];
                                                 }
                                             });
+
+                                            self.parser.save_config();
                                         });
 
 
