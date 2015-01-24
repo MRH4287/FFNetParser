@@ -76,7 +76,18 @@ module.exports = function (grunt)
 
                 ], //<%= pkg.name %>
                 dest: 'ffnetlist.user.js' //<%= pkg.name %>
-            }
+            },
+			standalone:
+			{
+				src: [
+					'build/standalone/lib/jquery-1.10.2.js',
+					'build/standalone/lib/jquery-ui.min.js',
+					'build/standalone/lib/jquery-colorpicker.min.js',
+					'build/standalone/main.js',
+					'build/standalone/Standalone.js',
+				],
+				dest: 'build/standalone/Standalone.pack.js'				
+			}
 
         },
         uglify: {
@@ -86,7 +97,13 @@ module.exports = function (grunt)
             dist: {
                 src: 'build/package.js', //'<%= concat.dist.dest %>',
                 dest: 'build/package.min.js'
-            }
+            },
+			standalone:
+			{
+				src: 'build/standalone/Standalone.pack.js',
+				dest: 'build/standalone/Standalone.pack.min.js'
+				
+			}
         },
         tslint: {
             options: {
@@ -353,15 +370,38 @@ module.exports = function (grunt)
 
     grunt.registerTask('standalone',
         [
-            'default',
+			'gitinfo',
             'copy:standalone',
             'copy:standaloneCode',
             'copy:standaloneStyle',
             'copy:standaloneLibs',
-            'copy:standaloneServer'
+            'copy:standaloneServer',
+			'concat:standalone',
+			'uglify:standalone'
         ]);
 
 
+	grunt.registerTask('jenkinsDev',
+		[
+			'big',
+			'qunit',
+			'copy:manifestBackup',
+			'update_json:manifestDev',
+			'compress',
+			'copy:manifestRestore',
+			'clean:manifestBase',
+			'language',
+			'standalone'
+	
+		]);
+		
+	grunt.registerTask('jenkins',
+		[
+			'packageDefault',
+			'standalone'
+	
+		]);
+		
     grunt.registerTask('devSwitch', function ()
     {
         var branch = grunt.config.get("gitinfo").local.branch.current.name;

@@ -66,6 +66,7 @@
     <TypeScriptCompile Include="GameEngine\Interfaces\Renderer.d.ts" />
     <TypeScriptCompile Include="GameEngine\Interfaces\scriptHandler.d.ts" />
     <TypeScriptCompile Include="GameEngine\Interfaces\windowManager.d.ts" />
+    <TypeScriptCompile Include="GithubAPI.ts" />
     <TypeScriptCompile Include="GUIHandler.ts" />
     <TypeScriptCompile Include="LiveChatHandler.ts" />
     <TypeScriptCompile Include="ParagraphMenu.ts" />
