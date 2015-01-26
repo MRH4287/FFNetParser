@@ -2259,6 +2259,14 @@ class GUIHandler extends ExtentionBaseClass
                 }
 
             },
+            "Support Me": function ()
+            {
+                if (confirm(self._('If you want to support my work, you can do that on Patreon. Open Patreon page?')))
+                {
+                    window.open("https://www.patreon.com/Invocate");
+                }
+
+            },
 
             Close: closeCallback
         };

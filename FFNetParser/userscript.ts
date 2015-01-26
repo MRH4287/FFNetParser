@@ -9,6 +9,7 @@
 /// <reference path="LiveChatHandler.ts" /> 
 /// <reference path="ExtentionBaseClass.ts" /> 
 /// <reference path="UpgradeHandler.ts" /> 
+/// <reference path="GithubAPI.ts" /> 
 
 /// <reference path="GameEngine/Interfaces/GameHandler.d.ts" /> 
 
@@ -146,7 +147,7 @@ class StoryParser
     /**
      * Used for the reset of the config
      */
-    private baseConfig = this.config;
+    private baseConfig = $.extend({}, this.config);
 
     // ----------------------
 
