@@ -10,6 +10,10 @@ class Standalone
     //private BasePath = "http://localhost:49990/FanFictionUserScript/FFNetProxy/?url="; 
     //private BasePath = "https://www.fanfiction.net/";
     private BasePath = "http://localhost:8080/";
+    private parser: StoryParser;
+
+    private lastHash: string = "";
+    private ignoreHashChange: boolean = false;
 
     private copy: { [index: string]: JQuery } = {};
 
@@ -44,7 +48,7 @@ class Standalone
 
     public clear()
     {
-        this.restoreElement("menulink");
+        //this.restoreElement("menulink");
         this.restoreElement("StandaloneMainContaniner");
 
     }
@@ -52,17 +56,29 @@ class Standalone
     /**
      * Starts the Standalone Mode
      */
-    public init(url: string = "/game/pokemon")
+    public init(url: string = "/game/pokemon", firstRun = true)
     {
+        this.ignoreHashChange = true;
+
+        if (firstRun && document.location.hash !== "")
+        {
+            url = document.location.hash.substr(1);
+
+            console.log("Get URL from Hash: " + url);
+        }
+
         console.info("Loading URL: ", url);
 
         var self = this;
 
         this.clear();
-        this.updatePage(url, function ()
+        this.updatePage(url, () =>
         {
+            document.location.hash = "#" + url;
+            this.lastHash = document.location.hash;
 
-            $(".navi").find("a").each(function (k, el)
+
+            $(".navi").find("a").each ((k, el) =>
             {
                 var element = $(el);
 
@@ -71,11 +87,11 @@ class Standalone
                     element.attr("data-href", element.attr("href"));
                     element.attr("href", self.BasePath + element.attr("href"));
 
-                    element.click(function (e)
+                    element.click((e) =>
                     {
                         e.preventDefault();
 
-                        self.init(element.attr("data-href"));
+                        this.init(element.attr("data-href"), false);
 
                     });
 
@@ -95,10 +111,38 @@ class Standalone
 
             });
 
+            if (firstRun)
+            {
+                this.runScript();
+                this.startHashTimer();
+            }
 
-            self.runScript();
+            this.parser.readList();
 
+            this.ignoreHashChange = false;
         });
+
+
+    }
+
+    private startHashTimer()
+    {
+        window.setInterval(() =>
+        {
+            if (!this.ignoreHashChange && document.location.hash !== this.lastHash)
+            {
+                this.lastHash = document.location.hash;
+
+                // Hash Changed
+                console.log("The Hash Changed to: " + this.lastHash);
+
+                if (this.lastHash[0] === "#")
+                {
+                    this.init(this.lastHash.substr(1), false);
+                }
+            }
+           
+        }, 1000);
 
 
     }
@@ -142,15 +186,17 @@ class Standalone
      */
     public runScript()
     {
-        var parser = new StoryParser();
+        this.parser = new StoryParser();
 
-        parser.readList();
-        parser.enablePocketSave();
-        parser.enableInStoryHighlighter();
-        parser.enableReadingAid();
-        parser.enableEndlessMode();
+        //this.parser.readList();
+        this.parser.enablePocketSave();
+        this.parser.enableInStoryHighlighter();
+        this.parser.enableReadingAid();
+        this.parser.enableEndlessMode();
 
-        parser.debugOptions();
+        this.parser.api_getStyles();
+
+        this.parser.debugOptions();
     }
 
     /**
