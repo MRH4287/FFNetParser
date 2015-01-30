@@ -60,6 +60,8 @@ class Standalone
     {
         this.ignoreHashChange = true;
 
+        console.log("Current Hash: " + document.location.hash);
+
         if (firstRun && document.location.hash !== "")
         {
             url = document.location.hash.substr(1);
