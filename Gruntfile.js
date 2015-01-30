@@ -36,7 +36,10 @@ module.exports = function (grunt)
             'jquery-1.10.2.min.map',
             'style.css',
             'logoMain.png',
-            'logoDev.png'
+            'logoDev.png',
+			'FFNetParser/GameEngine/run.js',
+			'FFNetParser/GameEngine/package.min.js',
+			'FFNetParser/GameEngine/astar.js'
         ],
 
         concat: {
