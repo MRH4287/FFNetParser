@@ -4911,7 +4911,7 @@ class StoryParser
 
         if (languageCode === this.config.language)
         {
-            if (tyeof(this.dataConfig["language"]) !== "undefined")
+            if (typeof(this.dataConfig["language"]) !== "undefined")
             {
                 this.log("Get Language from Cache ...");
 

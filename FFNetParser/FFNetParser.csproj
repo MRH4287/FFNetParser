@@ -50,6 +50,7 @@
     <None Include="standalone\Readme.md" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="bootstrap.d.ts" />
     <TypeScriptCompile Include="chrome.d.ts" />
     <TypeScriptCompile Include="ExtentionBaseClass.ts" />
     <TypeScriptCompile Include="GameEngine\Interfaces\animationHandler.d.ts" />
