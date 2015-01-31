@@ -342,7 +342,7 @@ class StoryParser
      */
     public defaultConfig()
     {
-        if (this.config["token"] === undefined)
+        if (typeof(this.config["token"]) === "undefined")
         {
             // Generates Random Token
             this.config["token"] = Math.random().toString().split(".")[1];
@@ -412,7 +412,7 @@ class StoryParser
         {
             // Check for new Version
             var data = this.loadFromMemory(localStorage, "ffnet-Script");
-            if (data.script !== undefined)
+            if (typeof(data.script) !== "undefined")
             {
                 if (this.DEBUG)
                 {
@@ -489,7 +489,7 @@ class StoryParser
         }
 
         // Check for DEBUG-Mode
-        if ((this.config['debug'] !== undefined) || (this.BRANCH === "dev"))
+        if ((typeof(this.config['debug']) !== "undefined") || (this.BRANCH === "dev"))
         {
             this.DEBUG = true;
         }
@@ -497,17 +497,17 @@ class StoryParser
 
         // Check for Config Values:
 
-        if ((this.config["pocket_user"] === undefined) || (this.config["pocket_user"] === ""))
+        if ((typeof(this.config["pocket_user"]) === "undefined") || (this.config["pocket_user"] === ""))
         {
             this.config["pocket_user"] = null;
         }
 
-        if ((this.config["pocket_password"] === undefined) || (this.config["pocket_password"] === ""))
+        if ((typeof(this.config["pocket_password"]) === "undefined") || (this.config["pocket_password"] === ""))
         {
             this.config["pocket_password"] = null;
         }
 
-        if (this.config["token"] === undefined)
+        if (typeof(this.config["token"]) === "undefined")
         {
             // Generates Random Token
             this.config["token"] = Math.random().toString().split(".")[1];
@@ -515,7 +515,7 @@ class StoryParser
         }
 
 
-        if (this.config["api_autoIncludeNewVersion"] === undefined)
+        if (typeof(this.config["api_autoIncludeNewVersion"]) === "undefined")
         {
             // Only Check if the Script is not loaded over Chrome!
             if (typeof(chrome) === "undefined")
@@ -580,7 +580,7 @@ class StoryParser
 
                     $.each(self.config, function (name, oldValue)
                     {
-                        if (result[name] !== undefined)
+                        if (typeof(result[name]) !== "undefined")
                         {
                             self.log("Key: '" + name + "'", oldValue, result[name]);
 
@@ -652,7 +652,7 @@ class StoryParser
         // Load all the config Values that are listed in the _config Array at startup
         $.each(defaultConfig, function (name, defaultValue)
         {
-            if (self.config[name] === undefined)
+            if (typeof(self.config[name]) === "undefined")
             {
                 self.config[name] = defaultValue;
             }
@@ -759,7 +759,7 @@ class StoryParser
             {
                 self.api_GetMessages(function (messages)
                 {
-                    if ((messages.Messages !== undefined) && (messages.Messages.length > 0))
+                    if ((typeof(messages.Messages) !== "undefined") && (messages.Messages.length > 0))
                     {
                         // New Messages:
                         self.dataConfig['messages'] = messages.Messages;
@@ -916,7 +916,7 @@ class StoryParser
 
             var count = 0;
 
-            if (this.dataConfig['messages'] !== undefined)
+            if (typeof(this.dataConfig['messages']) !== "undefined")
             {
                 count = this.dataConfig['messages'].length;
             }
@@ -1119,7 +1119,7 @@ class StoryParser
 
             var noneEntry = $('<option value="off">' + self._('Display: Everything') + '</option>').appendTo(input);
 
-            if (this.dataConfig["displayOnly"] === undefined)
+            if (typeof(this.dataConfig["displayOnly"]) === "undefined")
             {
                 noneEntry.attr("selected", "selected");
             }
@@ -1129,7 +1129,7 @@ class StoryParser
             {
                 var entry = $('<option></option>').attr('value', title).html(title).appendTo(input);
 
-                if ((self.dataConfig["displayOnly"] !== undefined) && (title === self.dataConfig["displayOnly"]))
+                if ((typeof(self.dataConfig["displayOnly"]) !== "undefined") && (title === self.dataConfig["displayOnly"]))
                 {
                     entry.attr("selected", "selected");
                 }
@@ -1524,7 +1524,7 @@ class StoryParser
 
 
                 // Highlighter found:
-                if (self.config['highlighter'][link] !== undefined)
+                if (typeof(self.config['highlighter'][link]) !== "undefined")
                 {
                     self.highlighterCallback(self, self.config.highlighter[link], element, link, page);
                 }
@@ -1537,7 +1537,7 @@ class StoryParser
                     console.log("[_read] Change Color of Line: ",element); 
                 }*/
 
-                if (self.dataConfig["displayOnly"] !== undefined)
+                if (typeof(self.dataConfig["displayOnly"]) !== "undefined")
                 {
                     if (self.DEBUG)
                     {
@@ -1576,9 +1576,9 @@ class StoryParser
         self.manageReadChaptersInfo();
 
         // Sort Elements:
-        if (this.config.sortFunction !== undefined && this.config.sortFunction !== 'default')
+        if (typeof(this.config.sortFunction) !== "undefined" && this.config.sortFunction !== 'default')
         {
-            if (this.sortMap[this.config.sortFunction] !== undefined)
+            if (typeof(this.sortMap[this.config.sortFunction]) !== "undefined")
             {
                 var sortfunction = this.sortMap[this.config.sortFunction];
                 this.sortStories(sortfunction.Function, container);
@@ -1711,7 +1711,7 @@ class StoryParser
 
         if (i >= queue.length)
         {
-            if (typeof (queue[0]) !== undefined)
+            if (typeof (queue[0]) !== "undefined")
             {
                 // Thr Queue is finished. Close all Requests.
                 var firstID = Number(queue[0].element.attr("data-ElementIdent"));
@@ -1727,7 +1727,7 @@ class StoryParser
 
         var url: string;
 
-        if (typeof (data) === undefined)
+        if (typeof (data) === "undefined")
         {
             this.log("Data not defined. Abort - ", page, initiated);
             return;
@@ -1980,7 +1980,7 @@ class StoryParser
                             var sentence = "";
                             for (var i = 1; i < data.length; i++)
                             {
-                                if (data[i] !== undefined)
+                                if (typeof(data[i]) !== "undefined")
                                 {
                                     sentence += data[i];
                                 }
@@ -2074,7 +2074,7 @@ class StoryParser
 
         if (!isStory)
         {
-            if ((self.dataConfig["displayOnly"] !== undefined) && (self.dataConfig["displayOnly"] === headline))
+            if ((typeof(self.dataConfig["displayOnly"]) !== "undefined") && (self.dataConfig["displayOnly"] === headline))
             {
                 if (self.DEBUG)
                 {
@@ -2088,7 +2088,7 @@ class StoryParser
 
                 self.hidden[page] -= 1;
             }
-            else if (self.dataConfig["displayOnly"] !== undefined)
+            else if (typeof(self.dataConfig["displayOnly"]) !== "undefined")
             {
                 // Hide this Element because the Only Mode do not match
 
@@ -2132,7 +2132,7 @@ class StoryParser
             }
             else
             {
-                if ((config.customPriority !== undefined) && (config.customPriority !== null))
+                if ((typeof(config.customPriority) !== "undefined") && (config.customPriority !== null))
                 {
                     priority = config.customPriority;
                 }
@@ -2182,7 +2182,7 @@ class StoryParser
                 });
             }
 
-            if (!isStoryText && (config.image !== undefined) && (config.image !== null) && (config.image !== "") && (config.image !== " "))
+            if (!isStoryText && (typeof(config.image) !== "undefined") && (config.image !== null) && (config.image !== "") && (config.image !== " "))
             {
                 self.log("Adds Filter-Image to Element: ", element, config);
 
@@ -2297,9 +2297,9 @@ class StoryParser
 
 
             // Sorting
-            if (!this.config.disable_resort_after_filter_match && !isStory && this.config.sortFunction !== undefined && this.config.sortFunction !== 'default')
+            if (!this.config.disable_resort_after_filter_match && !isStory && typeof(this.config.sortFunction) !== "undefined" && this.config.sortFunction !== 'default')
             {
-                if (this.sortMap[this.config.sortFunction] !== undefined)
+                if (typeof(this.sortMap[this.config.sortFunction]) !== "undefined")
                 {
                     var sortfunction = this.sortMap[this.config.sortFunction];
                     this.sortStories(sortfunction.Function, element.parent());
@@ -2330,9 +2330,9 @@ class StoryParser
         // Collect Data:
         var mod: ModificationBase;
 
-        if ((config.prefab !== undefined) && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
+        if ((typeof(config.prefab) !== "undefined") && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
         {
-            if (self.config.highlighterPrefabs[config.prefab] !== undefined)
+            if (typeof(self.config.highlighterPrefabs[config.prefab]) !== "undefined")
             {
                 mod = self.config.highlighterPrefabs[config.prefab];
             }
@@ -2342,7 +2342,7 @@ class StoryParser
                 return;
             }
         }
-        else if ((config.custom !== undefined) && (config.custom !== null))
+        else if ((typeof(config.custom) !== "undefined") && (config.custom !== null))
         {
             mod = config.custom;
             mod.name = "Custom Highlighter";
@@ -2399,7 +2399,7 @@ class StoryParser
             }
             else
             {
-                if ((mod.customPriority !== undefined) && (mod.customPriority !== null))
+                if ((typeof(mod.customPriority) !== "undefined") && (mod.customPriority !== null))
                 {
                     priority = mod.customPriority;
                 }
@@ -2438,7 +2438,7 @@ class StoryParser
 
 
 
-            if ((mod.image !== undefined) && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
+            if ((typeof(mod.image) !== "undefined") && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
             {
                 var img = $("<img></img>").attr("src", mod.image)
                     .css("width", "20px")
@@ -2490,9 +2490,9 @@ class StoryParser
 
 
             // Sorting
-            if (this.config.sortFunction !== undefined && this.config.sortFunction !== 'default')
+            if (typeof(this.config.sortFunction) !== "undefined" && this.config.sortFunction !== 'default')
             {
-                if (this.sortMap[this.config.sortFunction] !== undefined)
+                if (typeof(this.sortMap[this.config.sortFunction]) !== "undefined")
                 {
                     var sortfunction = this.sortMap[this.config.sortFunction];
                     this.sortStories(sortfunction.Function);
@@ -2742,12 +2742,12 @@ class StoryParser
             return;
         }
 
-        if (current !== undefined)
+        if (typeof(current) !== "undefined")
         {
             currentPriority = Number(current);
         }
 
-        if (currentPriority === NaN)
+        if (currentPriority === NaN || isNaN(currentPriority))
         {
             currentPriority = -100000;
         }
@@ -2944,7 +2944,7 @@ class StoryParser
         field.after(contextMenu);
 
         // Highlighter found:
-        if (this.config['highlighter'][document.location.pathname] !== undefined)
+        if (typeof(this.config['highlighter'][document.location.pathname]) !== "undefined")
         {
             if (this.DEBUG)
             {
@@ -2957,9 +2957,9 @@ class StoryParser
             // Collect Data:
             var mod: ModificationBase;
 
-            if ((config.prefab !== undefined) && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
+            if ((typeof(config.prefab) !== "undefined") && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
             {
-                if (self.config.highlighterPrefabs[config.prefab] !== undefined)
+                if (typeof(self.config.highlighterPrefabs[config.prefab]) !== "undefined")
                 {
                     mod = self.config.highlighterPrefabs[config.prefab];
                 }
@@ -2969,7 +2969,7 @@ class StoryParser
                     return;
                 }
             }
-            else if ((config.custom !== undefined) && (config.custom !== null))
+            else if ((typeof(config.custom) !== "undefined") && (config.custom !== null))
             {
                 mod = config.custom;
                 mod.name = "Custom Highlighter";
@@ -3009,7 +3009,7 @@ class StoryParser
             }
             else
             {
-                if ((mod.customPriority !== undefined) && (mod.customPriority !== null))
+                if ((typeof(mod.customPriority) !== "undefined") && (mod.customPriority !== null))
                 {
                     priority = mod.customPriority;
                 }
@@ -3028,7 +3028,7 @@ class StoryParser
             }
 
 
-            if ((mod.image !== undefined) && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
+            if ((typeof(mod.image) !== "undefined") && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
             {
                 var img = $("<img></img>").attr("src", mod.image)
                     .css("width", "20px")
@@ -3278,7 +3278,7 @@ class StoryParser
             {
                 if (!isStory)
                 {
-                    if (idELMap[id] !== undefined)
+                    if (typeof(idELMap[id]) !== "undefined")
                     {
                         var element = idELMap[id];
                         var textContainer = element.find(".z-padtop2").last();
@@ -3535,7 +3535,7 @@ class StoryParser
                 }
 
                 var lastPage = Number(lastPageContainer.attr("data-page"));
-                if (lastPage === Number.NaN)
+                if (isNaN(lastPage))
                 {
                     console.log("Error parsing Page Number!");
                     return;
@@ -3607,7 +3607,7 @@ class StoryParser
     {
         // Wrap the current Page into a PageWrapper
 
-        if (currentPage === undefined || currentPage === null)
+        if (typeof(currentPage) === "undefined" || currentPage === null)
         {
             currentPage = this.getCurrentPage();
         }
@@ -3619,7 +3619,7 @@ class StoryParser
             console.log("Current Page: ", currentPage);
         }
 
-        if (elements === null || elements === undefined)
+        if (elements === null || typeof(elements) === "undefined")
         {
             elements = $(".z-list");
         }
@@ -3905,7 +3905,7 @@ class StoryParser
     {
         this.log("Sort Stories", sortFunction, container);
 
-        if (sortFunction === undefined)
+        if (typeof(sortFunction) === "undefined")
         {
             console.log("No Sort Function defined. Abort");
             return;
@@ -3934,7 +3934,7 @@ class StoryParser
 
         };
 
-        if (container === undefined)
+        if (typeof(container) === "undefined")
         {
             var pages = $(".ffNetPageWrapper");
 
@@ -4674,7 +4674,7 @@ class StoryParser
                     return;
                 }
 
-                if ((sessionStorage[apiLookupKey + messageID] !== undefined) &&
+                if ((typeof(sessionStorage[apiLookupKey + messageID]) !== "undefined") &&
                     (sessionStorage[apiLookupKey + messageID] !== "null") &&
                     sessionStorage[apiLookupKey + messageID] !== "undefined" &&
                     sessionStorage[apiLookupKey + messageID] !== null &&
@@ -4718,7 +4718,7 @@ class StoryParser
                 {
                     Version: this.VERSION,
                     Token: this.config.token,
-                    Nested: (sessionStorage["ffnet-mutex"] !== undefined) ? true : false,
+                    Nested: (typeof(sessionStorage["ffnet-mutex"]) !== "undefined") ? true : false,
                     Branch: this.BRANCH,
                     Page: window.location.href,
                     Chrome: (typeof(chrome) !== "undefined"),
@@ -4806,7 +4806,7 @@ class StoryParser
 
         };
 
-        if (this.dataConfig["styles"] === undefined)
+        if (typeof(this.dataConfig["styles"]) === "undefined")
         {
             this.log("Load Styles from Remote Server ...");
 
@@ -4850,7 +4850,7 @@ class StoryParser
                 {
                     var data = <{ Users: string[]; WebUsers: string[]; DevInRoom: boolean; }>JSON.parse(res);
 
-                    if (callback !== undefined)
+                    if (typeof(callback) !== "undefined")
                     {
                         callback(data);
                     }
@@ -4887,7 +4887,7 @@ class StoryParser
 
             self.log("Got Language List:", result);
 
-            if (callback !== undefined)
+            if (typeof(callback) !== "undefined")
             {
                 callback(result);
             }
@@ -4911,7 +4911,7 @@ class StoryParser
 
         if (languageCode === this.config.language)
         {
-            if (this.dataConfig["language"] !== undefined)
+            if (tyeof(this.dataConfig["language"]) !== "undefined")
             {
                 this.log("Get Language from Cache ...");
 
@@ -4927,7 +4927,7 @@ class StoryParser
 
         if (languageCode === 'en')
         {
-            if (this.dataConfig["language"] !== undefined)
+            if (typeof(this.dataConfig["language"]) !== "undefined")
             {
                 delete this.dataConfig["language"];
             }
@@ -4950,7 +4950,7 @@ class StoryParser
 
             self.log("Got Language: ", result);
 
-            if (callback !== undefined)
+            if (typeof(callback) !== "undefined")
             {
                 callback(result);
             }
@@ -4976,7 +4976,7 @@ class StoryParser
 
                 self.save_dataStore();
             }
-            else if (self.dataConfig["language"] !== undefined)
+            else if (typeof(self.dataConfig["language"]) !== "undefined")
             {
                 delete self.dataConfig["language"];
 
@@ -5100,12 +5100,12 @@ class StoryParser
                 if (!response.Error)
                 {
                     // Save Revision into internal Data-Structure
-                    if (keys[index] === undefined)
+                    if (typeof(keys[index]) === "undefined")
                     {
                         self.log("Error keys[", index, "] is undefined");
                         self.log("keys : ", keys);
                     }
-                    else if (self.config.marker[keys[index]] === undefined)
+                    else if (typeof(self.config.marker[keys[index]]) === "undefined")
                     {
                         self.log("Error _config.marker[", keys[index], "] is undefined");
                         self.log("_config.marker : ", self.config.marker);
@@ -5177,7 +5177,7 @@ class StoryParser
 
                 self.log("Check Element: ", el);
 
-                if (marker !== undefined)
+                if (typeof(marker) !== "undefined")
                 {
                     self.log("Local Marker Found - Version: ", marker.revision);
 
@@ -5503,7 +5503,7 @@ class StoryParser
     {
         try
         {
-            if (this.config.config_key === undefined)
+            if (typeof(this.config.config_key) === "undefined")
             {
                 console.warn("Config Key is Undefined!");
                 return false;
@@ -5583,7 +5583,7 @@ class StoryParser
     {
         if ((memory[key] !== "undefined") &&
             (memory[key] !== "null") &&
-            memory[key] !== undefined &&
+            typeof(memory[key]) !== "undefined" &&
             memory[key] != null &&
             memory[key] !== "")
         {
@@ -5692,9 +5692,9 @@ class StoryParser
      */
     public _(key: string): string
     {
-        if (this.currentLanguage !== undefined
+        if (typeof(this.currentLanguage) !== "undefined"
             && this.currentLanguage !== null
-            && this.currentLanguage[key] !== undefined
+            && typeof(this.currentLanguage[key]) !== "undefined"
             && this.currentLanguage[key] !== "")
         {
             return this.currentLanguage[key];

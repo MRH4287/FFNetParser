@@ -38,7 +38,7 @@ class Standalone
     {
         var self = this;
 
-        if (self.copy[className] === undefined)
+        if (typeof(self.copy[className]) === "undefined")
         {
             return;
         }
@@ -197,6 +197,8 @@ class Standalone
         this.parser.enableEndlessMode();
 
         this.parser.api_getStyles();
+
+        this.parser.GUI.BOOTSTRAP = true;
 
         this.parser.debugOptions();
     }

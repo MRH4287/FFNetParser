@@ -231,7 +231,7 @@ class GUIHandler extends ExtentionBaseClass
                         element.change(function ()
                         {
                             var value = element.val();
-                            if (self.parser.sortMap[value] !== undefined)
+                            if (typeof(self.parser.sortMap[value]) !== "undefined")
                             {
                                 self.parser.sortStories(self.parser.sortMap[value].Function);
                             }
@@ -852,7 +852,7 @@ class GUIHandler extends ExtentionBaseClass
 
                                             $.each(self.parser.config, function (name, oldValue)
                                             {
-                                                if (result[name] !== undefined)
+                                                if (typeof(result[name]) !== "undefined")
                                                 {
                                                     self.log("Key: '" + name + "'", oldValue, result[name]);
 
@@ -1792,7 +1792,7 @@ class GUIHandler extends ExtentionBaseClass
                         };
 
                         var value: ModififcationPriority = data.value();
-                        if ((value === undefined) || (value === null))
+                        if ((typeof(value) === "undefined") || (value === null))
                         {
                             value = defaultValues;
                         }
@@ -1800,7 +1800,7 @@ class GUIHandler extends ExtentionBaseClass
                         {
                             $.each(value, function (name, element)
                             {
-                                if ((element === undefined) || (element === null))
+                                if ((typeof(element) === "undefined") || (element === null))
                                 {
                                     value[name] = defaultValues[name];
                                 }
@@ -2204,7 +2204,7 @@ class GUIHandler extends ExtentionBaseClass
                         customPriority[name] = Number(elements.filter(":checked").val());
                     }
 
-                    if (customPriority[name] === null || customPriority[name] === undefined || customPriority[name] === NaN || customPriority[name] < 0)
+                    if (customPriority[name] === null || typeof(customPriority[name]) === "undefined" || customPriority[name] === NaN || customPriority[name] < 0)
                     {
                         customPriority[name] = 1;
                     }
@@ -2230,11 +2230,11 @@ class GUIHandler extends ExtentionBaseClass
                         ignoreColor: data.instances['ignoreColor'].is(':checked'),
                         background: data.instances['background'].val(),
                         text_color: data.instances['text_color'].val(),
-                        image: (data.instances['image'] !== undefined) ? data.instances['image'].val() : null,
-                        note: (data.instances['note'] !== undefined) ? data.instances['note'].val() : null,
+                        image: (typeof(data.instances['image']) !== "undefined") ? data.instances['image'].val() : null,
+                        note: (typeof(data.instances['note']) !== "undefined") ? data.instances['note'].val() : null,
                         priority: priority,
                         customPriority: customPriority,
-                        highlight_color: (data.instances['highlight_color'] !== undefined) ? data.instances['highlight_color'].val() : null,
+                        highlight_color: (typeof(data.instances['highlight_color']) !== "undefined") ? data.instances['highlight_color'].val() : null,
                         revision: ((typeof (self.config.marker[name]) === "undefined") || (typeof (self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
                     };
 
@@ -2687,7 +2687,7 @@ class GUIHandler extends ExtentionBaseClass
             {
                 e.preventDefault();
 
-                if (selectedGist !== undefined && selectedGist !== null)
+                if (typeof(selectedGist) !== "undefined" && selectedGist !== null)
                 {
                     if (confirm("Do you realy want to overwrite your local config with the one from Github? Everything will be lost!"))
                     {
@@ -2716,7 +2716,7 @@ class GUIHandler extends ExtentionBaseClass
             {
                 e.preventDefault();
 
-                if (selectedGist !== undefined && selectedGist !== null)
+                if (typeof(selectedGist) !== "undefined" && selectedGist !== null)
                 {
                     if (confirm("Do you want to save your Config to Github?"))
                     {
@@ -2978,7 +2978,7 @@ class GUIHandler extends ExtentionBaseClass
                 );
 
             var usedData: ModificationBase;
-            if (this.config.highlighter[storyInfo.url] === undefined || this.config.highlighter[storyInfo.url].custom === null)
+            if (typeof(this.config.highlighter[storyInfo.url]) === "undefined" || this.config.highlighter[storyInfo.url].custom === null)
             {
                 usedData = {
                     background: null,
@@ -3081,7 +3081,7 @@ class GUIHandler extends ExtentionBaseClass
             }
 
 
-            if (this.config['highlighter'][storyInfo.url] !== undefined)
+            if (typeof(this.config['highlighter'][storyInfo.url]) !== "undefined")
             {
                 highlighter.val(this.config['highlighter'][storyInfo.url].image);
             }
@@ -3162,7 +3162,7 @@ class GUIHandler extends ExtentionBaseClass
         {
             $(".ffnet-HighlighterContainer").remove();
 
-            if (this.config.highlighter[storyInfo.url] === undefined)
+            if (typeof(this.config.highlighter[storyInfo.url]) === "undefined")
             {
                 this.config.highlighter[storyInfo.url] =
                 {
@@ -3199,7 +3199,7 @@ class GUIHandler extends ExtentionBaseClass
                 })
                 .appendTo(listContainer);
 
-            if (this.config.highlighter[storyInfo.url] !== undefined && this.config.highlighter[storyInfo.url].prefab === name)
+            if (typeof(this.config.highlighter[storyInfo.url]) !== "undefined" && this.config.highlighter[storyInfo.url].prefab === name)
             {
                 element.addClass("selected");
             }
@@ -3209,8 +3209,8 @@ class GUIHandler extends ExtentionBaseClass
 
         var color = "gray";
 
-        if (this.config.highlighter[storyInfo.url] !== undefined &&
-            this.config.highlighter[storyInfo.url].custom !== undefined &&
+        if (typeof(this.config.highlighter[storyInfo.url]) !== "undefined" &&
+            typeof(this.config.highlighter[storyInfo.url].custom) !== "undefined" &&
             this.config.highlighter[storyInfo.url].custom !== null)
         {
             color = this.config.highlighter[storyInfo.url].custom.highlight_color;
@@ -3226,7 +3226,7 @@ class GUIHandler extends ExtentionBaseClass
                 ev.preventDefault();
                 $(".ffnet-HighlighterContainer").remove();
 
-                if (self.config.highlighter[storyInfo.url] !== undefined)
+                if (typeof(self.config.highlighter[storyInfo.url]) !== "undefined")
                 {
                     self.config.highlighter[storyInfo.url].prefab = "";
                 }
@@ -3234,10 +3234,10 @@ class GUIHandler extends ExtentionBaseClass
                 self.toggleStoryConfig(storyInfo, false);
             }).appendTo(listContainer);
 
-        if (this.config.highlighter[storyInfo.url] !== undefined &&
-            (this.config.highlighter[storyInfo.url].prefab === undefined || this.config.highlighter[storyInfo.url].prefab === null ||
+        if (typeof(this.config.highlighter[storyInfo.url]) !== "undefined" &&
+            (typeof(this.config.highlighter[storyInfo.url].prefab) === "undefined" || this.config.highlighter[storyInfo.url].prefab === null ||
             this.config.highlighter[storyInfo.url].prefab === "" || this.config.highlighter[storyInfo.url].prefab === " ") &&
-            this.config.highlighter[storyInfo.url].custom !== undefined && this.config.highlighter[storyInfo.url].custom !== null)
+            typeof(this.config.highlighter[storyInfo.url].custom) !== "undefined" && this.config.highlighter[storyInfo.url].custom !== null)
         {
             customElement.addClass("selected");
         }
@@ -3254,7 +3254,7 @@ class GUIHandler extends ExtentionBaseClass
                 ev.preventDefault();
                 $(".ffnet-HighlighterContainer").remove();
 
-                if (self.config.highlighter[storyInfo.url] !== undefined)
+                if (typeof(self.config.highlighter[storyInfo.url]) !== "undefined")
                 {
                     if (confirm(self._("Do you really want to remove this Highlighter?")))
                     {
@@ -3346,7 +3346,7 @@ class GUIHandler extends ExtentionBaseClass
         {
             if (!custom)
             {
-                if (this.config.highlighterPrefabs[name] === undefined)
+                if (typeof(this.config.highlighterPrefabs[name]) === "undefined")
                 {
                     return {};
                 }
@@ -3358,7 +3358,7 @@ class GUIHandler extends ExtentionBaseClass
             }
             else
             {
-                if (this.config.highlighter[name].custom === undefined)
+                if (typeof(this.config.highlighter[name].custom) === "undefined")
                 {
                     return {};
                 }
@@ -3504,7 +3504,7 @@ class GUIHandler extends ExtentionBaseClass
                         };
 
                         var value: ModififcationPriority = data.value();
-                        if ((value === undefined) || (value === null))
+                        if ((typeof(value) === "undefined") || (value === null))
                         {
                             value = defaultValues;
                         }
@@ -3512,7 +3512,7 @@ class GUIHandler extends ExtentionBaseClass
                         {
                             $.each(value, function (name, element)
                             {
-                                if ((element === undefined) || (element === null))
+                                if ((typeof(element) === "undefined") || (element === null))
                                 {
                                     value[name] = defaultValues[name];
                                 }
@@ -3884,7 +3884,7 @@ class GUIHandler extends ExtentionBaseClass
                         customPriority[name] = Number(elements.filter(":checked").val());
                     }
 
-                    if (customPriority[name] === null || customPriority[name] === undefined || customPriority[name] === NaN || customPriority[name] < 0)
+                    if (customPriority[name] === null || typeof(customPriority[name]) === "undefined" || customPriority[name] === NaN || customPriority[name] < 0)
                     {
                         customPriority[name] = 1;
                     }
@@ -3905,7 +3905,7 @@ class GUIHandler extends ExtentionBaseClass
                         background: data.instances['background'].val(),
                         text_color: data.instances['text_color'].val(),
                         image: data.instances['image'].val(),
-                        note: (data.instances['note'] !== undefined) ? data.instances['note'].val() : null,
+                        note: (typeof(data.instances['note']) !== "undefined") ? data.instances['note'].val() : null,
                         priority: priority,
                         customPriority: customPriority,
                         highlight_color: data.instances['highlight_color'].val()
@@ -3928,7 +3928,7 @@ class GUIHandler extends ExtentionBaseClass
                 }
                 else
                 {
-                    if (this.config.highlighter[name] === undefined)
+                    if (typeof(this.config.highlighter[name]) === "undefined")
                     {
                         this.config.highlighter[name] = {
                             custom: null,
@@ -4213,7 +4213,7 @@ class GUIHandler extends ExtentionBaseClass
 
         var messages = $("<div></div>");
 
-        if (localMessages !== undefined)
+        if (typeof(localMessages) !== "undefined")
         {
             this.parser.api_MarkMessages();
 

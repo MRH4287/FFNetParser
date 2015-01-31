@@ -8,7 +8,7 @@ class GithubAPI extends ExtentionBaseClass
 
     get Authenticated()
     {
-        return this.code !== undefined && this.code !== null;
+        return typeof(this.code) !== "undefined" && this.code !== null;
     }
 
     public constructor(parser: StoryParser)
@@ -33,7 +33,7 @@ class GithubAPI extends ExtentionBaseClass
         this.beginCheck(() =>
         {
             this.log("Successfully Authenticated!");
-            if (callback !== undefined)
+            if (typeof(callback) !== "undefined")
             {
                 callback();
             }
@@ -43,7 +43,7 @@ class GithubAPI extends ExtentionBaseClass
 
     public GetGists(callback: (data: GistData[]) => void)
     {
-        if (this.code === undefined || this.code === null)
+        if (typeof(this.code) === "undefined" || this.code === null)
         {
             console.error("Github API - Not Authenticated!");
             return;
@@ -64,7 +64,7 @@ class GithubAPI extends ExtentionBaseClass
 
     public GetConfig(id: string, callback : (data: string) => void )
     {
-        if (this.code === undefined || this.code === null)
+        if (typeof(this.code) === "undefined" || this.code === null)
         {
             console.error("Github API - Not Authenticated!");
             return;
@@ -84,7 +84,7 @@ class GithubAPI extends ExtentionBaseClass
 
     public CreateNewConfigGist(description: string, isPublic: boolean, callback: (data: GistData) => void )
     {
-        if (this.code === undefined || this.code === null)
+        if (typeof(this.code) === "undefined" || this.code === null)
         {
             console.error("Github API - Not Authenticated!");
             return;
@@ -106,7 +106,7 @@ class GithubAPI extends ExtentionBaseClass
 
     public UpdateConfigGist(id: string, callback: (data: GistData) => void)
     {
-        if (this.code === undefined || this.code === null)
+        if (typeof(this.code) === "undefined" || this.code === null)
         {
             console.error("Github API - Not Authenticated!");
             return;

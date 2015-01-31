@@ -28,7 +28,7 @@ class UpgradeHandler extends ExtentionBaseClass
         {
             $.each(self.config.marker, function (name: string, data: MarkerConfig)
             {
-                if (data.keep_searching === undefined)
+                if (typeof(data.keep_searching) === "undefined")
                 {
                     self.config.marker[name].keep_searching = false;
                 }
@@ -44,7 +44,7 @@ class UpgradeHandler extends ExtentionBaseClass
 
             $.each(self.config.marker, function (name: string, data: MarkerConfig)
             {
-                if (data.image === undefined)
+                if (typeof(data.image) === "undefined")
                 {
                     self.config.marker[name].image = null;
                 }
@@ -67,7 +67,7 @@ class UpgradeHandler extends ExtentionBaseClass
                     };
                 }
 
-                if ((self.config.highlighter[link].custom === undefined) && (self.config.highlighter[link].prefab === undefined))
+                if ((typeof(self.config.highlighter[link].custom) === "undefined") && (typeof(self.config.highlighter[link].prefab) === "undefined"))
                 {
                     self.config.highlighter[link].custom = {
                         background: null,
@@ -173,7 +173,7 @@ class UpgradeHandler extends ExtentionBaseClass
 
             $.each(highlighterDefault, function (name, element)
             {
-                if (self.config.highlighterPrefabs[name] === undefined)
+                if (typeof(self.config.highlighterPrefabs[name]) === "undefined")
                 {
                     self.config.highlighterPrefabs[name] = element;
                 }
@@ -189,7 +189,7 @@ class UpgradeHandler extends ExtentionBaseClass
 
     public handleTags()
     {
-        if (this.config.upgradeTags === undefined)
+        if (typeof(this.config.upgradeTags) === "undefined")
         {
             this.log("Upgrade Handler: Initializing Upgrade Tags Variable");
             this.parser.save_config(false);
@@ -206,13 +206,13 @@ class UpgradeHandler extends ExtentionBaseClass
                 console.log("Upgrade Handler: Checking Tag - ", name);
             }
 
-            if (self.config.upgradeTags[name] === undefined && data.ifNotExist !== undefined)
+            if (typeof(self.config.upgradeTags[name]) === "undefined" && typeof(data.ifNotExist) !== "undefined")
             {
                 console.log("Upgrade Handler: Executing IfNotExist Handler for Tag: ", name);
 
                 data.ifNotExist(self);
             }
-            else if (self.config.upgradeTags[name] !== undefined && data.ifExist !== undefined)
+            else if (typeof(self.config.upgradeTags[name]) !== "undefined" && typeof(data.ifExist) !== "undefined")
             {
                 console.log("Upgrade Handler: Executing IfExist Handler for Tag: ", name);
 
@@ -232,13 +232,13 @@ class UpgradeHandler extends ExtentionBaseClass
 
     private registerTag(name: string, ifNotExist?: (self: UpgradeHandler) => void, ifExist?: (self: UpgradeHandler) => void)
     {
-        if (this.registeredTags[name] !== undefined)
+        if (typeof(this.registeredTags[name]) !== "undefined")
         {
             this.log("Upgrade Handler: Tag with name '" + name + "' is already registered!", this.registeredTags);
             return;
         }
 
-        if ((ifNotExist === undefined) && (ifExist === undefined))
+        if ((typeof(ifNotExist) === "undefined") && (typeof(ifExist) === "undefined"))
         {
             this.log("Upgrade Handler: At least one of the callback Functions has to be set!", name);
             return;
@@ -252,7 +252,7 @@ class UpgradeHandler extends ExtentionBaseClass
 
     public removeTag(name: string)
     {
-        if (this.config.upgradeTags[name] !== undefined)
+        if (typeof(this.config.upgradeTags[name]) !== "undefined")
         {
             delete this.config.upgradeTags[name];
             this.parser.save_config();

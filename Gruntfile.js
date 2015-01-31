@@ -229,7 +229,8 @@ module.exports = function (grunt)
                 },
                 files:
                 {
-                    "build/style.css": "style.less"
+                    "build/style.css": "style.less",
+                    "build/standalone/ffnetStyle.css": "ffnetStyle.less"
                 }
             }
         },
@@ -325,7 +326,7 @@ module.exports = function (grunt)
           'gitinfo',
           'replace:userscript',
           'concat:userscript',
-          'uglify',
+          'uglify:dist',
           'concat:pack',
           'less',
           'copy:style'
