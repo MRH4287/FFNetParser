@@ -8,6 +8,16 @@ class GUIHandler extends ExtentionBaseClass
     }
 
     /**
+     *  Use the Bootstrap GUI instead of jQuery UI
+     */
+    public BOOTSTRAP = false;
+
+    /**
+     *  The Main Container for the Bootsrap Modal
+     */
+    private bootstrapContainer: JQuery = null;
+
+    /**
      * The Container for the GUI
      */
     private guiContainer: JQuery = null;
@@ -451,7 +461,7 @@ class GUIHandler extends ExtentionBaseClass
 
                     customOptions: function (el)
                     {
-                        if (chrome === undefined)
+                        if (typeof(chrome) === "undefined")
                         {
                             el.parent().parent().remove();
                         }
@@ -816,7 +826,7 @@ class GUIHandler extends ExtentionBaseClass
                     value: function () { return self.config.chrome_sync; },
                     customOptions: function (el)
                     {
-                        if (typeof (chrome) === undefined)
+                        if (typeof(chrome) === "undefined")
                         {
                             el.prop("disabled", true).attr("title", self._("Only available in Chrome"));
                         }
@@ -1129,16 +1139,87 @@ class GUIHandler extends ExtentionBaseClass
     */
     private gui_create()
     {
-        this.log("Creating GUI ");
+        if (!this.BOOTSTRAP)
+        {
 
-        var container = $('<div title="Fanfiction Story Parser"></div>')
-            .hide();
+            this.log("Creating GUI ");
 
-        $("body").append(container);
+            var container = $('<div title="Fanfiction Story Parser"></div>')
+                .hide();
 
-        this.guiContainer = container;
+            $("body").append(container);
 
-        this.log("GUI Created");
+            this.guiContainer = container;
+
+            this.log("GUI Created");
+        }
+        else
+        {
+            this.log("Create Bootstrap GUI!");
+
+            this.guiContainer = $("<div></div");
+
+            /** FF-Net Native
+            this.bootstrapContainer = $('<div class="modal fade hide in" data-dynamic="true"></div>').append(
+                $("<form></form>").append(
+                    $('<div class="modal-header"></div>').append(
+                        $('<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>').append(
+                            '<span aria-hidden="true">&times;</span>'
+                            )
+                        )
+                        .append(
+                        $('<h3 class="modal-titel"></h3>').text("Fanfiction Story Parser")
+                        )
+                    )
+                    .append(
+                    $('<div class="modal-body"></div>').append(this.guiContainer)
+                    )
+                    .append(
+                    $('<div class="modal-footer"></div>').append(
+                        $('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>')
+                        ).append(
+                        $('<button type="button" class="btn btn-primary">Save changes</button>')
+                        )
+
+                    )
+                ).appendTo($("body"));
+            */
+            $(".ffnetModal").remove();
+
+
+            this.bootstrapContainer = $('<div class="ffnetModal modal fade" id="ffnetModal" tabindex="-1" role="dialog" aria-labelledby="ffnetModalLabel" aria-hidden="true"></div>').append(
+                $('<div class="modal-dialog"></div>').append(
+                    $('<div class="modal-content"></div>').append(
+                        $('<div class="modal-header"></div>').append(
+                            $('<button type="button class="close" data-dismiss="modal" aria-label="Close"></button>').append(
+                                '<span aria-hidden="true">&times;</span>'
+                                )
+                            ).append(
+                            $('<h4 class="modal-titel" id="ffnetModalLabel"></h4>').text("Fanfiction Story Parser")
+                            )
+                        )
+
+                        .append(
+                        $('<div class="modal-body"></div>').append(this.guiContainer)
+                        )
+                        .append(
+                        $('<div class="modal-footer"></div>').append(
+                            $('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>')
+                            ).append(
+                            $('<button type="button" class="btn btn-primary">Save changes</button>')
+                            )
+
+                        )
+
+
+                    )
+
+                );
+
+
+
+            this.log("GUI Created");
+        }
 
     }
 
@@ -2184,11 +2265,21 @@ class GUIHandler extends ExtentionBaseClass
      */
     private gui_hide()
     {
-        this.guiContainer.dialog("close");
-        this.guiContainer.remove();
-        this.guiContainer = null;
+        if (!this.BOOTSTRAP)
+        {
 
-        //_guiContainer.fadeOut();
+            this.guiContainer.dialog("close");
+            this.guiContainer.remove();
+            this.guiContainer = null;
+        }
+        else
+        {
+            $(this.bootstrapContainer).modal('hide');
+            this.bootstrapContainer.remove();
+            this.bootstrapContainer = null;
+            this.guiContainer = null;
+
+        }
     }
 
     /**
@@ -2198,91 +2289,102 @@ class GUIHandler extends ExtentionBaseClass
     {
         var self = this;
 
-        if (closeCallback === null)
+        if (!this.BOOTSTRAP)
         {
-            closeCallback = function ()
+
+            if (closeCallback === null)
             {
-                if (confirm(self._("All unsaved changes will be deleted!")))
+                closeCallback = function ()
                 {
-                    $(this).dialog("close");
-                }
+                    if (confirm(self._("All unsaved changes will be deleted!")))
+                    {
+                        $(this).dialog("close");
+                    }
+                };
+            }
+
+
+            var buttons = {
+
+                "Synchronization": function ()
+                {
+                    if (confirm(self._("All unsaved changes will be deleted!")))
+                    {
+                        self.gui_hide();
+
+                        self.syncGUI();
+                    }
+                },
+
+                "Config Import / Export": function ()
+                {
+                    if (confirm(self._("All unsaved changes will be deleted!")))
+                    {
+                        self.openSaveConfig();
+                    }
+                },
+
+                "Menu": function ()
+                {
+                    // Reopen:
+                    if (confirm(self._("All unsaved changes will be deleted!")))
+                    {
+                        self.gui_hide();
+
+                        self.gui();
+
+                    }
+
+                },
+
+                "Reset Config": function ()
+                {
+                    if (confirm(self._('Are you sure to overwrite the Config? This will overwrite all your changes!')))
+                    {
+                        $(this).dialog("close");
+
+                        self.guiData = {};
+                        self.categories = {};
+                        self.addCount = 0;
+
+                        self.initGUI();
+
+                        self.parser.defaultConfig();
+                    }
+
+                },
+                "Support Me": function ()
+                {
+                    if (confirm(self._('If you want to support my work, you can do that on Patreon. Open Patreon page?')))
+                    {
+                        window.open("https://www.patreon.com/Invocate");
+                    }
+
+                },
+
+                Close: closeCallback
             };
+
+            if (this.config.disable_sync)
+            {
+                delete buttons["Synchronization"];
+            }
+
+            this.guiContainer.dialog({
+                resizable: true,
+                modal: true,
+                height: 900,
+                width: 664,
+                buttons: buttons
+            });
+
         }
-
-
-        var buttons = {
-
-            "Synchronization": function ()
-            {
-                if (confirm(self._("All unsaved changes will be deleted!")))
-                {
-                    self.gui_hide();
-
-                    self.syncGUI();
-                }
-            },
-
-            "Config Import / Export": function ()
-            {
-                if (confirm(self._("All unsaved changes will be deleted!")))
-                {
-                    self.openSaveConfig();
-                }
-            },
-
-            "Menu": function ()
-            {
-                // Reopen:
-                if (confirm(self._("All unsaved changes will be deleted!")))
-                {
-                    self.gui_hide();
-
-                    self.gui();
-
-                }
-
-            },
-
-            "Reset Config": function ()
-            {
-                if (confirm(self._('Are you sure to overwrite the Config? This will overwrite all your changes!')))
-                {
-                    $(this).dialog("close");
-
-                    self.guiData = {};
-                    self.categories = {};
-                    self.addCount = 0;
-
-                    self.initGUI();
-
-                    self.parser.defaultConfig();
-                }
-
-            },
-            "Support Me": function ()
-            {
-                if (confirm(self._('If you want to support my work, you can do that on Patreon. Open Patreon page?')))
-                {
-                    window.open("https://www.patreon.com/Invocate");
-                }
-
-            },
-
-            Close: closeCallback
-        };
-
-        if (this.config.disable_sync)
+        else
         {
-            delete buttons["Synchronization"];
+            this.bootstrapContainer.modal('show');
+
         }
 
-        this.guiContainer.dialog({
-            resizable: true,
-            modal: true,
-            height: 900,
-            width: 664,
-            buttons: buttons
-        });
 
 
         // _guiContainer.fadeIn();
@@ -2295,7 +2397,7 @@ class GUIHandler extends ExtentionBaseClass
     {
         this.initGUI();
 
-        if (this.guiContainer == null)
+        if (this.guiContainer == null || this.bootstrapContainer)
         {
             this.gui_create();
         }

@@ -2,6 +2,7 @@
 /// <reference path="jquery.colorpicker.d.ts" /> 
 /// <reference path="jqueryui.d.ts" /> 
 /// <reference path="chrome.d.ts" /> 
+/// <reference path="bootstrap.d.ts" /> 
 
 /// <reference path="Types.ts" /> 
 /// <reference path="ParagraphMenu.ts" /> 
@@ -517,7 +518,7 @@ class StoryParser
         if (this.config["api_autoIncludeNewVersion"] === undefined)
         {
             // Only Check if the Script is not loaded over Chrome!
-            if (typeof (chrome) === "undefined")
+            if (typeof(chrome) === "undefined")
             {
 
                 // Creates Warning for new Feature:
@@ -566,7 +567,7 @@ class StoryParser
 
 
         // Google Storage Sync:
-        if ((typeof (chrome) !== undefined) && (this.config.chrome_sync))
+        if ((typeof(chrome) !== "undefined") && (this.config.chrome_sync))
         {
             window.setTimeout(function ()
             {
@@ -713,7 +714,7 @@ class StoryParser
         */
 
         // Check if the current Context is a Chrome Extention, if yes it is loaded over this system:
-        if (typeof (chrome) === "undefined")
+        if (typeof(chrome) === "undefined")
         {
             // Use this because of the new HTTPS Restrictions ...
             this.api_getStyles();
@@ -4720,7 +4721,7 @@ class StoryParser
                     Nested: (sessionStorage["ffnet-mutex"] !== undefined) ? true : false,
                     Branch: this.BRANCH,
                     Page: window.location.href,
-                    Chrome: (typeof (chrome) !== "undefined"),
+                    Chrome: (typeof(chrome) !== "undefined"),
                     Language: this.config.language
                 };
 
@@ -4745,7 +4746,7 @@ class StoryParser
                     return;
                 }
 
-                if (chrome !== undefined)
+                if (typeof(chrome) !== "undefined")
                 {
                     self.log("Ignore Update Info on Chrome Devices");
 
@@ -5511,7 +5512,7 @@ class StoryParser
             localStorage[this.config.config_key] = JSON.stringify(this.config);
 
             // Save to Chrome Sync API:
-            if (typeof (chrome) !== undefined && (this.config.chrome_sync === true) && saveToCloud)
+            if (typeof(chrome) !== "undefined" && (this.config.chrome_sync === true) && saveToCloud)
             {
                 chrome.storage.sync.set(this.config, function ()
                 {
