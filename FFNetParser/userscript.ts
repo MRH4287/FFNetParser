@@ -2921,6 +2921,8 @@ class StoryParser
                 .css("height", "100%")
             );
 
+        body.find('#profile_top').attr("data-elementident", this.getStoryInfo(document.location.href).ID);
+
         var self = this;
 
         // Open GUI
