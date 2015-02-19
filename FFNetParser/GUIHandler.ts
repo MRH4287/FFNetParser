@@ -1159,31 +1159,7 @@ class GUIHandler extends ExtentionBaseClass
 
             this.guiContainer = $("<div></div");
 
-            /** FF-Net Native
-            this.bootstrapContainer = $('<div class="modal fade hide in" data-dynamic="true"></div>').append(
-                $("<form></form>").append(
-                    $('<div class="modal-header"></div>').append(
-                        $('<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>').append(
-                            '<span aria-hidden="true">&times;</span>'
-                            )
-                        )
-                        .append(
-                        $('<h3 class="modal-titel"></h3>').text("Fanfiction Story Parser")
-                        )
-                    )
-                    .append(
-                    $('<div class="modal-body"></div>').append(this.guiContainer)
-                    )
-                    .append(
-                    $('<div class="modal-footer"></div>').append(
-                        $('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>')
-                        ).append(
-                        $('<button type="button" class="btn btn-primary">Save changes</button>')
-                        )
-
-                    )
-                ).appendTo($("body"));
-            */
+            
             $(".ffnetModal").remove();
 
 
@@ -1191,11 +1167,11 @@ class GUIHandler extends ExtentionBaseClass
                 $('<div class="modal-dialog"></div>').append(
                     $('<div class="modal-content"></div>').append(
                         $('<div class="modal-header"></div>').append(
-                            $('<button type="button class="close" data-dismiss="modal" aria-label="Close"></button>').append(
-                                '<span aria-hidden="true">&times;</span>'
+                            $('<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>').append(
+                                '<span aria-hidden="true">&' + 'times;</span>'
                                 )
                             ).append(
-                            $('<h4 class="modal-titel" id="ffnetModalLabel"></h4>').text("Fanfiction Story Parser")
+                            $('<h4 class="modal-titel" id="ffnetModalLabel"></h4>').text("Fanfiction Story Parser - Version: " + this.VERSION + " - Branch: " + this.BRANCH)
                             )
                         )
 
@@ -1204,9 +1180,52 @@ class GUIHandler extends ExtentionBaseClass
                         )
                         .append(
                         $('<div class="modal-footer"></div>').append(
-                            $('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>')
+                            $('<button type="button" class="btn btn-default">Config Import / Export</button>').click((e) =>
+                            {
+                                if (confirm(this._("All unsaved changes will be deleted!")))
+                                {
+                                    this.openSaveConfig();
+                                }
+                            })
                             ).append(
-                            $('<button type="button" class="btn btn-primary">Save changes</button>')
+    
+                            $('<button type="button" class="btn btn-primary">Menu</button>').click((e) =>
+                            {
+                                // Reopen:
+                                if (confirm(this._("All unsaved changes will be deleted!")))
+                                {
+                                    this.gui_hide();
+
+                                    this.gui();
+
+                                }
+                            })
+                            ).append(
+                            $('<button type="button" class="btn btn-danger">Reset Config</button>').click((e) =>
+                            {
+                                if (confirm(this._('Are you sure to overwrite the Config? This will overwrite all your changes!')))
+                                {
+                                    this.gui_hide();
+
+                                    this.guiData = {};
+                                    this.categories = {};
+                                    this.addCount = 0;
+
+                                    this.initGUI();
+
+                                    this.parser.defaultConfig();
+                                }
+                            })
+                            ).append(
+                            $('<button type="button" class="btn btn-default">Support Me</button>').click((e) =>
+                            {
+                                if (confirm(this._('If you want to support my work, you can do that on Patreon. Open Patreon page?')))
+                                {
+                                    window.open("https://www.patreon.com/Invocate");
+                                }
+                            })
+                            ).append(
+                            $('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>')
                             )
 
                         )
@@ -1507,60 +1526,29 @@ class GUIHandler extends ExtentionBaseClass
 
 
         // Save Logic
-        $(".ffnetSaveButton").click(function ()
+        window.setTimeout(() =>
         {
-            self.log("Save Config");
-
-            self.saveAll();
-
-            /*
-           
-
-            self.config.story_search_depth = Number(self.settingsElements['story_search_depth'].val());
-            self.config.mark_M_storys = self.settingsElements['mark_M_storys'].is(':checked');
-            self.config.hide_non_english_storys = self.settingsElements['hide_non_english_storys'].is(':checked');
-            self.config.hide_images = self.settingsElements['hide_images'].is(':checked');
-            self.config.hide_lazy_images = self.settingsElements['hide_lazy_images'].is(':checked');
-            self.config.disable_image_hover = self.settingsElements['disable_image_hover'].is(':checked');
-            self.config.allow_copy = self.settingsElements['allow_copy'].is(':checked');
-            self.config.disable_highlighter = self.settingsElements['disable_highlighter'].is(':checked');
-            self.config.disable_cache = self.settingsElements['disable_cache'].is(':checked');
-            self.config.disable_parahraphMenu = self.settingsElements['disable_parahraphMenu'].is(':checked');
-            self.config.disable_sync = self.settingsElements['disable_sync'].is(':checked');
-            self.config.content_width = self.settingsElements['content_width'].val();
-            self.config.color_normal = self.settingsElements['color_normal'].val();
-            self.config.color_odd_color = self.settingsElements['color_odd_color'].val();
-            self.config.color_mouse_over = self.settingsElements['color_mouse_over'].val();
-            self.config.readingHelp_enabled = self.settingsElements['readingHelp_enabled'].is(':checked');
-            self.config.readingHelp_color = self.settingsElements['readingHelp_color'].val();
-            self.config.readingHelp_backgroundColor = self.settingsElements['readingHelp_backgroundColor'].val();
-            self.config.pocket_user = self.settingsElements['pocket_user'].val();
-            self.config.pocket_password = self.settingsElements['pocket_password'].val();
-            self.config.api_checkForUpdates = self.settingsElements['api_checkForUpdates'].is(':checked');
-            self.config.api_autoIncludeNewVersion = self.settingsElements['api_autoIncludeNewVersion'].is(':checked');
-            self.config.token = self.settingsElements['token'].val();
-
-            if (self.DEBUG)
+            $(".ffnetSaveButton").click(function ()
             {
-                self.config.api_url = self.settingsElements['api_url'].find('.dataContainer').first().val();
-            }
+                self.log("Save Config");
 
-            */
-
-            if (self.parser.save_config())
-            {
-
-                self.log("Config Saved Successfully");
-            }
-            else
-            {
-                alert("Warning: An error occured while saving your Config. Your changes may not be saved! Please check the Console for more Information.");
-            }
+                self.saveAll();
 
 
-            self.gui_hide();
-        });
+                if (self.parser.save_config())
+                {
 
+                    self.log("Config Saved Successfully");
+                }
+                else
+                {
+                    alert("Warning: An error occured while saving your Config. Your changes may not be saved! Please check the Console for more Information.");
+                }
+
+
+                self.gui_hide();
+            });
+        }, 500);
 
 
 
@@ -1605,8 +1593,9 @@ class GUIHandler extends ExtentionBaseClass
                     container.css("cursor", "auto");
                     container.removeAttr("title")
                         .unbind();
+                    container.find('input[type="radio"]').show();
 
-                });
+                }).find('input[type="radio"]').hide();
 
         }
 
@@ -1749,11 +1738,11 @@ class GUIHandler extends ExtentionBaseClass
                             {
                                 if (Number(currentSelected.val()) === -1)
                                 {
-                                    $("#ffnet-" + UID + "-customPriorityCotainer").slideDown();
+                                    $("#ffnet-" + UID + "-customPriorityCotainer").show();
                                 }
                                 else
                                 {
-                                    $("#ffnet-" + UID + "-customPriorityCotainer").slideUp();
+                                    $("#ffnet-" + UID + "-customPriorityCotainer").hide();
                                 }
                             }
 
@@ -2120,6 +2109,8 @@ class GUIHandler extends ExtentionBaseClass
                                     .css("height", "35px")
                                     .attr('title', "Click to Edit");
 
+                                container.find('input[type="radio"]').hide();
+
                                 setTimeout(function ()
                                 {
                                     container.click(function ()
@@ -2127,6 +2118,7 @@ class GUIHandler extends ExtentionBaseClass
                                         container.css('height', 'auto');
                                         container.css("cursor", "auto");
                                         container.removeAttr("title");
+                                        container.find('input[type="radio"]').show();
 
                                     });
 

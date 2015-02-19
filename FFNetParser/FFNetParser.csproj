@@ -48,6 +48,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="standalone\Readme.md" />
+    <None Include="standalone\standaloneMap.json" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="bootstrap.d.ts" />

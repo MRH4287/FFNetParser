@@ -38,7 +38,7 @@ class Standalone
     {
         var self = this;
 
-        if (typeof(self.copy[className]) === "undefined")
+        if (typeof (self.copy[className]) === "undefined")
         {
             return;
         }
@@ -80,7 +80,7 @@ class Standalone
             this.lastHash = document.location.hash;
 
 
-            $(".navi").find("a").each ((k, el) =>
+            $(".navi").find("a").each((k, el) =>
             {
                 var element = $(el);
 
@@ -107,8 +107,15 @@ class Standalone
 
                 if (element.attr("href")[0] == "/")
                 {
-                    var link = "https://www.fanfiction.net/" + element.attr("href");
-                    element.attr("href", link);
+                    element.click((e) =>
+                    {
+                        e.preventDefault();
+
+                        document.location.href = "https://www.fanfiction.net/" + element.attr("href");
+                    });
+
+                    //var link = 
+                    //element.attr("href", link);
                 }
 
             });
@@ -143,7 +150,7 @@ class Standalone
                     this.init(this.lastHash.substr(1), false);
                 }
             }
-           
+
         }, 1000);
 
 
@@ -197,10 +204,23 @@ class Standalone
         this.parser.enableEndlessMode();
 
         this.parser.api_getStyles();
+        this.insertStyle();
 
         this.parser.GUI.BOOTSTRAP = true;
 
         this.parser.debugOptions();
+    }
+
+    public insertStyle()
+    {
+        this.getRawPageContent("ffnetStyle.css", (s) =>
+        {
+            $('<style type="text/css"></style>')
+                .text(s)
+                .appendTo($("head"));
+
+        });
+
     }
 
     /**
@@ -209,6 +229,19 @@ class Standalone
        * @param callback The callback Function
        */
     public getPageContent(url: string, callback: (page: JQuery) => void)
+    {
+        this.getRawPageContent(url, (s) =>
+        {
+            callback($(s));
+        });
+    }
+
+   /**
+    * Loads the Content of a Page  and returns the Data as string
+    * @param url The Request URI
+    * @param callback The callback Function
+    */
+    public getRawPageContent(url: string, callback: (page: string) => void)
     {
         if (this.DEBUG)
         {
@@ -219,12 +252,9 @@ class Standalone
 
         $.get(url, function (content)
         {
-            var data = $(content);
-
-            callback(data);
+            callback(content);
         });
-
-
     }
+
 
 }

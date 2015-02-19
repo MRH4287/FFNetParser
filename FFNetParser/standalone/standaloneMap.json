@@ -1,0 +1,6 @@
+{
+	"/start.html": "http://private.mrh-development.de/ff/build/standalone/start.html",
+	"/Standalone.pack.js": "http://private.mrh-development.de/ff/build/standalone/Standalone.pack.js",
+	"/style.css": "http://private.mrh-development.de/ff/build/standalone/style.css",
+	"/ffnetStyle.css": "http://private.mrh-development.de/ff/build/standalone/ffnetStyle.css"
+}
