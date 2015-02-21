@@ -275,7 +275,7 @@ module.exports = function (grunt)
         {
             options:
             {
-                timeout: 5000
+                timeout: 30000
             },
             all: ['test/*.html']
         },
