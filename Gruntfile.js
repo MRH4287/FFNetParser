@@ -26,6 +26,7 @@ module.exports = function (grunt)
             'build/LiveChatHandler.js',
             'build/UpgradeHandler.js',
             'build/EventHandler.js',
+            'build/UserHandler.js',
             'build/GithubAPI.js'
         ],
         filesToPack:

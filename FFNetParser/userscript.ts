@@ -27,7 +27,7 @@ class StoryParser
     /**
      * Print all Events to the console.
      */
-    public VERBOSE: boolean = true;
+    public VERBOSE: boolean = false;
 
     /**
      * Do not use a stored Version from the Auto Updater.
@@ -50,6 +50,11 @@ class StoryParser
      * A stored version of the Script is used
      */
     public LOAD_INTERNAL: boolean = false;
+
+    /**
+     *  The Event-Handler used for processing
+     */
+    public eventHandler: EventHandler = new EventHandler(this);
 
     /**
      * Module used for the GUI
@@ -77,9 +82,10 @@ class StoryParser
     public githubAPi: GithubAPI = new GithubAPI(this);
 
     /**
-     *  The Event-Handler used for processing
+     * The System used to handle Usernames
      */
-    public eventHandler: EventHandler = new EventHandler(this);
+    public userHandler: UserHandler = new UserHandler(this);
+
 
 
     /**

@@ -62,7 +62,7 @@ class EventHandler
 
         if (this.main.VERBOSE)
         {
-            console.log("Event Called: ", { name: event, sender: sender, arguments: arguments, heared: !unheared });
+            console.log("Event Called: "+event+" - ", { name: event, sender: sender, arguments: arguments, heared: !unheared });
         }
 
 
