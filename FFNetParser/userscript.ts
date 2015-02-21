@@ -11,8 +11,9 @@
 /// <reference path="ExtentionBaseClass.ts" /> 
 /// <reference path="UpgradeHandler.ts" /> 
 /// <reference path="GithubAPI.ts" /> 
+/// <reference path="EventHandler.ts" /> 
 
-/// <reference path="GameEngine/Interfaces/GameHandler.d.ts" /> 
+/*// <reference path="GameEngine/Interfaces/GameHandler.d.ts" /> */
 
 
 class StoryParser
@@ -22,6 +23,11 @@ class StoryParser
      * Can be enabled with a Config option or when a dev Version is used.
      */
     public DEBUG: boolean = false;
+
+    /**
+     * Print all Events to the console.
+     */
+    public VERBOSE: boolean = true;
 
     /**
      * Do not use a stored Version from the Auto Updater.
@@ -69,6 +75,11 @@ class StoryParser
      *  The API used for connecting to Github
      */
     public githubAPi: GithubAPI = new GithubAPI(this);
+
+    /**
+     *  The Event-Handler used for processing
+     */
+    public eventHandler: EventHandler = new EventHandler(this);
 
 
     /**
@@ -364,6 +375,8 @@ class StoryParser
      */
     constructor()
     {
+        this.eventHandler.callEvent("preInit", this, null);
+
         var self = this;
 
         var isNested = this.IGNORE_NEW_VERSION;
@@ -412,6 +425,7 @@ class StoryParser
         {
             // Check for new Version
             var data = this.loadFromMemory(localStorage, "ffnet-Script");
+
             if (typeof(data.script) !== "undefined")
             {
                 if (this.DEBUG)
@@ -470,7 +484,10 @@ class StoryParser
         {
             // Checks if sessionStorage entry is valid:
             this.storyCache = this.loadFromMemory(sessionStorage, this.config.storage_key);
+            this.eventHandler.callEvent("onStoryCacheLoad", this, this.storyCache);
+
             this.dataConfig = this.loadFromMemory(sessionStorage, this.config.dataStorage_key);
+            this.eventHandler.callEvent("onDataConfigLoad", this, this.dataConfig);
 
         } catch (ex)
         {
@@ -482,6 +499,7 @@ class StoryParser
         try
         {
             this.config = this.loadFromMemory(localStorage, this.config.config_key);
+            this.eventHandler.callEvent("onConfigLoad", this, this.config);
 
         } catch (ex)
         {
@@ -571,12 +589,15 @@ class StoryParser
         {
             window.setTimeout(function ()
             {
+                self.eventHandler.callEvent("onChromeSync", self, null);
                 console.info("Load Config from Chrome Server");
 
                 // Load Config from the Chrome Server:
                 chrome.storage.sync.get(function (result: Config)
                 {
                     self.log("Got Data from Chrome Server: ", result);
+
+                    self.eventHandler.callEvent("onChromeSyncDataReceived", self, result);
 
                     $.each(self.config, function (name, oldValue)
                     {
@@ -597,6 +618,8 @@ class StoryParser
                 {
                     return;
                 }
+
+                self.eventHandler.callEvent("onChromeSyncChange", self, [changes, namespace]);
 
                 $.each(changes, function (key, storageChange)
                 {
@@ -742,6 +765,8 @@ class StoryParser
 
         window.setTimeout(function ()
         {
+            self.eventHandler.callEvent("preParapgraphCheck", self, null);
+
             // Check if a Paragraph is given in the current request:
             var reg = new RegExp(".+#paragraph=([0-9]+)");
             if (reg.test(location.href))
@@ -754,11 +779,15 @@ class StoryParser
 
         setTimeout(function ()
         {
+            self.eventHandler.callEvent("preMessageCheck", self, null);
+
             // Get Messages from Server:  
             if (typeof (self.dataConfig['messages']) === "undefined")
             {
                 self.api_GetMessages(function (messages)
                 {
+                    self.eventHandler.callEvent("onMessageGot", self, messages);
+
                     if ((typeof(messages.Messages) !== "undefined") && (messages.Messages.length > 0))
                     {
                         // New Messages:
@@ -784,6 +813,7 @@ class StoryParser
 
         }, 5000);
 
+        this.eventHandler.callEvent("postInit", this, null);
     }
 
     /**
@@ -791,6 +821,8 @@ class StoryParser
      */
     private updateGUI()
     {
+        this.eventHandler.callEvent("preGUIUpdate", this, null);
+
         // Updates Content_width
         $('#content_wrapper').css('width', this.config['content_width']);
 
@@ -804,6 +836,8 @@ class StoryParser
             {
                 console.log("Adds User Interface");
             }
+
+            this.eventHandler.callEvent("preGUIMenuAppend", this, table);
 
             // Add User Interface
             table.append(
@@ -827,6 +861,8 @@ class StoryParser
                     .attr('title', self._('Open The Filter Collection'))
                 );
 
+            this.eventHandler.callEvent("postGUIMenuAppend", this, table);
+
         }
 
         // Add Messages Menu:
@@ -837,6 +873,7 @@ class StoryParser
 
         if (menulinks.length > 0)
         {
+            this.eventHandler.callEvent("preGUIMessageMenuAppend", this, menulinks);
 
             var imageContainer = $("<div></div>")
                 .css("display", "inline-block")
@@ -963,7 +1000,7 @@ class StoryParser
 
             innerContainer.append(liveChatContainer);
 
-
+            this.eventHandler.callEvent("postGUIMessageMenuAppend", this, menulinks);
 
             // Message Menu End
 
@@ -971,6 +1008,7 @@ class StoryParser
 
             if (!this.config.disable_parahraphMenu)
             {
+                this.eventHandler.callEvent("preGUIStoryReminderAppend", this, menulinks);
 
                 var sRImageContainer = $("<div></div>")
                     .css("display", "inline-block")
@@ -1055,7 +1093,7 @@ class StoryParser
 
                 });
 
-
+                this.eventHandler.callEvent("postGUIStoryReminderAppend", this, menulinks);
 
             }
 
@@ -1070,24 +1108,13 @@ class StoryParser
         }
 
 
-        if (this.DEBUG)
-        {
-            /*
-            $('.zui').last().append(
-                $('<a></a>').addClass('menu-link').html('Test - Feature').attr('href', '#').click(function(e)
-                {
-                    _loadNextPage();
-
-                }).attr('title', 'Test Feature')
-            );
-            */
-        }
-
         // Add GUI for "Only Mode":
         var container = $("#filters > form > .modal-body");
 
         if (container.length > 0)
         {
+            this.eventHandler.callEvent("preGUIOnlyModeAppend", this, container);
+
             if (this.DEBUG)
             {
                 console.log('Add GUI for "Only Mode"');
@@ -1140,12 +1167,16 @@ class StoryParser
             container.find("select").not(".filter_select_negative ").last().after(input);
 
             input.before("&nbsp;");
+
+            this.eventHandler.callEvent("postGUIOnlyModeAppend", this, container);
         }
 
         // Key Control for Page:
 
         $("body").keydown(function (event)
         {
+            self.eventHandler.callEvent("onKeyDown", self, event);
+
             var container = $("#content_wrapper_inner").find("center").last();
             var current = container.find("b").first();
             var url = null;
@@ -1205,39 +1236,7 @@ class StoryParser
 
         });
 
-
-        // Endless Mode --- DEBUG-Mode
-        if (self.DEBUG)
-        {
-            // This is unfinished and should not be used ....
-            /*
-            if ($(".z-list").length > 0)
-            {
-
-                $(".z-list").first().before(
-                    $("<a></a>").html("LoadPrevPage")
-                    .attr("href", "#")
-                    .click(function (e)
-                    {
-                        _loadPrevPage();
-
-                        //e.preventDefault();
-                    })
-                );
-
-                $(".z-list").last().after(
-                    $("<a></a>").html("LoadNextPage")
-                    .attr("href", "#")
-                    .click(function (e)
-                    {
-                        _loadNextPage();
-
-                        //e.preventDefault();
-                    })
-                );
-            }
-            */
-        }
+        this.eventHandler.callEvent("postGUIUpdate", this, null);
 
     }
 
@@ -1252,6 +1251,8 @@ class StoryParser
         {
             return;
         }
+
+        this.eventHandler.callEvent("preReadList", this, null);
 
         // Wrap Content:
         var wrapper = this.createPageWrapper();
@@ -1279,6 +1280,9 @@ class StoryParser
             this.manageReadChaptersInfo();
 
         }
+
+        this.eventHandler.callEvent("postReadList", this, null);
+
     }
 
     /**
@@ -1318,6 +1322,9 @@ class StoryParser
         {
             return;
         }
+
+        this.eventHandler.callEvent("preRead", this, container);
+
         var page = Number(container.attr("data-page"));
 
         this.log("Read List for Page: ", page);
@@ -1338,6 +1345,8 @@ class StoryParser
         elements.each(function (k, e)
         {
             var element = $(e);
+
+            self.eventHandler.callEvent("preElementParse", self, element);
 
             // Reset Hide:
             element.show();
@@ -1570,7 +1579,7 @@ class StoryParser
 
             self.doParse(requestQueue, page);
 
-
+            self.eventHandler.callEvent("postElementParse", self, element);
         });
 
         self.manageReadChaptersInfo();
@@ -1655,6 +1664,8 @@ class StoryParser
             }
 
         }, 1000);
+
+        this.eventHandler.callEvent("postRead", this, container);
     }
 
 
@@ -2048,6 +2059,8 @@ class StoryParser
      */
     private elementCallback(self: StoryParser, config: MarkerConfig, element: JQuery, textEl: JQuery, headline: string, info: StoryInfo, page: number)
     {
+        this.eventHandler.callEvent("preElementCallback", this, [config, element, textEl, headline, info, page]);
+
         var isStory = $(".storytext").length > 0;
         var isStoryText = element.is(".storytext");
 
@@ -2313,9 +2326,11 @@ class StoryParser
 
             }
 
-        }
+        }    
 
         self.updateList(page);
+
+        this.eventHandler.callEvent("postElementCallback", this, [config, element, textEl, headline, info, page]);
     }
 
 
@@ -2326,6 +2341,8 @@ class StoryParser
         {
             console.info("Highlight Element Found: ", element);
         }
+
+        this.eventHandler.callEvent("preHighlighterCallback", this, [config, element, link, page]);
 
         // Collect Data:
         var mod: ModificationBase;
@@ -2508,6 +2525,9 @@ class StoryParser
 
             self.updateList(page);
         }
+  
+        this.eventHandler.callEvent("postHighlighterCallback", this, [config, element, link, page]);
+
     }
 
 
@@ -2517,6 +2537,8 @@ class StoryParser
     private updateList(page: number)
     {
         var wrapper = this.wrapperList[page];
+
+        this.eventHandler.callEvent("preUpdateList", this, [page, wrapper]);
 
         if (typeof (wrapper) === "undefined")
         {
@@ -2632,6 +2654,8 @@ class StoryParser
         }
 
         wrapper.prepend(list);
+
+        this.eventHandler.callEvent("postUpdateList", this, [page, wrapper]);
     }
 
     /**
@@ -2784,6 +2808,8 @@ class StoryParser
             return;
         }
 
+        this.eventHandler.callEvent("preReadStory", this, storyElements);
+
         var self = this;
 
         var handleElement = function (element: JQuery)
@@ -2879,7 +2905,7 @@ class StoryParser
             handleElement(element);
         });
 
-
+        this.eventHandler.callEvent("postReadStory", this, storyElements);
     }
 
 
@@ -4609,6 +4635,8 @@ class StoryParser
         var timeout = this.config.api_timeout;
         var retrys = this.config.api_retries;
 
+        this.eventHandler.callEvent("preAPIRequest", this, data);
+
         var self = this;
 
         if (this.useCORS)
@@ -4630,6 +4658,8 @@ class StoryParser
                     self.log("Got Result from Server: ", result);
 
                     var data = result.Data[0].Value;
+
+                    self.eventHandler.callEvent("onAPIResult", this, data);
 
                     callback(data);
 
@@ -4691,6 +4721,8 @@ class StoryParser
 
                     // Clear last Result
                     delete sessionStorage[apiLookupKey + messageID];
+
+                    this.eventHandler.callEvent("onAPIResult", this, result);
 
                     callback(result);
 
@@ -5682,6 +5714,33 @@ class StoryParser
                 console.info(a, b, c);
             }
         }
+    }
+
+    /**
+     * Executa a function with all Debug Messages
+     * @param data Funcion to execute
+     */
+    public execVerbose(data: () => void)
+    {
+        this.VERBOSE = true;
+        data();
+        this.VERBOSE = false;
+    }
+
+    /**
+     * Activate full Debug Messages for a certain time
+     * @param time Duration of full Debug Log
+     */
+    public activateVerbose(time: number = 500)
+    {
+        this.VERBOSE = true;
+
+        var self = this;
+        window.setTimeout(function ()
+        {
+            self.VERBOSE = false;
+        }, time);
+
     }
 
 

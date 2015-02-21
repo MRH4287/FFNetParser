@@ -75,6 +75,7 @@
     <TypeScriptCompile Include="standalone\Standalone.ts" />
     <TypeScriptCompile Include="Types.ts" />
     <TypeScriptCompile Include="UpgradeHandler.ts" />
+    <TypeScriptCompile Include="UserHandler.ts" />
     <TypeScriptCompile Include="userscript.ts" />
     <TypeScriptCompile Include="jquery.colorpicker.d.ts" />
     <TypeScriptCompile Include="jquery.d.ts" />

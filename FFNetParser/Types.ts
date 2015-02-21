@@ -170,6 +170,14 @@ interface StoryInfo
     element?: JQuery;
 }
 
+interface EventData
+{
+    callbacks:
+    {
+        (sender: any, arguments: any): void;
+    }[]
+}
+
 
 // -----  GUI Elements --------
 
