@@ -4041,7 +4041,7 @@ class GUIHandler extends ExtentionBaseClass
                 var text = input.val();
                 input.val("");
 
-                addMessageElement(self.config.token, text, (new Date()).toLocaleTimeString());
+                //addMessageElement(self.config.token, text, (new Date()).toLocaleTimeString());
                 self.parser.chat.sendChatMessage(text);
 
             };

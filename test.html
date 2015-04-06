@@ -2,11 +2,12 @@
 <html>
     <head>
         <title>FFNet-Parser Test Page</title>
-        <link rel='stylesheet' href='//fast-fictionpressllc.netdna-ssl.com/static/styles/xss21.css'>
-        <link rel='stylesheet' href='style.css'>
+        <!--<link rel='stylesheet' href='//fast-fictionpressllc.netdna-ssl.com/static/styles/xss21.css'>
+        <link rel='stylesheet' href='style.css'> -->
     </head>
     <body>
 
+        <!--
         <div>
             <div class="zui">
                 <table>
@@ -110,41 +111,77 @@
         <script>
 
         </script>
-
-        <script type="text/javascript">
-            /*
-            $(document).ready(function ()
-            {
-                $(".navi").find("a").each(function (k, el)
-                {
-                    el = $(el);
-
-                    if (el.attr("href")[0] == "/")
-                    {
-                        var link = "?branch=master&url=" + "" + encodeURIComponent(el.attr("href"));
-                        el.attr("href", link);
-                    }
-
-                });
-
-                $(".z-list").find("a").each(function (k, el)
-                {
-                    el = $(el);
-                    if (el.attr("href")[0] == "/")
-                    {
-                        var link = "https://www.fanfiction.net/" + el.attr("href");
-                        el.attr("href", link);
-                    }
-
-                });
-
-            });
-            */
-
-        </script>
+            -->
+        
+        <span  style="margin:0; padding:0; background-color:rgb(255, 0, 0)">R</span>
+        <span style="margin:0; padding:0; background-color:rgb(255, 106, 0)">O</span>
+        <span style="margin:0; padding:0; background-color:rgb(250, 237, 1)">Y</span>
+        <span style="margin:0; padding:0; background-color:rgb(0, 255, 0)">G</span>
+        <span style="margin:0; padding:0; background-color:rgb(0, 0, 255)">B</span>
+        <span style="margin:0; padding:0; background-color:rgb(75, 0, 130)">I</span>
+        <span style="margin:0; padding:0; background-color:rgb(125, 0, 255)">V</span>
 
 
         <script type="text/javascript" src="ffnetlist.user.js"></script>
+
+        <script type="text/javascript">
+            
+
+
+            function doRainbow(element)
+            {
+                var colors = [
+                    [255, 0, 0], //Red
+                    [255, 62, 0], 
+                    [255, 106, 0], // Orange
+                    [255, 171, 0], 
+                    [250, 237, 0], // Yellow
+                    [80, 205, 0],
+                    [0, 255, 0], // Green
+                    [0, 144, 230],
+                    [0, 0, 255], // Blue
+                    [67, 0, 218],
+                    [75, 0, 130], // Indigo
+                    [41, 0, 68],
+                    [125, 0, 255] // Violet
+                ];
+
+                var text = element.text();
+
+                var length = text.length;
+                var elementCount =  Math.ceil(length / colors.length);
+                
+                console.log("Length: " + length + " - elementcount: " + elementCount);
+
+                var container = $("<div></div>");
+
+                for (var i = 0; i < text.length; i++)
+                {
+                    var currentColor = Math.floor(i / elementCount);
+                    console.log("CurrentColor", currentColor);
+
+                    var color = colors[currentColor % colors.length];
+                    console.log("Color", color);
+
+                    container.append(
+                            $("<span></span>")
+                                .text(text[i])
+                                .css("color", "rgb(" + color[0] +", " + color[1] + ", " + color[2])
+                        );
+
+                }
+
+                element.html(container[0].innerHTML);
+
+            }
+
+
+
+        </script>
+
+        <div class="test">DasIstEinLangerTest</div>
+
+        <!---->
     </body>
 
 

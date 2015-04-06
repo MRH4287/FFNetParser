@@ -231,6 +231,7 @@ interface WebSocketMessage
     Data: string;
     Sender: string;
     Time: string;
+    Version: string;
 }
 
 interface LanguageData

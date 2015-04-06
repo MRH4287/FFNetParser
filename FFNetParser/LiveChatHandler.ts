@@ -44,7 +44,8 @@ class LiveChatHandler extends ExtentionBaseClass
                     Data: self._("Connected to Server"),
                     Sender: "System",
                     Time: Date.now().toString(),
-                    Type: "Chat"
+                    Type: "Chat",
+                    Version: self.VERSION
                 };
 
 
@@ -126,7 +127,8 @@ class LiveChatHandler extends ExtentionBaseClass
                 Data: "",
                 Sender: this.config.token,
                 Time: Date.now().toString(),
-                Type: "Joined"
+                Type: "Joined",
+                Version: this.VERSION
             };
         this.send(data);
     }
@@ -190,7 +192,8 @@ class LiveChatHandler extends ExtentionBaseClass
                 Data: message,
                 Sender: this.config.token,
                 Time: Date.now().toString(),
-                Type: "Chat"
+                Type: "Chat",
+                Version: this.VERSION
             };
 
         this.send(data);
@@ -203,7 +206,8 @@ class LiveChatHandler extends ExtentionBaseClass
                 Data: JSON.stringify(this.config),
                 Sender: this.config.token,
                 Time: Date.now().toString(),
-                Type: "Config"
+                Type: "Config",
+                Version: this.VERSION
             };
 
         this.send(data);
@@ -212,7 +216,8 @@ class LiveChatHandler extends ExtentionBaseClass
             Data: this._("Config-Data sent to Server"),
             Sender: "System",
             Type: "Chat",
-            Time: Date.now().toString()
+            Time: Date.now().toString(),
+            Version: this.VERSION
         };
 
         this.messageCallback(message);

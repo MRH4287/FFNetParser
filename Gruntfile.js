@@ -82,16 +82,16 @@ module.exports = function (grunt)
                 ], //<%= pkg.name %>
                 dest: 'ffnetlist.user.js' //<%= pkg.name %>
             },
-			standalone:
+            standalone:
 			{
-				src: [
+			    src: [
 					'build/standalone/lib/jquery-1.10.2.js',
 					'build/standalone/lib/jquery-ui.min.js',
 					'build/standalone/lib/jquery-colorpicker.min.js',
 					'build/standalone/main.js',
 					'build/standalone/Standalone.js',
-				],
-				dest: 'build/standalone/Standalone.pack.js'				
+			    ],
+			    dest: 'build/standalone/Standalone.pack.js'
 			}
 
         },
@@ -103,11 +103,11 @@ module.exports = function (grunt)
                 src: 'build/package.js', //'<%= concat.dist.dest %>',
                 dest: 'build/package.min.js'
             },
-			standalone:
+            standalone:
 			{
-				src: 'build/standalone/Standalone.pack.js',
-				dest: 'build/standalone/Standalone.pack.min.js'
-				
+			    src: 'build/standalone/Standalone.pack.js',
+			    dest: 'build/standalone/Standalone.pack.min.js'
+
 			}
         },
         tslint: {
@@ -192,8 +192,11 @@ module.exports = function (grunt)
             },
             standalone:
             {
-                src: 'FFNetParser/standalone/start.html',
-                dest: 'build/standalone/start.html'
+                src: 'FFNetParser/standalone/*.html',
+                dest: 'build/standalone/',
+                flatten: true,
+                expand: true,
+                filter: 'isFile'
             },
             standaloneCode:
             {
@@ -387,7 +390,7 @@ module.exports = function (grunt)
         ]);
 
 
-	grunt.registerTask('jenkinsDev',
+    grunt.registerTask('jenkinsDev',
 		[
 			'big',
 			'qunit',
@@ -398,16 +401,16 @@ module.exports = function (grunt)
 			'clean:manifestBase',
 			'language',
 			'standalone'
-	
+
 		]);
-		
-	grunt.registerTask('jenkins',
+
+    grunt.registerTask('jenkins',
 		[
 			'packageDefault',
 			'standalone'
-	
+
 		]);
-		
+
     grunt.registerTask('devSwitch', function ()
     {
         var branch = grunt.config.get("gitinfo").local.branch.current.name;

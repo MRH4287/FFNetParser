@@ -197,6 +197,10 @@ class Standalone
     {
         this.parser = new StoryParser();
 
+        // Fix Chrome Sync Bug:
+        this.parser.config.chrome_sync = false;
+
+
         //this.parser.readList();
         this.parser.enablePocketSave();
         this.parser.enableInStoryHighlighter();
@@ -236,16 +240,16 @@ class Standalone
         });
     }
 
-   /**
-    * Loads the Content of a Page  and returns the Data as string
-    * @param url The Request URI
-    * @param callback The callback Function
-    */
+    /**
+     * Loads the Content of a Page  and returns the Data as string
+     * @param url The Request URI
+     * @param callback The callback Function
+     */
     public getRawPageContent(url: string, callback: (page: string) => void)
     {
         if (this.DEBUG)
         {
-            console.log("Requesting next page: ", url);
+            console.log("Requesting page: ", url);
         }
 
         var self = this;
@@ -254,6 +258,183 @@ class Standalone
         {
             callback(content);
         });
+    }
+
+    // ***************** Categories Page ************
+
+    /**
+     * Loads the Categories from the Server
+     * @param callback Callback with Result
+     */
+    public getCategories(callback: (data: { [index: string]: { name: string; url: string }[] }) => void)
+    {
+        var self = this;
+
+        this.getPageContent(this.BasePath, function (el)
+        {
+            var result: { [index: string]: { name: string; url: string }[] } = {};
+            var cats = el.find(".tcat");
+
+            cats.each(function (_, elem)
+            {
+                var cat = $(elem);
+                var title = cat.find("b").last().text();
+
+                result[title] = [];
+
+                var childs = cat.next().find("td");
+                childs.each(function (_, elem)
+                {
+                    var child = $(elem);
+                    var link = child.find("a");
+
+                    result[title].push({
+                        name: link.text(),
+                        url: link.attr("href")
+                    });
+
+                });
+            });
+
+            callback(result);
+
+        });
+    }
+
+    /**
+     * Creates the content for the Categories Page
+     */
+    public manageCategories()
+    {
+        var self = this;
+
+        this.getCategories(function (result)
+        {
+            console.log(result);
+
+            $(".categoriesContainer").html("");
+
+            $.each(result, function (name: string, elements: { name: string; url: string }[])
+            {
+                var rowContainer = $('<div clas="row"></div>').appendTo('.categoriesContainer');
+
+                $('<div class="col-md-12" style="background-color: #f5f5f5"><h2>' + name + '</h2></div>').appendTo(rowContainer);
+
+                $.each(elements, function (_, element: { name: string; url: string })
+                {
+                    var container = $('<div class="col-md-6"></div>').appendTo(rowContainer);
+
+                    container.append(
+                        $('<button class="btn btn-default" style="width:100%"></button>').text(element.name)
+                            .click(function (e)
+                            {
+                                e.preventDefault();
+
+                                document.location.href = "elements.html?cat=" + element.url;
+                            })
+                        );
+
+
+                });
+            });
+
+
+        });
+    }
+
+    // ************ Elements *************
+
+    public getElements(url: string, callback: (name: string, data: { name: string; url: string; count: string; }[] ) => void)
+    {
+        var self = this;
+        this.getPageContent(this.BasePath + url, function (res)
+        {
+            var result: { name: string; url: string; count: string; }[] = [];
+            var elements = res.find("#list_output").find("div");
+
+            elements.each(function (_, el)
+            {
+                var element = $(el);
+
+                result.push({
+                    name: element.find("a").text(),
+                    url: element.find("a").attr('href'),
+                    count: element.find('span').text()
+                });
+
+            });
+
+            callback(res.find("#content_wrapper_inner").find("td").first().text().trim(), result);
+        });
+    }
+
+    public manageElements()
+    {
+        var url = this.getSearchString("cat");
+
+        console.log("cat: ", url);
+
+        if (url !== undefined)
+        {
+            var self = this;
+
+            this.getElements(url, function (name, elements)
+            {
+                $(".elementsContainer").html('');
+
+                var body = $('<tbody></tbody>');
+
+                $('<table class="table" style="width:90%"><thead><tr><th>Name</th><th>Stories</th></tr></thead></table>').append(body).appendTo(".elementsContainer");
+
+                $.each(elements, function (_, element: { name: string; url: string; count: string; })
+                {
+                    var tr = $('<tr></tr').appendTo(body);
+
+                    tr.append($('<td></td>').append(
+                        $('<button class="btn btn-default" style="width:100%"></button>').click(
+                            function (e)
+                            {
+                                e.preventDefault();
+
+                                if (element.url.indexOf("crossovers") !== -1)
+                                {
+                                    document.location.href = "elements.html?cat=" + element.url;
+                                }
+                                else
+                                {
+                                    document.location.href = "start.html#" + element.url;
+                                }
+
+                                
+
+                            }).text(element.name)
+                        )
+                        ).append($('<td></td>').text(element.count));
+
+                });
+            });
+
+        } else
+        {
+            $(".elementsContainer").html('<h1>Please don\'t open this Page directly! Redirecting ...');
+
+            window.setTimeout(function ()
+            {
+                document.location.href = "categories.html";
+
+            }, 1000);
+        }
+
+
+    }
+
+    public getSearchString(key: string): string
+    {
+        var regEx = new RegExp(key + '=' + '(.+)', "i");
+        var groups = regEx.exec(document.location.search);
+
+
+        return (groups !== null) ?  groups[1] : undefined;
     }
 
 

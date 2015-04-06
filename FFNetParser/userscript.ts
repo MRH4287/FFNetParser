@@ -12,6 +12,7 @@
 /// <reference path="UpgradeHandler.ts" /> 
 /// <reference path="GithubAPI.ts" /> 
 /// <reference path="EventHandler.ts" /> 
+/// <reference path="UserHandler.ts" /> 
 
 /*// <reference path="GameEngine/Interfaces/GameHandler.d.ts" /> */
 
