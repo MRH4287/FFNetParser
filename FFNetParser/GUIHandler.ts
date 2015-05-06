@@ -461,7 +461,7 @@ class GUIHandler extends ExtentionBaseClass
 
                     customOptions: function (el)
                     {
-                        if (typeof(chrome) === "undefined")
+                        if ((typeof (chrome) === "undefined") || (typeof (chrome.runtime) === "undefined"))
                         {
                             el.parent().parent().remove();
                         }
@@ -703,7 +703,7 @@ class GUIHandler extends ExtentionBaseClass
                     customOptions: function (element)
                     {
                         // Only Check if the Script is not loaded over Chrome!
-                        if (typeof (chrome) !== "undefined")
+                        if ((typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined"))
                         {
                             element.removeProp("checked").prop("disabled", "disabled").attr("title", self._("The Update-Feature is disabled in the Chrome Version. " +
                                 "Chrome updates the Script for you! If you have problems, please send me a Message."));
@@ -826,7 +826,7 @@ class GUIHandler extends ExtentionBaseClass
                     value: function () { return self.config.chrome_sync; },
                     customOptions: function (el)
                     {
-                        if (typeof(chrome) === "undefined")
+                        if ((typeof (chrome) === "undefined") || (typeof (chrome.runtime) === "undefined"))
                         {
                             el.prop("disabled", true).attr("title", self._("Only available in Chrome"));
                         }

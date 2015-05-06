@@ -88,6 +88,7 @@
     <Content Include="GameEngine\run.js" />
     <Content Include="includeTemplate.js" />
     <Content Include="standalone\categories.html" />
+    <Content Include="standalone\elements.html" />
     <Content Include="standalone\Server.js" />
     <Content Include="standalone\start.html" />
   </ItemGroup>

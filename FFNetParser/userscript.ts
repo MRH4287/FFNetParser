@@ -360,7 +360,7 @@ class StoryParser
      */
     public defaultConfig()
     {
-        if (typeof(this.config["token"]) === "undefined")
+        if (typeof (this.config["token"]) === "undefined")
         {
             // Generates Random Token
             this.config["token"] = Math.random().toString().split(".")[1];
@@ -433,7 +433,7 @@ class StoryParser
             // Check for new Version
             var data = this.loadFromMemory(localStorage, "ffnet-Script");
 
-            if (typeof(data.script) !== "undefined")
+            if (typeof (data.script) !== "undefined")
             {
                 if (this.DEBUG)
                 {
@@ -514,7 +514,7 @@ class StoryParser
         }
 
         // Check for DEBUG-Mode
-        if ((typeof(this.config['debug']) !== "undefined") || (this.BRANCH === "dev"))
+        if ((typeof (this.config['debug']) !== "undefined") || (this.BRANCH === "dev"))
         {
             this.DEBUG = true;
         }
@@ -522,17 +522,17 @@ class StoryParser
 
         // Check for Config Values:
 
-        if ((typeof(this.config["pocket_user"]) === "undefined") || (this.config["pocket_user"] === ""))
+        if ((typeof (this.config["pocket_user"]) === "undefined") || (this.config["pocket_user"] === ""))
         {
             this.config["pocket_user"] = null;
         }
 
-        if ((typeof(this.config["pocket_password"]) === "undefined") || (this.config["pocket_password"] === ""))
+        if ((typeof (this.config["pocket_password"]) === "undefined") || (this.config["pocket_password"] === ""))
         {
             this.config["pocket_password"] = null;
         }
 
-        if (typeof(this.config["token"]) === "undefined")
+        if (typeof (this.config["token"]) === "undefined")
         {
             // Generates Random Token
             this.config["token"] = Math.random().toString().split(".")[1];
@@ -540,10 +540,10 @@ class StoryParser
         }
 
 
-        if (typeof(this.config["api_autoIncludeNewVersion"]) === "undefined")
+        if (typeof (this.config["api_autoIncludeNewVersion"]) === "undefined")
         {
             // Only Check if the Script is not loaded over Chrome!
-            if (typeof(chrome) === "undefined")
+            if ((typeof (chrome) === "undefined") || (typeof (chrome.runtime) === "undefined"))
             {
 
                 // Creates Warning for new Feature:
@@ -592,7 +592,7 @@ class StoryParser
 
 
         // Google Storage Sync:
-        if ((typeof(chrome) !== "undefined") && (this.config.chrome_sync))
+        if ((typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined") && (this.config.chrome_sync))
         {
             window.setTimeout(function ()
             {
@@ -608,7 +608,7 @@ class StoryParser
 
                     $.each(self.config, function (name, oldValue)
                     {
-                        if (typeof(result[name]) !== "undefined")
+                        if (typeof (result[name]) !== "undefined")
                         {
                             self.log("Key: '" + name + "'", oldValue, result[name]);
 
@@ -682,7 +682,7 @@ class StoryParser
         // Load all the config Values that are listed in the _config Array at startup
         $.each(defaultConfig, function (name, defaultValue)
         {
-            if (typeof(self.config[name]) === "undefined")
+            if (typeof (self.config[name]) === "undefined")
             {
                 self.config[name] = defaultValue;
             }
@@ -744,7 +744,7 @@ class StoryParser
         */
 
         // Check if the current Context is a Chrome Extention, if yes it is loaded over this system:
-        if (typeof(chrome) === "undefined")
+        if ((typeof (chrome) === "undefined") || (typeof (chrome.runtime) === "undefined"))
         {
             // Use this because of the new HTTPS Restrictions ...
             this.api_getStyles();
@@ -795,7 +795,7 @@ class StoryParser
                 {
                     self.eventHandler.callEvent("onMessageGot", self, messages);
 
-                    if ((typeof(messages.Messages) !== "undefined") && (messages.Messages.length > 0))
+                    if ((typeof (messages.Messages) !== "undefined") && (messages.Messages.length > 0))
                     {
                         // New Messages:
                         self.dataConfig['messages'] = messages.Messages;
@@ -960,7 +960,7 @@ class StoryParser
 
             var count = 0;
 
-            if (typeof(this.dataConfig['messages']) !== "undefined")
+            if (typeof (this.dataConfig['messages']) !== "undefined")
             {
                 count = this.dataConfig['messages'].length;
             }
@@ -1006,6 +1006,17 @@ class StoryParser
             }
 
             innerContainer.append(liveChatContainer);
+
+            innerContainer.append(
+                $("<div>" + self._('Wiki') + "</div>")
+                    .addClass("menuItem")
+                    .click(function ()
+                    {
+                        messageContainer.hide();
+                        window.open("https://github.com/MRH4287/FFNetParser/wiki");
+                    })
+                );
+            //
 
             this.eventHandler.callEvent("postGUIMessageMenuAppend", this, menulinks);
 
@@ -1153,7 +1164,7 @@ class StoryParser
 
             var noneEntry = $('<option value="off">' + self._('Display: Everything') + '</option>').appendTo(input);
 
-            if (typeof(this.dataConfig["displayOnly"]) === "undefined")
+            if (typeof (this.dataConfig["displayOnly"]) === "undefined")
             {
                 noneEntry.attr("selected", "selected");
             }
@@ -1163,7 +1174,7 @@ class StoryParser
             {
                 var entry = $('<option></option>').attr('value', title).html(title).appendTo(input);
 
-                if ((typeof(self.dataConfig["displayOnly"]) !== "undefined") && (title === self.dataConfig["displayOnly"]))
+                if ((typeof (self.dataConfig["displayOnly"]) !== "undefined") && (title === self.dataConfig["displayOnly"]))
                 {
                     entry.attr("selected", "selected");
                 }
@@ -1540,7 +1551,7 @@ class StoryParser
 
 
                 // Highlighter found:
-                if (typeof(self.config['highlighter'][link]) !== "undefined")
+                if (typeof (self.config['highlighter'][link]) !== "undefined")
                 {
                     self.highlighterCallback(self, self.config.highlighter[link], element, link, page);
                 }
@@ -1553,7 +1564,7 @@ class StoryParser
                     console.log("[_read] Change Color of Line: ",element); 
                 }*/
 
-                if (typeof(self.dataConfig["displayOnly"]) !== "undefined")
+                if (typeof (self.dataConfig["displayOnly"]) !== "undefined")
                 {
                     if (self.DEBUG)
                     {
@@ -1592,9 +1603,9 @@ class StoryParser
         self.manageReadChaptersInfo();
 
         // Sort Elements:
-        if (typeof(this.config.sortFunction) !== "undefined" && this.config.sortFunction !== 'default')
+        if (typeof (this.config.sortFunction) !== "undefined" && this.config.sortFunction !== 'default')
         {
-            if (typeof(this.sortMap[this.config.sortFunction]) !== "undefined")
+            if (typeof (this.sortMap[this.config.sortFunction]) !== "undefined")
             {
                 var sortfunction = this.sortMap[this.config.sortFunction];
                 this.sortStories(sortfunction.Function, container);
@@ -1998,7 +2009,7 @@ class StoryParser
                             var sentence = "";
                             for (var i = 1; i < data.length; i++)
                             {
-                                if (typeof(data[i]) !== "undefined")
+                                if (typeof (data[i]) !== "undefined")
                                 {
                                     sentence += data[i];
                                 }
@@ -2094,7 +2105,7 @@ class StoryParser
 
         if (!isStory)
         {
-            if ((typeof(self.dataConfig["displayOnly"]) !== "undefined") && (self.dataConfig["displayOnly"] === headline))
+            if ((typeof (self.dataConfig["displayOnly"]) !== "undefined") && (self.dataConfig["displayOnly"] === headline))
             {
                 if (self.DEBUG)
                 {
@@ -2108,7 +2119,7 @@ class StoryParser
 
                 self.hidden[page] -= 1;
             }
-            else if (typeof(self.dataConfig["displayOnly"]) !== "undefined")
+            else if (typeof (self.dataConfig["displayOnly"]) !== "undefined")
             {
                 // Hide this Element because the Only Mode do not match
 
@@ -2152,7 +2163,7 @@ class StoryParser
             }
             else
             {
-                if ((typeof(config.customPriority) !== "undefined") && (config.customPriority !== null))
+                if ((typeof (config.customPriority) !== "undefined") && (config.customPriority !== null))
                 {
                     priority = config.customPriority;
                 }
@@ -2202,7 +2213,7 @@ class StoryParser
                 });
             }
 
-            if (!isStoryText && (typeof(config.image) !== "undefined") && (config.image !== null) && (config.image !== "") && (config.image !== " "))
+            if (!isStoryText && (typeof (config.image) !== "undefined") && (config.image !== null) && (config.image !== "") && (config.image !== " "))
             {
                 self.log("Adds Filter-Image to Element: ", element, config);
 
@@ -2317,9 +2328,9 @@ class StoryParser
 
 
             // Sorting
-            if (!this.config.disable_resort_after_filter_match && !isStory && typeof(this.config.sortFunction) !== "undefined" && this.config.sortFunction !== 'default')
+            if (!this.config.disable_resort_after_filter_match && !isStory && typeof (this.config.sortFunction) !== "undefined" && this.config.sortFunction !== 'default')
             {
-                if (typeof(this.sortMap[this.config.sortFunction]) !== "undefined")
+                if (typeof (this.sortMap[this.config.sortFunction]) !== "undefined")
                 {
                     var sortfunction = this.sortMap[this.config.sortFunction];
                     this.sortStories(sortfunction.Function, element.parent());
@@ -2333,7 +2344,7 @@ class StoryParser
 
             }
 
-        }    
+        }
 
         self.updateList(page);
 
@@ -2354,9 +2365,9 @@ class StoryParser
         // Collect Data:
         var mod: ModificationBase;
 
-        if ((typeof(config.prefab) !== "undefined") && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
+        if ((typeof (config.prefab) !== "undefined") && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
         {
-            if (typeof(self.config.highlighterPrefabs[config.prefab]) !== "undefined")
+            if (typeof (self.config.highlighterPrefabs[config.prefab]) !== "undefined")
             {
                 mod = self.config.highlighterPrefabs[config.prefab];
             }
@@ -2366,7 +2377,7 @@ class StoryParser
                 return;
             }
         }
-        else if ((typeof(config.custom) !== "undefined") && (config.custom !== null))
+        else if ((typeof (config.custom) !== "undefined") && (config.custom !== null))
         {
             mod = config.custom;
             mod.name = "Custom Highlighter";
@@ -2423,7 +2434,7 @@ class StoryParser
             }
             else
             {
-                if ((typeof(mod.customPriority) !== "undefined") && (mod.customPriority !== null))
+                if ((typeof (mod.customPriority) !== "undefined") && (mod.customPriority !== null))
                 {
                     priority = mod.customPriority;
                 }
@@ -2462,7 +2473,7 @@ class StoryParser
 
 
 
-            if ((typeof(mod.image) !== "undefined") && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
+            if ((typeof (mod.image) !== "undefined") && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
             {
                 var img = $("<img></img>").attr("src", mod.image)
                     .css("width", "20px")
@@ -2514,9 +2525,9 @@ class StoryParser
 
 
             // Sorting
-            if (typeof(this.config.sortFunction) !== "undefined" && this.config.sortFunction !== 'default')
+            if (typeof (this.config.sortFunction) !== "undefined" && this.config.sortFunction !== 'default')
             {
-                if (typeof(this.sortMap[this.config.sortFunction]) !== "undefined")
+                if (typeof (this.sortMap[this.config.sortFunction]) !== "undefined")
                 {
                     var sortfunction = this.sortMap[this.config.sortFunction];
                     this.sortStories(sortfunction.Function);
@@ -2532,7 +2543,7 @@ class StoryParser
 
             self.updateList(page);
         }
-  
+
         this.eventHandler.callEvent("postHighlighterCallback", this, [config, element, link, page]);
 
     }
@@ -2773,7 +2784,7 @@ class StoryParser
             return;
         }
 
-        if (typeof(current) !== "undefined")
+        if (typeof (current) !== "undefined")
         {
             currentPriority = Number(current);
         }
@@ -2979,7 +2990,7 @@ class StoryParser
         field.after(contextMenu);
 
         // Highlighter found:
-        if (typeof(this.config['highlighter'][document.location.pathname]) !== "undefined")
+        if (typeof (this.config['highlighter'][document.location.pathname]) !== "undefined")
         {
             if (this.DEBUG)
             {
@@ -2992,9 +3003,9 @@ class StoryParser
             // Collect Data:
             var mod: ModificationBase;
 
-            if ((typeof(config.prefab) !== "undefined") && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
+            if ((typeof (config.prefab) !== "undefined") && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
             {
-                if (typeof(self.config.highlighterPrefabs[config.prefab]) !== "undefined")
+                if (typeof (self.config.highlighterPrefabs[config.prefab]) !== "undefined")
                 {
                     mod = self.config.highlighterPrefabs[config.prefab];
                 }
@@ -3004,7 +3015,7 @@ class StoryParser
                     return;
                 }
             }
-            else if ((typeof(config.custom) !== "undefined") && (config.custom !== null))
+            else if ((typeof (config.custom) !== "undefined") && (config.custom !== null))
             {
                 mod = config.custom;
                 mod.name = "Custom Highlighter";
@@ -3044,7 +3055,7 @@ class StoryParser
             }
             else
             {
-                if ((typeof(mod.customPriority) !== "undefined") && (mod.customPriority !== null))
+                if ((typeof (mod.customPriority) !== "undefined") && (mod.customPriority !== null))
                 {
                     priority = mod.customPriority;
                 }
@@ -3063,7 +3074,7 @@ class StoryParser
             }
 
 
-            if ((typeof(mod.image) !== "undefined") && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
+            if ((typeof (mod.image) !== "undefined") && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
             {
                 var img = $("<img></img>").attr("src", mod.image)
                     .css("width", "20px")
@@ -3313,7 +3324,7 @@ class StoryParser
             {
                 if (!isStory)
                 {
-                    if (typeof(idELMap[id]) !== "undefined")
+                    if (typeof (idELMap[id]) !== "undefined")
                     {
                         var element = idELMap[id];
                         var textContainer = element.find(".z-padtop2").last();
@@ -3642,7 +3653,7 @@ class StoryParser
     {
         // Wrap the current Page into a PageWrapper
 
-        if (typeof(currentPage) === "undefined" || currentPage === null)
+        if (typeof (currentPage) === "undefined" || currentPage === null)
         {
             currentPage = this.getCurrentPage();
         }
@@ -3654,7 +3665,7 @@ class StoryParser
             console.log("Current Page: ", currentPage);
         }
 
-        if (elements === null || typeof(elements) === "undefined")
+        if (elements === null || typeof (elements) === "undefined")
         {
             elements = $(".z-list");
         }
@@ -3940,7 +3951,7 @@ class StoryParser
     {
         this.log("Sort Stories", sortFunction, container);
 
-        if (typeof(sortFunction) === "undefined")
+        if (typeof (sortFunction) === "undefined")
         {
             console.log("No Sort Function defined. Abort");
             return;
@@ -3969,7 +3980,7 @@ class StoryParser
 
         };
 
-        if (typeof(container) === "undefined")
+        if (typeof (container) === "undefined")
         {
             var pages = $(".ffNetPageWrapper");
 
@@ -4713,7 +4724,7 @@ class StoryParser
                     return;
                 }
 
-                if ((typeof(sessionStorage[apiLookupKey + messageID]) !== "undefined") &&
+                if ((typeof (sessionStorage[apiLookupKey + messageID]) !== "undefined") &&
                     (sessionStorage[apiLookupKey + messageID] !== "null") &&
                     sessionStorage[apiLookupKey + messageID] !== "undefined" &&
                     sessionStorage[apiLookupKey + messageID] !== null &&
@@ -4759,10 +4770,10 @@ class StoryParser
                 {
                     Version: this.VERSION,
                     Token: this.config.token,
-                    Nested: (typeof(sessionStorage["ffnet-mutex"]) !== "undefined") ? true : false,
+                    Nested: (typeof (sessionStorage["ffnet-mutex"]) !== "undefined") ? true : false,
                     Branch: this.BRANCH,
                     Page: window.location.href,
-                    Chrome: (typeof(chrome) !== "undefined"),
+                    Chrome: (typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined"),
                     Language: this.config.language
                 };
 
@@ -4787,7 +4798,7 @@ class StoryParser
                     return;
                 }
 
-                if (typeof(chrome) !== "undefined")
+                if ((typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined"))
                 {
                     self.log("Ignore Update Info on Chrome Devices");
 
@@ -4847,7 +4858,7 @@ class StoryParser
 
         };
 
-        if (typeof(this.dataConfig["styles"]) === "undefined")
+        if (typeof (this.dataConfig["styles"]) === "undefined")
         {
             this.log("Load Styles from Remote Server ...");
 
@@ -4891,7 +4902,7 @@ class StoryParser
                 {
                     var data = <{ Users: string[]; WebUsers: string[]; DevInRoom: boolean; }>JSON.parse(res);
 
-                    if (typeof(callback) !== "undefined")
+                    if (typeof (callback) !== "undefined")
                     {
                         callback(data);
                     }
@@ -4928,7 +4939,7 @@ class StoryParser
 
             self.log("Got Language List:", result);
 
-            if (typeof(callback) !== "undefined")
+            if (typeof (callback) !== "undefined")
             {
                 callback(result);
             }
@@ -4952,7 +4963,7 @@ class StoryParser
 
         if (languageCode === this.config.language)
         {
-            if (typeof(this.dataConfig["language"]) !== "undefined")
+            if (typeof (this.dataConfig["language"]) !== "undefined")
             {
                 this.log("Get Language from Cache ...");
 
@@ -4968,7 +4979,7 @@ class StoryParser
 
         if (languageCode === 'en')
         {
-            if (typeof(this.dataConfig["language"]) !== "undefined")
+            if (typeof (this.dataConfig["language"]) !== "undefined")
             {
                 delete this.dataConfig["language"];
             }
@@ -4991,7 +5002,7 @@ class StoryParser
 
             self.log("Got Language: ", result);
 
-            if (typeof(callback) !== "undefined")
+            if (typeof (callback) !== "undefined")
             {
                 callback(result);
             }
@@ -5017,7 +5028,7 @@ class StoryParser
 
                 self.save_dataStore();
             }
-            else if (typeof(self.dataConfig["language"]) !== "undefined")
+            else if (typeof (self.dataConfig["language"]) !== "undefined")
             {
                 delete self.dataConfig["language"];
 
@@ -5141,12 +5152,12 @@ class StoryParser
                 if (!response.Error)
                 {
                     // Save Revision into internal Data-Structure
-                    if (typeof(keys[index]) === "undefined")
+                    if (typeof (keys[index]) === "undefined")
                     {
                         self.log("Error keys[", index, "] is undefined");
                         self.log("keys : ", keys);
                     }
-                    else if (typeof(self.config.marker[keys[index]]) === "undefined")
+                    else if (typeof (self.config.marker[keys[index]]) === "undefined")
                     {
                         self.log("Error _config.marker[", keys[index], "] is undefined");
                         self.log("_config.marker : ", self.config.marker);
@@ -5218,7 +5229,7 @@ class StoryParser
 
                 self.log("Check Element: ", el);
 
-                if (typeof(marker) !== "undefined")
+                if (typeof (marker) !== "undefined")
                 {
                     self.log("Local Marker Found - Version: ", marker.revision);
 
@@ -5544,7 +5555,7 @@ class StoryParser
     {
         try
         {
-            if (typeof(this.config.config_key) === "undefined")
+            if (typeof (this.config.config_key) === "undefined")
             {
                 console.warn("Config Key is Undefined!");
                 return false;
@@ -5553,7 +5564,7 @@ class StoryParser
             localStorage[this.config.config_key] = JSON.stringify(this.config);
 
             // Save to Chrome Sync API:
-            if (typeof(chrome) !== "undefined" && (this.config.chrome_sync === true) && saveToCloud)
+            if ((typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined") && (this.config.chrome_sync === true) && saveToCloud)
             {
                 chrome.storage.sync.set(this.config, function ()
                 {
@@ -5624,7 +5635,7 @@ class StoryParser
     {
         if ((memory[key] !== "undefined") &&
             (memory[key] !== "null") &&
-            typeof(memory[key]) !== "undefined" &&
+            typeof (memory[key]) !== "undefined" &&
             memory[key] != null &&
             memory[key] !== "")
         {
@@ -5760,9 +5771,9 @@ class StoryParser
      */
     public _(key: string): string
     {
-        if (typeof(this.currentLanguage) !== "undefined"
+        if (typeof (this.currentLanguage) !== "undefined"
             && this.currentLanguage !== null
-            && typeof(this.currentLanguage[key]) !== "undefined"
+            && typeof (this.currentLanguage[key]) !== "undefined"
             && this.currentLanguage[key] !== "")
         {
             return this.currentLanguage[key];
