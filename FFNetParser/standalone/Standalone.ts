@@ -29,11 +29,11 @@ class Standalone
      * @param sender The Sender of the event
      * @param arguments The Argument of this Event
      */
-    private callEvent(event: string, sender: any, arguments: any)
+    private callEvent(event: string, sender: any, args: any)
     {
         if (this.eventHandler !== undefined)
         {
-            this.eventHandler.callEvent(event, sender, arguments);
+            this.eventHandler.callEvent(event, sender, args);
         }
     }
 

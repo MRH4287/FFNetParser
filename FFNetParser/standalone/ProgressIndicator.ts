@@ -68,7 +68,7 @@ class ProgressIndicator
         });
     }
 
-    private handleEvent(sender: any, event: string, arguments: any)
+    private handleEvent(sender: any, event: string, args: any)
     {
         var message = this.eventMessageMap[event];
         this.lastMessage = message;

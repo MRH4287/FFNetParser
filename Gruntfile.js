@@ -128,7 +128,6 @@ module.exports = function (grunt)
                 options: {
                     module: 'amd', //or commonjs
                     target: 'es5', //or es3
-                    basePath: 'FFNetParser',
                     sourceMap: false,
                     declaration: true
                 }
