@@ -23,6 +23,7 @@ module.exports = function (grunt)
             'build/ParagraphMenu.js',
             'build/ExtentionBaseClass.js',
             'build/GUIHandler.js',
+			'build/Types.js',
             'build/LiveChatHandler.js',
             'build/UpgradeHandler.js',
             'build/EventHandler.js',
