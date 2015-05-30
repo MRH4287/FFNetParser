@@ -63,6 +63,7 @@ module.exports = function (grunt)
                     'lib/jquery-1.10.2.js',
                     'lib/jquery-ui.min.js',
                     'lib/jquery-colorpicker.min.js',
+                    'lib/bootstrap.min.js',
                     'build/package.min.js',
                     'lib/footer.js'
 
@@ -76,6 +77,7 @@ module.exports = function (grunt)
                     'lib/jquery-1.10.2.js',
                     'lib/jquery-ui.min.js',
                     'lib/jquery-colorpicker.min.js',
+                    'lib/bootstrap.min.js',
                     'build/package.js',
                     'lib/footer.js'
 
@@ -90,6 +92,7 @@ module.exports = function (grunt)
 					'build/standalone/lib/jquery-colorpicker.min.js',
 					'build/standalone/main.js',
 					'build/standalone/Standalone.js',
+                    'build/standalone/ProgressIndicator.js'
 			    ],
 			    dest: 'build/standalone/Standalone.pack.js'
 			}
@@ -320,6 +323,13 @@ module.exports = function (grunt)
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-update-json');
+
+    grunt.registerTask('compile',
+      [
+          'clean:build',
+          'tslint',
+          'typescript'
+      ]);
 
     // Default task.
     grunt.registerTask('default',

@@ -10,7 +10,7 @@ class GUIHandler extends ExtentionBaseClass
     /**
      *  Use the Bootstrap GUI instead of jQuery UI
      */
-    public BOOTSTRAP = false;
+    public BOOTSTRAP = true;
 
     /**
      *  The Main Container for the Bootsrap Modal
@@ -231,7 +231,7 @@ class GUIHandler extends ExtentionBaseClass
                         element.change(function ()
                         {
                             var value = element.val();
-                            if (typeof(self.parser.sortMap[value]) !== "undefined")
+                            if (typeof (self.parser.sortMap[value]) !== "undefined")
                             {
                                 self.parser.sortStories(self.parser.sortMap[value].Function);
                             }
@@ -328,6 +328,12 @@ class GUIHandler extends ExtentionBaseClass
                     }
                 },
                 {
+                    name: "",
+                    type: GUIElementType.PanelStart,
+                    label: self._("Colors"),
+                    value: undefined
+                },
+                {
                     name: 'color_normal',
                     type: GUIElementType.Color,
                     value: function () { return self.config.color_normal; },
@@ -385,6 +391,18 @@ class GUIHandler extends ExtentionBaseClass
                     }
                 },
                 {
+                    name: "",
+                    type: GUIElementType.PanelEnd,
+                    label: self._("Colors"),
+                    value: undefined
+                },
+                {
+                    name: "",
+                    type: GUIElementType.PanelStart,
+                    label: self._("Reading Help"),
+                    value: undefined
+                },
+                {
                     name: 'readingHelp_enabled',
                     type: GUIElementType.Checkbox,
                     value: function () { return self.config.readingHelp_enabled; },
@@ -427,6 +445,12 @@ class GUIHandler extends ExtentionBaseClass
                         }).after('<small style="margin-left:10px">Click field to change color</small>');
                         */
                     }
+                },
+                {
+                    name: "",
+                    type: GUIElementType.PanelEnd,
+                    label: self._("Colors"),
+                    value: undefined
                 },
                 {
                     name: 'enable_chapter_review_ratio',
@@ -522,10 +546,10 @@ class GUIHandler extends ExtentionBaseClass
         var apiData = this.registerGUI("config-api", this.config,
             [
                 {
-                    name: '',
-                    type: GUIElementType.Text,
-                    label: "--------",
-                    value: function () { return ' ---- <a href="http://www.getpocket.com">Pocket</a> ' + self._('Settings') + ' ----'; }
+                    name: "",
+                    type: GUIElementType.PanelStart,
+                    label: '<a href="http://www.getpocket.com">Pocket</a> ' + self._('Settings'),
+                    value: undefined
                 },
                 {
                     name: 'pocket_user',
@@ -549,10 +573,16 @@ class GUIHandler extends ExtentionBaseClass
                     }
                 },
                 {
-                    name: '',
-                    type: GUIElementType.Text,
-                    label: "--------",
-                    value: function () { return ' ---- ' + self._('API Settings') + ' ----'; }
+                    name: "",
+                    type: GUIElementType.PanelEnd,
+                    label: "Pocket",
+                    value: undefined
+                },
+                {
+                    name: "",
+                    type: GUIElementType.PanelStart,
+                    label: self._("API Settings"),
+                    value: undefined
                 },
                 {
                     name: 'api_url',
@@ -720,6 +750,12 @@ class GUIHandler extends ExtentionBaseClass
                         size: 50,
                         pattern: "[0-9a-zA-Z]+"
                     }
+                },
+                {
+                    name: "",
+                    type: GUIElementType.PanelEnd,
+                    label: self._("API Settings"),
+                    value: undefined
                 }
 
             ]);
@@ -852,7 +888,7 @@ class GUIHandler extends ExtentionBaseClass
 
                                             $.each(self.parser.config, function (name, oldValue)
                                             {
-                                                if (typeof(result[name]) !== "undefined")
+                                                if (typeof (result[name]) !== "undefined")
                                                 {
                                                     self.log("Key: '" + name + "'", oldValue, result[name]);
 
@@ -896,7 +932,7 @@ class GUIHandler extends ExtentionBaseClass
     }
 
 
-
+    private currentPanel: JQuery;
 
     /**
     * Creates a block of Elements in the Container Element and saves the Elements with its IDs in the saveTo Variable
@@ -929,7 +965,7 @@ class GUIHandler extends ExtentionBaseClass
             {
                 case GUIElementType.Input:
 
-                    element = $('<input type="text" id="' + id + '"/>');
+                    element = $('<input class="form-control" type="text" id="' + id + '"/>');
                     element.val(data.value());
 
                     if (typeof (data.result) === "undefined")
@@ -960,7 +996,7 @@ class GUIHandler extends ExtentionBaseClass
                     break;
                 case GUIElementType.Button:
 
-                    element = $('<input type="button" class="btn"  id="' + id + '"/>');
+                    element = $('<input class="form-control" type="button" class="btn"  id="' + id + '"/>');
                     element.val(data.value());
 
                     if (typeof (data.callback) !== "undefined")
@@ -979,7 +1015,7 @@ class GUIHandler extends ExtentionBaseClass
                     break;
                 case GUIElementType.Combobox:
 
-                    element = $('<select id="' + id + '"/>');
+                    element = $('<select class="form-control" id="' + id + '"/>');
 
                     if (typeof (data.values) !== "undefined")
                     {
@@ -1004,7 +1040,7 @@ class GUIHandler extends ExtentionBaseClass
                     break;
                 case GUIElementType.Text:
 
-                    element = $('<p></p>').html(data.value());
+                    element = $('<p class="form-control-static"></p>').html(data.value());
 
                     if (typeof (data.result) === "undefined")
                     {
@@ -1018,7 +1054,7 @@ class GUIHandler extends ExtentionBaseClass
 
                 case GUIElementType.Color:
 
-                    element = $('<input type="text" id="' + id + '"/>')
+                    element = $('<input class="form-control" type="text" id="' + id + '"/>')
                         .val(data.value());
 
                     // Because i want to append something, i need to do that after the element was appended to the List
@@ -1063,6 +1099,34 @@ class GUIHandler extends ExtentionBaseClass
 
                     break;
 
+                case GUIElementType.PanelStart:
+
+                    if (typeof (self.currentPanel) !== "undefined")
+                    {
+                        self.log("Two starting Panels detected! Ignore second panel start.");
+                        return;
+                    }
+
+                    var panel = $('<div class="panel panel-default"></div>');
+                    if (typeof (data.label) !== "undefined")
+                    {
+                        panel.append(
+                            $('<div class="panel-heading"></div>').html(data.label)
+                        );
+                    }
+
+                    var panelBody = $('<div class="panel-body"></div>').appendTo(panel);
+                    self.currentPanel = panelBody;
+
+                    element = panel;
+
+                    break;
+
+                case GUIElementType.PanelEnd:
+                    self.currentPanel = undefined;
+                    return;
+
+
                 case GUIElementType.Custom:
 
                     if (typeof (data.customElement) !== "undefined")
@@ -1105,21 +1169,44 @@ class GUIHandler extends ExtentionBaseClass
             }
 
 
-            parent.append(
-                $('<tr></tr>').append(
-                    $('<td width="30%" style="height: 30px"></td>').append(
-                        $('<label></label>')
-                            .html(data.label)
-                            .css('font-weight', 'bold')
-                            .attr("for", element.attr('id'))
-                        )
-                        .css('border-right', '1px solid gray')
-                    ).append(
-                    $('<td class="ffnetparser_InputField"></td>').append(
-                        element
-                        )
-                    )
-                );
+            var elementParent = parent;
+            if (data.type !== GUIElementType.PanelStart && self.currentPanel !== undefined)
+            {
+                elementParent = self.currentPanel;
+            }
+
+            switch (data.type)
+            {
+                case GUIElementType.Checkbox:
+                    elementParent.append(
+                        $('<div class="checkbox"></div>').append(
+                            $('<label></label>').append(
+                                element
+                                ).append(data.label)
+                            )
+                        );
+
+                    break;
+
+                case GUIElementType.PanelStart:
+                    elementParent.append(element);
+                    break;
+
+
+                default:
+                    elementParent.append(
+                        $('<div class="form-group"></div>').append(
+                            $('<label></label>')
+                                .html(data.label)
+                                .attr("for", element.attr('id'))
+                            )
+                            .append(
+                            element
+                            )
+                        );
+                    break;
+
+            }
 
             if (typeof (data.customOptions) !== "undefined")
             {
@@ -1159,9 +1246,8 @@ class GUIHandler extends ExtentionBaseClass
 
             this.guiContainer = $("<div></div");
 
-            
-            $(".ffnetModal").remove();
 
+            $(".ffnetModal").remove();
 
             this.bootstrapContainer = $('<div class="ffnetModal modal fade" id="ffnetModal" tabindex="-1" role="dialog" aria-labelledby="ffnetModalLabel" aria-hidden="true"></div>').append(
                 $('<div class="modal-dialog"></div>').append(
@@ -1188,7 +1274,7 @@ class GUIHandler extends ExtentionBaseClass
                                 }
                             })
                             ).append(
-    
+
                             $('<button type="button" class="btn btn-primary">Menu</button>').click((e) =>
                             {
                                 // Reopen:
@@ -1227,15 +1313,9 @@ class GUIHandler extends ExtentionBaseClass
                             ).append(
                             $('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>')
                             )
-
                         )
-
-
                     )
-
                 );
-
-
 
             this.log("GUI Created");
         }
@@ -1286,11 +1366,11 @@ class GUIHandler extends ExtentionBaseClass
 
     private getButton = function (name, target, container)
     {
-        return $("<div></div>").addClass("ffnet_Config_Button").text(name)
-            .attr("data-target", target).click(this.buttonLogic).appendTo(container);
+        return $("<div></div>").addClass("col-md-6").append($('<div></div>').addClass("ffnet_Config_Button").text(name)
+            .attr("data-target", target).click(this.buttonLogic)).appendTo(container);
     };
 
-    private getCategory(name, id, container)
+    private getCategory(name, id, container): { category: JQuery; headline: JQuery; container: JQuery }
     {
         var cat = $("<div></div>").addClass("ffnet_Config_Category").addClass(id).appendTo(container);
         var headline = $("<div></div>").addClass("headline").appendTo(cat);
@@ -1298,17 +1378,14 @@ class GUIHandler extends ExtentionBaseClass
         var backButton = $('<button class="btn">' + this._('Back') + '</back>').click(this.backLogic).appendTo(backField);
         var textField = $("<div></div>").appendTo(headline).text(name);
 
-        var table = $('<table width="100%" cellpadding="5"></table>').appendTo(cat);
+        var catContainer = $('<div></div>').appendTo(cat);
 
 
-        var result =
-            {
-                category: cat,
-                headline: headline,
-                table: table
-            };
-
-        return result;
+        return {
+            category: cat,
+            headline: headline,
+            container: catContainer
+        };
     }
 
     // ----------
@@ -1353,7 +1430,7 @@ class GUIHandler extends ExtentionBaseClass
             );
 
 
-        var buttonContainer = $('<div class="ffnet_Config_Button_Container"></div>').appendTo(settingsContainer);
+        var buttonContainer = $('<div class="row ffnet_Config_Button_Container"></div>').appendTo(settingsContainer);
         var saveButtonContainer = this.getSaveButtonContainer();
 
         $.each(this.categories, function (name, element: GUICategory)
@@ -1369,9 +1446,8 @@ class GUIHandler extends ExtentionBaseClass
 
             var cat = self.getCategory(element.title, "ffnetConfig-" + element.name, settingsContainer);
             element.instance = cat.category;
-            var table = cat.table;
 
-            self.renderGUI(element.elements, table);
+            self.renderGUI(element.elements, cat.container);
 
             cat.category.append(saveButtonContainer.clone());
 
@@ -1568,7 +1644,7 @@ class GUIHandler extends ExtentionBaseClass
 
         var radius = 10;
 
-        var height = '35';
+        var height = '70';
 
         if (displayBig)
         {
@@ -1603,7 +1679,7 @@ class GUIHandler extends ExtentionBaseClass
         var UID = name.replace(replace, "");
 
 
-        var table = $('<table width="100%" cellpadding="5"></table>').appendTo(container);
+        var guiContainer = $('<div></div>').appendTo(container);
 
         var self = this;
 
@@ -1781,7 +1857,7 @@ class GUIHandler extends ExtentionBaseClass
                         };
 
                         var value: ModififcationPriority = data.value();
-                        if ((typeof(value) === "undefined") || (value === null))
+                        if ((typeof (value) === "undefined") || (value === null))
                         {
                             value = defaultValues;
                         }
@@ -1789,7 +1865,7 @@ class GUIHandler extends ExtentionBaseClass
                         {
                             $.each(value, function (name, element)
                             {
-                                if ((typeof(element) === "undefined") || (element === null))
+                                if ((typeof (element) === "undefined") || (element === null))
                                 {
                                     value[name] = defaultValues[name];
                                 }
@@ -2106,7 +2182,7 @@ class GUIHandler extends ExtentionBaseClass
                                 container
                                     .unbind()
                                     .css("cursor", "pointer")
-                                    .css("height", "35px")
+                                    .css("height", "70px")
                                     .attr('title', "Click to Edit");
 
                                 container.find('input[type="radio"]').hide();
@@ -2196,7 +2272,7 @@ class GUIHandler extends ExtentionBaseClass
                         customPriority[name] = Number(elements.filter(":checked").val());
                     }
 
-                    if (customPriority[name] === null || typeof(customPriority[name]) === "undefined" || customPriority[name] === NaN || customPriority[name] < 0)
+                    if (customPriority[name] === null || typeof (customPriority[name]) === "undefined" || customPriority[name] === NaN || customPriority[name] < 0)
                     {
                         customPriority[name] = 1;
                     }
@@ -2222,11 +2298,11 @@ class GUIHandler extends ExtentionBaseClass
                         ignoreColor: data.instances['ignoreColor'].is(':checked'),
                         background: data.instances['background'].val(),
                         text_color: data.instances['text_color'].val(),
-                        image: (typeof(data.instances['image']) !== "undefined") ? data.instances['image'].val() : null,
-                        note: (typeof(data.instances['note']) !== "undefined") ? data.instances['note'].val() : null,
+                        image: (typeof (data.instances['image']) !== "undefined") ? data.instances['image'].val() : null,
+                        note: (typeof (data.instances['note']) !== "undefined") ? data.instances['note'].val() : null,
                         priority: priority,
                         customPriority: customPriority,
-                        highlight_color: (typeof(data.instances['highlight_color']) !== "undefined") ? data.instances['highlight_color'].val() : null,
+                        highlight_color: (typeof (data.instances['highlight_color']) !== "undefined") ? data.instances['highlight_color'].val() : null,
                         revision: ((typeof (self.config.marker[name]) === "undefined") || (typeof (self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
                     };
 
@@ -2244,7 +2320,7 @@ class GUIHandler extends ExtentionBaseClass
 
             });
 
-        this.renderGUIElement(name, table);
+        this.renderGUIElement(name, guiContainer);
 
 
         container.fadeIn();
@@ -2373,8 +2449,19 @@ class GUIHandler extends ExtentionBaseClass
         }
         else
         {
-            this.bootstrapContainer.modal('show');
+            var container = $(".ffnetParserContext");
+            if (container.length === 0)
+            {
+                container = $('<div class="ffnetParserContext"></div>').appendTo($("body"));
+            }
+            $(".modal-backdrop").fadeOut();
 
+            $(this.bootstrapContainer).modal('show');
+            window.setTimeout(() =>
+            {
+                $(this.bootstrapContainer).detach().appendTo(container);
+                $(".modal-backdrop").detach().appendTo(container);
+            }, 10);
         }
 
 
@@ -2679,7 +2766,7 @@ class GUIHandler extends ExtentionBaseClass
             {
                 e.preventDefault();
 
-                if (typeof(selectedGist) !== "undefined" && selectedGist !== null)
+                if (typeof (selectedGist) !== "undefined" && selectedGist !== null)
                 {
                     if (confirm("Do you realy want to overwrite your local config with the one from Github? Everything will be lost!"))
                     {
@@ -2708,7 +2795,7 @@ class GUIHandler extends ExtentionBaseClass
             {
                 e.preventDefault();
 
-                if (typeof(selectedGist) !== "undefined" && selectedGist !== null)
+                if (typeof (selectedGist) !== "undefined" && selectedGist !== null)
                 {
                     if (confirm("Do you want to save your Config to Github?"))
                     {
@@ -2970,7 +3057,7 @@ class GUIHandler extends ExtentionBaseClass
                 );
 
             var usedData: ModificationBase;
-            if (typeof(this.config.highlighter[storyInfo.url]) === "undefined" || this.config.highlighter[storyInfo.url].custom === null)
+            if (typeof (this.config.highlighter[storyInfo.url]) === "undefined" || this.config.highlighter[storyInfo.url].custom === null)
             {
                 usedData = {
                     background: null,
@@ -3154,7 +3241,7 @@ class GUIHandler extends ExtentionBaseClass
         {
             $(".ffnet-HighlighterContainer").remove();
 
-            if (typeof(this.config.highlighter[storyInfo.url]) === "undefined")
+            if (typeof (this.config.highlighter[storyInfo.url]) === "undefined")
             {
                 this.config.highlighter[storyInfo.url] =
                 {
@@ -3191,7 +3278,7 @@ class GUIHandler extends ExtentionBaseClass
                 })
                 .appendTo(listContainer);
 
-            if (typeof(this.config.highlighter[storyInfo.url]) !== "undefined" && this.config.highlighter[storyInfo.url].prefab === name)
+            if (typeof (this.config.highlighter[storyInfo.url]) !== "undefined" && this.config.highlighter[storyInfo.url].prefab === name)
             {
                 element.addClass("selected");
             }
@@ -3201,8 +3288,8 @@ class GUIHandler extends ExtentionBaseClass
 
         var color = "gray";
 
-        if (typeof(this.config.highlighter[storyInfo.url]) !== "undefined" &&
-            typeof(this.config.highlighter[storyInfo.url].custom) !== "undefined" &&
+        if (typeof (this.config.highlighter[storyInfo.url]) !== "undefined" &&
+            typeof (this.config.highlighter[storyInfo.url].custom) !== "undefined" &&
             this.config.highlighter[storyInfo.url].custom !== null)
         {
             color = this.config.highlighter[storyInfo.url].custom.highlight_color;
@@ -3218,7 +3305,7 @@ class GUIHandler extends ExtentionBaseClass
                 ev.preventDefault();
                 $(".ffnet-HighlighterContainer").remove();
 
-                if (typeof(self.config.highlighter[storyInfo.url]) !== "undefined")
+                if (typeof (self.config.highlighter[storyInfo.url]) !== "undefined")
                 {
                     self.config.highlighter[storyInfo.url].prefab = "";
                 }
@@ -3226,10 +3313,10 @@ class GUIHandler extends ExtentionBaseClass
                 self.toggleStoryConfig(storyInfo, false);
             }).appendTo(listContainer);
 
-        if (typeof(this.config.highlighter[storyInfo.url]) !== "undefined" &&
-            (typeof(this.config.highlighter[storyInfo.url].prefab) === "undefined" || this.config.highlighter[storyInfo.url].prefab === null ||
+        if (typeof (this.config.highlighter[storyInfo.url]) !== "undefined" &&
+            (typeof (this.config.highlighter[storyInfo.url].prefab) === "undefined" || this.config.highlighter[storyInfo.url].prefab === null ||
             this.config.highlighter[storyInfo.url].prefab === "" || this.config.highlighter[storyInfo.url].prefab === " ") &&
-            typeof(this.config.highlighter[storyInfo.url].custom) !== "undefined" && this.config.highlighter[storyInfo.url].custom !== null)
+            typeof (this.config.highlighter[storyInfo.url].custom) !== "undefined" && this.config.highlighter[storyInfo.url].custom !== null)
         {
             customElement.addClass("selected");
         }
@@ -3246,7 +3333,7 @@ class GUIHandler extends ExtentionBaseClass
                 ev.preventDefault();
                 $(".ffnet-HighlighterContainer").remove();
 
-                if (typeof(self.config.highlighter[storyInfo.url]) !== "undefined")
+                if (typeof (self.config.highlighter[storyInfo.url]) !== "undefined")
                 {
                     if (confirm(self._("Do you really want to remove this Highlighter?")))
                     {
@@ -3298,7 +3385,7 @@ class GUIHandler extends ExtentionBaseClass
 
         var radius = 10;
 
-        var height = '35';
+        var height = '70';
 
         if (displayBig)
         {
@@ -3332,13 +3419,13 @@ class GUIHandler extends ExtentionBaseClass
         }
 
 
-        var table = $('<table width="100%" cellpadding="5"></table>').appendTo(container);
+        var highlightContainer = $('<div></div>').appendTo(container);
 
         this.registerGUI(name, () =>
         {
             if (!custom)
             {
-                if (typeof(this.config.highlighterPrefabs[name]) === "undefined")
+                if (typeof (this.config.highlighterPrefabs[name]) === "undefined")
                 {
                     return {};
                 }
@@ -3350,7 +3437,7 @@ class GUIHandler extends ExtentionBaseClass
             }
             else
             {
-                if (typeof(this.config.highlighter[name].custom) === "undefined")
+                if (typeof (this.config.highlighter[name].custom) === "undefined")
                 {
                     return {};
                 }
@@ -3496,7 +3583,7 @@ class GUIHandler extends ExtentionBaseClass
                         };
 
                         var value: ModififcationPriority = data.value();
-                        if ((typeof(value) === "undefined") || (value === null))
+                        if ((typeof (value) === "undefined") || (value === null))
                         {
                             value = defaultValues;
                         }
@@ -3504,7 +3591,7 @@ class GUIHandler extends ExtentionBaseClass
                         {
                             $.each(value, function (name, element)
                             {
-                                if ((typeof(element) === "undefined") || (element === null))
+                                if ((typeof (element) === "undefined") || (element === null))
                                 {
                                     value[name] = defaultValues[name];
                                 }
@@ -3788,7 +3875,7 @@ class GUIHandler extends ExtentionBaseClass
                                 container
                                     .unbind()
                                     .css("cursor", "pointer")
-                                    .css("height", "35px")
+                                    .css("height", "70px")
                                     .attr('title', self._("Click to Edit"));
 
                                 setTimeout(function ()
@@ -3876,7 +3963,7 @@ class GUIHandler extends ExtentionBaseClass
                         customPriority[name] = Number(elements.filter(":checked").val());
                     }
 
-                    if (customPriority[name] === null || typeof(customPriority[name]) === "undefined" || customPriority[name] === NaN || customPriority[name] < 0)
+                    if (customPriority[name] === null || typeof (customPriority[name]) === "undefined" || customPriority[name] === NaN || customPriority[name] < 0)
                     {
                         customPriority[name] = 1;
                     }
@@ -3897,7 +3984,7 @@ class GUIHandler extends ExtentionBaseClass
                         background: data.instances['background'].val(),
                         text_color: data.instances['text_color'].val(),
                         image: data.instances['image'].val(),
-                        note: (typeof(data.instances['note']) !== "undefined") ? data.instances['note'].val() : null,
+                        note: (typeof (data.instances['note']) !== "undefined") ? data.instances['note'].val() : null,
                         priority: priority,
                         customPriority: customPriority,
                         highlight_color: data.instances['highlight_color'].val()
@@ -3920,7 +4007,7 @@ class GUIHandler extends ExtentionBaseClass
                 }
                 else
                 {
-                    if (typeof(this.config.highlighter[name]) === "undefined")
+                    if (typeof (this.config.highlighter[name]) === "undefined")
                     {
                         this.config.highlighter[name] = {
                             custom: null,
@@ -3935,7 +4022,7 @@ class GUIHandler extends ExtentionBaseClass
 
             });
 
-        this.renderGUIElement(name, table);
+        this.renderGUIElement(name, highlightContainer);
 
 
         container.fadeIn();
@@ -4205,7 +4292,7 @@ class GUIHandler extends ExtentionBaseClass
 
         var messages = $("<div></div>");
 
-        if (typeof(localMessages) !== "undefined")
+        if (typeof (localMessages) !== "undefined")
         {
             this.parser.api_MarkMessages();
 

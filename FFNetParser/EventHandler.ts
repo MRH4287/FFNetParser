@@ -60,7 +60,7 @@ class EventHandler
 
         var unheared = ((this.events === undefined) || (this.events[event] === undefined));
 
-        if (this.main.VERBOSE)
+        if (this.main !== undefined && this.main !== null && this.main.VERBOSE)
         {
             console.log("Event Called: "+event+" - ", { name: event, sender: sender, arguments: arguments, heared: !unheared });
         }

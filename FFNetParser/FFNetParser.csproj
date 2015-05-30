@@ -73,6 +73,7 @@
     <TypeScriptCompile Include="GUIHandler.ts" />
     <TypeScriptCompile Include="LiveChatHandler.ts" />
     <TypeScriptCompile Include="ParagraphMenu.ts" />
+    <TypeScriptCompile Include="standalone\ProgressIndicator.ts" />
     <TypeScriptCompile Include="standalone\Standalone.ts" />
     <TypeScriptCompile Include="Types.ts" />
     <TypeScriptCompile Include="UpgradeHandler.ts" />
@@ -100,7 +101,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>cd $(SolutionDir)
-grunt --no-color</PreBuildEvent>
+grunt compile --no-color</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

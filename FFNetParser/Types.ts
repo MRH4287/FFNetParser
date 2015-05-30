@@ -183,7 +183,7 @@ interface EventData
 
 enum GUIElementType
 {
-    Input, Button, Checkbox, Combobox, Text, Color, Custom
+    Input, Button, Checkbox, Combobox, Text, Color, PanelStart, PanelEnd, Custom
 }
 
 interface GUIElement

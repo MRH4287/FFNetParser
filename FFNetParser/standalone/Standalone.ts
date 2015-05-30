@@ -1,4 +1,6 @@
 ﻿/// <reference path="../userscript.ts" /> 
+/// <reference path="progressIndicator.ts" /> 
+
 
 /**
  * Class used for the Standalone Mode
@@ -11,15 +13,40 @@ class Standalone
     //private BasePath = "https://www.fanfiction.net/";
     private BasePath = "http://localhost:8080/";
     private parser: StoryParser;
+    private progress: ProgressIndicator;
 
     private lastHash: string = "";
     private ignoreHashChange: boolean = false;
 
+    /**
+     * The current Instance of the EventHandler
+     */
+    private eventHandler: EventHandler;
+
+    /**
+     * Calls a specific event
+     * @param event The name of the event
+     * @param sender The Sender of the event
+     * @param arguments The Argument of this Event
+     */
+    private callEvent(event: string, sender: any, arguments: any)
+    {
+        if (this.eventHandler !== undefined)
+        {
+            this.eventHandler.callEvent(event, sender, arguments);
+        }
+    }
+
+    /**
+     * List of Objects saved for later
+     */
     private copy: { [index: string]: JQuery } = {};
 
     constructor()
     {
         var self = this;
+        this.progress = new ProgressIndicator();
+
 
         $(document).ready(function ()
         {
@@ -29,11 +56,20 @@ class Standalone
 
     }
 
+
+    /**
+     * Save a specific Element
+     * @param className The Classname of the Element that should be saved
+     */
     private saveElement(className: string)
     {
         this.copy[className] = $("." + className).clone();
     }
 
+    /**
+     * Restore an element to the state it was, when it was saved
+     * @param className The Classname of the element that should be restored
+     */
     private restoreElement(className: string)
     {
         var self = this;
@@ -46,19 +82,33 @@ class Standalone
         $("." + className).html(self.copy[className].html());
     }
 
+    /**
+     * Restore The GUI to the way it was
+     */
     public clear()
     {
-        //this.restoreElement("menulink");
-        this.restoreElement("StandaloneMainContaniner");
+        this.callEvent("standaloneClearPage", this, null);
 
+        this.restoreElement("StandaloneMainContaniner");
     }
 
     /**
      * Starts the Standalone Mode
+     * @param url The URL that should be loaded if no hash is present
+     * @param firstRun Was the script loaded the first time
      */
     public init(url: string = "/game/pokemon", firstRun = true)
     {
+        if (this.eventHandler === undefined)
+        {
+            this.eventHandler = new EventHandler(null);
+            this.progress.setEventHandler(this.eventHandler);
+        }
+
         this.ignoreHashChange = true;
+        this.progress.show();
+
+        this.callEvent("standaloneInit", this, url);
 
         console.log("Current Hash: " + document.location.hash);
 
@@ -76,6 +126,8 @@ class Standalone
         this.clear();
         this.updatePage(url, () =>
         {
+            this.callEvent("standalonePreUpdatePage", self, url);
+
             document.location.hash = "#" + url;
             this.lastHash = document.location.hash;
 
@@ -129,6 +181,9 @@ class Standalone
             this.parser.readList();
 
             this.ignoreHashChange = false;
+
+            this.callEvent("standalonePostUpdatePage", this, url);
+            this.progress.hide();
         });
 
 
@@ -136,7 +191,10 @@ class Standalone
 
     private startHashTimer()
     {
-        window.setInterval(() =>
+        this.callEvent("standaloneOnHashTimerCreate", this, null);
+
+        this.eventHandler.addTimedTrigger("standaloneHashTimer", "standaloneOnHashTimerTick", 1000, this, null);
+        this.eventHandler.addEventListener("standaloneOnHashTimerTick", (s, e) =>
         {
             if (!this.ignoreHashChange && document.location.hash !== this.lastHash)
             {
@@ -151,13 +209,17 @@ class Standalone
                 }
             }
 
-        }, 1000);
+        });
 
 
     }
 
 
-
+    /**
+     * Updates the page with contents from the given URL
+     * @param url The URL to load
+     * @param callback Is triggered when the Asynchron process is done
+     */
     public updatePage(url: string, callback: () => void)
     {
         this.getPageElements(this.BasePath + url, function (res)
@@ -196,10 +258,13 @@ class Standalone
     public runScript()
     {
         this.parser = new StoryParser();
+        this.eventHandler = this.parser.eventHandler;
+        this.progress.setEventHandler(this.eventHandler);
 
         // Fix Chrome Sync Bug:
         this.parser.config.chrome_sync = false;
 
+        this.callEvent("standaloneRunScript", this, null);
 
         //this.parser.readList();
         this.parser.enablePocketSave();
@@ -215,10 +280,15 @@ class Standalone
         this.parser.debugOptions();
     }
 
+    /**
+     * Insert the Style needed for the Page
+     */
     public insertStyle()
     {
         this.getRawPageContent("ffnetStyle.css", (s) =>
         {
+            this.callEvent("standaloneOnStyleInsert", this, s);
+
             $('<style type="text/css"></style>')
                 .text(s)
                 .appendTo($("head"));
@@ -252,11 +322,18 @@ class Standalone
             console.log("Requesting page: ", url);
         }
 
+        this.callEvent("standalonePreRequest", this, url);
+
         var self = this;
 
         $.get(url, function (content)
         {
+            self.callEvent("standaloneOnRequestDone", this, { url: url, content: content });
+
             callback(content);
+        }).fail(function (event)
+        {
+            self.callEvent("standaloneOnRequestFail", this, { url: url, event: event });
         });
     }
 
@@ -268,6 +345,8 @@ class Standalone
      */
     public getCategories(callback: (data: { [index: string]: { name: string; url: string }[] }) => void)
     {
+        this.callEvent("standalonePreRequestCategories", this, null);
+
         var self = this;
 
         this.getPageContent(this.BasePath, function (el)
@@ -296,6 +375,8 @@ class Standalone
                 });
             });
 
+            self.callEvent("standalonePostCategoriesRequest", self, el);
+
             callback(result);
 
         });
@@ -308,7 +389,12 @@ class Standalone
     {
         var self = this;
 
-        this.getCategories(function (result)
+        this.eventHandler = new EventHandler(null);
+        this.progress.setEventHandler(this.eventHandler);
+
+        this.progress.show();
+
+        this.getCategories((result) =>
         {
             console.log(result);
 
@@ -323,9 +409,8 @@ class Standalone
                 $.each(elements, function (_, element: { name: string; url: string })
                 {
                     var container = $('<div class="col-md-6"></div>').appendTo(rowContainer);
-
                     container.append(
-                        $('<button class="btn btn-default" style="width:100%"></button>').text(element.name)
+                        $('<button class="btn btn-default btn-lg btn-block"></button>').text(element.name) //  style="width:100%"
                             .click(function (e)
                             {
                                 e.preventDefault();
@@ -338,15 +423,24 @@ class Standalone
                 });
             });
 
-
+            self.callEvent("standaloneCategoriesParsed", self, result);
+            self.progress.hide();
         });
     }
 
     // ************ Elements *************
 
-    public getElements(url: string, callback: (name: string, data: { name: string; url: string; count: string; }[] ) => void)
+    /**
+     * Loads the Elements (StoryBase) from the Server
+     * @param url The URL to load from
+     * @param callback Is triggered when the async Request is done
+     */
+    public getElements(url: string, callback: (name: string, data: { name: string; url: string; count: string; }[]) => void)
     {
         var self = this;
+
+        this.callEvent("standalonePreRequestElements", self, url);
+
         this.getPageContent(this.BasePath + url, function (res)
         {
             var result: { name: string; url: string; count: string; }[] = [];
@@ -364,12 +458,19 @@ class Standalone
 
             });
 
+            self.callEvent("standalonePostRequestElements", self, res);
+
             callback(res.find("#content_wrapper_inner").find("td").first().text().trim(), result);
         });
     }
 
     public manageElements()
     {
+        this.eventHandler = new EventHandler(null);
+        this.progress.setEventHandler(this.eventHandler);
+
+        this.progress.show();
+
         var url = this.getSearchString("cat");
 
         console.log("cat: ", url);
@@ -391,7 +492,7 @@ class Standalone
                     var tr = $('<tr></tr').appendTo(body);
 
                     tr.append($('<td></td>').append(
-                        $('<button class="btn btn-default" style="width:100%"></button>').click(
+                        $('<button class="btn btn-default btn-lg btn-block" ></button>').click( // style="width:100%"
                             function (e)
                             {
                                 e.preventDefault();
@@ -405,13 +506,16 @@ class Standalone
                                     document.location.href = "start.html#" + element.url;
                                 }
 
-                                
+
 
                             }).text(element.name)
                         )
                         ).append($('<td></td>').text(element.count));
 
                 });
+
+                self.callEvent("standaloneElementsParsed", self, [name, elements]);
+                self.progress.hide();
             });
 
         } else
@@ -434,7 +538,7 @@ class Standalone
         var groups = regEx.exec(document.location.search);
 
 
-        return (groups !== null) ?  groups[1] : undefined;
+        return (groups !== null) ? groups[1] : undefined;
     }
 
 
