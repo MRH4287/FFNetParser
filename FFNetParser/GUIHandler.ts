@@ -1246,11 +1246,15 @@ class GUIHandler extends ExtentionBaseClass
 
             this.guiContainer = $("<div></div");
 
+            $(window).resize(() =>
+            {
+                $(".ffnetParserContext").find(".modal-body").css("max-height", ($(window).height() / 2) + "px");
+            });
 
             $(".ffnetModal").remove();
 
             this.bootstrapContainer = $('<div class="ffnetModal modal fade" id="ffnetModal" tabindex="-1" role="dialog" aria-labelledby="ffnetModalLabel" aria-hidden="true"></div>').append(
-                $('<div class="modal-dialog"></div>').append(
+                $('<div class="modal-dialog fullscreen"></div>').append(
                     $('<div class="modal-content"></div>').append(
                         $('<div class="modal-header"></div>').append(
                             $('<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>').append(
@@ -2342,6 +2346,7 @@ class GUIHandler extends ExtentionBaseClass
         }
         else
         {
+            $(".modal-backdrop").remove();
             $(this.bootstrapContainer).modal('hide');
             this.bootstrapContainer.remove();
             this.bootstrapContainer = null;
@@ -2461,7 +2466,9 @@ class GUIHandler extends ExtentionBaseClass
             {
                 $(this.bootstrapContainer).detach().appendTo(container);
                 $(".modal-backdrop").detach().appendTo(container);
-            }, 10);
+                $(".modal-body").css("max-height", ( $(window).height() / 2) + "px");
+
+            }, 100);
         }
 
 
