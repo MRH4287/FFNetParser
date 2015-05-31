@@ -631,7 +631,7 @@ class StoryParser
                 $.each(changes, function (key, storageChange)
                 {
 
-                    var storageChange = changes[key];
+                    //var storageChange = changes[key];
                     console.log('Storage key "%s" changed. ' +
                         'Old value was "%s", new value is "%s".',
                         key,

@@ -129,7 +129,7 @@ interface HighlighterConfig
 
 interface UpgradeTag
 {
-    lastRun: number
+    lastRun: number;
 }
 
 interface FollowUserData
@@ -175,7 +175,7 @@ interface EventData
     callbacks:
     {
         (sender: any, arguments: any): void;
-    }[]
+    }[];
 }
 
 

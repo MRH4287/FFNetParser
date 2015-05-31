@@ -60,7 +60,7 @@ class UserHandler extends ExtentionBaseClass
                             }
 
                         }
-                        catch (Exception)
+                        catch (exception)
                         {
                         }
 

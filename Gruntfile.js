@@ -119,7 +119,7 @@ module.exports = function (grunt)
                 configuration: grunt.file.readJSON("tslint.json")
             },
             files: {
-                src: ['FFNetParser/*.ts']
+                src: ['FFNetParser/*.ts', '!FFNetParser/*.d.ts']
             }
         },
         typescript: {

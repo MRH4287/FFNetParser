@@ -1112,11 +1112,13 @@ class GUIHandler extends ExtentionBaseClass
                     {
                         panel.append(
                             $('<div class="panel-heading"></div>').html(data.label)
-                        );
+                            );
                     }
 
                     var panelBody = $('<div class="panel-body"></div>').appendTo(panel);
-                    self.currentPanel = panelBody;
+                    var row = $('<div class="row"></div>').appendTo(panelBody);
+
+                    self.currentPanel = row;
 
                     element = panel;
 
@@ -1179,29 +1181,35 @@ class GUIHandler extends ExtentionBaseClass
             {
                 case GUIElementType.Checkbox:
                     elementParent.append(
-                        $('<div class="checkbox"></div>').append(
-                            $('<label></label>').append(
-                                element
-                                ).append(data.label)
+                        $('<div class="col-md-6"></div>').append(
+                            $('<div class="checkbox"></div>').append(
+                                $('<label></label>').append(
+                                    element
+                                    ).append(data.label)
+                                )
                             )
                         );
 
                     break;
 
                 case GUIElementType.PanelStart:
-                    elementParent.append(element);
+                    elementParent.append(
+                        $('<div class="col-md-6"></div>').append(element)
+                        );
                     break;
 
 
                 default:
                     elementParent.append(
-                        $('<div class="form-group"></div>').append(
-                            $('<label></label>')
-                                .html(data.label)
-                                .attr("for", element.attr('id'))
-                            )
-                            .append(
-                            element
+                        $('<div class="col-md-6"></div>').append(
+                            $('<div class="form-group"></div>').append(
+                                $('<label></label>')
+                                    .html(data.label)
+                                    .attr("for", element.attr('id'))
+                                )
+                                .append(
+                                element
+                                )
                             )
                         );
                     break;
@@ -1260,9 +1268,7 @@ class GUIHandler extends ExtentionBaseClass
                             $('<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>').append(
                                 '<span aria-hidden="true">&' + 'times;</span>'
                                 )
-                            ).append(
-                            $('<h4 class="modal-titel" id="ffnetModalLabel"></h4>').text("Fanfiction Story Parser - Version: " + this.VERSION + " - Branch: " + this.BRANCH)
-                            )
+                            ).text("Fanfiction Story Parser - Version: " + this.VERSION + " - Branch: " + this.BRANCH) // .append( $('<h4 class="modal-titel" id="ffnetModalLabel"></h4>') )
                         )
 
                         .append(
@@ -1382,7 +1388,7 @@ class GUIHandler extends ExtentionBaseClass
         var backButton = $('<button class="btn">' + this._('Back') + '</back>').click(this.backLogic).appendTo(backField);
         var textField = $("<div></div>").appendTo(headline).text(name);
 
-        var catContainer = $('<div></div>').appendTo(cat);
+        var catContainer = $('<div class="row"></div>').appendTo(cat);
 
 
         return {
@@ -1414,7 +1420,7 @@ class GUIHandler extends ExtentionBaseClass
 
 
         // render Settings Container:
-        var settingsContainer = $("<div></div>")
+        var settingsContainer = $('<div class="row"></div>')
             .addClass("ffnet_settingsContainer")
 
             .appendTo(this.guiContainer);
@@ -1655,7 +1661,7 @@ class GUIHandler extends ExtentionBaseClass
             height = 'auto'; //580;
         }
 
-        var container = $('<div class="fflist-filterField"></div>')
+        var container = $('<div class="col-md-6 fflist-filterField"></div>')
             .css('height', height + 'px')
 
 
@@ -2466,7 +2472,7 @@ class GUIHandler extends ExtentionBaseClass
             {
                 $(this.bootstrapContainer).detach().appendTo(container);
                 $(".modal-backdrop").detach().appendTo(container);
-                $(".modal-body").css("max-height", ( $(window).height() / 2) + "px");
+                $(".modal-body").css("max-height", ($(window).height() / 2) + "px");
 
             }, 100);
         }
