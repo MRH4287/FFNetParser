@@ -275,8 +275,6 @@ class Standalone
         this.parser.api_getStyles();
         this.insertStyle();
 
-        this.parser.GUI.BOOTSTRAP = true;
-
         this.parser.debugOptions();
     }
 

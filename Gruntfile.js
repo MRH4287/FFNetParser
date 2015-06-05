@@ -88,9 +88,9 @@ module.exports = function (grunt)
             standalone:
 			{
 			    src: [
-					'build/standalone/lib/jquery-1.10.2.js',
-					'build/standalone/lib/jquery-ui.min.js',
-					'build/standalone/lib/jquery-colorpicker.min.js',
+					'lib/jquery-1.10.2.js',
+					'lib/jquery-ui.min.js',
+					'lib/jquery-colorpicker.min.js',
 					'build/standalone/main.js',
 					'build/standalone/Standalone.js',
                     'build/standalone/ProgressIndicator.js'
@@ -209,14 +209,6 @@ module.exports = function (grunt)
             {
                 src: 'build/style.css',
                 dest: 'build/standalone/style.css'
-            }, standaloneLibs:
-            {
-                src: ['lib/*.js'],
-                dest: 'build/standalone/'
-            }, standaloneServer:
-            {
-                src: 'FFNetParser/standalone/Server.js',
-                dest: 'build/standalone/Server.js'
             },
             manifestBackup:
             {
@@ -393,8 +385,6 @@ module.exports = function (grunt)
             'copy:standalone',
             'copy:standaloneCode',
             'copy:standaloneStyle',
-            'copy:standaloneLibs',
-            'copy:standaloneServer',
 			'concat:standalone',
 			'uglify:standalone'
         ]);

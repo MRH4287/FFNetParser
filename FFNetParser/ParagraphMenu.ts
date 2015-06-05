@@ -85,18 +85,9 @@ class ParagraphMenu
                 var url = self.parser.getLinkToPageNumber(page);
 
 
-                // Create Dialog:
-                var dialog = $('<div></div>').attr("title", self.parser._("Link for this Position"))
-                    .append(
-                    $("<pre></pre>").text(url + "#paragraph=" + paragraphNumber)
-                    ).appendTo($("body"));
+                var modal = GUIHandler.createBootstrapModal($("<pre></pre>").text(url + "#paragraph=" + paragraphNumber), self.parser._("Link for this Position"));
+                GUIHandler.showModal(modal);
 
-                dialog.dialog({
-                    close: function (event, ui) 
-                    {
-                        dialog.remove();
-                    }
-                });
             });
 
 

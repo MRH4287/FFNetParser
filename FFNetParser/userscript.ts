@@ -548,39 +548,40 @@ class StoryParser
 
                 // Creates Warning for new Feature:
 
-                var text = "<b>Please Read!</b><br />";
+                var text = "<div><b>Please Read!</b><br />";
                 text += "In one of the previous version, a new feature has been implemented. With this Feature activated, you don't have to manually install new Versions. ";
                 text += "Newer Versions will be saved in your Local Storage and then executed. Because of that, the Version Number displayed in your UserScript Manager ";
                 text += "can be wrong. To Display the Version Number, check your Menu.";
-                text += "Do you want to activate this Feature?";
+                text += "Do you want to activate this Feature?</div>";
 
-                var dialog = $('<div title="Fanfiction Story Parser"><p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>' + text + '</p></div>')
-                    .appendTo($("body"));
+                var buttons = [];
+                var modal: JQuery;
 
+                buttons.push($('<button class="btn btn-primary">Enable Feature</button>').click(() =>
+                {
+                    modal.modal('hide');
+
+                    self.config['api_autoIncludeNewVersion'] = true;
+                    self.save_config();
+
+                }));
+
+                buttons.push($('<button class="btn btn-default">Keep Disabled</button>').click(() =>
+                {
+                    modal.modal('hide');
+
+                    self.config['api_autoIncludeNewVersion'] = false;
+                    self.save_config();
+
+                }));
+
+                modal = GUIHandler.createBootstrapModal($(text), "Fanfiction Story Parser", buttons);
+                
+               
                 window.setTimeout(function ()
                 {
-                    dialog.dialog({
-                        resizable: true,
-                        modal: true,
-                        buttons:
-                        {
-                            "Enable Feature": function ()
-                            {
-                                $(this).dialog("close");
+                    GUIHandler.showModal(modal);
 
-                                self.config['api_autoIncludeNewVersion'] = true;
-                                self.save_config();
-
-                            },
-                            Cancel: function ()
-                            {
-                                $(this).dialog("close");
-
-                                self.config['api_autoIncludeNewVersion'] = false;
-                                self.save_config();
-                            }
-                        }
-                    });
                 }, 1000);
             }
             else
@@ -801,8 +802,10 @@ class StoryParser
                         self.dataConfig['messages'] = messages.Messages;
 
                         // Update Icon:
-                        $(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
-                        $(".ffnetMessageContainer").css("background-color", "red");
+                        //$(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
+                        //$(".ffnetMessageContainer").css("background-color", "red");
+                        $(".ffnetMessageContainer").find(".badge").remove();
+                        $(".ffnetMessageContainer").append($('<div class="badge ffnet-messageCount"></div>'));
 
                         $('.ffnet-messageCount').text(messages.Messages.length);
 
@@ -814,7 +817,10 @@ class StoryParser
             else
             {
                 // Update Icon:
-                $(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
+                //$(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
+                $(".ffnetMessageContainer").find(".badge").remove();
+                $(".ffnetMessageContainer").append($('<div class="badge ffnet-messageCount"></div>'));
+
                 $('.ffnet-messageCount').text(self.dataConfig['messages'].length);
             }
 
@@ -888,6 +894,7 @@ class StoryParser
                 .css("height", "100%")
                 .css("border-radius", "5px")
                 .addClass("ffnetMessageContainer")
+                .addClass("ffnetParserContext")
                 .addClass("clickable")
                 .attr("title", self._("Advanced Messaging Features. Sorry, this is not a PM Button :-("))
                 .appendTo(menulinks);
@@ -1051,9 +1058,12 @@ class StoryParser
                 {
                     event.preventDefault();
 
+                    
                     var table = $('<table class="table table-hover table-responsive table-border"></table>');
                     table.append("<tr><th>" + self._('ID') + '</th><th>' + self._('Name') + '</th><th>' + self._('Chapter') +
                         '</th><th>' + self._('Time') + '</th><th>' + self._('Visited') + '</th><th>' + self._('Options') + "</th></tr>");
+
+                    var modal = GUIHandler.createBootstrapModal(table, self._("Saved Story Reminder"));
 
                     $.each(self.config.storyReminder, function (_, el: StoryReminderData)
                     {
@@ -1077,7 +1087,7 @@ class StoryParser
                                     {
                                         delete self.config.storyReminder[_];
                                         self.save_config();
-                                        dialog.dialog('close');
+                                        modal.modal('hide');
                                     }
 
                                 })
@@ -1094,21 +1104,8 @@ class StoryParser
                             }).appendTo(table);
                     });
 
-
-                    // Create Dialog:
-                    var dialog = $('<div></div>').attr("title", self._("Saved Story Reminder"))
-                        .append(
-                        table
-                        ).appendTo($("body"));
-
-                    dialog.dialog({
-                        close: function (event, ui)
-                        {
-                            dialog.remove();
-                        }
-                    });
-
-
+                   
+                    GUIHandler.showModal(modal);
                 });
 
                 this.eventHandler.callEvent("postGUIStoryReminderAppend", this, menulinks);
@@ -2624,9 +2621,9 @@ class StoryParser
             $("<u></u>").text(self.hidden[page]).click(
                 function (e)
                 {
-                    // Build Dialog
-                    var dialog = $('<div title="' + self._('Hidden Elements') + '"></div>');
-                    var table = $("<table></table>").appendTo(dialog);
+                    var table = $("<table></table>");
+                    var modal = GUIHandler.createBootstrapModal(table, self._('Hidden Elements'));
+
 
                     $.each(self.hiddenElements[page], function (key, value)
                     {
@@ -2646,11 +2643,7 @@ class StoryParser
                     });
 
 
-                    // Show Dialog:
-                    dialog.dialog(
-                        {
-                            width: 668
-                        });
+                    GUIHandler.showModal(modal);
 
                     e.preventDefault();
                 }
@@ -5442,8 +5435,9 @@ class StoryParser
         delete this.dataConfig['messages'];
         this.save_dataStore();
 
-        $(".ffnetMessageContainer img").attr("src", this.getUrl("message-white.png"));
-        $(".ffnetMessageContainer").css("background-color", "");
+        //$(".ffnetMessageContainer img").attr("src", this.getUrl("message-white.png"));
+        //$(".ffnetMessageContainer").css("background-color", "");
+        $(".ffnetMessageContainer").find(".badge").remove();
         $(".ffnet-messageCount").text("0");
 
 

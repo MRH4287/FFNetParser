@@ -26,6 +26,7 @@ abbr[data-original-title] {
 
 .ffnet_settingsContainer {
     margin: auto;
+    margin: 10px;
     margin-bottom: 30px;
     background-color: white;
     padding: 5px;
@@ -34,7 +35,7 @@ abbr[data-original-title] {
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
     -goog-ms-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-    border: 2px solid black;
+    border: 1px solid gray;
 }
 
 
@@ -123,17 +124,20 @@ abbr[data-original-title] {
 @config_category_headline_height: 30px;
 
 .ffnet_Config_Button {
+    margin: 5px !important;
+
+    /*
     width: @config_button_width;
     height: @config_button_height;
     display: inline-block;
     margin-bottom: 10px;
-    /*margin-left: 14px;*/
+    /*margin-left: 14px;* /
     font-size: @config_button_textSize;
     padding: @config_button_radius;
     padding-top: (@config_button_height - @config_button_textSize) / 2;
     text-align: center;
     .border_radius(@config_button_radius);
-    border: 2px solid black;
+    border: 1px solid gray;
     .gradient(@config_button_color_begin, @config_button_color_end);
 
     &:hover {
@@ -141,6 +145,7 @@ abbr[data-original-title] {
     }
 
     .clickable;
+        */
 }
 
 .ffnet_Config_Category {
@@ -166,7 +171,8 @@ abbr[data-original-title] {
 
 .ffnet-InfoContainer {
     .fflist-filterField;
-    border: 1px dashed black;
+    margin: 5px;
+    border: 1px solid gray;
     text-align: center;
 }
 
@@ -418,75 +424,33 @@ abbr[data-original-title] {
 
 /* Bootstrap: */
 
-.radio input[type="radio"],
-.radio-inline input[type="radio"],
-.checkbox input[type="checkbox"],
-.checkbox-inline input[type="checkbox"] {
-    float: left;
-    margin-left: -20px;
-}
 
-.radio + .radio,
-.checkbox + .checkbox {
-    margin-top: -5px; // Move up sibling radios or checkboxes for tighter spacing
-}
-
-// Radios and checkboxes on same line
-.radio-inline,
-.checkbox-inline {
-    display: inline-block;
-    padding-left: 20px;
-    margin-bottom: 0;
-    vertical-align: middle;
-    font-weight: normal;
-    cursor: pointer;
-}
-
-.radio-inline + .radio-inline,
-.checkbox-inline + .checkbox-inline {
-    margin-top: 0;
-    margin-left: 10px; // space out consecutive inline controls
-}
-
-// Apply same disabled cursor tweak as for inputs
-//
-// Note: Neither radios nor checkboxes can be readonly.
-input[type="radio"],
-input[type="checkbox"],
-.radio,
-.radio-inline,
-.checkbox,
-.checkbox-inline {
-    &[disabled],
-    fieldset[disabled] & {
-        cursor: not-allowed;
-    }
-}
-
-
-/* Test */
 
 .ffnetParserContext {
     word-wrap: normal;
 
     .modal {
+        color: black;
         margin: 0;
         background: none;
         width: auto;
-        top: 0px;
+        top: 0px !important;
     }
+
 
     .modal-dialog {
         &.fullscreen {
-            width: 90%;
+            width: 80%;
             height: 90%;
             padding: 0;
+
         }
     }
 
     .modal .modal-body {
         max-height: 420px;
         overflow-y: auto;
+        overflow-x: hidden;
     }
     /*!
  * Bootstrap v3.3.4 (http://getbootstrap.com)
