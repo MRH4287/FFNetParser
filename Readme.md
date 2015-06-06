@@ -8,11 +8,6 @@ This UserScript allows to parse and mark stories in the list.
 If there is an problem with fictionpress.com, please report that to me.**
 
 
-*You can find a compiled Version of the Script [Here](http://server.mrh-development.de:8080/job/Fanfiction%20User%20Script/lastSuccessfulBuild/artifact/ffnetlist.user.js)*
-
-**Warning: The Version above can be broken! Choose a different Version [Here](http://server.mrh-development.de:8080/job/Fanfiction%20User%20Script/) if necessary.**
-
-
 ## Need Help?
 
 Go to the [Wiki](https://github.com/MRH4287/FFNetParser/wiki) for more Information!

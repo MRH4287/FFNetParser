@@ -727,16 +727,16 @@ class StoryParser
 
 
         // Add jQueryUI to the Page:        
-        var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
+        /*var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
         $("head").append(block);
 
         if (typeof ($.ui) === "undefined")
         {
             console.error("Can't include jQuery UI!");
-        }
+        }*/
 
         // Add jQuery Color Picker to the Page:     
-        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", this.getUrl("jquery.colorpicker.css"));
+        var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", this.getUrl("bootstrap-colorpicker.min.css"));
         $("head").append(block);
 
         /*

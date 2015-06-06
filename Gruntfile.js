@@ -63,7 +63,7 @@ module.exports = function (grunt)
                     'build/header.js',
                     'lib/jquery-1.10.2.js',
                     'lib/jquery-ui.min.js',
-                    'lib/jquery-colorpicker.min.js',
+                    'lib/bootstrap-colorpicker.min.js',
                     'lib/bootstrap.min.js',
                     'build/package.min.js',
                     'lib/footer.js'
@@ -77,7 +77,7 @@ module.exports = function (grunt)
                     'build/header.js',
                     'lib/jquery-1.10.2.js',
                     'lib/jquery-ui.min.js',
-                    'lib/jquery-colorpicker.min.js',
+                    'lib/bootstrap-colorpicker.min.js',
                     'lib/bootstrap.min.js',
                     'build/package.js',
                     'lib/footer.js'
@@ -90,7 +90,7 @@ module.exports = function (grunt)
 			    src: [
 					'lib/jquery-1.10.2.js',
 					'lib/jquery-ui.min.js',
-					'lib/jquery-colorpicker.min.js',
+					'lib/bootstrap-colorpicker.min.js',
 					'build/standalone/main.js',
 					'build/standalone/Standalone.js',
                     'build/standalone/ProgressIndicator.js'
