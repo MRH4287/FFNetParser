@@ -711,16 +711,16 @@ class GUIHandler extends ExtentionBaseClass
                             $('<input type="text" class="dataContainer form-control" id="fflist-api_url" />')
                                 .val(self.config.api_url)
                             ).append(
-                                $("<div></div>").append(
-                                    $('<button class="btn btn-default">Default</button>').click(function ()
-                                    {
-                                        $('#fflist-api_url').val("https://www.mrh-development.de/FanFictionUserScript");
-                                    })
-                                    ).append(
-                                    $('<button class="btn btn-default">Local</button>').click(function ()
-                                    {
-                                        $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
-                                    })
+                            $("<div></div>").append(
+                                $('<button class="btn btn-default">Default</button>').click(function ()
+                                {
+                                    $('#fflist-api_url').val("https://www.mrh-development.de/FanFictionUserScript");
+                                })
+                                ).append(
+                                $('<button class="btn btn-default">Local</button>').click(function ()
+                                {
+                                    $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
+                                })
                                 )
                             );
                     }
@@ -743,16 +743,16 @@ class GUIHandler extends ExtentionBaseClass
                                 .attr('size', '50')
                                 .val(self.config.api_webSocketServerAddress)
                             ).append(
-                                $('<div></div>').append(
-                                    $('<button class="btn btn-default">Default</button>').click(function ()
-                                    {
-                                        $('#fflist-api_webSocketServerAddress').val("wss://www.mrh-development.de:8182");
-                                    })
-                                    ).append(
-                                    $('<button class="btn btn-default">Local</button>').click(function ()
-                                    {
-                                        $('#fflist-api_webSocketServerAddress').val("ws://127.0.0.1:8182");
-                                    })
+                            $('<div></div>').append(
+                                $('<button class="btn btn-default">Default</button>').click(function ()
+                                {
+                                    $('#fflist-api_webSocketServerAddress').val("wss://www.mrh-development.de:8182");
+                                })
+                                ).append(
+                                $('<button class="btn btn-default">Local</button>').click(function ()
+                                {
+                                    $('#fflist-api_webSocketServerAddress').val("ws://127.0.0.1:8182");
+                                })
                                 )
                             );
                     }
@@ -775,16 +775,16 @@ class GUIHandler extends ExtentionBaseClass
                                 .attr('size', '50')
                                 .val(self.config.api_github_url)
                             ).append(
-                                $('<div></div>').append(
-                                    $('<button class="btn btn-default">Default</button>').click(function ()
-                                    {
-                                        $('#fflist-api_github_url').val("https://www.mrh-development.de/api/ffgithub");
-                                    })
-                                    ).append(
-                                    $('<button class="btn btn-default">Local</button>').click(function ()
-                                    {
-                                        $('#fflist-api_github_url').val("https://localhost:44300/api/ffgithub");
-                                    })
+                            $('<div></div>').append(
+                                $('<button class="btn btn-default">Default</button>').click(function ()
+                                {
+                                    $('#fflist-api_github_url').val("https://www.mrh-development.de/api/ffgithub");
+                                })
+                                ).append(
+                                $('<button class="btn btn-default">Local</button>').click(function ()
+                                {
+                                    $('#fflist-api_github_url').val("https://localhost:44300/api/ffgithub");
+                                })
                                 )
                             );
                     }
@@ -807,16 +807,16 @@ class GUIHandler extends ExtentionBaseClass
                                 .attr('size', '50')
                                 .val(self.config.api_github_requestStart_url)
                             ).append(
-                                $('<div></div>').append(
-                                    $('<button class="btn btn-default">Default</button>').click(function ()
-                                    {
-                                        $('#fflist-api_github_requestStart_url').val("https://www.mrh-development.de/FFNetGithub/RedirectToAccessSite/");
-                                    })
-                                    ).append(
-                                    $('<button class="btn btn-default">Local</button>').click(function ()
-                                    {
-                                        $('#fflist-api_github_requestStart_url').val("https://localhost:44300/FFNetGithub/RedirectToAccessSite/");
-                                    })
+                            $('<div></div>').append(
+                                $('<button class="btn btn-default">Default</button>').click(function ()
+                                {
+                                    $('#fflist-api_github_requestStart_url').val("https://www.mrh-development.de/FFNetGithub/RedirectToAccessSite/");
+                                })
+                                ).append(
+                                $('<button class="btn btn-default">Local</button>').click(function ()
+                                {
+                                    $('#fflist-api_github_requestStart_url').val("https://localhost:44300/FFNetGithub/RedirectToAccessSite/");
+                                })
                                 )
                             );
                     }
@@ -4459,34 +4459,42 @@ class GUIHandler extends ExtentionBaseClass
         var self = this;
         var types = [self._("Bug"), self._("Feature Request"), self._("Question"), self._("Other")];
 
-        var inputType = $("<select></select>");
+        var inputType = $('<select id="feedbackType" class="form-control"></select>');
         $.each(types, function (_, type)
         {
             $("<option></option>").text(type)
                 .appendTo(inputType);
         });
 
-        var inputTitle = $('<input type="text" required />');
-        var inputMessage = $('<textarea style="width:90%; height: 100px;" required></textarea>');
+        var inputTitle = $('<input id="feedbackTitle" type="text" class="form-control" required />');
+        var inputMessage = $('<textarea id="feedbackMessage" rows="5" class="form-control" required></textarea>'); // style="width:90%; height: 100px;"
 
 
         var element = $('<div></div>')
             .append(
-            $('<p></p>')
-                .append($('<span class="" style="float: left; margin: 0 7px 20px 0;"></span>'))
+            $("<h2></h2>").text(self._('Feedback'))
+            )
+            .append(
+            $('<div class="form-group"></div>')
                 .append(
-                "<b>Feedback:</b><br /><br />"
+                $('<label for="feedbackType"></label').text(self._('Type'))
                 )
-                .append("<b>Type:</b><br />")
                 .append(inputType)
-
-                .append("<br /><b>Title:</b><br />")
+            )
+            .append(
+            $('<div class="form-group"></div>')
+                .append(
+                $('<label for="feedbackTitle"></label').text(self._('Title'))
+                )
                 .append(inputTitle)
-
-                .append("<br /><b>Message:</b><br />")
+            )
+            .append(
+            $('<div class="form-group"></div>')
+                .append(
+                $('<label for="feedbackMessage"></label').text(self._('Message'))
+                )
                 .append(inputMessage)
-                .append("<small>Please write English OR German!</small>")
-
+                .append($('<p></p>').text(self._('Please write English OR German!')))
             );
 
         var buttons: JQuery[] = [];
@@ -4513,7 +4521,8 @@ class GUIHandler extends ExtentionBaseClass
 
         buttons.push($('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'));
 
-        var modal = GUIHandler.createBootstrapModal(element, self._("Feedback"));
+        var modal = GUIHandler.createBootstrapModal(element, self._("Feedback"), buttons);
+        GUIHandler.showModal(modal);
     }
 
 
