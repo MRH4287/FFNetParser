@@ -43,7 +43,7 @@ function speechBubble()
 
     index = (index + 1) % text.length;
 
-    window.setTimeout("speechBubble", 15000);
+    window.setTimeout("speechBubble", 5000);
 }
 
 window.setTimeout(function ()
@@ -59,8 +59,11 @@ window.setTimeout(function ()
         eventHandler.callEvent = function () { }
     });
 
-
-    speechBubble();
+	window.setInterval(function()
+	{
+		speechBubble();
+	}, 5000);
+    
 
 
 }, 1000);

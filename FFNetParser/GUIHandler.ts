@@ -503,8 +503,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Normal Background-Color'),
                     attributes:
                     {
-                        size: 50,
-                        placeholder: self._("Click to change Color")
+                        size: 50
                     },
                     customOptions: function (element) 
                     {
@@ -522,8 +521,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('MouseOver Background-Color'),
                     attributes:
                     {
-                        size: 50,
-                        placeholder: self._("Click to change Color")
+                        size: 50
                     },
                     customOptions: function (element) 
                     {
@@ -541,8 +539,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Odd Background-Color'),
                     attributes:
                     {
-                        size: 50,
-                        placeholder: self._("Click to change Color")
+                        size: 50
                     },
                     customOptions: function (element) 
                     {
@@ -578,8 +575,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Reading Help Background Color'),
                     attributes:
                     {
-                        size: 50,
-                        placeholder: self._("Click to change Color")
+                        size: 50
                     },
                     customOptions: function (element)
                     {
@@ -597,8 +593,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Reading Help Text Color'),
                     attributes:
                     {
-                        size: 50,
-                        placeholder: self._("Click to change Color")
+                        size: 50
                     },
                     customOptions: function (element)
                     {
@@ -2198,8 +2193,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Color'),
                     attributes:
                     {
-                        id: 'fflist-' + UID + '-color',
-                        placeholder: self._("Click to change Color")
+                        id: 'fflist-' + UID + '-color'
                     }
                 },
                 {
@@ -2212,8 +2206,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Mouse Over Color'),
                     attributes:
                     {
-                        id: 'fflist-' + UID + '-mouseOver',
-                        placeholder: self._("Click to change Color")
+                        id: 'fflist-' + UID + '-mouseOver'
                     }
                 },
                 {
@@ -2226,8 +2219,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Info Text Color'),
                     attributes:
                     {
-                        id: 'fflist-' + UID + '-text_color',
-                        placeholder: self._("Click to change Color")
+                        id: 'fflist-' + UID + '-text_color'
                     }
                 },
                 {
@@ -2240,8 +2232,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Highlight Color'),
                     attributes:
                     {
-                        id: 'fflist-' + UID + '-highlight_color',
-                        placeholder: self._("Click to change Color")
+                        id: 'fflist-' + UID + '-highlight_color'
                     },
                     debugOnly: true
                 },
@@ -3832,8 +3823,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Color'),
                     attributes:
                     {
-                        id: 'fflist-' + UID + '-color',
-                        placeholder: self._("Click to change Color")
+                        id: 'fflist-' + UID + '-color'
                     }
                 },
                 {
@@ -3846,8 +3836,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Mouse Over Color'),
                     attributes:
                     {
-                        id: 'fflist-' + UID + '-mouseOver',
-                        placeholder: self._("Click to change Color")
+                        id: 'fflist-' + UID + '-mouseOver'
                     }
                 },
                 {
@@ -3860,8 +3849,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Info Text Color'),
                     attributes:
                     {
-                        id: 'fflist-' + UID + '-text_color',
-                        placeholder: self._("Click to change Color")
+                        id: 'fflist-' + UID + '-text_color'
                     }
                 },
                 {
@@ -3874,8 +3862,7 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._('Highlight Color'),
                     attributes:
                     {
-                        id: 'fflist-' + UID + '-highlight_color',
-                        placeholder: self._("Click to change Color")
+                        id: 'fflist-' + UID + '-highlight_color'
                     }
                 },
                 {
