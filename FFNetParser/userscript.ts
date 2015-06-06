@@ -1792,19 +1792,25 @@ class StoryParser
             }
         }
 
+        url = data.url;
 
         // Check for ScriptInsert Page:
-        if (data.url.indexOf("?url=") === -1)
+        if (document.location.href.indexOf("file://") === -1)
         {
             var domainRegex = new RegExp("https?://[^/]+");
-            var domain = domainRegex.exec(location.href)[0];
-
-            url = domain + data.url;
+            var result = domainRegex.exec(location.href);
+            if (result !== undefined && result !== null)
+            {
+                var domain = result[0];
+                url = domain + data.url;
+            }
         }
         else
         {
-            url = data.url;
+            this.log("Detected File-URL. Abort Sory Request");
+            return;
         }
+
 
         var self = this;
 

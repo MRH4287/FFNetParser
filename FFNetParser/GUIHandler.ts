@@ -2493,24 +2493,24 @@ class GUIHandler extends ExtentionBaseClass
                 var config =
                     {
                         name: name,
-                        color: data.instances['color'].val(),
+                        color: data.instances['color'].find('input').val(),
                         ignore: data.instances['ignore'].val().split(', '),
                         keywords: data.instances['keywords'].val().split(', '),
                         mark_chapter: data.instances['mark_chapter'].is(':checked'),
                         mention_in_headline: data.instances['mention_in_headline'].is(':checked'),
                         display: data.instances['display'].is(':checked'),
-                        mouseOver: data.instances['mouseOver'].val(),
+                        mouseOver: data.instances['mouseOver'].find('input').val(),
                         print_story: data.instances['print_story'].is(':checked'),
                         search_story: data.instances['search_story'].is(':checked'),
                         keep_searching: data.instances['keep_searching'].is(':checked'),
                         ignoreColor: data.instances['ignoreColor'].is(':checked'),
                         background: data.instances['background'].val(),
-                        text_color: data.instances['text_color'].val(),
+                        text_color: data.instances['text_color'].find('input').val(),
                         image: (typeof (data.instances['image']) !== "undefined") ? data.instances['image'].val() : null,
                         note: (typeof (data.instances['note']) !== "undefined") ? data.instances['note'].val() : null,
                         priority: priority,
                         customPriority: customPriority,
-                        highlight_color: (typeof (data.instances['highlight_color']) !== "undefined") ? data.instances['highlight_color'].val() : null,
+                        highlight_color: (typeof (data.instances['highlight_color']) !== "undefined") ? data.instances['highlight_color'].find('input').val() : null,
                         revision: ((typeof (self.config.marker[name]) === "undefined") || (typeof (self.config.marker[name].revision) === "undefined")) ? 0 : self.config.marker[name].revision + 1
                     };
 
@@ -3606,7 +3606,7 @@ class GUIHandler extends ExtentionBaseClass
 
                         for (var i = 1; i <= 5; i++)
                         {
-                            label = $('<label class="radio-inline lineHeight"></label>').appendTo(container);
+                            label = $('<label class="radio-inline"></label>').appendTo(container);
 
                             element = $('<input type="radio"></input>')
                                 .attr("name", "ffnet-" + UID + "-priority")
@@ -3625,7 +3625,7 @@ class GUIHandler extends ExtentionBaseClass
 
                         // Custom:
 
-                        label = $('<label class="radio-inline lineHeight"></label>').appendTo(container);
+                        label = $('<label class="radio-inline"></label>').appendTo(container);
 
                         element = $('<input type="radio"></input>')
                             .attr("name", "ffnet-" + UID + "-priority")
@@ -3729,11 +3729,11 @@ class GUIHandler extends ExtentionBaseClass
 
                         $.each(options, function (name, description)
                         {
-                            $('<div class="lineHeight" style="margin-top:5px"></div>')
+                            $('<div style="margin-top:5px"></div>')
                                 .text(description + ": ")
                                 .appendTo(mainContainer);
 
-                            var container = $('<div class="form-horizontal"></div>').appendTo(mainContainer);
+                            var container = $('<div ></div>').appendTo(mainContainer);
 
                             var elementContainer: JQuery;
                             var label: JQuery;
@@ -3743,7 +3743,7 @@ class GUIHandler extends ExtentionBaseClass
 
                             for (var i = 0; i <= 5; i++)
                             {
-                                label = $('<label class="radio-inline lineHeight"></label>').appendTo(container);
+                                label = $('<label class="radio-inline"></label>').appendTo(container);
 
                                 element = $('<input type="radio"></input>')
                                     .attr("name", "ffnet-" + UID + "-customPrioritry-" + name)
@@ -4111,18 +4111,18 @@ class GUIHandler extends ExtentionBaseClass
                 var config: ModificationBase =
                     {
                         name: name,
-                        color: data.instances['color'].val(),
+                        color: data.instances['color'].find('input').val(),
                         mark_chapter: data.instances['mark_chapter'].is(':checked'),
                         display: data.instances['display'].is(':checked'),
-                        mouseOver: data.instances['mouseOver'].val(),
+                        mouseOver: data.instances['mouseOver'].find('input').val(),
                         ignoreColor: data.instances['ignoreColor'].is(':checked'),
                         background: data.instances['background'].val(),
-                        text_color: data.instances['text_color'].val(),
+                        text_color: data.instances['text_color'].find('input').val(),
                         image: data.instances['image'].val(),
                         note: (typeof (data.instances['note']) !== "undefined") ? data.instances['note'].val() : null,
                         priority: priority,
                         customPriority: customPriority,
-                        highlight_color: data.instances['highlight_color'].val()
+                        highlight_color: data.instances['highlight_color'].find('input').val()
                     };
 
                 if (config.text_color === "")
