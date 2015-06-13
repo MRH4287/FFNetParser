@@ -1312,7 +1312,8 @@ class GUIHandler extends ExtentionBaseClass
         {
             modal.detach().appendTo(container);
             $(".modal-backdrop").detach().appendTo(container);
-            $(".modal-body").css("max-height", ($(window).height() / 2) + "px");
+            $(".modal-body").css("max-height", ($(window).height() - 160) + "px");
+            $(".modal-body").css("max-height", "calc(100%);");
 
         }, 100);
 
@@ -1379,7 +1380,9 @@ class GUIHandler extends ExtentionBaseClass
 
         $(window).resize(() =>
         {
-            $("#ffnetParserContext").find(".modal-body").css("max-height", ($(window).height() / 2) + "px");
+            $("#ffnetParserContext").find(".modal-body")
+                .css("max-height", ($(window).height() - 160) + "px")
+                .css("max-height", "calc(100%);");
         });
 
         $(".ffnetModal").remove();
@@ -2605,14 +2608,24 @@ class GUIHandler extends ExtentionBaseClass
                 })
             ).appendTo(_guiContainer);
             */
+            var panelMain = $('<div id="importPanel" class="panel-group" role="rablist" aria-multiselectable="true"></div>').appendTo(this.guiContainer);
 
-            var accordion = $("<div></div>").appendTo(this.guiContainer);
 
             // -------- Manual Import -------------
 
-            accordion.append("<h3>" + this._("Manual Import") + "</h3>");
+            var panel = $('<div class="panel panel-default"></div>').appendTo(panelMain);
+            panel.append(
+                $('<div class="panel-heading" role="tab" ></div>').append(
+                    $('<h4 class="panel-title"></h4>').append(
+                        $('<a data-toggle="collapse" data-parent="#importPanel" href="#manualInport" aria-expanded="true" aria-controls="collapseOne"></a>').text(
+                            this._("Manual Import")
+                            )
+                        )
+                    )
+                );
 
-            var manualContainer = $("<div></div>").appendTo(accordion);
+            var panelContainer = $('<div id="manualInport" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne"></div>').appendTo(panel);
+            var manualContainer = $('<div class="panel-body"></div>').appendTo(panelContainer);
 
             manualContainer.append('<label for="ffnet-config-display">Your current Config:</label><br/>');
 
@@ -2639,9 +2652,22 @@ class GUIHandler extends ExtentionBaseClass
 
             // ----------- Github API -------------
 
-            accordion.append("<h3>" + this._("Github Gist") + "</h3>");
 
-            var githubContainer = $("<div></div>").appendTo(accordion);
+            panel = $('<div class="panel panel-default"></div>').appendTo(panelMain);
+            panel.append(
+                $('<div class="panel-heading" role="tab" ></div>').append(
+                    $('<h4 class="panel-title"></h4>').append(
+                        $('<a data-toggle="collapse" data-parent="#importPanel" href="#githubInport" aria-expanded="true" aria-controls="collapseOne"></a>').text(
+                            this._("Github Gist")
+                            )
+                        )
+                    )
+                );
+
+
+
+            panelContainer = $('<div id="githubInport" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne"></div>').appendTo(panel);
+            var githubContainer = $('<div class="panel-body"></div>').appendTo(panelContainer);
 
 
             var gistInfo: GistData[] = null;
@@ -2977,9 +3003,7 @@ class GUIHandler extends ExtentionBaseClass
 
 
             // --- Call the Accordion Script ---
-            accordion.accordion({
-                heightStyle: "content"
-            });
+            panelMain.collapse();
 
             this.gui_show();
         }
