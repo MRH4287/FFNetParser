@@ -1533,7 +1533,7 @@ class GUIHandler extends ExtentionBaseClass
         var cat = $("<div></div>").addClass("ffnet_Config_Category").addClass(id).appendTo(container);
         var headline = $("<div></div>").addClass("headline").appendTo(cat);
         var backField = $("<div></div>").addClass("back").appendTo(headline);
-        var backButton = $('<button class="btn">' + this._('Back') + '</back>').click(this.backLogic).appendTo(backField);
+        var backButton = $('<button class="btn btn-default btn-xs">' + this._('Back') + '</button>').click(this.backLogic).appendTo(backField);
         var textField = $("<div></div>").appendTo(headline).text(name);
 
         var catContainer = $('<div class="row"></div>').appendTo(cat);
@@ -2442,8 +2442,13 @@ class GUIHandler extends ExtentionBaseClass
 
                                 setTimeout(function ()
                                 {
-                                    container.click(function ()
+                                    container.click(function (e)
                                     {
+                                        if ($(e.target).is(".ignoreClick"))
+                                        {
+                                            return;
+                                        }
+
                                         container.css('height', 'auto');
                                         container.css("cursor", "auto");
                                         container.removeAttr("title");
