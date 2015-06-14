@@ -1176,6 +1176,15 @@ class GUIHandler extends ExtentionBaseClass
 
                     element = panel;
 
+                    if (typeof (data.result) === "undefined")
+                    {
+                        data.result = function (e)
+                        {
+                            return null;
+                        };
+                    }
+                    
+
                     break;
 
                 case GUIElementType.PanelEnd:
@@ -1312,8 +1321,7 @@ class GUIHandler extends ExtentionBaseClass
         {
             modal.detach().appendTo(container);
             $(".modal-backdrop").detach().appendTo(container);
-            $(".modal-body").css("max-height", ($(window).height() - 160) + "px");
-            $(".modal-body").css("max-height", "calc(100%);");
+            $(".modal-body").css("max-height", ($(window).height() - 200) + "px");
 
         }, 100);
 
@@ -1381,8 +1389,7 @@ class GUIHandler extends ExtentionBaseClass
         $(window).resize(() =>
         {
             $("#ffnetParserContext").find(".modal-body")
-                .css("max-height", ($(window).height() - 160) + "px")
-                .css("max-height", "calc(100%);");
+                .css("max-height", ($(window).height() - 200) + "px");
         });
 
         $(".ffnetModal").remove();
@@ -1802,6 +1809,13 @@ class GUIHandler extends ExtentionBaseClass
             height = 'auto'; //580;
         }
 
+        if (!mainContainer.is("[id]"))
+        {
+            mainContainer.attr("id", "ffnetGUIMainContainer"); 
+        }
+        var mainContainerID = mainContainer.attr("id");
+
+
         var wrapper = $('<div class="col-md-6"></div>').appendTo(mainContainer);
 
         var container = $('<div class="fflist-filterField"></div>')
@@ -1814,8 +1828,13 @@ class GUIHandler extends ExtentionBaseClass
             container.css("cursor", "pointer")
                 .attr('title', "Click to Edit")
 
-                .click(function ()
+                .click(function (e)
                 {
+                    if ($(e.target).is(".ignoreClick"))
+                    {
+                        return;
+                    }
+
                     container.css('height', 'auto');
                     container.css("cursor", "auto");
                     container.removeAttr("title")
@@ -1829,6 +1848,19 @@ class GUIHandler extends ExtentionBaseClass
         var replace = new RegExp("[ /.\-]", "g");
         var UID = name.replace(replace, "");
 
+        var foundCount = 0;
+        $.each(this.parser.eList, (page, data) =>
+        {
+            if (data[name] !== undefined)
+            {
+                foundCount += data[name].length;
+            }
+        });
+
+        var quickInfo = this._("Name") + ": " + marker.name + " - " +
+            this._("Display Entries") + ": " + (marker.display ? this._("Yes") : this._("No")) + " - " +
+            this._("Priority") + ": " + marker.priority + " - " +
+            this._("Number of founds on all visible pages") + ": " + foundCount;
 
         var guiContainer = $('<div class="row"></div>').appendTo(container);
 
@@ -1840,7 +1872,17 @@ class GUIHandler extends ExtentionBaseClass
                     name: "",
                     type: GUIElementType.PanelStart,
                     label: name,
-                    value: undefined
+                    value: undefined,
+                    customOptions: function (el)
+                    {
+                        el.find(".panel-heading").append(
+                            $('<a tabindex="0"  class="ignoreClick pull-right btn btn-default" role="button" data-toggle="popover" title="Quick Info" data-trigger="focus" data-placement="top" style="margin-top:-8px">Info</a>')
+                                .attr("data-container", "#" + mainContainerID)
+                                .popover({
+                                    content: quickInfo
+                                })
+                            );
+                    }
                 },
                 {
                     name: 'name',
@@ -2624,7 +2666,7 @@ class GUIHandler extends ExtentionBaseClass
                     )
                 );
 
-            var panelContainer = $('<div id="manualInport" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne"></div>').appendTo(panel);
+            var panelContainer = $('<div id="manualInport" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne"></div>').appendTo(panel);
             var manualContainer = $('<div class="panel-body"></div>').appendTo(panelContainer);
 
             manualContainer.append('<label for="ffnet-config-display">Your current Config:</label><br/>');
@@ -2666,7 +2708,7 @@ class GUIHandler extends ExtentionBaseClass
 
 
 
-            panelContainer = $('<div id="githubInport" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne"></div>').appendTo(panel);
+            panelContainer = $('<div id="githubInport" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne"></div>').appendTo(panel);
             var githubContainer = $('<div class="panel-body"></div>').appendTo(panelContainer);
 
 
@@ -3525,7 +3567,6 @@ class GUIHandler extends ExtentionBaseClass
                 });
 
         }
-
 
         var highlightContainer = $('<div></div>').appendTo(container);
 

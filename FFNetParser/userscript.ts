@@ -185,7 +185,7 @@ class StoryParser
      * List of found Elements
      * Key: Headline, Value: List of Links
      */
-    private eList: { [inex: number]: { [index: string]: StoryInfo[] } } = {};
+    public eList: { [index: number]: { [index: string]: StoryInfo[] } } = {};
 
     /**
      *  The List of PageWrapper for every page
