@@ -11,8 +11,6 @@ class UpgradeHandler extends ExtentionBaseClass
         this.initTags();
     }
 
-
-
     public initTags()
     {
         if (this.DEBUG)
@@ -20,8 +18,6 @@ class UpgradeHandler extends ExtentionBaseClass
             this.log("Upgrade Handler Initiate");
         }
         var self = this;
-
-
 
         // Update 5.2.4 - Adds Keep Searching to the Filter Config
         this.registerTag("filter_keep_searching", function ()

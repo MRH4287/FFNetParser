@@ -1,4 +1,4 @@
-﻿if (typeof (_VARIABLE_) == "undefined")
+﻿if (typeof (_VARIABLE_) === "undefined")
 {
     _CODE_
 

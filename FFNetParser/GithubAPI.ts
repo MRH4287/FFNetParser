@@ -1,16 +1,23 @@
 ﻿/// <reference path="userscript.ts" />
 
+/**
+ * Class used for Comunication with Github
+ */
 class GithubAPI extends ExtentionBaseClass
 {
     private code: string;
     private attempt: number  = 0;
     private MAX_ATTEMPTS = 30;
 
+    /**
+     * Is the User Authenticated
+     */
     get Authenticated()
     {
         return typeof(this.code) !== "undefined" && this.code !== null;
     }
 
+   
     public constructor(parser: StoryParser)
     {
         super(parser);

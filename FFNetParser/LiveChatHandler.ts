@@ -100,7 +100,7 @@ class LiveChatHandler extends ExtentionBaseClass
                 window.setTimeout(function ()
                 {
                     self.updateUserList();
-                }, 5000);
+                }, 10000);
             });
 
 
@@ -168,9 +168,6 @@ class LiveChatHandler extends ExtentionBaseClass
                 self.parser.log("Message Callback is undefined ....");
 
             }
-
-
-
         }
         catch (ex)
         {

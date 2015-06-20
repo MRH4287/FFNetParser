@@ -184,8 +184,6 @@ class GUIHandler extends ExtentionBaseClass
             self.saveData(element);
         });
 
-
-
     }
 
 
@@ -1183,7 +1181,7 @@ class GUIHandler extends ExtentionBaseClass
                             return null;
                         };
                     }
-                    
+
 
                     break;
 
@@ -1811,7 +1809,7 @@ class GUIHandler extends ExtentionBaseClass
 
         if (!mainContainer.is("[id]"))
         {
-            mainContainer.attr("id", "ffnetGUIMainContainer"); 
+            mainContainer.attr("id", "ffnetGUIMainContainer");
         }
         var mainContainerID = mainContainer.attr("id");
 
@@ -2596,11 +2594,15 @@ class GUIHandler extends ExtentionBaseClass
      */
     private gui_show(closeCallback: () => void = null)
     {
-        var self = this;
+        if (closeCallback !== null)
+        {
+            this.bootstrapContainer.on('hide.bs.modal', function (e)
+            {
+                closeCallback();
+            });
+        }
 
         GUIHandler.showModal(this.bootstrapContainer);
-
-        // _guiContainer.fadeIn();
     }
 
     /**

@@ -1571,7 +1571,7 @@ class StoryParser
                     self.hiddenElements[page][link] = "Display-Only Mode";
 
 
-                    element.hide();
+                    element.fadeOut();
                     self.hidden[page] += 1;
                 }
                 else
@@ -1739,7 +1739,7 @@ class StoryParser
         {
             if (typeof (queue[0]) !== "undefined")
             {
-                // Thr Queue is finished. Close all Requests.
+                // The Queue is finished. Close all Requests.
                 var firstID = Number(queue[0].element.attr("data-ElementIdent"));
                 delete this.requestsPending[firstID];
             }
@@ -2117,7 +2117,7 @@ class StoryParser
 
                 window.setTimeout(function ()
                 {
-                    element.show();
+                    element.fadeIn();
                 }, 100);
 
                 self.hidden[page] -= 1;
@@ -2133,7 +2133,7 @@ class StoryParser
 
                 self.hiddenElements[page][info.url] = "displayOnly";
 
-                element.hide();
+                element.fadeOut();
                 self.hidden[page] += 1;
             }
         }
