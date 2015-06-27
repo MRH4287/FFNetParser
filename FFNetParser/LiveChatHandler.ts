@@ -111,7 +111,10 @@ class LiveChatHandler extends ExtentionBaseClass
 
     public disconnect()
     {
-        this.socket.close();
+        if (this.socket !== null && this.socket !== undefined)
+        {
+            this.socket.close();
+        }
     }
 
     public get Available()
