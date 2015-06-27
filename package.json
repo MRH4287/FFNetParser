@@ -4,6 +4,7 @@
   },
   "devDependencies": {
     "grunt": "",
+	"grunt-lib-phantomjs": "",
     "grunt-contrib-clean": "",
     "grunt-contrib-compress": "",
     "grunt-contrib-concat": "",
@@ -16,6 +17,7 @@
     "grunt-replace": "",
     "grunt-tslint": "",
     "grunt-typescript": "",
-    "grunt-update-json": ""
+    "grunt-update-json": "",
+	"tslint": ""
   }
 }

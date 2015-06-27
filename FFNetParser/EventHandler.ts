@@ -52,7 +52,7 @@ class EventHandler
      * Calls a specific event
      * @param event The name of the event
      * @param sender The Sender of the event
-     * @param arguments The Argument of this Event
+     * @param args The Argument of this Event
      */
     public callEvent(event: string, sender: any, args: any)
     {

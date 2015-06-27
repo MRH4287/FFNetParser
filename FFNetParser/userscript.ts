@@ -1848,7 +1848,7 @@ class StoryParser
      *   @param elementID The ID of the main Element
      *   @param initiated The Time this Request was initiated
      */
-    private parse(url: string, markerConfig: MarkerConfig, callback: (StoryInfo) => void, i: number, executeNext: () => void, elementID: number, initiated: number)
+    private parse(url: string, markerConfig: MarkerConfig, callback: (storyInfo) => void, i: number, executeNext: () => void, elementID: number, initiated: number)
     {
 
         if (i >= this.config.story_search_depth)
@@ -5328,9 +5328,9 @@ class StoryParser
      *   Synchronize - Starts the synchronization
      *   @param progress_callback Callback with progress information
      */
-    public api_syncFilter(progress_callback: (progress: number) => void)
+    public api_syncFilter(progressCallback: (progress: number) => void)
     {
-        progress_callback(-1);
+        progressCallback(-1);
 
         var self = this;
 
@@ -5340,7 +5340,7 @@ class StoryParser
 
             var progress = function (index)
             {
-                progress_callback((index / numberOfElements) * 100);
+                progressCallback((index / numberOfElements) * 100);
             };
 
             // Upload Markers:
@@ -5348,7 +5348,7 @@ class StoryParser
             {
                 progress = function ()
                 {
-                    progress_callback(((numberOfElements - 1) / numberOfElements) * 100);
+                    progressCallback(((numberOfElements - 1) / numberOfElements) * 100);
                 };
 
                 self.api_getMarker(elements.download, function (result)
@@ -5396,7 +5396,7 @@ class StoryParser
                         self.save_config();
 
                         self.log("Sync Finished");
-                        progress_callback(100);
+                        progressCallback(100);
 
                     }
                     else
