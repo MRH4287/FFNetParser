@@ -3918,7 +3918,8 @@ class StoryParser
         else
         {
             // Add a Load New Page Button:
-            var button = $('<button class="btn">Load Next Page</button>')
+            var button = $('<button class="btn"></button>')
+                .text(this._('Load Next Page'))
                 .click(function (e)
                 {
                     e.preventDefault();
@@ -5465,6 +5466,68 @@ class StoryParser
                 Token: this.config.token,
                 Chapters: storyIDs
             };
+
+        if (storyIDs === undefined)
+        {
+            callback(undefined, undefined);
+            return;
+        }
+
+        if (storyIDs.length > 5)
+        {
+            var queue: string[][] = [];
+
+            for (var i = 0; i <= storyIDs.length / 5; i++)
+            {
+                var elements : string[] = [];
+
+                for (var j = 0; j < 5; j++)
+                {
+                    var id = i * 5 + j;
+                    var data = storyIDs[id];
+                    if (data !== undefined)
+                    {
+                        elements.push(data);
+                    }
+                }
+
+                queue.push(elements);
+            }
+
+            if (this.DEBUG)
+            {
+                console.log("Get Story Info Queue: ", queue);
+            }
+
+            var i = 0;
+            var outResult: { [index: string]: number[] } = {};
+            var outLastChapter: { [index: string]: number } = {};
+
+            var dataCallback = (result: { [index: string]: number[] }, lastChapter: { [index: string]: number }) =>
+            {
+                if (this.DEBUG)
+                {
+                    console.log("Get Story Info call Number: ", i);
+                }
+                outResult = $.extend(outResult, result);
+                outLastChapter = $.extend(outLastChapter, lastChapter);
+
+                if (i < queue.length)
+                {
+                    i += 1;
+                    this.api_getReadChapters(queue[i], dataCallback);
+                }
+                else
+                {
+                    callback(outResult, outLastChapter);
+                }
+
+            };
+
+            dataCallback({}, {});
+
+            return;
+        }
 
         this.apiRequest(
             {
