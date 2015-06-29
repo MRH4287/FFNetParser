@@ -5499,7 +5499,7 @@ class StoryParser
                 console.log("Get Story Info Queue: ", queue);
             }
 
-            var i = 0;
+            var index = 0;
             var outResult: { [index: string]: number[] } = {};
             var outLastChapter: { [index: string]: number } = {};
 
@@ -5512,9 +5512,9 @@ class StoryParser
                 outResult = $.extend(outResult, result);
                 outLastChapter = $.extend(outLastChapter, lastChapter);
 
-                if (i < queue.length)
+                if (index < queue.length)
                 {
-                    i += 1;
+                    index += 1;
                     this.api_getReadChapters(queue[i], dataCallback);
                 }
                 else
