@@ -5477,7 +5477,7 @@ class StoryParser
         {
             var queue: string[][] = [];
 
-            for (var i = 0; i <= storyIDs.length / 5; i++)
+            for (var i = 0; i < storyIDs.length / 5; i++)
             {
                 var elements : string[] = [];
 
@@ -5507,7 +5507,7 @@ class StoryParser
             {
                 if (this.DEBUG)
                 {
-                    console.log("Get Story Info call Number: ", i);
+                    console.log("Get Story Info call Number: ", index);
                 }
                 outResult = $.extend(outResult, result);
                 outLastChapter = $.extend(outLastChapter, lastChapter);
@@ -5515,7 +5515,7 @@ class StoryParser
                 if (index < queue.length)
                 {
                     index += 1;
-                    this.api_getReadChapters(queue[i], dataCallback);
+                    this.api_getReadChapters(queue[index], dataCallback);
                 }
                 else
                 {
