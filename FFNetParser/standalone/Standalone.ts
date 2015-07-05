@@ -17,6 +17,8 @@ class Standalone
 
     private lastHash: string = "";
     private ignoreHashChange: boolean = false;
+    private filterModal: JQuery = undefined;
+    private categoryBaseURL: string = undefined;
 
     /**
      * The current Instance of the EventHandler
@@ -105,6 +107,11 @@ class Standalone
             this.progress.setEventHandler(this.eventHandler);
         }
 
+        if (firstRun)
+        {
+            this.categoryBaseURL = url;
+        }
+
         this.ignoreHashChange = true;
         this.progress.show();
 
@@ -124,7 +131,7 @@ class Standalone
         var self = this;
 
         this.clear();
-        this.updatePage(url, () =>
+        this.updatePage(url,() =>
         {
             this.callEvent("standalonePreUpdatePage", self, url);
 
@@ -194,7 +201,7 @@ class Standalone
         this.callEvent("standaloneOnHashTimerCreate", this, null);
 
         this.eventHandler.addTimedTrigger("standaloneHashTimer", "standaloneOnHashTimerTick", 1000, this, null);
-        this.eventHandler.addEventListener("standaloneOnHashTimerTick", (s, e) =>
+        this.eventHandler.addEventListener("standaloneOnHashTimerTick",(s, e) =>
         {
             if (!this.ignoreHashChange && document.location.hash !== this.lastHash)
             {
@@ -222,6 +229,8 @@ class Standalone
      */
     public updatePage(url: string, callback: () => void)
     {
+        $("#filterButtonContainer").hide();
+
         this.getPageElements(this.BasePath + url, function (res)
         {
             $(".FFNetContentContainer").html($("<div></div>").append(res.Content).html());
@@ -240,15 +249,131 @@ class Standalone
     public getPageElements(url: string, callback: (result: { Content: JQuery; Navigation: JQuery }) => void) 
     {
 
-        this.getPageContent(url, (res) =>
+        this.getPageContent(url,(res) =>
         {
             var result = {
                 Content: res.find(".z-list"),
                 Navigation: res.find("center").first()
             };
 
+            this.handleFilterModal(res);
+
             callback(result);
         });
+    }
+
+    private handleFilterModal(modal: JQuery)
+    {
+        var modalBody = modal.find(".modal-body");
+        // remove all Javascript Elements:
+
+        var elements = modalBody.children();
+        this.removeScripts(elements);
+
+        // wrap Dropdowns in Rows:
+       
+        // var container = $('<div class="row"></div>').appendTo(modalBody);
+        var selects = elements.filter("select");
+        selects.each(function (_, el)
+        {
+            var element = $(el);
+
+            var container = $('<div class="form-group"></div>').append(
+                $('<label></label>')
+                );
+
+            element.after(container).detach();
+            element.addClass("form-control").appendTo(container);
+
+        });
+
+        var buttons: JQuery[] = [];
+
+        buttons.push(
+            $('<button type="button" class="btn btn-primary" data-dismiss="modal">Apply</button>')
+                .click(() =>
+                {
+                this.applyFilter();
+                })
+            );
+
+        buttons.push($('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'));
+
+
+
+        this.filterModal = GUIHandler.createBootstrapModal(modalBody, "Filter", buttons);
+        $("#filterButtonContainer").show();
+    }
+
+    public applyFilter()
+    {
+        var path = '';
+        path += this.gt_zero_append($('select[name=sortid]').val(), '&srt=');
+
+        path += this.gt_zero_append($('select[name=genreid1]').val(), '&g1=');
+        path += this.gt_zero_append($('select[name=genreid2]').val(), '&g2=');
+        path += this.gt_zero_append($('select[name=_genreid1]').val(), '&_g1=');
+
+        path += this.gt_zero_append($('select[name=languageid]').val(), '&lan=');
+        path += this.gt_zero_append($('select[name=censorid]').val(), '&r=');
+        path += this.gt_zero_append($('select[name=length]').val(), '&len=');
+
+        path += this.gt_zero_append($('select[name=timerange]').val(), '&t=');
+        path += this.gt_zero_append($('select[name=statusid]').val(), '&s=');
+
+        path += this.gt_zero_append($('select[name=characterid1]').val(), '&c1=');
+        path += this.gt_zero_append($('select[name=characterid2]').val(), '&c2=');
+        path += this.gt_zero_append($('select[name=characterid3]').val(), '&c3=');
+        path += this.gt_zero_append($('select[name=characterid4]').val(), '&c4=');
+        path += this.gt_zero_append($('select[name=_characterid1]').val(), '&_c1=');
+        path += this.gt_zero_append($('select[name=_characterid2]').val(), '&_c2=');
+
+        path += this.gt_zero_append($('select[name=verseid1]').val(), '&v1=');
+        path += this.gt_zero_append($('select[name=_verseid1]').val(), '&_v1=');
+
+        if ($('input[name=pm]').is(':checked'))
+        {
+            path += this.gt_zero_append($('input[name=pm]').val(), '&pm=');
+        }
+        if ($('input[name=_pm]').is(':checked'))
+        {
+            path += this.gt_zero_append($('input[name=_pm]').val(), '&_pm=');
+        }
+
+        console.log("Filter Path: ", path);
+        this.init(this.categoryBaseURL + '/?' + path, false);
+    }
+
+    /**
+     * Copied from FF-Net
+     */
+    private gt_zero_append(compare, prepend: string): string
+    {
+        if (compare != undefined && compare > 0)
+        {
+            return prepend + compare;
+        }
+        else return '';
+    }
+
+
+    private removeScripts(elements: JQuery)
+    {
+        elements.remove("script").removeAttr("onchange").removeAttr("onclick");
+
+        var elementsWithChilds = elements.has("*");
+        if (elementsWithChilds.length > 0)
+        {
+            this.removeScripts(elementsWithChilds.children());
+        }
+    }
+
+    public showFilterModal()
+    {
+        if (this.filterModal !== undefined)
+        {
+            GUIHandler.showModal(this.filterModal);
+        }
     }
 
 
@@ -283,7 +408,7 @@ class Standalone
      */
     public insertStyle()
     {
-        this.getRawPageContent("ffnetStyle.css", (s) =>
+        this.getRawPageContent("ffnetStyle.css",(s) =>
         {
             this.callEvent("standaloneOnStyleInsert", this, s);
 
@@ -302,7 +427,7 @@ class Standalone
        */
     public getPageContent(url: string, callback: (page: JQuery) => void)
     {
-        this.getRawPageContent(url, (s) =>
+        this.getRawPageContent(url,(s) =>
         {
             callback($(s));
         });
@@ -410,11 +535,11 @@ class Standalone
                     container.append(
                         $('<button class="btn btn-default btn-lg btn-block"></button>').text(element.name) //  style="width:100%"
                             .click(function (e)
-                            {
-                                e.preventDefault();
+                        {
+                            e.preventDefault();
 
-                                document.location.href = "elements.html?cat=" + element.url;
-                            })
+                            document.location.href = "elements.html?cat=" + element.url;
+                        })
                         );
 
 
