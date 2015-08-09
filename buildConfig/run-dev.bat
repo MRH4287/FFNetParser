@@ -1,0 +1,1 @@
+grunt jenkinsDev --no-color

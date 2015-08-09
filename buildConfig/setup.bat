@@ -1,0 +1,1 @@
+"%NodePath%/npm.cmd" install -g grunt-cli
