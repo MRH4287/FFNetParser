@@ -1,1 +1,1 @@
-grunt jenkinsDev --no-color
+"%appdata%/npm/grunt.cmd" jenkinsDev --no-color

@@ -1,1 +1,1 @@
-grunt package --no-color
+"%appdata%/npm/grunt.cmd" package --no-color
