@@ -82,6 +82,7 @@
     <TypeScriptCompile Include="jquery.colorpicker.d.ts" />
     <TypeScriptCompile Include="jquery.d.ts" />
     <TypeScriptCompile Include="jqueryui.d.ts" />
+    <TypeScriptCompile Include="_reference.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="GameEngine\astar.js" />

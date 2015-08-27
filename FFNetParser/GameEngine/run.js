@@ -1,6 +1,6 @@
 ﻿var container = $('<div></div>')
 .css("width", "100%")
-.css("height", "75px")
+.css("height", "100px")
 .css("position", "fixed")
 .css("bottom", "0")
 .css("text-align", "right")
@@ -15,13 +15,13 @@ var gameHandler = new GameHandler({
     initStaticAnimations: true,
     mapPath: "data/FFNetMap.json",
     width: $("body").width(),
-    height: 75,
+    height: 100,
     playerModel: "pichu",
     basePath: "https://www.mrh-development.de/FanFictionUserScript/SSLProxy/?url="
 });
 var eventHandler = new EventHandler(gameHandler);
 var renderer = new Renderer(canvas[0], gameHandler);
-renderer.setOffset = function () { };
+//renderer.setOffset = function () { };
 gameHandler.setRenderer(renderer);
 
 gameHandler.init();

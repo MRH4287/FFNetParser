@@ -1,4 +1,4 @@
-﻿/// <reference path="userscript.ts" />
+﻿/// <reference path="_reference.ts" /> 
 
 class LiveChatHandler extends ExtentionBaseClass
 {

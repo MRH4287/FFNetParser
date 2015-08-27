@@ -1,4 +1,4 @@
-﻿/// <reference path="userscript.ts" />
+﻿/// <reference path="_reference.ts" /> 
 
 class GUIHandler extends ExtentionBaseClass
 {
@@ -1449,27 +1449,6 @@ class GUIHandler extends ExtentionBaseClass
 
         this.bootstrapContainer = GUIHandler.createBootstrapModal(this.guiContainer, "Fanfiction Story Parser - Version: " + this.VERSION + " - Branch: " + this.BRANCH, buttons);
 
-        /*
-        this.bootstrapContainer = $('<div class="ffnetModal modal fade" id="ffnetModal" tabindex="-1" role="dialog" aria-labelledby="ffnetModalLabel" aria-hidden="true"></div>').append(
-            $('<div class="modal-dialog fullscreen"></div>').append(
-                $('<div class="modal-content"></div>').append(
-                    $('<div class="modal-header"></div>').append(
-                        $('<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>').append(
-                            '<span aria-hidden="true">&' + 'times;</span>'
-                            )
-                        ).text("Fanfiction Story Parser - Version: " + this.VERSION + " - Branch: " + this.BRANCH) // .append( $('<h4 class="modal-titel" id="ffnetModalLabel"></h4>') )
-                    )
-
-                    .append(
-                    $('<div class="modal-body"></div>').append(this.guiContainer)
-                    )
-                    .append(
-                    $('<div class="modal-footer"></div>').append(
-                        
-                    )
-                )
-            );
-        */
 
         this.log("GUI Created");
 
@@ -2645,18 +2624,7 @@ class GUIHandler extends ExtentionBaseClass
         {
             this.guiContainer.html('');
 
-            /*
-            $('<div style="width:100%; text-align:right; margin-bottom: 5px"></div>').append(
-                $('<input class="btn" type="button" value="Close"></input>').click(function ()
-                {
-                    if (confirm("All unsaved changes will be deleted!"))
-                    {
-                        _gui_hide();
-                    }
 
-                })
-            ).appendTo(_guiContainer);
-            */
             var panelMain = $('<div id="importPanel" class="panel-group" role="rablist" aria-multiselectable="true"></div>').appendTo(this.guiContainer);
 
 

@@ -1,3 +1,5 @@
+/// <reference path="_reference.ts" /> 
+
 // ---- Config -----
 
 interface Config

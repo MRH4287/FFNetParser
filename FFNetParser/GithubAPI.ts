@@ -1,4 +1,4 @@
-﻿/// <reference path="userscript.ts" />
+﻿/// <reference path="_reference.ts" /> 
 
 /**
  * Class used for Comunication with Github
