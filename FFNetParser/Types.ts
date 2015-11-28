@@ -56,6 +56,7 @@ interface Config
     disable_inStory_parsing: boolean;
     disable_resort_after_filter_match: boolean;
     chrome_sync: boolean;
+    advanced_view: boolean;
 
     storage_key: string;
     config_key: string;
@@ -205,6 +206,7 @@ interface GUIElement
     customElement?: (data: GUIElement) => JQuery;
     result?: (element: JQuery) => any;
     debugOnly?: boolean;
+    advancedOnly?: boolean;
 }
 
 interface GUIData

@@ -101,6 +101,11 @@ class GUIHandler extends ExtentionBaseClass
 
             $.each(data.guiData, function (_, element: GUIElement)
             {
+                if (element.advancedOnly && !self.config.advanced_view)
+                {
+                    return;
+                }
+
                 if (element.debugOnly && !self.DEBUG)
                 {
                     return;
@@ -883,6 +888,13 @@ class GUIHandler extends ExtentionBaseClass
         var advancedData = this.registerGUI("config-advanced", this.config,
             [
                 {
+                    name: 'advanced_view',
+                    type: GUIElementType.Checkbox,
+                    label: self._("Enable Advanced View"),
+                    value: function () { return self.config.advanced_view; },
+                    debugOnly: true
+                },
+                {
                     name: 'disable_highlighter',
                     type: GUIElementType.Checkbox,
                     label: '<abbr title="' + self._('Disable the Story Highlighter Feature.') + '">' + self._('Disable Highlighter') + '</abbr>',
@@ -900,14 +912,6 @@ class GUIHandler extends ExtentionBaseClass
                     label: '<abbr title="' + self._('Disable the Paragraph Menu.') + '">' + self._('Disable Paragraph Menu') + '</abbr>',
                     value: function () { return self.config.disable_parahraphMenu; }
                 },
-                /*
-                {
-                    name: 'disable_sync',
-                    type: GUIElementType.Checkbox,
-                    label: self._('Disable Synchronization Feature'),
-                    value: function () { return self.config.disable_sync; }
-                },
-                */
                 {
                     name: 'disable_default_coloring',
                     type: GUIElementType.Checkbox,
@@ -1030,6 +1034,11 @@ class GUIHandler extends ExtentionBaseClass
 
 
             var element: JQuery = null;
+
+            if (data.advancedOnly === true && !self.config.advanced_view)
+            {
+                return;
+            }
 
             if ((data.debugOnly === true) && !self.parser.DEBUG)
             {
@@ -1229,6 +1238,11 @@ class GUIHandler extends ExtentionBaseClass
             if (data.debugOnly)
             {
                 data.label = "[" + data.label + "]";
+            }
+
+            if (data.advancedOnly)
+            {
+                data.label = "<li>" + data.label + "</li>";
             }
 
 
@@ -2620,7 +2634,8 @@ class GUIHandler extends ExtentionBaseClass
 
             this.openSaveConfig();
 
-        } else
+        }
+        else
         {
             this.guiContainer.html('');
 

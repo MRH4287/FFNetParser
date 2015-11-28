@@ -123,6 +123,7 @@ class StoryParser
         api_github_requestStart_url: "https://www.mrh-development.de/FFNetGithub/RedirectToAccessSite/",
 
         // advanced Features:
+        advanced_view: false,
         disable_cache: false,
         disable_highlighter: false,
         disable_parahraphMenu: false,
@@ -1921,9 +1922,19 @@ class StoryParser
                     {
                         self.parse(data, markerConfig, callback, i + 1, executeNext, elementID, initiated);
                     }
+                    else
+                    {
+                        executeNext();
+                        return;
+                    }
                 }
                 //console.log('Content not found in: ', url);
 
+            }
+            else
+            {
+                executeNext();
+                return;
             }
 
         };
@@ -2182,6 +2193,9 @@ class StoryParser
                         suggestionLevel *= data;
                     }
                 });
+
+                // Add Bonus if the Chapter of the found entry is earlier:
+                suggestionLevel += (this.config.story_search_depth - info.chapter);
 
                 if (element.is("[data-suggestionLevel]"))
                 {
