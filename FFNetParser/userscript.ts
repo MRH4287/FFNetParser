@@ -2676,7 +2676,9 @@ class StoryParser
         {
             list.append($('<a href="#">' + self._('Show Elements hidden by Story Config') + '</a>').click(function (e)
             {
-                hiddenByStoryConfig.slideDown();
+                hiddenByStoryConfig.css("border", "2px solid black").slideDown();
+
+                self.updateListColor();
                 e.preventDefault();
             }));
         }
