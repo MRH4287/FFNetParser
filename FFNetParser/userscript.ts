@@ -2122,6 +2122,8 @@ class StoryParser
                 window.setTimeout(function ()
                 {
                     element.fadeIn();
+                    self.updateListColor();
+
                 }, 100);
 
                 self.hidden[page] -= 1;
@@ -2137,8 +2139,11 @@ class StoryParser
 
                 self.hiddenElements[page][info.url] = "displayOnly";
 
+
                 element.fadeOut();
                 self.hidden[page] += 1;
+
+                self.updateListColor();
             }
         }
 
@@ -2152,7 +2157,6 @@ class StoryParser
             self.hiddenElements[page][info.url] = "Filter '" + headline + "'";
 
             element.hide();
-            element.addClass('hidden');
             self.updateListColor();
             self.hidden[page] += 1;
         } else
@@ -2690,7 +2694,7 @@ class StoryParser
         var odd = false;
         var self = this;
 
-        $(".z-list").not('.hidden').each(function (k, e)
+        $(".z-list").filter(':visible').each(function (k, e)
         {
             var el = $(e);
             var link = el.find('a').first().attr('href');
@@ -2714,19 +2718,6 @@ class StoryParser
                 self.updateColor(el, color, -1, colorMo, -1);
             }
 
-
-            /*
-            if (_found.indexOf(storyName) == -1)
-            {
-                //
-                
-                /*if (_DEBUG)
-                {
-                    console.log("[UpdateList] Change Color of Line: ",el); 
-                }* /
-                
-            }
-            */
         });
 
 
@@ -3911,6 +3902,8 @@ class StoryParser
                     self.read(wrapper);
 
                     wrapper.slideDown();
+
+                    self.updateListColor();
 
                     window.setTimeout(function ()
                     {
