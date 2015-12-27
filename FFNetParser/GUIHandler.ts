@@ -384,6 +384,13 @@ class GUIHandler extends ExtentionBaseClass
                     attributes:
                     {
                         size: 50
+                    },
+                    customOptions: el =>
+                    {
+                        if (self.config.disable_width_change === true)
+                        {
+                            el.attr("disabled", "disabled").attr("title", self._("This option can't be changed!"));
+                        }
                     }
                 },
                 {
@@ -959,7 +966,12 @@ class GUIHandler extends ExtentionBaseClass
                     type: GUIElementType.Checkbox,
                     label: self._('Disable the resorting of Elements after a Filter match'),
                     value: function () { return self.config.disable_resort_after_filter_match; }
-
+                },
+                {
+                    name: 'disable_width_change',
+                    type: GUIElementType.Checkbox,
+                    label: self._('Disables the changing of the size'),
+                    value: function () { return self.config.disable_width_change; }
                 },
                 {
                     name: 'chrome_sync',

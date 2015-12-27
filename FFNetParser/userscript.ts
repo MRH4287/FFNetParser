@@ -131,6 +131,7 @@ class StoryParser
         disable_default_coloring: false,
         disable_inStory_parsing: false,
         disable_resort_after_filter_match: false,
+        disable_width_change: false,
         chrome_sync: false,
         highlighter_use_storyID: false,
 
@@ -824,8 +825,11 @@ class StoryParser
     {
         this.eventHandler.callEvent("preGUIUpdate", this, null);
 
-        // Updates Content_width
-        $('#content_wrapper').css('width', this.config['content_width']);
+        if (!this.config.disable_width_change)
+        {
+            // Updates Content_width
+            $('#content_wrapper').css('width', this.config['content_width']);
+        }
 
         var table = $(".zui").find("td").first();
 
