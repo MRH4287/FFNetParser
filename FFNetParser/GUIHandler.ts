@@ -3273,120 +3273,27 @@ class GUIHandler extends ExtentionBaseClass
                 customContainer.append("<p><strong>" + self._("In order to active the Custom Options, you have to click on the Button 'Custom' in the Drop-down List") + "</strong></p>");
             }
 
-            $(".saveButton").click((e) =>
-            {
-                e.preventDefault();
-
-                this.saveAll();
-                this.parser.save_config();
-
-                this.guiContainer.css("position", "absolute");
-                this.gui_hide();
-                this.parser.readAll();
-                this.parser.enableInStoryHighlighter();
-
-            });
-
-            /*
-            this.guiContainer.append("<p>This Menu allows you to set story specific options for:</p>");
-            this.guiContainer.append(storyInfo.name);
-            this.guiContainer.append("<hr />");
-            this.guiContainer.append("<p>Highlighter Options:</p>");
-
-            this.guiContainer.append($('<label for="ffnet-story-highlighter-hide">Hide Story</label>').css("display", "inline-block"));
-            var hide = $('<input type="checkbox" id="ffnet-story-highlighter-hide">')
-                .css("display", "inline-block").css("margin-left", "15px")
-                .appendTo(this.guiContainer);
-
-            if ((this.config['highlighter'][storyInfo.url] !== undefined) && (this.config['highlighter'][storyInfo.url].hide))
-            {
-                hide.attr('checked', 'checked');
-            }
-
-            this.guiContainer.append("<hr />");
-
-            this.guiContainer.append('<label for="ffnet-story-highlighter">Highlighter Path: (leave empty to clear)</label><br/>');
-            var highlighter = $('<input id="ffnet-story-highlighter" type="text"></input>')
-                .appendTo(this.guiContainer)
-                .css("width", "500px");
-
-            this.guiContainer.append("<p></p>");
-
-            var imageContainer = $("<div></div>")
-                .css("border", "1px solid black")
-                .css("padding", "2px")
-                .appendTo(this.guiContainer);
-
-            var image = $("<img></img>")
-                .css("width", "30px")
-                .css("height", "30px")
-                .css("margin-left", "5px")
-                .css("border", "1px solid black")
-                .css("display", "inline-block");
-
-            image.clone()
-                .attr("src", self.parser.getUrl("none.gif"))
-                .appendTo(imageContainer)
-                .click(function ()
-                {
-                    highlighter.val("");
-                });
-
-            for (var i = 1; i <= 6; i++)
-            {
-                image.clone()
-                    .attr("src", self.parser.getUrl(i + ".gif"))
-                    .appendTo(imageContainer)
-                    .click(function ()
-                    {
-                        highlighter.val($(this).attr("src"));
-                    });
-            }
-
-
-            if (typeof(this.config['highlighter'][storyInfo.url]) !== "undefined")
-            {
-                highlighter.val(this.config['highlighter'][storyInfo.url].image);
-            }
-
-            this.guiContainer.append("<p></p>");
-
-
-
-            this.guiContainer.append(
-                $('<input class="btn" type="button" value="Set" />')
-                    .click(function ()
-                    {
-                        var newVal = highlighter.val();
-                        var hidden = hide.is(":checked");
-
-                        if ((newVal === "") && (!hidden))
-                        {
-                            self.config['highlighter'][storyInfo.url] = undefined;
-                        }
-                        else
-                        {
-                            self.config['highlighter'][storyInfo.url] = {
-                                image: newVal,
-                                hide: hidden
-                            };
-                        }
-
-                        self.parser.save_config();
-
-                        self.guiContainer.css("position", "absolute");
-                        self.gui_hide();
-                        self.parser.readAll();
-                        self.parser.enableInStoryHighlighter();
-                    })
-                );
-
-    */
 
             this.log("Display Content");
 
-
             this.gui_show();
+
+            window.setTimeout(() =>
+            {
+                $(".saveButton").click((e) =>
+                {
+                    e.preventDefault();
+
+                    this.saveAll();
+                    this.parser.save_config();
+
+                    this.guiContainer.css("position", "absolute");
+                    this.gui_hide();
+                    this.parser.readAll();
+                    this.parser.enableInStoryHighlighter();
+
+                });
+            }, 500);
         }
 
     }
