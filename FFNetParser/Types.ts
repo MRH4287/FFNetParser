@@ -57,6 +57,7 @@ interface Config
     disable_resort_after_filter_match: boolean;
     chrome_sync: boolean;
     advanced_view: boolean;
+    highlighter_use_storyID: boolean;
 
     storage_key: string;
     config_key: string;
@@ -167,6 +168,7 @@ interface StoryInfo
 {
     name: string;
     url: string;
+    id: string;
     chapter?: number;
     sentence?: string;
     // Used in Highlighter Config

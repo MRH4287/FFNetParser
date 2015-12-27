@@ -339,7 +339,7 @@ class GUIHandler extends ExtentionBaseClass
                 }
 
             ]
-            );
+        );
 
         this.registerCategory(
             {
@@ -508,7 +508,7 @@ class GUIHandler extends ExtentionBaseClass
                     {
                         size: 50
                     },
-                    customOptions: function (element) 
+                    customOptions: function (element)
                     {
                         /*
                         element.colorpicker({
@@ -526,7 +526,7 @@ class GUIHandler extends ExtentionBaseClass
                     {
                         size: 50
                     },
-                    customOptions: function (element) 
+                    customOptions: function (element)
                     {
                         /*
                         element.colorpicker({
@@ -544,7 +544,7 @@ class GUIHandler extends ExtentionBaseClass
                     {
                         size: 50
                     },
-                    customOptions: function (element) 
+                    customOptions: function (element)
                     {
                         /*
                         element.colorpicker({
@@ -714,7 +714,7 @@ class GUIHandler extends ExtentionBaseClass
                                 {
                                     $('#fflist-api_url').val("https://www.mrh-development.de/FanFictionUserScript");
                                 })
-                                ).append(
+                            ).append(
                                 $('<button class="btn btn-default">Local</button>').click(function ()
                                 {
                                     $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
@@ -746,7 +746,7 @@ class GUIHandler extends ExtentionBaseClass
                                 {
                                     $('#fflist-api_webSocketServerAddress').val("wss://www.mrh-development.de:8182");
                                 })
-                                ).append(
+                            ).append(
                                 $('<button class="btn btn-default">Local</button>').click(function ()
                                 {
                                     $('#fflist-api_webSocketServerAddress').val("ws://127.0.0.1:8182");
@@ -778,7 +778,7 @@ class GUIHandler extends ExtentionBaseClass
                                 {
                                     $('#fflist-api_github_url').val("https://www.mrh-development.de/api/ffgithub");
                                 })
-                                ).append(
+                            ).append(
                                 $('<button class="btn btn-default">Local</button>').click(function ()
                                 {
                                     $('#fflist-api_github_url').val("https://localhost:44300/api/ffgithub");
@@ -810,7 +810,7 @@ class GUIHandler extends ExtentionBaseClass
                                 {
                                     $('#fflist-api_github_requestStart_url').val("https://www.mrh-development.de/FFNetGithub/RedirectToAccessSite/");
                                 })
-                                ).append(
+                            ).append(
                                 $('<button class="btn btn-default">Local</button>').click(function ()
                                 {
                                     $('#fflist-api_github_requestStart_url').val("https://localhost:44300/FFNetGithub/RedirectToAccessSite/");
@@ -893,6 +893,36 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._("Enable Advanced View"),
                     value: function () { return self.config.advanced_view; },
                     debugOnly: true
+                },
+                {
+                    name: 'highlighter_use_storyID',
+                    type: GUIElementType.Checkbox,
+                    label: self._("Use StoryID for Highlighter Configuration"),
+                    value: function () { return self.config.highlighter_use_storyID; },
+                    customOptions: el =>
+                    {
+                        if (el.is(":checked"))
+                        {
+                            el.attr("disabled", "disabled").attr("title",
+                                self._("This option can't be changed!"));
+                        }
+
+                        el.change(function ()
+                        {
+                            if (el.is(":checked"))
+                            {
+                                var ok = confirm(self._("If you change this option, all highlighter are converted to use the StoryID instead of the StoryURL. " +
+                                    "This allows you to identify stories in every chapter. Setting this option is permanent! " +
+                                    "Every duplicate Highlighter will be removed without further warning. Are you sure you want to set this option? " +
+                                    "This option is applied as soon as you hit save button and reload the page."));
+
+                                if (!ok)
+                                {
+                                    el.prop('checked', false);
+                                }
+                            }
+                        });
+                    }
                 },
                 {
                     name: 'disable_highlighter',
@@ -1173,7 +1203,7 @@ class GUIHandler extends ExtentionBaseClass
                     {
                         panel.append(
                             $('<div class="panel-heading"></div>').html(data.label)
-                            );
+                        );
                     }
 
                     var panelBody = $('<div class="panel-body"></div>').appendTo(panel);
@@ -1266,17 +1296,17 @@ class GUIHandler extends ExtentionBaseClass
                             $('<div class="checkbox"></div>').append(
                                 $('<label></label>').append(
                                     element
-                                    ).append(data.label)
-                                )
+                                ).append(data.label)
                             )
-                        );
+                        )
+                    );
 
                     break;
 
                 case GUIElementType.PanelStart:
                     elementParent.append(
                         $('<div class="col-md-' + size + '"></div>').append(element)
-                        );
+                    );
                     break;
 
 
@@ -1287,12 +1317,12 @@ class GUIHandler extends ExtentionBaseClass
                                 $('<label></label>')
                                     .html(data.label)
                                     .attr("for", element.attr('id'))
-                                )
+                            )
                                 .append(
                                 element
                                 )
-                            )
-                        );
+                        )
+                    );
                     break;
 
             }
@@ -1373,9 +1403,9 @@ class GUIHandler extends ExtentionBaseClass
                     $('<div class="modal-header"></div>').append(
                         $('<button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>').append(
                             '<span aria-hidden="true">&' + 'times;</span>'
-                            )
-                        ).html(title)
-                    )
+                        )
+                    ).html(title)
+                )
 
                     .append(
                     $('<div class="modal-body"></div>').append(content)
@@ -1383,10 +1413,10 @@ class GUIHandler extends ExtentionBaseClass
                     .append(
                     $('<div class="modal-footer"></div>').append(
                         buttons
-                        )
                     )
-                )
-            );
+                    )
+            )
+        );
     }
 
     /*
@@ -1459,7 +1489,7 @@ class GUIHandler extends ExtentionBaseClass
 
         buttons.push(
             $('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>')
-            );
+        );
 
         this.bootstrapContainer = GUIHandler.createBootstrapModal(this.guiContainer, "Fanfiction Story Parser - Version: " + this.VERSION + " - Branch: " + this.BRANCH, buttons);
 
@@ -1478,12 +1508,12 @@ class GUIHandler extends ExtentionBaseClass
         var saveButtonContainer = $('<div class="fflist-buttonContainer"></div>');
 
         $('<input class="btn btn-danger" type="button" value="' + this._("Save") + '"></input>')
-        /*.button({
-            icons: {
-                primary: "ui-icon-check"
-            }
-        })
-        */
+            /*.button({
+                icons: {
+                    primary: "ui-icon-check"
+                }
+            })
+            */
             .addClass("ffnetSaveButton").appendTo(saveButtonContainer);
 
         return saveButtonContainer;
@@ -1516,7 +1546,7 @@ class GUIHandler extends ExtentionBaseClass
         return $("<div></div>").addClass("col-md-6").append(
             $('<button class="btn btn-default btn-lg btn-block ffnet_Config_Button"></button>').text(name) // ffnet_Config_Button
                 .attr("data-target", target).click(this.buttonLogic)
-            ).appendTo(container);
+        ).appendTo(container);
     };
 
     private getCategory(name, id, container): { category: JQuery; headline: JQuery; container: JQuery }
@@ -1655,11 +1685,11 @@ class GUIHandler extends ExtentionBaseClass
         filterButtonContainer.appendTo(this.guiContainer);
 
         $('<input class="btn brn-default" id="ffnet-addNewFilter" type="button" value="' + self._('Add new Filter') + '"></input>')
-        /*.button({
-            icons: {
-                primary: "ui-icon-plusthick"
-            }
-        }) */
+            /*.button({
+                icons: {
+                    primary: "ui-icon-plusthick"
+                }
+            }) */
             .click(function ()
             {
                 $(".ffnet-InfoContainer").fadeOut();
@@ -1692,19 +1722,19 @@ class GUIHandler extends ExtentionBaseClass
                         highlight_color: null
                     }, container
                     , true // Display Big
-                    );
+                );
 
             }).appendTo(filterButtonContainer);
 
 
         $('<input class="btn btn-default" id="ffnet-ImportButton" type="button" value="' + self._('Import Filter') + '"></input>')
-        /*
-        .button({
-            icons: {
-                primary: "ui-icon-plusthick"
-            }
-        })
-        */
+            /*
+            .button({
+                icons: {
+                    primary: "ui-icon-plusthick"
+                }
+            })
+            */
             .click(function (event)
             {
                 event.preventDefault();
@@ -1872,7 +1902,7 @@ class GUIHandler extends ExtentionBaseClass
                                 .popover({
                                     content: quickInfo
                                 })
-                            );
+                        );
                     }
                 },
                 {
@@ -1929,7 +1959,7 @@ class GUIHandler extends ExtentionBaseClass
                     {
                         input.parent().append(
                             '<br><span style="font-size: small;">' + self._('Separated by ", "') + '</span>'
-                            );
+                        );
                     }
                 },
                 {
@@ -1952,7 +1982,7 @@ class GUIHandler extends ExtentionBaseClass
                     {
                         input.parent().append(
                             '<br><span style="font-size: small;">' + self._('Separated by ", "') + '</span>'
-                            );
+                        );
                     }
                 },
                 {
@@ -2449,11 +2479,11 @@ class GUIHandler extends ExtentionBaseClass
 
                                 }, 100);
                             }).css("cursor", "pointer")
-                            );
+                        );
 
                         $('<div class="col-md-4 col-md-offset-4"></div>').appendTo(elementContainer).append(
                             $('<button class="btn btn-default">' + self._('Export') + '</button>')
-                            //.button()
+                                //.button()
                                 .click(function (event)
                                 {
                                     event.preventDefault();
@@ -2462,7 +2492,7 @@ class GUIHandler extends ExtentionBaseClass
                                     var modal = GUIHandler.createBootstrapModal($("<pre></pre>").text(JSON.stringify(marker)), self._("Export Data for Element: ") + marker.name);
                                     GUIHandler.showModal(modal);
                                 })
-                            );
+                        );
 
                         return elementContainer;
                     }
@@ -2651,10 +2681,10 @@ class GUIHandler extends ExtentionBaseClass
                     $('<h4 class="panel-title"></h4>').append(
                         $('<a data-toggle="collapse" data-parent="#importPanel" href="#manualInport" aria-expanded="true" aria-controls="collapseOne"></a>').text(
                             this._("Manual Import")
-                            )
                         )
                     )
-                );
+                )
+            );
 
             var panelContainer = $('<div id="manualInport" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne"></div>').appendTo(panel);
             var manualContainer = $('<div class="panel-body"></div>').appendTo(panelContainer);
@@ -2679,7 +2709,7 @@ class GUIHandler extends ExtentionBaseClass
                         self.gui_hide();
                         self.parser.readAll();
                     })
-                );
+            );
 
 
             // ----------- Github API -------------
@@ -2691,10 +2721,10 @@ class GUIHandler extends ExtentionBaseClass
                     $('<h4 class="panel-title"></h4>').append(
                         $('<a data-toggle="collapse" data-parent="#importPanel" href="#githubInport" aria-expanded="true" aria-controls="collapseOne"></a>').text(
                             this._("Github Gist")
-                            )
                         )
                     )
-                );
+                )
+            );
 
 
 
@@ -2774,7 +2804,7 @@ class GUIHandler extends ExtentionBaseClass
                             .append("<th>" + this._('Valid') + "</th>")
                             .append(infoValid)
                         )
-                    )
+                )
                 );
 
             var gistChangeCallback = () =>
@@ -2838,12 +2868,12 @@ class GUIHandler extends ExtentionBaseClass
                     .append("<th>3. Insert Information</th>")
                     .append(($("<td></td>").append(
                         '<label for="githubGistDescription">' + this._('Description') + ': </label>'
-                        ).append(descriptionInput)
+                    ).append(descriptionInput)
                         .append(
                         '<label for="githubGistDescription">' + this._('Public') + ': </label>'
                         ).append(isPublicInput)
                     ))
-                );
+            );
 
             newGistContainer.push(
                 $("<tr></tr>")
@@ -2867,9 +2897,9 @@ class GUIHandler extends ExtentionBaseClass
 
                             })
 
-                        )
+                    )
                     ))
-                );
+            );
 
 
 
@@ -2885,13 +2915,13 @@ class GUIHandler extends ExtentionBaseClass
                     .append("<th>3. Select Gist</th>")
                     .append(($("<td></td>").append(gistSelect))
                     )
-                );
+            );
 
             importUpdateContainer.push(
                 $("<tr></tr>")
                     .append("<th></th>")
                     .append($("<td></td>").append(gistDataContainer))
-                );
+            );
 
             importUpdateContainer.push(
                 $("<tr></tr>")
@@ -2901,7 +2931,7 @@ class GUIHandler extends ExtentionBaseClass
                         .append(importButton)
                         .append(updateButton)
                     )
-                );
+            );
 
 
             importButton.click((e) =>
@@ -3165,7 +3195,7 @@ class GUIHandler extends ExtentionBaseClass
 
                         })
                     ).append(saveButton.clone())
-                );
+            );
 
             this.guiContainer.append(presetContainer);
 
@@ -3194,10 +3224,12 @@ class GUIHandler extends ExtentionBaseClass
             customContainer.append(
                 $('<div style="margin-top: 10px; text-align:center"></div>').append(
                     saveButton.clone())
-                );
+            );
+
+            var highlighterKey = this.config.highlighter_use_storyID ? storyInfo.id : storyInfo.url;
 
             var usedData: ModificationBase;
-            if (typeof (this.config.highlighter[storyInfo.url]) === "undefined" || this.config.highlighter[storyInfo.url].custom === null)
+            if (typeof (this.config.highlighter[highlighterKey]) === "undefined" || this.config.highlighter[highlighterKey].custom === null)
             {
                 usedData = {
                     background: null,
@@ -3218,7 +3250,7 @@ class GUIHandler extends ExtentionBaseClass
             }
             else
             {
-                usedData = this.config.highlighter[storyInfo.url].custom;
+                usedData = this.config.highlighter[highlighterKey].custom;
             }
 
 
@@ -3377,22 +3409,24 @@ class GUIHandler extends ExtentionBaseClass
 
         // Add Element:
 
+        var highlighterKey = self.config.highlighter_use_storyID ? storyInfo.id : storyInfo.url;
         var selectElement = (name: string) =>
         {
             $(".ffnet-HighlighterContainer").remove();
 
-            if (typeof (this.config.highlighter[storyInfo.url]) === "undefined")
+
+            if (typeof (this.config.highlighter[highlighterKey]) === "undefined")
             {
-                this.config.highlighter[storyInfo.url] =
-                {
-                    custom: null,
-                    hide: null,
-                    image: null,
-                    prefab: null
-                };
+                this.config.highlighter[highlighterKey] =
+                    {
+                        custom: null,
+                        hide: null,
+                        image: null,
+                        prefab: null
+                    };
             }
 
-            this.config.highlighter[storyInfo.url].prefab = name;
+            this.config.highlighter[highlighterKey].prefab = name;
 
             this.parser.save_config();
             this.parser.read(storyInfo.element.parent());
@@ -3418,7 +3452,7 @@ class GUIHandler extends ExtentionBaseClass
                 })
                 .appendTo(listContainer);
 
-            if (typeof (this.config.highlighter[storyInfo.url]) !== "undefined" && this.config.highlighter[storyInfo.url].prefab === name)
+            if (typeof (this.config.highlighter[highlighterKey]) !== "undefined" && this.config.highlighter[highlighterKey].prefab === name)
             {
                 element.addClass("selected");
             }
@@ -3428,35 +3462,35 @@ class GUIHandler extends ExtentionBaseClass
 
         var color = "gray";
 
-        if (typeof (this.config.highlighter[storyInfo.url]) !== "undefined" &&
-            typeof (this.config.highlighter[storyInfo.url].custom) !== "undefined" &&
-            this.config.highlighter[storyInfo.url].custom !== null)
+        if (typeof (this.config.highlighter[highlighterKey]) !== "undefined" &&
+            typeof (this.config.highlighter[highlighterKey].custom) !== "undefined" &&
+            this.config.highlighter[highlighterKey].custom !== null)
         {
-            color = this.config.highlighter[storyInfo.url].custom.highlight_color;
+            color = this.config.highlighter[highlighterKey].custom.highlight_color;
         }
 
         var customElement = $('<div class="ffnet-HighlighterListElement"></div>').append(
             $('<div class="color">')
                 .css("background-color", color)
-            )
+        )
             .append($('</div><div class="name">Custom</div>')
             ).click(function (ev)
             {
                 ev.preventDefault();
                 $(".ffnet-HighlighterContainer").remove();
 
-                if (typeof (self.config.highlighter[storyInfo.url]) !== "undefined")
+                if (typeof (self.config.highlighter[highlighterKey]) !== "undefined")
                 {
-                    self.config.highlighter[storyInfo.url].prefab = "";
+                    self.config.highlighter[highlighterKey].prefab = "";
                 }
 
                 self.toggleStoryConfig(storyInfo, false);
             }).appendTo(listContainer);
 
-        if (typeof (this.config.highlighter[storyInfo.url]) !== "undefined" &&
-            (typeof (this.config.highlighter[storyInfo.url].prefab) === "undefined" || this.config.highlighter[storyInfo.url].prefab === null ||
-            this.config.highlighter[storyInfo.url].prefab === "" || this.config.highlighter[storyInfo.url].prefab === " ") &&
-            typeof (this.config.highlighter[storyInfo.url].custom) !== "undefined" && this.config.highlighter[storyInfo.url].custom !== null)
+        if (typeof (this.config.highlighter[highlighterKey]) !== "undefined" &&
+            (typeof (this.config.highlighter[highlighterKey].prefab) === "undefined" || this.config.highlighter[highlighterKey].prefab === null ||
+                this.config.highlighter[highlighterKey].prefab === "" || this.config.highlighter[highlighterKey].prefab === " ") &&
+            typeof (this.config.highlighter[highlighterKey].custom) !== "undefined" && this.config.highlighter[highlighterKey].custom !== null)
         {
             customElement.addClass("selected");
         }
@@ -3466,18 +3500,18 @@ class GUIHandler extends ExtentionBaseClass
             $('<div class="color">X</div>')
                 .css("background-color", "red")
                 .css("text-align", "center")
-            )
+        )
             .append($('<div class="name" style="top:0px">Reset</div>')
             ).click(function (ev)
             {
                 ev.preventDefault();
                 $(".ffnet-HighlighterContainer").remove();
 
-                if (typeof (self.config.highlighter[storyInfo.url]) !== "undefined")
+                if (typeof (self.config.highlighter[highlighterKey]) !== "undefined")
                 {
                     if (confirm(self._("Do you really want to remove this Highlighter?")))
                     {
-                        delete self.config.highlighter[storyInfo.url];
+                        delete self.config.highlighter[highlighterKey];
 
                         self.parser.save_config();
                         self.parser.read(storyInfo.element.parent());
@@ -4077,11 +4111,11 @@ class GUIHandler extends ExtentionBaseClass
 
                                 }, 100);
                             }).css("cursor", "pointer")
-                            );
+                        );
 
                         $('<div style="display:inline-block; width: 40%"></div>').appendTo(elementContainer).append(
                             $('<button class="btn btn-default">' + self._('Export') + '</button>')
-                            //.button()
+                                //.button()
                                 .click(function (event)
                                 {
                                     event.preventDefault();
@@ -4089,7 +4123,7 @@ class GUIHandler extends ExtentionBaseClass
                                     var modal = GUIHandler.createBootstrapModal($("<pre></pre>").text(JSON.stringify(config)), self._("Export Data for Element: ") + config.name);
                                     GUIHandler.showModal(modal);
                                 })
-                            );
+                        );
 
                         return elementContainer;
                     }
@@ -4279,7 +4313,7 @@ class GUIHandler extends ExtentionBaseClass
                             });
 
                         })
-                    )
+                )
                 );
 
 
@@ -4320,7 +4354,7 @@ class GUIHandler extends ExtentionBaseClass
                         send();
                     })
                     )
-                )
+            )
                 .append('<hr/><p style="text-align:center">' + self._('Advanced Features:') + '</p>')
                 .append(
                 $('<button class="btn btn-warning">' + self._('Send Config-Data') + '</button>')
@@ -4480,7 +4514,7 @@ class GUIHandler extends ExtentionBaseClass
                 messages.append(
                     $("<b></b>")
                         .text(el.Title)
-                    )
+                )
                     .append(
                     $("<p></p>")
                         .html(el.Content)

@@ -132,6 +132,7 @@ class StoryParser
         disable_inStory_parsing: false,
         disable_resort_after_filter_match: false,
         chrome_sync: false,
+        highlighter_use_storyID: false,
 
         // Do not change below this line:
         storage_key: "ffnet-storycache",
@@ -563,8 +564,8 @@ class StoryParser
                 }));
 
                 modal = GUIHandler.createBootstrapModal($(text), "Fanfiction Story Parser", buttons);
-                
-               
+
+
                 window.setTimeout(function ()
                 {
                     GUIHandler.showModal(modal);
@@ -847,7 +848,7 @@ class StoryParser
                     e.preventDefault();
 
                 }).attr('title', self._('Parse the Stories again'))
-                ).append(
+            ).append(
                 $('<a></a>').addClass('menu-link').html(self._('Menu')).attr('href', '#').click(function (e)
                 {
                     self.GUI.gui();
@@ -893,7 +894,7 @@ class StoryParser
                     .attr("src", self.getUrl("message-white.png"))
                     .css("width", "20px")
                     .css("margin-bottom", "4px")
-                );
+            );
 
 
             var radius = 15;
@@ -950,7 +951,7 @@ class StoryParser
                 $("<div>" + self._('Message Menu (Script)') + "</div>")
                     .css("font-weight", "bold")
                     .css("margin-bottom", "10px")
-                );
+            );
 
             var count = 0;
 
@@ -970,7 +971,7 @@ class StoryParser
                         self.GUI.messagesGUI();
 
                     })
-                );
+            );
 
             innerContainer.append(
                 $("<div>" + self._('Give Feedback') + "</div>")
@@ -981,7 +982,7 @@ class StoryParser
 
                         self.GUI.feedbackGUI();
                     })
-                );
+            );
 
             var liveChatContainer = $("<div>" + self._('Live Chat') + "</div>")
                 .addClass("menuItem liveChatButton")
@@ -1009,7 +1010,7 @@ class StoryParser
                         messageContainer.hide();
                         window.open("https://github.com/MRH4287/FFNetParser/wiki");
                     })
-                );
+            );
             //
 
             this.eventHandler.callEvent("postGUIMessageMenuAppend", this, menulinks);
@@ -1038,14 +1039,14 @@ class StoryParser
                         .attr("src", self.getUrl("notes.png"))
                         .css("width", "12px")
                         .css("margin-bottom", "4px")
-                    );
+                );
 
 
                 sRImageContainer.click(function (event)
                 {
                     event.preventDefault();
 
-                    
+
                     var table = $('<table class="table table-hover table-responsive table-border"></table>');
                     table.append("<tr><th>" + self._('ID') + '</th><th>' + self._('Name') + '</th><th>' + self._('Chapter') +
                         '</th><th>' + self._('Time') + '</th><th>' + self._('Visited') + '</th><th>' + self._('Options') + "</th></tr>");
@@ -1078,7 +1079,7 @@ class StoryParser
                                     }
 
                                 })
-                                )
+                            )
                             ).addClass("clickable")
                             .click(function (e)
                             {
@@ -1091,7 +1092,7 @@ class StoryParser
                             }).appendTo(table);
                     });
 
-                   
+
                     GUIHandler.showModal(modal);
                 });
 
@@ -1460,6 +1461,7 @@ class StoryParser
                     var info: StoryInfo = {
                         name: storyName,
                         url: link,
+                        id: storyInfo.ID,
                         chapter: 0
                     };
 
@@ -1525,7 +1527,8 @@ class StoryParser
                     self.GUI.showStoryPrefabList({
                         url: link,
                         element: element,
-                        name: storyName
+                        name: storyName,
+                        id: storyInfo.ID
                     });
 
 
@@ -1533,11 +1536,11 @@ class StoryParser
 
                 element.find("div").first().before(contextMenu);
 
-
+                var highlighterKey = self.config.highlighter_use_storyID ? storyInfo.ID : link;
                 // Highlighter found:
-                if (typeof (self.config['highlighter'][link]) !== "undefined")
+                if (typeof (self.config['highlighter'][highlighterKey]) !== "undefined")
                 {
-                    self.highlighterCallback(self, self.config.highlighter[link], element, link, page);
+                    self.highlighterCallback(self, self.config.highlighter[highlighterKey], element, link, page);
                 }
             }
 
@@ -1627,9 +1630,9 @@ class StoryParser
                 {
                     $(this).css('background-color', colorMo);
                 }).mouseleave(function ()
-                    {
-                        $(this).css('background-color', color);
-                    });
+                {
+                    $(this).css('background-color', color);
+                });
 
 
             });
@@ -1644,7 +1647,7 @@ class StoryParser
                         $('<style class="disableImageHoverClass"></style')
                             .text(".z-list_hover { height: auto !important }")
                             .addClass("parser-msg")
-                        );
+                    );
 
                 }
 
@@ -1677,7 +1680,7 @@ class StoryParser
      *   @param link Link to story
      *   @result Name of Story
      */
-    private getStoryInfo(link: string): { Chapter: string; Name: string; ID: string }
+    public getStoryInfo(link: string): { Chapter: string; Name: string; ID: string }
     {
         var data: { Chapter: string; Name: string; ID: string } = { Chapter: null, ID: null, Name: null };
 
@@ -2503,7 +2506,7 @@ class StoryParser
                 element.find('a').first().after(
                     $("<span class=\"parser-msg\"> <b>{" + mod.name + "}</b></span>")
                         .attr("title", mod.note)
-                    );
+                );
             }
 
             if (!mod.ignoreColor && mod.text_color !== null)
@@ -2595,12 +2598,12 @@ class StoryParser
                         $("<li></li>").append(
                             $("<span></span>").append(
                                 $("<a></a>").attr('href', value.url).html(value.name)
-                                ).append(" - " + value.chapter)
+                            ).append(" - " + value.chapter)
                                 .attr("title", value.sentence)
-                            ).append(
+                        ).append(
                             $(" <a>#</a>").attr("href", "#" + value.name)
                             )
-                        );
+                    );
                 });
 
                 headlineContainer.append(eUl);
@@ -2638,13 +2641,13 @@ class StoryParser
                                 $("<th></th>").append(
                                     $("<a></a>").text(self.getStoryInfo(key).Name)
                                         .attr("href", key)
-                                    )
                                 )
+                            )
                                 .append
                                 (
                                 $('<td style="padding-left: 15px"></td>').text(value)
                                 )
-                            );
+                        );
 
                     });
 
@@ -2654,7 +2657,7 @@ class StoryParser
                     e.preventDefault();
                 }
 
-                )
+            )
                 .attr("title", self._("Show the reasons for hiding"))
                 .addClass("clickable")
             )
@@ -2752,9 +2755,9 @@ class StoryParser
             {
                 $(this).css('background-color', colorMo);
             }).mouseleave(function ()
-                {
-                    $(this).css('background-color', color);
-                });
+            {
+                $(this).css('background-color', color);
+            });
 
 
             element.attr("data-mouseOverColor", colorMo);
@@ -2899,6 +2902,7 @@ class StoryParser
                         chapter: chapter,
                         name: (result !== null && result.length > 3) ? result[3] : "Unknown",
                         element: element,
+                        id: (result !== null && result.length > 1) ? result[1] : "Unknown",
                         sentence: null
                     };
 
@@ -2964,39 +2968,35 @@ class StoryParser
                 .css("height", "100%")
             );
 
-        body.find('#profile_top').attr("data-elementident", this.getStoryInfo(document.location.href).ID);
+        var info = this.getStoryInfo(document.location.href);
+        body.find('#profile_top').attr("data-elementident", info.ID);
 
         var self = this;
 
         // Open GUI
         contextMenu.click(function ()
         {
-
             self.GUI.showStoryPrefabList({
                 url: document.location.pathname,
                 element: body.find('#profile_top'),
-                name: field.text()
+                name: field.text(),
+                id: info.ID
             });
-
-            /* self.GUI.toggleStoryConfig({
-                 url: document.location.pathname,
-                 //element: element,
-                 name: field.text() 
-             }, false);*/
 
         });
 
         field.after(contextMenu);
 
+        var highlighterKey = self.config.highlighter_use_storyID ? info.ID : document.location.pathname;
         // Highlighter found:
-        if (typeof (this.config['highlighter'][document.location.pathname]) !== "undefined")
+        if (typeof (this.config['highlighter'][highlighterKey]) !== "undefined")
         {
             if (this.DEBUG)
             {
                 console.info("Highlight Element Found");
             }
 
-            var config = this.config['highlighter'][document.location.pathname];
+            var config = this.config['highlighter'][highlighterKey];
 
 
             // Collect Data:
@@ -3101,7 +3101,7 @@ class StoryParser
                 body.find('#profile_top').find('.icon-mail-1').first().after(
                     $("<span class=\"parser-msg\"> <b>{" + mod.name + "}</b></span>")
                         .attr("title", mod.note)
-                    );
+                );
             }
 
 
@@ -3191,9 +3191,9 @@ class StoryParser
             {
                 $(this).addClass("readingAidMarker");
             }).mouseleave(function ()
-                {
-                    $(this).removeClass("readingAidMarker");
-                });
+            {
+                $(this).removeClass("readingAidMarker");
+            });
 
 
         }
@@ -3420,7 +3420,7 @@ class StoryParser
                 $("<option></option>")
                     .text(value)
                     .attr("value", key)
-                );
+            );
 
         });
 
@@ -3439,7 +3439,7 @@ class StoryParser
 
                 }).css("margin-left", "10px")
                 .attr("id", "ffnet-pocket-save-button")
-            );
+        );
 
 
 
@@ -3494,7 +3494,7 @@ class StoryParser
 
             $("body").append(
                 $("<img>").attr("src", 'https://readitlaterlist.com/v2/add?username=' + user + '&password=' + password + '&apikey=emIpiQ7cA6fR4u6dr7ga2aXC11dcD58a&url=' + domain + url + '&title=' + title)
-                );
+            );
 
             console.log(url + ' - ' + title + ' - Done');
 
@@ -5479,7 +5479,7 @@ class StoryParser
 
             for (var i = 0; i < storyIDs.length / 5; i++)
             {
-                var elements : string[] = [];
+                var elements: string[] = [];
 
                 for (var j = 0; j < 5; j++)
                 {
@@ -5541,7 +5541,7 @@ class StoryParser
                     LastChapter: {
                         Key: string; Value: string;
                     }
-                }> JSON.parse(res);
+                }>JSON.parse(res);
                 var result: { [index: string]: number[] } = {};
                 var lastChapter: { [index: string]: number } = {};
 

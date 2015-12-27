@@ -24,13 +24,15 @@ class UpgradeHandler extends ExtentionBaseClass
         {
             $.each(self.config.marker, function (name: string, data: MarkerConfig)
             {
-                if (typeof(data.keep_searching) === "undefined")
+                if (typeof (data.keep_searching) === "undefined")
                 {
                     self.config.marker[name].keep_searching = false;
                 }
             });
 
             self.parser.save_config();
+
+            return true;
         });
 
 
@@ -40,7 +42,7 @@ class UpgradeHandler extends ExtentionBaseClass
 
             $.each(self.config.marker, function (name: string, data: MarkerConfig)
             {
-                if (typeof(data.image) === "undefined")
+                if (typeof (data.image) === "undefined")
                 {
                     self.config.marker[name].image = null;
                 }
@@ -57,13 +59,13 @@ class UpgradeHandler extends ExtentionBaseClass
                     }
 
                     self.config.highlighter[link] =
-                    {
-                        image: String(element),
-                        hide: false
-                    };
+                        {
+                            image: String(element),
+                            hide: false
+                        };
                 }
 
-                if ((typeof(self.config.highlighter[link].custom) === "undefined") && (typeof(self.config.highlighter[link].prefab) === "undefined"))
+                if ((typeof (self.config.highlighter[link].custom) === "undefined") && (typeof (self.config.highlighter[link].prefab) === "undefined"))
                 {
                     self.config.highlighter[link].custom = {
                         background: null,
@@ -82,7 +84,7 @@ class UpgradeHandler extends ExtentionBaseClass
                     };
 
                     self.config.highlighter[link].hide = null,
-                    self.config.highlighter[link].image = null;
+                        self.config.highlighter[link].image = null;
                 }
 
 
@@ -90,6 +92,8 @@ class UpgradeHandler extends ExtentionBaseClass
             });
 
             self.parser.save_config();
+
+            return true;
         });
 
         this.registerTag("highlighter_defaultValues", function ()
@@ -169,7 +173,7 @@ class UpgradeHandler extends ExtentionBaseClass
 
             $.each(highlighterDefault, function (name, element)
             {
-                if (typeof(self.config.highlighterPrefabs[name]) === "undefined")
+                if (typeof (self.config.highlighterPrefabs[name]) === "undefined")
                 {
                     self.config.highlighterPrefabs[name] = element;
                 }
@@ -177,15 +181,41 @@ class UpgradeHandler extends ExtentionBaseClass
 
             self.parser.save_config(true);
 
+            return true;
         });
 
+        this.registerTag("highlighter_storyID", function ()
+        {
+            if (!self.parser.config.highlighter_use_storyID)
+            {
+                return false;
+            }
+
+            var newData: { [index: string]: HighlighterConfig } = {};
+            $.each(self.parser.config.highlighter, function (key, value)
+            {
+                var info = self.parser.getStoryInfo(key);
+                if (info.ID in newData)
+                {
+                    return;
+                }
+
+                newData[info.ID] = value;
+            });
+
+            self.parser.config.highlighter = newData;
+
+            self.parser.save_config(true);
+
+            return true;
+        });
     }
 
 
 
     public handleTags()
     {
-        if (typeof(this.config.upgradeTags) === "undefined")
+        if (typeof (this.config.upgradeTags) === "undefined")
         {
             this.log("Upgrade Handler: Initializing Upgrade Tags Variable");
             this.parser.save_config(false);
@@ -195,24 +225,36 @@ class UpgradeHandler extends ExtentionBaseClass
         var self = this;
 
 
-        $.each(this.registeredTags, function (name: string, data: { ifNotExist?: (self: UpgradeHandler) => void; ifExist?: (self: UpgradeHandler) => void })
+        $.each(this.registeredTags, function (name: string, data: { ifNotExist?: (self: UpgradeHandler) => boolean; ifExist?: (self: UpgradeHandler) => boolean })
         {
             if (self.DEBUG)
             {
                 console.log("Upgrade Handler: Checking Tag - ", name);
             }
 
-            if (typeof(self.config.upgradeTags[name]) === "undefined" && typeof(data.ifNotExist) !== "undefined")
+            if (typeof (self.config.upgradeTags[name]) === "undefined" && typeof (data.ifNotExist) !== "undefined")
             {
-                console.log("Upgrade Handler: Executing IfNotExist Handler for Tag: ", name);
+                if (self.DEBUG)
+                {
+                    console.log("Upgrade Handler: Executing IfNotExist Handler for Tag: ", name);
+                }
 
-                data.ifNotExist(self);
+                if (!data.ifNotExist(self))
+                {
+                    return;
+                }
             }
-            else if (typeof(self.config.upgradeTags[name]) !== "undefined" && typeof(data.ifExist) !== "undefined")
+            else if (typeof (self.config.upgradeTags[name]) !== "undefined" && typeof (data.ifExist) !== "undefined")
             {
-                console.log("Upgrade Handler: Executing IfExist Handler for Tag: ", name);
+                if (self.DEBUG)
+                {
+                    console.log("Upgrade Handler: Executing IfExist Handler for Tag: ", name);
+                }
 
-                data.ifExist(self);
+                if (!data.ifExist(self))
+                {
+                    return;
+                }
             }
 
 
@@ -228,13 +270,13 @@ class UpgradeHandler extends ExtentionBaseClass
 
     private registerTag(name: string, ifNotExist?: (self: UpgradeHandler) => void, ifExist?: (self: UpgradeHandler) => void)
     {
-        if (typeof(this.registeredTags[name]) !== "undefined")
+        if (typeof (this.registeredTags[name]) !== "undefined")
         {
             this.log("Upgrade Handler: Tag with name '" + name + "' is already registered!", this.registeredTags);
             return;
         }
 
-        if ((typeof(ifNotExist) === "undefined") && (typeof(ifExist) === "undefined"))
+        if ((typeof (ifNotExist) === "undefined") && (typeof (ifExist) === "undefined"))
         {
             this.log("Upgrade Handler: At least one of the callback Functions has to be set!", name);
             return;
@@ -248,7 +290,7 @@ class UpgradeHandler extends ExtentionBaseClass
 
     public removeTag(name: string)
     {
-        if (typeof(this.config.upgradeTags[name]) !== "undefined")
+        if (typeof (this.config.upgradeTags[name]) !== "undefined")
         {
             delete this.config.upgradeTags[name];
             this.parser.save_config();
