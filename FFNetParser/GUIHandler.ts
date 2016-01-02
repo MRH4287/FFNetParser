@@ -918,10 +918,10 @@ class GUIHandler extends ExtentionBaseClass
                         {
                             if (el.is(":checked"))
                             {
-                                var ok = confirm(self._("If you change this option, all highlighter are converted to use the StoryID instead of the StoryURL. " +
-                                    "This allows you to identify stories in every chapter. Setting this option is permanent! " +
-                                    "Every duplicate Highlighter will be removed without further warning. Are you sure you want to set this option? " +
-                                    "This option is applied as soon as you hit save button and reload the page."));
+                                var ok = confirm(self._("If you change this option, all highlighter are converted to use the StoryID instead of the StoryURL. ") +
+                                    self._("This allows you to identify stories in every chapter. Setting this option is permanent! ") +
+                                    self._("Every duplicate Highlighter will be removed without further warning. Are you sure you want to set this option? ") +
+                                    self._("This option is applied as soon as you hit save button and reload the page."));
 
                                 if (!ok)
                                 {
@@ -990,8 +990,8 @@ class GUIHandler extends ExtentionBaseClass
                             {
                                 if (el.is(":checked"))
                                 {
-                                    if (confirm(self._("If you enable Sync, your local storage will be overwritten by Cloud Storage. " +
-                                        "If there is none, your config is uploaded instead. Are you sure?")))
+                                    if (confirm(self._("If you enable Sync, your local storage will be overwritten by Cloud Storage. ") +
+                                        self._("If there is none, your config is uploaded instead. Are you sure?")))
                                     {
                                         var wait = $("<span>&nbsp; " + self._('Please wait ...') + "</span>");
                                         el.after(wait);
