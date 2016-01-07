@@ -1807,7 +1807,7 @@ class StoryParser
     {
         var data: { Chapter: string; Name: string; ID: string } = { Chapter: null, ID: null, Name: null };
 
-        var storyNameReg = /\/s\/([0-9]+)\/([0-9]+)\/(.*)/;
+        var storyNameReg = /\/s\/([0-9]+)\/?([0-9]*)\/?(.*)/;
         var result = storyNameReg.exec(link);
 
         if ((result != null) && (result.length > 1))

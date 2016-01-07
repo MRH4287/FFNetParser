@@ -3280,8 +3280,7 @@ class GUIHandler extends ExtentionBaseClass
                 usedData = this.config.highlighter[highlighterKey].custom;
             }
 
-
-            this.gui_add_highlighterForm(storyInfo.url, usedData, customElementContainer, true, true);
+            this.gui_add_highlighterForm(highlighterKey, usedData, customElementContainer, true, true);
 
             if (managePresets)
             {
