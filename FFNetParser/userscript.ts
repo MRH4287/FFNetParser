@@ -132,6 +132,7 @@ class StoryParser
         disable_inStory_parsing: false,
         disable_resort_after_filter_match: false,
         disable_width_change: false,
+        disable_highlighter_list: false,
         chrome_sync: false,
         highlighter_use_storyID: false,
 
@@ -1104,6 +1105,124 @@ class StoryParser
 
             }
 
+            if (!self.config.disable_highlighter && !self.config.disable_highlighter_list)
+            {
+                var hLImageContainer = $("<div></div>")
+                    .css("display", "inline-block")
+                    .css("margin-left", "10px")
+                    .css("height", "100%")
+                    .css("border-radius", "5px")
+                    .addClass("ffnetHighlighterListContainer")
+                    .addClass("clickable")
+                    .attr("title", self._("Highlighter List"))
+                    .appendTo(menulinks);
+
+                hLImageContainer.append(
+
+                    $("<img></img>")
+                        .attr("src", self.getUrl("highlighter.png"))
+                        .css("width", "12px")
+                        .css("margin-bottom", "4px")
+                );
+
+
+                hLImageContainer.click(function (event)
+                {
+                    event.preventDefault();
+
+                    // Collect Data:
+                    var groups: { [index: string]: string[] } = {};
+
+                    $.each(self.config.highlighter, function (key: string, data: HighlighterConfig)
+                    {
+                        var prefab = "Custom Highlighter";
+                        if (data.prefab !== null)
+                        {
+                            prefab = data.prefab;
+                        }
+
+                        if (groups[prefab] === undefined)
+                        {
+                            groups[prefab] = [];
+                        }
+
+                        groups[prefab].push(key);
+                    });
+
+                    var contentContainer = $('<div id="ffnet_highlighterGroup" class="panel-group" role="tablist" aria-multiselectable="true"></div>');
+
+                    var modal = GUIHandler.createBootstrapModal(contentContainer, self._("Highlighter List"));
+
+                    $.each(groups, function (name: string, elements: string[])
+                    {
+                        var panelBody = $('<div class="panel-body"></div>');
+
+                        var list = $("<ul></ul>").appendTo(panelBody);
+
+                        var image = null;
+                        if (self.config.highlighterPrefabs[name] !== undefined)
+                        {
+                            var highlighterPrefab = self.config.highlighterPrefabs[name];
+                            if (highlighterPrefab.image !== undefined && highlighterPrefab.image !== null)
+                            {
+                                image = $("<img></img>").attr("src", highlighterPrefab.image)
+                                    .css("max-height", "16px").css("max-width", "16px")
+                                    .css("margin-right", "10px");
+                            }
+                        }
+
+
+                        var prefabName = name.replace(' ', '_')
+                            .replace('\'', '')
+                            .replace('"', '')
+                            .replace('.', '_')
+                            .replace(',', '_');
+
+                        var panel = $('<div class="panel panel-default"></div>');
+                        panel.append(
+                            $('<div class="panel-heading" role="tab"></div').attr("id", "heading" + prefabName).append(
+                                $('<h4 class="panel-title"></h4').append(
+                                    $('<a role="button" class="collapsed" data-toggle="collapse" data-parent="#ffnet_highlighterGroup" aria-expanded="false"></a>')
+                                        .attr("aria-controls", "collapse" + prefabName)
+                                        .attr("href", "#collapse" + prefabName)
+                                        .append(image).append(
+                                        $("<span></span>").text(name)
+                                        )
+
+                                )
+                            )
+                        ).append(
+                            $('<div class="panel-collapse collapse" role="tabpanel"></div>')
+                                .attr("id", "collapse" + prefabName)
+                                .attr("aria-labelledby", "heading" + prefabName)
+                                .append(panelBody)
+                            );
+
+                        $.each(elements, function (_, value: string)
+                        {
+                            var link = self.config.highlighter_use_storyID ? "/s/" + value : value;
+                            var aElement = $('<a></a>').attr("href", link).text(value);
+                            list.append(
+                                $('<li></li>').append(
+                                    aElement
+                                )
+                            );
+
+                            self.getPageContent(link, function (body)
+                            {
+                                var title = body.find("#profile_top > .xcontrast_txt").first().text();
+                                aElement.text(title);
+                            });
+                        });
+
+                        contentContainer.append(panel);
+                    });
+
+                    contentContainer.collapse();
+
+                    GUIHandler.showModal(modal);
+                });
+            }
         }
         else
         {
@@ -1869,7 +1988,8 @@ class StoryParser
                 try
                 {
                     sessionStorage[self.config.storage_key] = JSON.stringify(self.storyCache);
-                } catch (ex)
+                }
+                catch (ex)
                 {
                     self.log("Can't save Story Cache: ", ex);
 
@@ -3601,7 +3721,7 @@ class StoryParser
     {
         if (this.DEBUG)
         {
-            console.log("Requesting next page: ", url);
+            console.log("Requesting page: ", url);
         }
 
         var self = this;

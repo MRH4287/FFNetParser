@@ -974,6 +974,19 @@ class GUIHandler extends ExtentionBaseClass
                     value: function () { return self.config.disable_width_change; }
                 },
                 {
+                    name: 'disable_highlighter_list',
+                    type: GUIElementType.Checkbox,
+                    label: self._('Disables the Highlighter List'),
+                    value: function () { return self.config.disable_highlighter_list; },
+                    customOptions: function (el)
+                    {
+                        if (self.config.disable_highlighter)
+                        {
+                            el.prop("disabled", true);
+                        }
+                    }
+                },
+                {
                     name: 'chrome_sync',
                     type: GUIElementType.Checkbox,
                     label: self._('Use Chrome to Synchronize Data'),
@@ -1385,7 +1398,9 @@ class GUIHandler extends ExtentionBaseClass
             {
                 if (!$(".modal-body").is(":visible"))
                 {
-                    $(".modal").detach().appendTo("#ffnetParserContext");
+                    $(".modal").detach().appendTo("#ffnetParserContext").
+                        show();
+                    
                 }
             }
         }, 300);

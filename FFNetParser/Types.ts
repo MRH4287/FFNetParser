@@ -56,6 +56,7 @@ interface Config
     disable_inStory_parsing: boolean;
     disable_resort_after_filter_match: boolean;
     disable_width_change: boolean;
+    disable_highlighter_list: boolean;
     chrome_sync: boolean;
     advanced_view: boolean;
     highlighter_use_storyID: boolean;
