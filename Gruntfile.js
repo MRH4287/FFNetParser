@@ -143,7 +143,7 @@ module.exports = function (grunt)
                     patterns: [
                       {
                           match: 'VERSION',
-                          replacement: '<%= manifest.version %>'
+                          replacement: '<%= version %>'
                       }
                     ]
                 },
@@ -158,7 +158,7 @@ module.exports = function (grunt)
                     patterns: [
                       {
                           match: 'VERSION',
-                          replacement: '<%= manifest.version %>'
+                          replacement: '<%= version %>'
                       },
                       {
                           match: 'BRANCH',
@@ -291,6 +291,18 @@ module.exports = function (grunt)
                     'key',
                     'icons'
                 ]
+            },
+            manifestVersion:
+            {
+                src: 'manifest.json',
+                dest: 'manifest.json',
+                fields:
+                    {
+                        'version': function (src)
+                        {
+                           return grunt.config.get("version")
+                        }
+                    }
             }
         },
         language:
@@ -325,63 +337,67 @@ module.exports = function (grunt)
 
     // Default task.
     grunt.registerTask('default',
-      [
-          'clean:build',
-          'tslint',
-          'typescript',
-          'replace:header',
-          'gitinfo',
-          'replace:userscript',
-          'concat:userscript',
-          'uglify:dist',
-          'concat:pack',
-          'less',
-          'copy:style'
-      ]);
+		[
+			'gitinfo',
+			'versionUpdate',
+			'clean:build',
+            'tslint',
+            'typescript',
+            'replace:header',
+            'replace:userscript',
+            'concat:userscript',
+            'uglify:dist',
+            'concat:pack',
+            'less',
+            'copy:style'
+		]);
 
     grunt.registerTask('big',
-     [
-         'clean:build',
-         'tslint',
-         'typescript',
-         'replace:header',
-         'gitinfo',
-         'replace:userscript',
-         'concat:userscript',
-         'concat:big',
-         'less',
-         'copy:style'
-     ]);
+         [
+		    'gitinfo',
+		    'versionUpdate',
+            'clean:build',
+            'tslint',
+            'typescript',
+            'replace:header',
+            'replace:userscript',
+            'concat:userscript',
+            'concat:big',
+            'less',
+            'copy:style'
+         ]);
 
     grunt.registerTask('style',
-      [
-         'less',
-         'copy:style'
-      ]);
+          [
+             'less',
+             'copy:style'
+          ]);
 
 
     grunt.registerTask('packageDefault',
-     [
-         'default',
-         'qunit',
-         'compress'
-     ]);
+         [
+             'default',
+             'qunit',
+             'compress'
+         ]);
 
     grunt.registerTask('packageDev',
-    [
-        'big',
-        'qunit',
-        'copy:manifestBackup',
-        'update_json:manifestDev',
-        'compress',
-        'copy:manifestRestore',
-        'clean:manifestBase',
-        'language'
-    ]);
+        [
+            'big',
+            'qunit',
+            'copy:manifestBackup',
+            'update_json:manifestDev',
+            'update_json:manifestVersion',
+            'compress',
+            'copy:manifestRestore',
+            'clean:manifestBase',
+            'language'
+        ]);
 
     grunt.registerTask('standalone',
         [
 			'gitinfo',
+		    'versionUpdate',
             'copy:standalone',
             'copy:standaloneCode',
             'copy:standaloneStyle',
@@ -396,6 +412,7 @@ module.exports = function (grunt)
 			'qunit',
 			'copy:manifestBackup',
 			'update_json:manifestDev',
+            'update_json:manifestVersion',
 			'compress',
 			'copy:manifestRestore',
 			'clean:manifestBase',
@@ -410,6 +427,42 @@ module.exports = function (grunt)
 			'standalone'
 
 		]);
+
+    grunt.registerTask('versionUpdate', function ()
+    {
+        var manifest = grunt.config.get("manifest");
+        console.log("Current Version: " + manifest.version);
+
+        var version = manifest.version;
+        var branch = grunt.config.get("gitinfo").local.branch.current.name;
+
+        if (branch === "dev")
+        {
+            var time = new Date();
+            var year = time.getFullYear();
+            var month = time.getMonth() + 1;
+            var day = time.getDate();
+            var hour = time.getHours();
+            var minutes = time.getMinutes();
+
+            console.log("year:", year);
+            console.log("month:", month);
+            console.log("day:", day);
+            console.log("hour:", hour);
+            console.log("minutes:", minutes);
+
+            var versionSuffix = year * 10
+                                + month * 1000
+                                + day * 100
+                                + hour * 10
+                                + minutes;
+            version = version + "." + versionSuffix;
+
+            console.log("Set Dev-Version to: ", version);
+        }
+
+        grunt.config("version", version);
+    });
 
     grunt.registerTask('devSwitch', function ()
     {
@@ -429,6 +482,7 @@ module.exports = function (grunt)
     grunt.registerTask('package',
         [
             'gitinfo',
+			'versionUpdate',
             'devSwitch'
         ]);
 
