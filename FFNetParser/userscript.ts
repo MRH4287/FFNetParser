@@ -774,7 +774,6 @@ class StoryParser
             }
         }, 1000);
 
-
         setTimeout(function ()
         {
             self.eventHandler.callEvent("preMessageCheck", self, null);
@@ -1202,15 +1201,21 @@ class StoryParser
                         {
                             var link = self.config.highlighter_use_storyID ? "/s/" + value : value;
                             var aElement = $('<a></a>').attr("href", link).text(value);
+                            var spanElement = $('<span></span>');
                             list.append(
                                 $('<li></li>').append(
                                     aElement
-                                )
+                                ).append(
+                                    spanElement
+                                    )
                             );
 
                             self.getPageContent(link, function (body)
                             {
                                 var title = body.find("#profile_top > .xcontrast_txt").first().text();
+                                var lastUpdate = body.find("#profile_top > .xcontrast_txt").last().find("[data-xutime]").first().text();
+
+                                spanElement.text(" (Last Updated: " + lastUpdate + ")");
                                 aElement.text(title);
                             });
                         });
@@ -1889,7 +1894,7 @@ class StoryParser
                 return;
             }
         }
-        else 
+        else
         {
             if (i === 0)
             {
@@ -3461,7 +3466,7 @@ class StoryParser
                 else
                 {
                     var chapterSelects = $('select[id="chap_select"]');
-                    chapterSelects.children().each(function (i, el) 
+                    chapterSelects.children().each(function (i, el)
                     {
                         var element = $(el);
 

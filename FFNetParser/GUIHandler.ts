@@ -1387,8 +1387,10 @@ class GUIHandler extends ExtentionBaseClass
         window.setTimeout(() =>
         {
             modal.detach().appendTo(container);
-            $(".modal-backdrop").detach().appendTo(container);
-            $(".modal-body").css("max-height", ($(window).height() - 200) + "px");
+            var context = $(".ffnetModal");
+
+            context.find(".modal-backdrop").detach().appendTo(container);
+            context.find(".modal-body").css("max-height", ($(window).height() - 200) + "px");
 
         }, 100);
 
