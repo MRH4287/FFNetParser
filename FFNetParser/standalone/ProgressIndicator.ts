@@ -5,105 +5,105 @@
  */
 class ProgressIndicator
 {
-    private eventHandler: EventHandler;
-    private lastMessage = "Init";
-    private visible = false;
+    private _eventHandler: EventHandler;
+    private _lastMessage = "Init";
+    private _visible = false;
 
-    private config =
+    private _config =
     {
         container: "#progress"
     };
 
-    private eventMessageMap: { [index: string]: string } = {};
+    private _eventMessageMap: { [index: string]: string } = {};
 
     constructor(config?)
     {
-        this.config = $.extend(this.config, config);
+        this._config = $.extend(this._config, config);
 
-        this.initEventMessageMap();
-        this.initGUI();      
+        this.InitEventMessageMap();
+        this.InitGUI();      
     }
 
-    private initEventMessageMap()
+    private InitEventMessageMap()
     {
-        this.eventMessageMap["onConfigLoad"] = "Config Loaded";
-        this.eventMessageMap["preGUIUpdate"] = "Begin GUI-Update";
-        this.eventMessageMap["postGUIUpdate"] = "GUI-Update Done";
-        this.eventMessageMap["preReadList"] = "Begin Parsing of Page";
-        this.eventMessageMap["postReadList"] = "Page parsed successfully";
-        this.eventMessageMap["preRead"] = "Parsing Story-List";
-        this.eventMessageMap["postRead"] = "Story-List parsed successfully";
+        this._eventMessageMap["onConfigLoad"] = "Config Loaded";
+        this._eventMessageMap["preGUIUpdate"] = "Begin GUI-Update";
+        this._eventMessageMap["postGUIUpdate"] = "GUI-Update Done";
+        this._eventMessageMap["preReadList"] = "Begin Parsing of Page";
+        this._eventMessageMap["postReadList"] = "Page parsed successfully";
+        this._eventMessageMap["preRead"] = "Parsing Story-List";
+        this._eventMessageMap["postRead"] = "Story-List parsed successfully";
 
-        this.eventMessageMap["standaloneInit"] = "System Start";
-        this.eventMessageMap["standaloneClearPage"] = "Page cleared";
-        this.eventMessageMap["standalonePreUpdatePage"] = "Prepare Page Update";
-        this.eventMessageMap["standalonePostUpdatePage"] = "Page Update done";
-        this.eventMessageMap["standaloneRunScript"] = "Base-Script loaded";
-        this.eventMessageMap["standalonePreRequest"] = "Starting Web-Request";
-        this.eventMessageMap["standaloneOnRequestDone"] = "Web-Request Done";
-        this.eventMessageMap["standaloneOnRequestFail"] = "Web-Request Failed";
-        this.eventMessageMap["standalonePreRequestCategories"] = "Requesting Categories";
-        this.eventMessageMap["standalonePostCategoriesRequest"] = "Got Categories";
-        this.eventMessageMap["standaloneCategoriesParsed"] = "Categories parsed successfully";
-        this.eventMessageMap["standalonePreRequestElements"] = "Requesting Elements";
-        this.eventMessageMap["standalonePostRequestElements"] = "Got Elements";
-        this.eventMessageMap["standaloneElementsParsed"] = "Elements parsed successfully";
+        this._eventMessageMap["standaloneInit"] = "System Start";
+        this._eventMessageMap["standaloneClearPage"] = "Page cleared";
+        this._eventMessageMap["standalonePreUpdatePage"] = "Prepare Page Update";
+        this._eventMessageMap["standalonePostUpdatePage"] = "Page Update done";
+        this._eventMessageMap["standaloneRunScript"] = "Base-Script loaded";
+        this._eventMessageMap["standalonePreRequest"] = "Starting Web-Request";
+        this._eventMessageMap["standaloneOnRequestDone"] = "Web-Request Done";
+        this._eventMessageMap["standaloneOnRequestFail"] = "Web-Request Failed";
+        this._eventMessageMap["standalonePreRequestCategories"] = "Requesting Categories";
+        this._eventMessageMap["standalonePostCategoriesRequest"] = "Got Categories";
+        this._eventMessageMap["standaloneCategoriesParsed"] = "Categories parsed successfully";
+        this._eventMessageMap["standalonePreRequestElements"] = "Requesting Elements";
+        this._eventMessageMap["standalonePostRequestElements"] = "Got Elements";
+        this._eventMessageMap["standaloneElementsParsed"] = "Elements parsed successfully";
 
     }
 
-    public setEventHandler(eventHandler: EventHandler)
+    public SetEventHandler(eventHandler: EventHandler)
     {
-        this.eventHandler = eventHandler;
-        this.registerEvents();
+        this._eventHandler = eventHandler;
+        this.RegisterEvents();
     }
 
-    private registerEvents()
+    private RegisterEvents()
     {
-        $.each(this.eventMessageMap, (key, value) =>
+        $.each(this._eventMessageMap, (key, value) =>
         {
-            this.eventHandler.addEventListener(key, (sender, args) =>
+            this._eventHandler.AddEventListener(key, (sender, args) =>
             {
-                this.handleEvent(sender, key, args);
+                this.HandleEvent(sender, key, args);
             });
         });
     }
 
-    private handleEvent(sender: any, event: string, args: any)
+    private HandleEvent(sender: any, event: string, args: any)
     {
-        var message = this.eventMessageMap[event];
-        this.lastMessage = message;
+        var message = this._eventMessageMap[event];
+        this._lastMessage = message;
 
         console.log("Progress: " + message);
-        $(this.config.container).find(".messageContainer").text(message);
+        $(this._config.container).find(".messageContainer").text(message);
     }
 
 
-    public show()
+    public Show()
     {
-        $(this.config.container).show();
-        this.visible = true;
+        $(this._config.container).show();
+        this._visible = true;
     }
 
-    public hide()
+    public Hide()
     {
-        $(this.config.container).hide();
-        this.visible = false;
+        $(this._config.container).hide();
+        this._visible = false;
     }
 
-    private initGUI()
+    private InitGUI()
     {
         var container = $('<div class="row"></div>');
         container.append('<div class="col-md-12"><h2>Loading ...</h2></div>');
-        container.append('<div class="col-md-12">Status: <b class="messageContainer">'+ this.lastMessage + '</b></div>');
+        container.append('<div class="col-md-12">Status: <b class="messageContainer">'+ this._lastMessage + '</b></div>');
 
         $(document).ready(() =>
         {
-            $(this.config.container).append(container)
-                .find(".messageContainer").text(this.lastMessage);
+            $(this._config.container).append(container)
+                .find(".messageContainer").text(this._lastMessage);
 
-            if (!this.visible)
+            if (!this._visible)
             {             
-                $(this.config.container).hide();
+                $(this._config.container).hide();
             }
         });
     }

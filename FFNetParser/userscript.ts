@@ -160,7 +160,7 @@ class StoryParser
     /**
      * Used for the reset of the config
      */
-    private _baseConfig = $.extend({}, this.Config);
+    public BaseConfig = $.extend({}, this.Config);
 
     // ----------------------
 
@@ -354,7 +354,7 @@ class StoryParser
 
         var token = this.Config.token;
 
-        this.Config = this._baseConfig;
+        this.Config = this.BaseConfig;
 
         this.Config.token = token;
 

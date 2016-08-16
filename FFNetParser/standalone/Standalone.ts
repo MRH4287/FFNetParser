@@ -11,19 +11,19 @@ class Standalone
 
     //private BasePath = "http://localhost:49990/FanFictionUserScript/FFNetProxy/?url="; 
     //private BasePath = "https://www.fanfiction.net/";
-    private BasePath = "http://localhost:8080/";
-    private parser: StoryParser;
-    private progress: ProgressIndicator;
+    private _basePath = "http://localhost:8080/";
+    private _parser: StoryParser;
+    private _progress: ProgressIndicator;
 
-    private lastHash: string = "";
-    private ignoreHashChange: boolean = false;
-    private filterModal: JQuery = undefined;
-    private categoryBaseURL: string = undefined;
+    private _lastHash: string = "";
+    private _ignoreHashChange: boolean = false;
+    private _filterModal: JQuery = undefined;
+    private _categoryBaseURL: string = undefined;
 
     /**
      * The current Instance of the EventHandler
      */
-    private eventHandler: EventHandler;
+    private _eventHandler: EventHandler;
 
     /**
      * Calls a specific event
@@ -31,23 +31,23 @@ class Standalone
      * @param sender The Sender of the event
      * @param arguments The Argument of this Event
      */
-    private callEvent(event: string, sender: any, args: any)
+    private CallEvent(event: string, sender: any, args: any)
     {
-        if (this.eventHandler !== undefined)
+        if (this._eventHandler !== undefined)
         {
-            this.eventHandler.callEvent(event, sender, args);
+            this._eventHandler.CallEvent(event, sender, args);
         }
     }
 
     /**
      * List of Objects saved for later
      */
-    private copy: { [index: string]: JQuery } = {};
+    private _copy: { [index: string]: JQuery } = {};
 
     constructor()
     {
         var self = this;
-        this.progress = new ProgressIndicator();
+        this._progress = new ProgressIndicator();
 
 
         $(document).ready(function ()
@@ -65,33 +65,33 @@ class Standalone
      */
     private saveElement(className: string)
     {
-        this.copy[className] = $("." + className).clone();
+        this._copy[className] = $("." + className).clone();
     }
 
     /**
      * Restore an element to the state it was, when it was saved
      * @param className The Classname of the element that should be restored
      */
-    private restoreElement(className: string)
+    private RestoreElement(className: string)
     {
         var self = this;
 
-        if (typeof (self.copy[className]) === "undefined")
+        if (typeof (self._copy[className]) === "undefined")
         {
             return;
         }
 
-        $("." + className).html(self.copy[className].html());
+        $("." + className).html(self._copy[className].html());
     }
 
     /**
      * Restore The GUI to the way it was
      */
-    public clear()
+    public Clear()
     {
-        this.callEvent("standaloneClearPage", this, null);
+        this.CallEvent("standaloneClearPage", this, null);
 
-        this.restoreElement("StandaloneMainContaniner");
+        this.RestoreElement("StandaloneMainContaniner");
     }
 
     /**
@@ -99,23 +99,23 @@ class Standalone
      * @param url The URL that should be loaded if no hash is present
      * @param firstRun Was the script loaded the first time
      */
-    public init(url: string = "/game/pokemon", firstRun = true)
+    public Init(url: string = "/game/pokemon", firstRun = true)
     {
-        if (this.eventHandler === undefined)
+        if (this._eventHandler === undefined)
         {
-            this.eventHandler = new EventHandler(null);
-            this.progress.setEventHandler(this.eventHandler);
+            this._eventHandler = new EventHandler(null);
+            this._progress.SetEventHandler(this._eventHandler);
         }
 
         if (firstRun)
         {
-            this.categoryBaseURL = url;
+            this._categoryBaseURL = url;
         }
 
-        this.ignoreHashChange = true;
-        this.progress.show();
+        this._ignoreHashChange = true;
+        this._progress.Show();
 
-        this.callEvent("standaloneInit", this, url);
+        this.CallEvent("standaloneInit", this, url);
 
         console.log("Current Hash: " + document.location.hash);
 
@@ -130,13 +130,13 @@ class Standalone
 
         var self = this;
 
-        this.clear();
-        this.updatePage(url,() =>
+        this.Clear();
+        this.UpdatePage(url,() =>
         {
-            this.callEvent("standalonePreUpdatePage", self, url);
+            this.CallEvent("standalonePreUpdatePage", self, url);
 
             document.location.hash = "#" + url;
-            this.lastHash = document.location.hash;
+            this._lastHash = document.location.hash;
 
 
             $(".navi").find("a").each((k, el) =>
@@ -146,13 +146,13 @@ class Standalone
                 if (element.attr("href")[0] == "/")
                 {
                     element.attr("data-href", element.attr("href"));
-                    element.attr("href", self.BasePath + element.attr("href"));
+                    element.attr("href", self._basePath + element.attr("href"));
 
                     element.click((e) =>
                     {
                         e.preventDefault();
 
-                        this.init(element.attr("data-href"), false);
+                        this.Init(element.attr("data-href"), false);
 
                     });
 
@@ -181,38 +181,38 @@ class Standalone
 
             if (firstRun)
             {
-                this.runScript();
-                this.startHashTimer();
+                this.RunScript();
+                this.StartHashTimer();
             }
 
-            this.parser.readList();
+            this._parser.ReadList();
 
-            this.ignoreHashChange = false;
+            this._ignoreHashChange = false;
 
-            this.callEvent("standalonePostUpdatePage", this, url);
-            this.progress.hide();
+            this.CallEvent("standalonePostUpdatePage", this, url);
+            this._progress.Hide();
         });
 
 
     }
 
-    private startHashTimer()
+    private StartHashTimer()
     {
-        this.callEvent("standaloneOnHashTimerCreate", this, null);
+        this.CallEvent("standaloneOnHashTimerCreate", this, null);
 
-        this.eventHandler.addTimedTrigger("standaloneHashTimer", "standaloneOnHashTimerTick", 1000, this, null);
-        this.eventHandler.addEventListener("standaloneOnHashTimerTick",(s, e) =>
+        this._eventHandler.AddTimedTrigger("standaloneHashTimer", "standaloneOnHashTimerTick", 1000, this, null);
+        this._eventHandler.AddEventListener("standaloneOnHashTimerTick",(s, e) =>
         {
-            if (!this.ignoreHashChange && document.location.hash !== this.lastHash)
+            if (!this._ignoreHashChange && document.location.hash !== this._lastHash)
             {
-                this.lastHash = document.location.hash;
+                this._lastHash = document.location.hash;
 
                 // Hash Changed
-                console.log("The Hash Changed to: " + this.lastHash);
+                console.log("The Hash Changed to: " + this._lastHash);
 
-                if (this.lastHash[0] === "#")
+                if (this._lastHash[0] === "#")
                 {
-                    this.init(this.lastHash.substr(1), false);
+                    this.Init(this._lastHash.substr(1), false);
                 }
             }
 
@@ -227,11 +227,11 @@ class Standalone
      * @param url The URL to load
      * @param callback Is triggered when the Asynchron process is done
      */
-    public updatePage(url: string, callback: () => void)
+    public UpdatePage(url: string, callback: () => void)
     {
         $("#filterButtonContainer").hide();
 
-        this.getPageElements(this.BasePath + url, function (res)
+        this.GetPageElements(this._basePath + url, function (res)
         {
             $(".FFNetContentContainer").html($("<div></div>").append(res.Content).html());
             $(".navi").html($("<div></div>").append(res.Navigation).html());
@@ -246,29 +246,29 @@ class Standalone
      * @param url The for the Request
      * @param callback The Callback with the Elements
      */
-    public getPageElements(url: string, callback: (result: { Content: JQuery; Navigation: JQuery }) => void) 
+    public GetPageElements(url: string, callback: (result: { Content: JQuery; Navigation: JQuery }) => void) 
     {
 
-        this.getPageContent(url,(res) =>
+        this.GetPageContent(url,(res) =>
         {
             var result = {
                 Content: res.find(".z-list"),
                 Navigation: res.find("center").first()
             };
 
-            this.handleFilterModal(res);
+            this.HandleFilterModal(res);
 
             callback(result);
         });
     }
 
-    private handleFilterModal(modal: JQuery)
+    private HandleFilterModal(modal: JQuery)
     {
         var modalBody = modal.find(".modal-body");
         // remove all Javascript Elements:
 
         var elements = modalBody.children();
-        this.removeScripts(elements);
+        this.RemoveScripts(elements);
 
         // wrap Dropdowns in Rows:
        
@@ -293,7 +293,7 @@ class Standalone
             $('<button type="button" class="btn btn-primary" data-dismiss="modal">Apply</button>')
                 .click(() =>
                 {
-                this.applyFilter();
+                this.ApplyFilter();
                 })
             );
 
@@ -301,53 +301,53 @@ class Standalone
 
 
 
-        this.filterModal = GUIHandler.createBootstrapModal(modalBody, "Filter", buttons);
+        this._filterModal = GUIHandler.CreateBootstrapModal(modalBody, "Filter", buttons);
         $("#filterButtonContainer").show();
     }
 
-    public applyFilter()
+    public ApplyFilter()
     {
         var path = '';
-        path += this.gt_zero_append($('select[name=sortid]').val(), '&srt=');
+        path += this.ZeroAppend($('select[name=sortid]').val(), '&srt=');
 
-        path += this.gt_zero_append($('select[name=genreid1]').val(), '&g1=');
-        path += this.gt_zero_append($('select[name=genreid2]').val(), '&g2=');
-        path += this.gt_zero_append($('select[name=_genreid1]').val(), '&_g1=');
+        path += this.ZeroAppend($('select[name=genreid1]').val(), '&g1=');
+        path += this.ZeroAppend($('select[name=genreid2]').val(), '&g2=');
+        path += this.ZeroAppend($('select[name=_genreid1]').val(), '&_g1=');
 
-        path += this.gt_zero_append($('select[name=languageid]').val(), '&lan=');
-        path += this.gt_zero_append($('select[name=censorid]').val(), '&r=');
-        path += this.gt_zero_append($('select[name=length]').val(), '&len=');
+        path += this.ZeroAppend($('select[name=languageid]').val(), '&lan=');
+        path += this.ZeroAppend($('select[name=censorid]').val(), '&r=');
+        path += this.ZeroAppend($('select[name=length]').val(), '&len=');
 
-        path += this.gt_zero_append($('select[name=timerange]').val(), '&t=');
-        path += this.gt_zero_append($('select[name=statusid]').val(), '&s=');
+        path += this.ZeroAppend($('select[name=timerange]').val(), '&t=');
+        path += this.ZeroAppend($('select[name=statusid]').val(), '&s=');
 
-        path += this.gt_zero_append($('select[name=characterid1]').val(), '&c1=');
-        path += this.gt_zero_append($('select[name=characterid2]').val(), '&c2=');
-        path += this.gt_zero_append($('select[name=characterid3]').val(), '&c3=');
-        path += this.gt_zero_append($('select[name=characterid4]').val(), '&c4=');
-        path += this.gt_zero_append($('select[name=_characterid1]').val(), '&_c1=');
-        path += this.gt_zero_append($('select[name=_characterid2]').val(), '&_c2=');
+        path += this.ZeroAppend($('select[name=characterid1]').val(), '&c1=');
+        path += this.ZeroAppend($('select[name=characterid2]').val(), '&c2=');
+        path += this.ZeroAppend($('select[name=characterid3]').val(), '&c3=');
+        path += this.ZeroAppend($('select[name=characterid4]').val(), '&c4=');
+        path += this.ZeroAppend($('select[name=_characterid1]').val(), '&_c1=');
+        path += this.ZeroAppend($('select[name=_characterid2]').val(), '&_c2=');
 
-        path += this.gt_zero_append($('select[name=verseid1]').val(), '&v1=');
-        path += this.gt_zero_append($('select[name=_verseid1]').val(), '&_v1=');
+        path += this.ZeroAppend($('select[name=verseid1]').val(), '&v1=');
+        path += this.ZeroAppend($('select[name=_verseid1]').val(), '&_v1=');
 
         if ($('input[name=pm]').is(':checked'))
         {
-            path += this.gt_zero_append($('input[name=pm]').val(), '&pm=');
+            path += this.ZeroAppend($('input[name=pm]').val(), '&pm=');
         }
         if ($('input[name=_pm]').is(':checked'))
         {
-            path += this.gt_zero_append($('input[name=_pm]').val(), '&_pm=');
+            path += this.ZeroAppend($('input[name=_pm]').val(), '&_pm=');
         }
 
         console.log("Filter Path: ", path);
-        this.init(this.categoryBaseURL + '/?' + path, false);
+        this.Init(this._categoryBaseURL + '/?' + path, false);
     }
 
     /**
      * Copied from FF-Net
      */
-    private gt_zero_append(compare, prepend: string): string
+    private ZeroAppend(compare, prepend: string): string
     {
         if (compare != undefined && compare > 0)
         {
@@ -357,22 +357,22 @@ class Standalone
     }
 
 
-    private removeScripts(elements: JQuery)
+    private RemoveScripts(elements: JQuery)
     {
         elements.remove("script").removeAttr("onchange").removeAttr("onclick");
 
         var elementsWithChilds = elements.has("*");
         if (elementsWithChilds.length > 0)
         {
-            this.removeScripts(elementsWithChilds.children());
+            this.RemoveScripts(elementsWithChilds.children());
         }
     }
 
-    public showFilterModal()
+    public ShowFilterModal()
     {
-        if (this.filterModal !== undefined)
+        if (this._filterModal !== undefined)
         {
-            GUIHandler.showModal(this.filterModal);
+            GUIHandler.ShowModal(this._filterModal);
         }
     }
 
@@ -380,37 +380,39 @@ class Standalone
     /**
      * Stats the Userscript
      */
-    public runScript()
+    public RunScript()
     {
-        this.parser = new StoryParser();
-        this.eventHandler = this.parser.eventHandler;
-        this.progress.setEventHandler(this.eventHandler);
+        this._parser = new StoryParser();
+        this._eventHandler = this._parser.EventHandler;
+        this._progress.SetEventHandler(this._eventHandler);
 
         // Fix Chrome Sync Bug:
-        this.parser.config.chrome_sync = false;
+        this._parser.Config.chrome_sync = false;
 
-        this.callEvent("standaloneRunScript", this, null);
+        this.CallEvent("standaloneRunScript", this, null);
 
         //this.parser.readList();
-        this.parser.enablePocketSave();
-        this.parser.enableInStoryHighlighter();
-        this.parser.enableReadingAid();
-        this.parser.enableEndlessMode();
+        this._parser.EnablePocketSave();
+        this._parser.EnableInStoryHighlighter();
+        this._parser.EnableReadingAid();
+        this._parser.EnableEndlessMode();
 
-        this.parser.api_getStyles();
-        this.insertStyle();
+        this._parser.Api.Initialize();
 
-        this.parser.debugOptions();
+        this._parser.Api.GetStyles();
+        this.InsertStyle();
+
+        this._parser.DebugOptions();
     }
 
     /**
      * Insert the Style needed for the Page
      */
-    public insertStyle()
+    public InsertStyle()
     {
-        this.getRawPageContent("ffnetStyle.css",(s) =>
+        this.GetRawPageContent("ffnetStyle.css",(s) =>
         {
-            this.callEvent("standaloneOnStyleInsert", this, s);
+            this.CallEvent("standaloneOnStyleInsert", this, s);
 
             $('<style type="text/css"></style>')
                 .text(s)
@@ -425,9 +427,9 @@ class Standalone
        * @param url The Request URI
        * @param callback The callback Function
        */
-    public getPageContent(url: string, callback: (page: JQuery) => void)
+    public GetPageContent(url: string, callback: (page: JQuery) => void)
     {
-        this.getRawPageContent(url,(s) =>
+        this.GetRawPageContent(url,(s) =>
         {
             callback($(s));
         });
@@ -438,25 +440,25 @@ class Standalone
      * @param url The Request URI
      * @param callback The callback Function
      */
-    public getRawPageContent(url: string, callback: (page: string) => void)
+    public GetRawPageContent(url: string, callback: (page: string) => void)
     {
         if (this.DEBUG)
         {
             console.log("Requesting page: ", url);
         }
 
-        this.callEvent("standalonePreRequest", this, url);
+        this.CallEvent("standalonePreRequest", this, url);
 
         var self = this;
 
         $.get(url, function (content)
         {
-            self.callEvent("standaloneOnRequestDone", this, { url: url, content: content });
+            self.CallEvent("standaloneOnRequestDone", this, { url: url, content: content });
 
             callback(content);
         }).fail(function (event)
         {
-            self.callEvent("standaloneOnRequestFail", this, { url: url, event: event });
+            self.CallEvent("standaloneOnRequestFail", this, { url: url, event: event });
         });
     }
 
@@ -466,13 +468,13 @@ class Standalone
      * Loads the Categories from the Server
      * @param callback Callback with Result
      */
-    public getCategories(callback: (data: { [index: string]: { name: string; url: string }[] }) => void)
+    public GetCategories(callback: (data: { [index: string]: { name: string; url: string }[] }) => void)
     {
-        this.callEvent("standalonePreRequestCategories", this, null);
+        this.CallEvent("standalonePreRequestCategories", this, null);
 
         var self = this;
 
-        this.getPageContent(this.BasePath, function (el)
+        this.GetPageContent(this._basePath, function (el)
         {
             var result: { [index: string]: { name: string; url: string }[] } = {};
             var cats = el.find(".tcat");
@@ -498,7 +500,7 @@ class Standalone
                 });
             });
 
-            self.callEvent("standalonePostCategoriesRequest", self, el);
+            self.CallEvent("standalonePostCategoriesRequest", self, el);
 
             callback(result);
 
@@ -508,16 +510,16 @@ class Standalone
     /**
      * Creates the content for the Categories Page
      */
-    public manageCategories()
+    public ManageCategories()
     {
         var self = this;
 
-        this.eventHandler = new EventHandler(null);
-        this.progress.setEventHandler(this.eventHandler);
+        this._eventHandler = new EventHandler(null);
+        this._progress.SetEventHandler(this._eventHandler);
 
-        this.progress.show();
+        this._progress.Show();
 
-        this.getCategories((result) =>
+        this.GetCategories((result) =>
         {
             console.log(result);
 
@@ -546,8 +548,8 @@ class Standalone
                 });
             });
 
-            self.callEvent("standaloneCategoriesParsed", self, result);
-            self.progress.hide();
+            self.CallEvent("standaloneCategoriesParsed", self, result);
+            self._progress.Hide();
         });
     }
 
@@ -558,13 +560,13 @@ class Standalone
      * @param url The URL to load from
      * @param callback Is triggered when the async Request is done
      */
-    public getElements(url: string, callback: (name: string, data: { name: string; url: string; count: string; }[]) => void)
+    public GetElements(url: string, callback: (name: string, data: { name: string; url: string; count: string; }[]) => void)
     {
         var self = this;
 
-        this.callEvent("standalonePreRequestElements", self, url);
+        this.CallEvent("standalonePreRequestElements", self, url);
 
-        this.getPageContent(this.BasePath + url, function (res)
+        this.GetPageContent(this._basePath + url, function (res)
         {
             var result: { name: string; url: string; count: string; }[] = [];
             var elements = res.find("#list_output").find("div");
@@ -581,20 +583,20 @@ class Standalone
 
             });
 
-            self.callEvent("standalonePostRequestElements", self, res);
+            self.CallEvent("standalonePostRequestElements", self, res);
 
             callback(res.find("#content_wrapper_inner").find("td").first().text().trim(), result);
         });
     }
 
-    public manageElements()
+    public ManageElements()
     {
-        this.eventHandler = new EventHandler(null);
-        this.progress.setEventHandler(this.eventHandler);
+        this._eventHandler = new EventHandler(null);
+        this._progress.SetEventHandler(this._eventHandler);
 
-        this.progress.show();
+        this._progress.Show();
 
-        var url = this.getSearchString("cat");
+        var url = this.GetSearchString("cat");
 
         console.log("cat: ", url);
 
@@ -602,7 +604,7 @@ class Standalone
         {
             var self = this;
 
-            this.getElements(url, function (name, elements)
+            this.GetElements(url, function (name, elements)
             {
                 $(".elementsContainer").html('');
 
@@ -637,8 +639,8 @@ class Standalone
 
                 });
 
-                self.callEvent("standaloneElementsParsed", self, [name, elements]);
-                self.progress.hide();
+                self.CallEvent("standaloneElementsParsed", self, [name, elements]);
+                self._progress.Hide();
             });
 
         } else
@@ -655,7 +657,7 @@ class Standalone
 
     }
 
-    public getSearchString(key: string): string
+    public GetSearchString(key: string): string
     {
         var regEx = new RegExp(key + '=' + '(.+)', "i");
         var groups = regEx.exec(document.location.search);

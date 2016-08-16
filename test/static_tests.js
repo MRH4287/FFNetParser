@@ -32,19 +32,19 @@ QUnit.module("Config")
 
 QUnit.test("Config", function (assert)
 {
-    assert.notEqual(parser.config, undefined, "The config has to be defined");
+    assert.notEqual(parser.Config, undefined, "The config has to be defined");
 
 
 });
 
 QUnit.test("Config-Reset", function (assert)
 {
-    var currentToken = parser.config.token;
+    var currentToken = parser.Config.token;
 
-    parser.defaultConfig();
+    parser.DefaultConfig();
 
-    assert.equal(currentToken, parser.config.token, "The Token should be the same after Reset");
-    assert.deepEqual(parser.config, parser.baseConfig, "The new Config should match the default Config");
+    assert.equal(currentToken, parser.Config.token, "The Token should be the same after Reset");
+    assert.deepEqual(parser.Config, parser.BaseConfig, "The new Config should match the default Config");
 });
 
 QUnit.test("loadFromMemory / saveToMemory", function (assert)
@@ -52,9 +52,9 @@ QUnit.test("loadFromMemory / saveToMemory", function (assert)
     var structure = {};
     var data = { Name: "Test", Value: { A: true, B: 23.233, C: [1, 2, 3] } };
 
-    parser.saveToMemory(structure, "data", data);
+    parser.SaveToMemory(structure, "data", data);
 
-    var result = parser.loadFromMemory(structure, "data");
+    var result = parser.LoadFromMemory(structure, "data");
 
     assert.deepEqual(result, data, "The Output should match the Input");
 
@@ -71,7 +71,7 @@ QUnit.test("getStoryInfo", function (assert)
         ID: "12345678"
     };
 
-    assert.deepEqual(parser.getStoryInfo(link), compare, "The result data should match the reference Data");
+    assert.deepEqual(parser.GetStoryInfo(link), compare, "The result data should match the reference Data");
 
 
 });

@@ -36,7 +36,7 @@
     "radix": true,
     "semicolon": true,
     "triple-equals": [true, "allow-null-check"],
-    "variable-name": true,
+    "variable-name": false,
     "whitespace": [false,
         "check-branch",
         "check-decl",
