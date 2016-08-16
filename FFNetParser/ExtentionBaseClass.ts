@@ -2,11 +2,11 @@
 
 class ExtentionBaseClass
 {
-    public parser: StoryParser;
+    public Parser: StoryParser;
 
     public constructor(parser: StoryParser)
     {
-        this.parser = parser;
+        this.Parser = parser;
     }
 
     /** 
@@ -15,7 +15,7 @@ class ExtentionBaseClass
      */
     get DEBUG()
     {
-        return this.parser.DEBUG;
+        return this.Parser.DEBUG;
     }
 
     /**
@@ -23,7 +23,7 @@ class ExtentionBaseClass
      */
     get IGNORE_NEW_VERSION()
     {
-        return this.parser.IGNORE_NEW_VERSION;
+        return this.Parser.IGNORE_NEW_VERSION;
     }
 
     /**
@@ -32,7 +32,7 @@ class ExtentionBaseClass
      */
     get VERSION()
     {
-        return this.parser.VERSION;
+        return this.Parser.VERSION;
     }
 
     /**
@@ -41,7 +41,7 @@ class ExtentionBaseClass
      */
     get BRANCH()
     {
-        return this.parser.BRANCH;
+        return this.Parser.BRANCH;
     }
 
     /**
@@ -49,23 +49,28 @@ class ExtentionBaseClass
      */
     get LOAD_INTERNAL()
     {
-        return this.parser.LOAD_INTERNAL;
+        return this.Parser.LOAD_INTERNAL;
     }
 
     /**
      * The Config of the Script
      */
-    get config()
+    get Config()
     {
-        return this.parser.config;
+        return this.Parser.Config;
+    }
+
+    get EventHandler()
+    {
+        return this.Parser.EventHandler;
     }
 
     /** 
      * Config that is only available in this session 
      */
-    get dataConfig()
+    get DataConfig()
     {
-        return this.parser.dataConfig;
+        return this.Parser.DataConfig;
     }
 
 
@@ -75,9 +80,9 @@ class ExtentionBaseClass
      *   @param b Parameter B
      *   @param c Paramater C
      */
-    public log(a: any, b?: any, c?: any)
+    public Log(a: any, b?: any, c?: any)
     {
-        this.parser.log(a, b, c);
+        this.Parser.Log(a, b, c);
     }
 
     /**
@@ -86,9 +91,9 @@ class ExtentionBaseClass
      *   @param b Parameter B
      *   @param c Parameter C
      */
-    public info(a: any, b?: any, c?: any)
+    public Info(a: any, b?: any, c?: any)
     {
-        this.parser.info(a, b, c);
+        this.Parser.Info(a, b, c);
     }
 
 
@@ -99,7 +104,7 @@ class ExtentionBaseClass
      */
     public _(key: string): string
     {
-       return this.parser._(key);
+       return this.Parser._(key);
     }
 
 

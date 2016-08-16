@@ -14,3 +14,4 @@
 /// <reference path="GithubAPI.ts" /> 
 /// <reference path="EventHandler.ts" /> 
 /// <reference path="UserHandler.ts" /> 
+/// <reference path="ApiController.ts" /> 

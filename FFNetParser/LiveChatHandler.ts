@@ -7,38 +7,35 @@ class LiveChatHandler extends ExtentionBaseClass
         super(parser);
     }
 
-    private socket: WebSocket = null;
+    private _socket: WebSocket = null;
 
-    private connected: boolean = false;
+    private _connected: boolean = false;
 
-    private nicks: string[] = [
+    private _nicks: string[] = [
         "Mew",
         "Pichufan",
         "Invocate"
     ];
 
-    private messageCallback: (data: WebSocketMessage) => void = function (e) { };
+    private _messageCallback: (data: WebSocketMessage) => void = function (e) { };
 
-    public onError: (message: string) => void;
+    public _onError: (message: string) => void;
 
-    public connect()
+    public Connect()
     {
         var self = this;
 
-        var address = this.config.api_webSocketServerAddress;
+        var address = this.Config.api_webSocketServerAddress;
 
-        // Test-Value
-        //
-        //var address = "ws://127.0.0.1:8182";
 
-        this.socket = new WebSocket(address);
-        this.socket.onopen = function (e)
+        this._socket = new WebSocket(address);
+        this._socket.onopen = function (e)
         {
-            self.connected = true;
+            self._connected = true;
 
-            self.sendJoinedMessage();
+            self.SendJoinedMessage();
 
-            if (typeof (self.messageCallback) !== "undefined")
+            if (typeof (self._messageCallback) !== "undefined")
             {
                 var message: WebSocketMessage = {
                     Data: self._("Connected to Server"),
@@ -49,36 +46,36 @@ class LiveChatHandler extends ExtentionBaseClass
                 };
 
 
-                self.messageCallback(message);
+                self._messageCallback(message);
 
-                self.updateUserList();
+                self.UpdateUserList();
             }
 
         };
 
-        this.socket.onmessage = function (data)
+        this._socket.onmessage = function (data)
         {
-            self.onMessage(data, self);
+            self.OnMessage(data, self);
         };
-        this.socket.onerror = function (ev)
+        this._socket.onerror = function (ev)
         {
-            self.parser.log("Error with the Socket Connection!", ev);
+            self.Parser.Log("Error with the Socket Connection!", ev);
 
-            if (typeof (self.onError) !== "undefined")
+            if (typeof (self._onError) !== "undefined")
             {
-                self.onError(self._("Error with the Socket Connection! Please reload the page and try again!"));
+                self._onError(self._("Error with the Socket Connection! Please reload the page and try again!"));
             } 
 
         };
 
     }
 
-    public updateUserList()
+    public UpdateUserList()
     {
-        if (this.connected && ($('.ChatUserInfo').length > 0))
+        if (this._connected && ($('.ChatUserInfo').length > 0))
         {
             var self = this;
-            this.parser.api_getLiveChatInfo(function (res)
+            this.Parser.Api.GetLiveChatInfo(function (res)
             {
                 var count = res.Users.length + res.WebUsers.length;
 
@@ -99,7 +96,7 @@ class LiveChatHandler extends ExtentionBaseClass
 
                 window.setTimeout(function ()
                 {
-                    self.updateUserList();
+                    self.UpdateUserList();
                 }, 10000);
             });
 
@@ -109,11 +106,11 @@ class LiveChatHandler extends ExtentionBaseClass
 
     }
 
-    public disconnect()
+    public Disconnect()
     {
-        if (this.socket !== null && this.socket !== undefined)
+        if (this._socket !== null && this._socket !== undefined)
         {
-            this.socket.close();
+            this._socket.close();
         }
     }
 
@@ -123,60 +120,60 @@ class LiveChatHandler extends ExtentionBaseClass
     }
 
 
-    private sendJoinedMessage()
+    private SendJoinedMessage()
     {
         var data: WebSocketMessage =
             {
                 Data: "",
-                Sender: this.config.token,
+                Sender: this.Config.token,
                 Time: Date.now().toString(),
                 Type: "Joined",
                 Version: this.VERSION
             };
-        this.send(data);
+        this.Send(data);
     }
 
-    private send(data: WebSocketMessage)
+    private Send(data: WebSocketMessage)
     {
-        if (this.socket.readyState === WebSocket.OPEN)
+        if (this._socket.readyState === WebSocket.OPEN)
         {
-            this.socket.send(JSON.stringify(data));
+            this._socket.send(JSON.stringify(data));
         }
         else
         {
-            this.connected = false;
+            this._connected = false;
         }
     }
 
-    private onMessage(data: any, self: LiveChatHandler)
+    private OnMessage(data: any, self: LiveChatHandler)
     {
         try
         {
             var message = <WebSocketMessage>JSON.parse(data.data);
 
-            self.log(message);
+            self.Log(message);
 
-            if (typeof (self.messageCallback) !== "undefined")
+            if (typeof (self._messageCallback) !== "undefined")
             {
-                if (this.nicks.indexOf(message.Sender) !== -1)
+                if (this._nicks.indexOf(message.Sender) !== -1)
                 {
                     message.Sender = message.Sender + " [Dev]";
                 }
 
-                self.messageCallback(message);
+                self._messageCallback(message);
             }
             else
             {
-                self.parser.log(self.messageCallback);
-                self.parser.log("Message Callback is undefined ....");
+                self.Parser.Log(self._messageCallback);
+                self.Parser.Log("Message Callback is undefined ....");
 
             }
         }
         catch (ex)
         {
-            if (typeof (self.parser.log) !== "undefined")
+            if (typeof (self.Parser.Log) !== "undefined")
             {
-                self.parser.log("Error while parsing Message: ", ex);
+                self.Parser.Log("Error while parsing Message: ", ex);
             }
             else
             {
@@ -185,32 +182,32 @@ class LiveChatHandler extends ExtentionBaseClass
         }
     }
 
-    public sendChatMessage(message: string)
+    public SendChatMessage(message: string)
     {
         var data: WebSocketMessage =
             {
                 Data: message,
-                Sender: this.config.token,
+                Sender: this.Config.token,
                 Time: Date.now().toString(),
                 Type: "Chat",
                 Version: this.VERSION
             };
 
-        this.send(data);
+        this.Send(data);
     }
 
-    public sendConfigData()
+    public SendConfigData()
     {
         var data: WebSocketMessage =
             {
-                Data: JSON.stringify(this.config),
-                Sender: this.config.token,
+                Data: JSON.stringify(this.Config),
+                Sender: this.Config.token,
                 Time: Date.now().toString(),
                 Type: "Config",
                 Version: this.VERSION
             };
 
-        this.send(data);
+        this.Send(data);
 
         var message: WebSocketMessage = {
             Data: this._("Config-Data sent to Server"),
@@ -220,14 +217,14 @@ class LiveChatHandler extends ExtentionBaseClass
             Version: this.VERSION
         };
 
-        this.messageCallback(message);
+        this._messageCallback(message);
 
     }
 
 
-    public setMessageCallback(data: (e: WebSocketMessage) => void)
+    public SetMessageCallback(data: (e: WebSocketMessage) => void)
     {
-        this.messageCallback = data;
+        this._messageCallback = data;
     }
 
 }

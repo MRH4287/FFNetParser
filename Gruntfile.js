@@ -28,7 +28,8 @@ module.exports = function (grunt)
             'build/UpgradeHandler.js',
             'build/EventHandler.js',
             'build/UserHandler.js',
-            'build/GithubAPI.js'
+            'build/GithubAPI.js',
+			'build/ApiController.js'
         ],
         filesToPack:
         [

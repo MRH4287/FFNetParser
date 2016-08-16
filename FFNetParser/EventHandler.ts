@@ -5,12 +5,12 @@
  */
 class EventHandler
 {
-    private events: { [id: string]: EventData } = {};
-    private calledEvents: string[] = [];
+    private _events: { [id: string]: EventData } = {};
+    private _calledEvents: string[] = [];
 
-    private main: StoryParser = null;
+    private _main: StoryParser = null;
 
-    private timedEvents: {
+    private _timedEvents: {
         [id: string]: {
             run: boolean;
             callback: (sender: any, args: any) => void;
@@ -23,7 +23,7 @@ class EventHandler
      */
     constructor(main: StoryParser)
     {
-        this.main = main;
+        this._main = main;
     }
 
     /**
@@ -31,21 +31,21 @@ class EventHandler
      * @param event The name of the Event
      * @param callback The callback Function for this Handler
      */
-    public addEventListener(event: string, callback: (sender: any, args: any) => void)
+    public AddEventListener(event: string, callback: (sender: any, args: any) => void)
     {
-        if (this.events === undefined)
+        if (this._events === undefined)
         {
-            this.events = {};
+            this._events = {};
         }
 
-        if (this.events[event] === undefined)
+        if (this._events[event] === undefined)
         {
-            this.events[event] = {
+            this._events[event] = {
                 callbacks: []
             };
         }
 
-        this.events[event].callbacks.push(callback);
+        this._events[event].callbacks.push(callback);
     }
 
     /**
@@ -54,13 +54,13 @@ class EventHandler
      * @param sender The Sender of the event
      * @param args The Argument of this Event
      */
-    public callEvent(event: string, sender: any, args: any)
+    public CallEvent(event: string, sender: any, args: any)
     {
-        this.addEventToList(event);
+        this.AddEventToList(event);
 
-        var unheared = ((this.events === undefined) || (this.events[event] === undefined));
+        var unheared = ((this._events === undefined) || (this._events[event] === undefined));
 
-        if (this.main !== undefined && this.main !== null && this.main.VERBOSE)
+        if (this._main !== undefined && this._main !== null && this._main.VERBOSE)
         {
             console.log("Event Called: " + event + " - ", { name: event, sender: sender, args: args, heared: !unheared });
         }
@@ -73,27 +73,27 @@ class EventHandler
             return false;
         }
 
-        for (var i = 0; i < this.events[event].callbacks.length; i++)
+        for (var i = 0; i < this._events[event].callbacks.length; i++)
         {
-            this.events[event].callbacks[i](sender, args);
+            this._events[event].callbacks[i](sender, args);
         }
     }
 
     /**
      * Returns a list of all called Events
      */
-    public getEvents(): string[]
+    public GetEvents(): string[]
     {
-        return Object.keys(this.events).concat(this.calledEvents);
+        return Object.keys(this._events).concat(this._calledEvents);
     }
 
     /**
      * Check if a specific Event was called allready
      * @param index The name of the Event
      */
-    public containesKey(index: string): boolean
+    public ContainesKey(index: string): boolean
     {
-        return (this.getEvents().indexOf(index) !== -1);
+        return (this.GetEvents().indexOf(index) !== -1);
     }
 
 
@@ -105,15 +105,15 @@ class EventHandler
      * @param sender The sender of the Event
      * @param arguments The Argument for this Event
      */
-    public addTimer(name: string, callback: (sender: any, args: any) => void, intervall: number, sender?: any, args?: any)
+    public AddTimer(name: string, callback: (sender: any, args: any) => void, intervall: number, sender?: any, args?: any)
     {
-        if (this.timedEvents[name] !== undefined)
+        if (this._timedEvents[name] !== undefined)
         {
-            this.stopTimer(name);
+            this.StopTimer(name);
         }
 
 
-        this.timedEvents[name] = {
+        this._timedEvents[name] = {
             run: true,
             callback: callback
         };
@@ -124,32 +124,32 @@ class EventHandler
             try
             {
 
-                var data = self.timedEvents[name];
+                var data = self._timedEvents[name];
 
                 if ((data !== undefined) && (data.run))
                 {
                     data.callback(sender, args);
 
-                    self.callEvent("TaskCreated", self, "Timer - " + name);
+                    self.CallEvent("TaskCreated", self, "Timer - " + name);
 
                     window.setTimeout(triggerEvent, intervall);
                 }
                 else
                 {
-                    delete self.timedEvents[name];
+                    delete self._timedEvents[name];
                 }
 
             }
             catch (ex)
             {
                 console.warn("Exception while executing timed Trigger '" + name + "': ", ex);
-                delete self.timedEvents[name];
+                delete self._timedEvents[name];
             }
 
-            self.callEvent("TaskDisposed", self, "Timer - " + name);
+            self.CallEvent("TaskDisposed", self, "Timer - " + name);
         };
 
-        self.callEvent("TaskCreated", self, "Timer - " + name);
+        self.CallEvent("TaskCreated", self, "Timer - " + name);
         window.setTimeout(triggerEvent, intervall);
     }
 
@@ -162,34 +162,34 @@ class EventHandler
      * @param sender the Sender of the Event
      * @param arguments The Argument for this Event
      */
-    public addTimedTrigger(name: string, triggerEvent: string, intervall: number, sender?: any, args?: any)
+    public AddTimedTrigger(name: string, triggerEvent: string, intervall: number, sender?: any, args?: any)
     {
         var self = this;
         var callback = function (sender, args)
         {
-            self.callEvent(triggerEvent, sender, args);
+            self.CallEvent(triggerEvent, sender, args);
         };
 
-        this.addTimer(name, callback, intervall, sender, args);
+        this.AddTimer(name, callback, intervall, sender, args);
     }
 
     /**
      * Stops a specific Timer
      * @param name Name of the Timer
      */
-    public stopTimer(name: string)
+    public StopTimer(name: string)
     {
-        if (this.timedEvents[name] !== undefined)
+        if (this._timedEvents[name] !== undefined)
         {
-            this.timedEvents[name].run = false;
+            this._timedEvents[name].run = false;
         }
     }
 
-    private addEventToList(name: string)
+    private AddEventToList(name: string)
     {
-        if (this.calledEvents.indexOf(name) === -1)
+        if (this._calledEvents.indexOf(name) === -1)
         {
-            this.calledEvents.push(name);
+            this._calledEvents.push(name);
         }
 
     }

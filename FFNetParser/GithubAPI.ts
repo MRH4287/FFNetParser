@@ -5,8 +5,8 @@
  */
 class GithubAPI extends ExtentionBaseClass
 {
-    private code: string;
-    private attempt: number  = 0;
+    private _code: string;
+    private _attempt: number  = 0;
     private MAX_ATTEMPTS = 30;
 
     /**
@@ -14,7 +14,7 @@ class GithubAPI extends ExtentionBaseClass
      */
     get Authenticated()
     {
-        return typeof(this.code) !== "undefined" && this.code !== null;
+        return typeof(this._code) !== "undefined" && this._code !== null;
     }
 
    
@@ -26,20 +26,20 @@ class GithubAPI extends ExtentionBaseClass
 
     public Auth(callback? : () => void)
     {
-        if (!this.parser.useCORS)
+        if (!this.Parser.Api.UseCors)
         {
             console.error("CORS has to be active for this Feature to work!");
 
             return;
         }
 
-        window.open(this.parser.config.api_github_requestStart_url + "?token=" + this.config.token);
+        window.open(this.Parser.Config.api_github_requestStart_url + "?token=" + this.Config.token);
 
-        this.attempt = 0;
+        this._attempt = 0;
 
-        this.beginCheck(() =>
+        this.BeginCheck(() =>
         {
-            this.log("Successfully Authenticated!");
+            this.Log("Successfully Authenticated!");
             if (typeof(callback) !== "undefined")
             {
                 callback();
@@ -50,17 +50,17 @@ class GithubAPI extends ExtentionBaseClass
 
     public GetGists(callback: (data: GistData[]) => void)
     {
-        if (typeof(this.code) === "undefined" || this.code === null)
+        if (typeof(this._code) === "undefined" || this._code === null)
         {
             console.error("Github API - Not Authenticated!");
             return;
         }
         else
         {
-            this.api_call("Gists",
+            this.ApiCall("Gists",
                 {
-                    token: this.config.token,
-                    code: this.code
+                    token: this.Config.token,
+                    code: this._code
                 },
                 (data: GistData[]) =>
                 {
@@ -71,16 +71,16 @@ class GithubAPI extends ExtentionBaseClass
 
     public GetConfig(id: string, callback : (data: string) => void )
     {
-        if (typeof(this.code) === "undefined" || this.code === null)
+        if (typeof(this._code) === "undefined" || this._code === null)
         {
             console.error("Github API - Not Authenticated!");
             return;
         }
 
-        this.api_call("Config",
+        this.ApiCall("Config",
             {
-                token: this.config.token,
-                code: this.code,
+                token: this.Config.token,
+                code: this._code,
                 id: id
             },
             (data: string) =>
@@ -91,19 +91,19 @@ class GithubAPI extends ExtentionBaseClass
 
     public CreateNewConfigGist(description: string, isPublic: boolean, callback: (data: GistData) => void )
     {
-        if (typeof(this.code) === "undefined" || this.code === null)
+        if (typeof(this._code) === "undefined" || this._code === null)
         {
             console.error("Github API - Not Authenticated!");
             return;
         }
 
-        this.api_call("Gist",
+        this.ApiCall("Gist",
             JSON.stringify({
-                token: this.config.token,
-                code: this.code,
+                token: this.Config.token,
+                code: this._code,
                 description: description,
                 isPublic: isPublic,
-                content: JSON.stringify(this.config, null, "\t")
+                content: JSON.stringify(this.Config, null, "\t")
             }), function (data: GistData)
             {
                 callback(data);
@@ -113,18 +113,18 @@ class GithubAPI extends ExtentionBaseClass
 
     public UpdateConfigGist(id: string, callback: (data: GistData) => void)
     {
-        if (typeof(this.code) === "undefined" || this.code === null)
+        if (typeof(this._code) === "undefined" || this._code === null)
         {
             console.error("Github API - Not Authenticated!");
             return;
         }
 
-        this.api_call("Gist",
+        this.ApiCall("Gist",
             JSON.stringify({
-                token: this.config.token,
-                code: this.code,
+                token: this.Config.token,
+                code: this._code,
                 id: id,
-                content: JSON.stringify(this.config, null, "\t")
+                content: JSON.stringify(this.Config, null, "\t")
             }), function (data: GistData)
             {
                 callback(data);
@@ -133,35 +133,35 @@ class GithubAPI extends ExtentionBaseClass
     }
 
 
-    private beginCheck(callback: () => void)
+    private BeginCheck(callback: () => void)
     {
         var self = this;
 
-        this.api_call("Status", { token: self.config.token }, (data) =>
+        this.ApiCall("Status", { token: self.Config.token }, (data) =>
         {
             if (data !== null && data !== "null")
             {
-                this.code = data;
+                this._code = data;
 
-                this.log("Got Code from Server. Attempts: ", this.attempt);
+                this.Log("Got Code from Server. Attempts: ", this._attempt);
 
                 callback();
                 return;
             }
             else
             {
-                if (this.attempt > this.MAX_ATTEMPTS)
+                if (this._attempt > this.MAX_ATTEMPTS)
                 {
                     console.error("Github API - Max Attempt Count reached! Abort!");
                     return;
                 }
                 else
                 {
-                    this.attempt = this.attempt + 1;
+                    this._attempt = this._attempt + 1;
 
                     window.setTimeout(() =>
                     {
-                        self.beginCheck(callback);
+                        self.BeginCheck(callback);
                     }, 1000);
 
                 }
@@ -173,9 +173,9 @@ class GithubAPI extends ExtentionBaseClass
     }
 
 
-    private api_call(address: string, data: {}, callback: (data: any) => void, method: string = "GET")
+    private ApiCall(address: string, data: {}, callback: (data: any) => void, method: string = "GET")
     {
-        var url = this.parser.config.api_github_url + "/" + address;
+        var url = this.Parser.Config.api_github_url + "/" + address;
 
         var self = this;
 
@@ -191,7 +191,7 @@ class GithubAPI extends ExtentionBaseClass
         })
             .done(function (result)
             {
-                self.log("Github API - Got Result from Server: ", result);
+                self.Log("Github API - Got Result from Server: ", result);
 
                 callback(result);
 

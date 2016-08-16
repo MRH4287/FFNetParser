@@ -2,13 +2,10 @@
 
 class UserHandler extends ExtentionBaseClass
 {
-    private rainbowColors = [
+    private _rainbowColors = [
         [255, 0, 0], //Red
         [255, 62, 0],
         [255, 106, 0], // Orange
-        //[255, 171, 0],
-        //[250, 237, 0], // Yellow
-        //[80, 205, 0],
         [0, 255, 0], // Green
         [0, 144, 230],
         [0, 0, 255], // Blue
@@ -18,19 +15,19 @@ class UserHandler extends ExtentionBaseClass
         [125, 0, 255] // Violet
     ];
 
-    private specialUsers: Number[] =
+    private _specialUsers: Number[] =
     [
         4319809, // aguscha333
         2918285 // Tanon
     ];
 
-    private userRegEx = new RegExp("\/u\/([0-9]+)\/(.+)");
+    private _userRegEx = new RegExp("\/u\/([0-9]+)\/(.+)");
 
     public constructor(parser: StoryParser)
     {
         super(parser);
 
-        this.parser.eventHandler.addEventListener("postElementParse", (sender, element) =>
+        this.Parser.EventHandler.AddEventListener("postElementParse", (sender, element) =>
         {
             var links = element.find("a");
             var found = false;
@@ -44,9 +41,9 @@ class UserHandler extends ExtentionBaseClass
                 }
 
                 var href = el.attr("href");
-                if (this.userRegEx.test(href))
+                if (this._userRegEx.test(href))
                 {
-                    var res = this.userRegEx.exec(href);
+                    var res = this._userRegEx.exec(href);
 
                     if (res[1] !== undefined)
                     {
@@ -54,9 +51,9 @@ class UserHandler extends ExtentionBaseClass
                         {
                             var userNumber = Number(res[1]);
 
-                            if (this.specialUsers.indexOf(userNumber) !== -1)
+                            if (this._specialUsers.indexOf(userNumber) !== -1)
                             {
-                                this.doRainbow(el, "- Special Supporter of the Fanfiction Story-Parser");
+                                this.DoRainbow(el, "- Special Supporter of the Fanfiction Story-Parser");
                             }
 
                         }
@@ -75,20 +72,20 @@ class UserHandler extends ExtentionBaseClass
         });
     }
 
-    public doRainbow(element: JQuery, title: string = null, prependUsername: boolean = true)
+    public DoRainbow(element: JQuery, title: string = null, prependUsername: boolean = true)
     {
 
         var text = element.text();
 
         var length = text.length;
-        var elementCount = Math.ceil(length / this.rainbowColors.length);
+        var elementCount = Math.ceil(length / this._rainbowColors.length);
 
         var container = $("<div></div>");
 
         for (var i = 0; i < text.length; i++)
         {
             var currentColor = Math.floor(i / elementCount);
-            var color = this.rainbowColors[currentColor % this.rainbowColors.length];
+            var color = this._rainbowColors[currentColor % this._rainbowColors.length];
 
             container.append(
                 $("<span></span>")
