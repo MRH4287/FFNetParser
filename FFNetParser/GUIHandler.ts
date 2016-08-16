@@ -458,7 +458,7 @@ class GUIHandler extends ExtentionBaseClass
                                         Branch: self.BRANCH
                                     };
 
-                                    self.Parser.Api.Request({ command: "postFeedback", data: JSON.stringify(data) }, function () { });
+                                    self.Parser.Api.Request(MessageType.postFeedback, { data: JSON.stringify(data) }, function () { });
                                 }
                             })
                             .attr('title', "Hello!");
@@ -4441,7 +4441,7 @@ class GUIHandler extends ExtentionBaseClass
                 };
 
 
-                self.Parser.Api.Request({ command: "postFeedback", data: JSON.stringify(data) }, function () { });
+                self.Parser.Api.Request(MessageType.postFeedback, { data: JSON.stringify(data) }, function () { });
 
                 alert("Message sent ...");
 

@@ -233,6 +233,23 @@ interface GUICategory
 
 // ------- API Functions -------
 
+enum MessageType
+{
+    Invalid,
+    getVersion,
+    echo,
+    test,
+    getCurrent,
+    getStyles,
+    getMessages,
+    readMessages,
+    postFeedback,
+    getLanguageList,
+    getLanguage,
+    liveChatInfo,
+    getStoryInfo
+}
+
 interface WebSocketMessage
 {
     Type: string;

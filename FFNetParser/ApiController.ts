@@ -13,10 +13,8 @@ class ApiController extends ExtentionBaseClass
 
     get UseCors()
     {
-       return this._useCors;
+        return this._useCors;
     }
-        
-
 
     public Initialize()
     {
@@ -25,127 +23,144 @@ class ApiController extends ExtentionBaseClass
 
         // Check for CORS:
         this._useCors = 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest();
-
     }
-
 
     /**
      *   Generic API-Request
      *   @param data Request Options
      *   @param callback Function executed after result was found
      */
-    public Request(data: any, callback: (result: string) => void)
+    public Request(command: MessageType, data: any, callback: (result: string) => void)
     {
         var url = this.Config.api_url;
         var apiLookupKey = this.Config.api_lookupKey;
         var timeout = this.Config.api_timeout;
-        var retrys = this.Config.api_retries;
+        var retries = this.Config.api_retries;
+
+        data.command = MessageType[command];
 
         this.EventHandler.CallEvent("preAPIRequest", this, data);
 
-        var self = this;
-
         if (this._useCors)
         {
-            data.CORS = true;
-
-            $.ajax({
-                type: 'GET',
-                url: url,
-                async: true,
-                contentType: "application/json",
-                dataType: 'json',
-                crossDomain: true,
-                data: data,
-                cache: false
-            })
-                .done(function (result)
-                {
-                    self.Log("Got Result from Server: ", result);
-
-                    var data = result.Data[0].Value;
-
-                    self.EventHandler.CallEvent("onAPIResult", this, data);
-
-                    callback(data);
-
-                })
-                .fail(function (state)
-                {
-                    console.error("[FFNet-Parser] Error while fetching Result from Server: ", state);
-                });
-
+            this.CorsRequest(url, data, callback);
         }
         else
         {
-            var messageID = Math.random().toString().split(".")[1];
-            data.adress = apiLookupKey + messageID;
+            console.warn("Your Browser doesn't support CORS. You are using the deprecated API-Feature. This feature will be removed in later releases");
+            
+            this.JsonPRequest(url, data, apiLookupKey, timeout, retries, callback);
+        }
+    }
 
-            $.ajax({
-                type: 'GET',
-                url: url,
-                async: false,
-                contentType: "application/json",
-                dataType: 'jsonp',
-                data: data,
-                cache: false
+
+    private CorsRequest(url: string, data: any, callback: (result: string) => void)
+    {
+        var self = this;
+
+        data.CORS = true;
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            async: true,
+            contentType: "application/json",
+            dataType: 'json',
+            crossDomain: true,
+            data: data,
+            cache: false
+        })
+            .done(function (result)
+            {
+                self.Log("Got Result from Server: ", result);
+
+                var data = result.Data[0].Value;
+
+                self.EventHandler.CallEvent("onAPIResult", this, data);
+
+                callback(data);
+
+            })
+            .fail(function (state)
+            {
+                console.error("[FFNet-Parser] Error while fetching Result from Server: ", state);
             });
 
+    }
+
+    private JsonPRequest(url: string, data: any, apiLookupKey: string, timeout: Number, retries: Number, callback: (result: string) => void)
+    {
+        var self = this;
+
+        var messageID = Math.random().toString().split(".")[1];
+        data.adress = apiLookupKey + messageID;
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            async: false,
+            contentType: "application/json",
+            dataType: 'jsonp',
+            data: data,
+            cache: false
+        });
 
 
-            var tries = 0;
 
-            var checkFunction = function ()
+        var tries = 0;
+
+        var checkFunction = function ()
+        {
+            if (self.DEBUG)
+            {
+                console.log("API_Request - CheckFor Result");
+            }
+
+            if (tries >= retries)
             {
                 if (self.DEBUG)
                 {
-                    console.log("API_Request - CheckFor Result");
+                    console.log("API_Request - To many tries, abort for ", data);
                 }
 
-                if (tries >= retrys)
-                {
-                    if (self.DEBUG)
-                    {
-                        console.log("API_Request - To many tries, abort for ", data);
-                    }
+                return;
+            }
 
-                    return;
+            if ((typeof (sessionStorage[apiLookupKey + messageID]) !== "undefined") &&
+                (sessionStorage[apiLookupKey + messageID] !== "null") &&
+                sessionStorage[apiLookupKey + messageID] !== "undefined" &&
+                sessionStorage[apiLookupKey + messageID] !== null &&
+                sessionStorage[apiLookupKey + messageID] !== "")
+            {
+                if (self.DEBUG)
+                {
+                    //console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
                 }
 
-                if ((typeof (sessionStorage[apiLookupKey + messageID]) !== "undefined") &&
-                    (sessionStorage[apiLookupKey + messageID] !== "null") &&
-                    sessionStorage[apiLookupKey + messageID] !== "undefined" &&
-                    sessionStorage[apiLookupKey + messageID] !== null &&
-                    sessionStorage[apiLookupKey + messageID] !== "")
+                var result = sessionStorage[apiLookupKey + messageID];
+
+                // Clear last Result
+                delete sessionStorage[apiLookupKey + messageID];
+
+                this.eventHandler.callEvent("onAPIResult", this, result);
+
+                callback(result);
+
+            } else
+            {
+                if (self.DEBUG)
                 {
-                    if (self.DEBUG)
-                    {
-                        //console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
-                    }
-
-                    var result = sessionStorage[apiLookupKey + messageID];
-
-                    // Clear last Result
-                    delete sessionStorage[apiLookupKey + messageID];
-
-                    this.eventHandler.callEvent("onAPIResult", this, result);
-
-                    callback(result);
-
-                } else
-                {
-                    if (self.DEBUG)
-                    {
-                        console.log("API_Request - No Result found, Retry");
-                    }
-                    tries++;
-                    window.setTimeout(checkFunction, timeout);
+                    console.log("API_Request - No Result found, Retry");
                 }
-            };
+                tries++;
+                window.setTimeout(checkFunction, timeout);
+            }
+        };
 
-            window.setTimeout(checkFunction, timeout);
-        }
+        window.setTimeout(checkFunction, timeout);
     }
+
+
 
 
     /**
@@ -176,7 +191,7 @@ class ApiController extends ExtentionBaseClass
 
             var self = this;
 
-            this.Request({ command: "getVersion", data: requestData }, function (res)
+            this.Request(MessageType.getVersion, { data: requestData }, function (res)
             {
                 if (!self.Config.api_checkForUpdates)
                 {
@@ -251,7 +266,7 @@ class ApiController extends ExtentionBaseClass
         {
             this.Log("Load Styles from Remote Server ...");
 
-            this.Request({ command: "getStyles", data: this.BRANCH }, function (styles)
+            this.Request(MessageType.getStyles, { data: this.BRANCH }, function (styles)
             {
                 self.DataConfig["styles"] = styles;
 
@@ -274,9 +289,8 @@ class ApiController extends ExtentionBaseClass
 
         var self = this;
 
-        this.Request(
+        this.Request(MessageType.liveChatInfo,
             {
-                command: "liveChatInfo",
                 data: this.BRANCH
             },
             function (res)
@@ -319,7 +333,7 @@ class ApiController extends ExtentionBaseClass
         }
 
         var self = this;
-        this.Request({ command: "getLanguageList", data: this.BRANCH }, function (res)
+        this.Request(MessageType.getLanguageList, { data: this.BRANCH }, function (res)
         {
             var result = <LanguageData[]>JSON.parse(res);
 
@@ -382,7 +396,7 @@ class ApiController extends ExtentionBaseClass
         }
 
         var self = this;
-        this.Request({ command: "getLanguage", data: languageCode }, function (res)
+        this.Request(MessageType.getLanguage, { data: languageCode }, function (res)
         {
             var result = <LanguageData>JSON.parse(res);
 
@@ -439,7 +453,7 @@ class ApiController extends ExtentionBaseClass
             }
 
             var self = this;
-            this.Request({ command: "getCurrent", data: this.BRANCH }, function (res)
+            this.Request(MessageType.getCurrent, { data: this.BRANCH }, function (res)
             {
                 //console.log("Script: ", res);
 
@@ -465,7 +479,7 @@ class ApiController extends ExtentionBaseClass
             Version: this.VERSION
         };
 
-        this.Request({ command: "getMessages", data: JSON.stringify(data) }, function (result)
+        this.Request(MessageType.getMessages, { data: JSON.stringify(data) }, function (result)
         {
             var response = JSON.parse(result);
 
@@ -489,7 +503,7 @@ class ApiController extends ExtentionBaseClass
         $(".ffnet-messageCount").text("0");
 
 
-        this.Request({ command: "readMessages", data: this.Config.token }, function (result)
+        this.Request(MessageType.readMessages, { data: this.Config.token }, function (result)
         {
         });
 
@@ -570,9 +584,8 @@ class ApiController extends ExtentionBaseClass
             return;
         }
 
-        this.Request(
+        this.Request(MessageType.getStoryInfo,
             {
-                command: "getStoryInfo",
                 data: JSON.stringify(request)
             },
             function (res)
