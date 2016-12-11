@@ -1527,6 +1527,10 @@ class StoryParser
 
             $.each(self.Config.marker, function (headline: string, config: MarkerConfig)
             {
+                if (config.enabled === false)
+                {
+                    return;
+                }
 
                 var ignore = false;
                 $.each(config.ignore, function (i: number, marker: string)
@@ -2966,6 +2970,10 @@ class StoryParser
 
             $.each(self.Config.marker, function (headline: string, config: MarkerConfig)
             {
+                if (config.enabled === false)
+                {
+                    return;
+                }
 
                 var ignore = false;
                 $.each(config.ignore, function (i: number, marker: string)

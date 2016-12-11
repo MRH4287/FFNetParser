@@ -79,6 +79,7 @@ interface Config
 
 interface MarkerConfig extends ModificationBase
 {
+    enabled?: boolean;
     ignore: string[];
     keywords: string[];
     mention_in_headline: boolean;

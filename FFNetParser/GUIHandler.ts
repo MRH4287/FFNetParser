@@ -1906,6 +1906,7 @@ class GUIHandler extends ExtentionBaseClass
         });
 
         var quickInfo = this._("Name") + ": " + marker.name + " - " +
+            this._('Enabled') + ": " + (marker.enabled === false ? this._("No") : this._("Yes")) + " - " +
             this._("Display Entries") + ": " + (marker.display ? this._("Yes") : this._("No")) + " - " +
             this._("Priority") + ": " + marker.priority + " - " +
             this._("Number of founds on all visible pages") + ": " + foundCount;
@@ -1931,7 +1932,7 @@ class GUIHandler extends ExtentionBaseClass
                                 })
                         );
                     }
-                },
+                },              
                 {
                     name: 'name',
                     type: GUIElementType.Input,
@@ -1943,6 +1944,20 @@ class GUIHandler extends ExtentionBaseClass
                     attributes:
                     {
                         size: 50
+                    }
+                },
+                {
+                    name: 'enabled',
+                    type: GUIElementType.Checkbox,
+                    label: self._('Enabled'),
+                    value: function ()
+                    {
+                        if (marker.enabled === undefined)
+                        {
+                            return true;
+                        }
+
+                        return marker.enabled;
                     }
                 },
                 {
@@ -2582,6 +2597,7 @@ class GUIHandler extends ExtentionBaseClass
                 var config =
                     {
                         name: name,
+                        enabled: data.instances['enabled'].is(':checked'),
                         color: data.instances['color'].find('input').val(),
                         ignore: data.instances['ignore'].val().split(', '),
                         keywords: data.instances['keywords'].val().split(', '),
