@@ -1,17 +1,21 @@
-﻿/// <reference path="jquery.d.ts" /> 
-/// <reference path="jquery.colorpicker.d.ts" /> 
-/// <reference path="jqueryui.d.ts" /> 
-/// <reference path="chrome.d.ts" /> 
-/// <reference path="bootstrap.d.ts" /> 
+﻿/// <reference path="Definitions/jquery.d.ts" /> 
+/// <reference path="Definitions/jquery.colorpicker.d.ts" />
+/// <reference path="Definitions/jqueryui.d.ts" />
+/// <reference path="Definitions/chrome.d.ts" />
+/// <reference path="Definitions/bootstrap.d.ts" />
 
 /// <reference path="userscript.ts" />
-/// <reference path="Types.ts" /> 
-/// <reference path="ParagraphMenu.ts" /> 
-/// <reference path="GUIHandler.ts" />
-/// <reference path="LiveChatHandler.ts" /> 
-/// <reference path="ExtentionBaseClass.ts" /> 
-/// <reference path="UpgradeHandler.ts" /> 
-/// <reference path="GithubAPI.ts" /> 
-/// <reference path="EventHandler.ts" /> 
-/// <reference path="UserHandler.ts" /> 
-/// <reference path="ApiController.ts" /> 
+
+/// <reference path="Core/Types.ts" /> 
+/// <reference path="Core/EventHandler.ts" />
+/// <reference path="Core/ApiController.ts" /> 
+/// <reference path="Core/ExtentionBaseClass.ts" />
+/// <reference path="Const/Events.ts" />
+
+/// <reference path="Addons/ParagraphMenu.ts" /> 
+/// <reference path="Addons/GUIHandler.ts" />
+/// <reference path="Addons/LiveChatHandler.ts" />
+/// <reference path="Addons/UpgradeHandler.ts" />
+/// <reference path="Addons/GithubAPI.ts" />
+/// <reference path="Addons/UserHandler.ts" />
+

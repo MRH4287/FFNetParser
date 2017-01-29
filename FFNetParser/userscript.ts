@@ -1,8 +1,5 @@
 /// <reference path="_reference.ts" /> 
 
-/*// <reference path="GameEngine/Interfaces/GameHandler.d.ts" /> */
-
-
 class StoryParser
 {
     /** 
@@ -42,36 +39,6 @@ class StoryParser
      *  The Event-Handler used for processing
      */
     public EventHandler: EventHandler = new EventHandler(this);
-
-    /**
-     * Module used for the GUI
-     */
-    public Gui: GUIHandler = new GUIHandler(this);
-
-    /**
-     * Handler for the IRC-Live Chat
-     */
-    public Chat: LiveChatHandler = new LiveChatHandler(this);
-
-    /**
-     * Handler for Upgrades to the Config Values 
-     */
-    public Upgrade: UpgradeHandler = new UpgradeHandler(this);
-
-    /**
-     * The Paragraph Menu of the current Page
-     */
-    public ParagramMenu: ParagraphMenu = null;
-
-    /**
-     *  The API used for connecting to Github
-     */
-    public GithubAPi: GithubAPI = new GithubAPI(this);
-
-    /**
-     * The System used to handle Usernames
-     */
-    public UserHandler: UserHandler = new UserHandler(this);
 
     /**
      * The Controller used to handle API-Requests
@@ -179,7 +146,7 @@ class StoryParser
      * List of found Elements
      * Key: Headline, Value: List of Links
      */
-    public FoundElemementList: { [index: number]: { [index: string]: StoryInfo[] } } = {};
+    public FoundElemementList: { [index: number]: { [index: string]: EventStoryInfo[] } } = {};
 
     /**
      *  The List of PageWrapper for every page
@@ -362,12 +329,13 @@ class StoryParser
 
     }
 
+
     /**
      *   Initializes System
      */
-    constructor()
+    public Initialize()
     {
-        this.EventHandler.CallEvent("preInit", this, null);
+        this.EventHandler.CallEvent(Events.PreInit, this, null);
 
         var self = this;
 
@@ -476,10 +444,10 @@ class StoryParser
         {
             // Checks if sessionStorage entry is valid:
             this._storyCache = this.LoadFromMemory(sessionStorage, this.Config.storage_key);
-            this.EventHandler.CallEvent("onStoryCacheLoad", this, this._storyCache);
+            this.EventHandler.CallEvent(Events.OnStoryCacheLoad, this, this._storyCache);
 
             this.DataConfig = this.LoadFromMemory(sessionStorage, this.Config.dataStorage_key);
-            this.EventHandler.CallEvent("onDataConfigLoad", this, this.DataConfig);
+            this.EventHandler.CallEvent(Events.OnDataConfigLoad, this, this.DataConfig);
 
         } catch (ex)
         {
@@ -491,7 +459,7 @@ class StoryParser
         try
         {
             this.Config = this.LoadFromMemory(localStorage, this.Config.config_key);
-            this.EventHandler.CallEvent("onConfigLoad", this, this.Config);
+            this.EventHandler.CallEvent(Events.OnConfigLoad, this, this.Config);
 
         } catch (ex)
         {
@@ -507,15 +475,6 @@ class StoryParser
 
         // Check for Config Values:
 
-        if ((typeof (this.Config["pocket_user"]) === "undefined") || (this.Config["pocket_user"] === ""))
-        {
-            this.Config["pocket_user"] = null;
-        }
-
-        if ((typeof (this.Config["pocket_password"]) === "undefined") || (this.Config["pocket_password"] === ""))
-        {
-            this.Config["pocket_password"] = null;
-        }
 
         if (typeof (this.Config["token"]) === "undefined")
         {
@@ -523,147 +482,6 @@ class StoryParser
             this.Config["token"] = Math.random().toString().split(".")[1];
             this.SaveConfig();
         }
-
-
-        if (typeof (this.Config["api_autoIncludeNewVersion"]) === "undefined")
-        {
-            // Only Check if the Script is not loaded over Chrome!
-            if ((typeof (chrome) === "undefined") || (typeof (chrome.runtime) === "undefined"))
-            {
-
-                // Creates Warning for new Feature:
-
-                var text = "<div><b>Please Read!</b><br />";
-                text += "In one of the previous version, a new feature has been implemented. With this Feature activated, you don't have to manually install new Versions. ";
-                text += "Newer Versions will be saved in your Local Storage and then executed. Because of that, the Version Number displayed in your UserScript Manager ";
-                text += "can be wrong. To Display the Version Number, check your Menu.";
-                text += "Do you want to activate this Feature?</div>";
-
-                var buttons = [];
-                var modal: JQuery;
-
-                buttons.push($('<button class="btn btn-primary">Enable Feature</button>').click(() =>
-                {
-                    modal.modal('hide');
-
-                    self.Config['api_autoIncludeNewVersion'] = true;
-                    self.SaveConfig();
-
-                }));
-
-                buttons.push($('<button class="btn btn-default">Keep Disabled</button>').click(() =>
-                {
-                    modal.modal('hide');
-
-                    self.Config['api_autoIncludeNewVersion'] = false;
-                    self.SaveConfig();
-
-                }));
-
-                modal = GUIHandler.CreateBootstrapModal($(text), "Fanfiction Story Parser", buttons);
-
-
-                window.setTimeout(function ()
-                {
-                    GUIHandler.ShowModal(modal);
-
-                }, 1000);
-            }
-            else
-            {
-                self.Config['api_autoIncludeNewVersion'] = false;
-                self.SaveConfig();
-            }
-        }
-
-
-        // Google Storage Sync:
-        if ((typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined") && (this.Config.chrome_sync))
-        {
-            window.setTimeout(function ()
-            {
-                self.EventHandler.CallEvent("onChromeSync", self, null);
-                console.info("Load Config from Chrome Server");
-
-                // Load Config from the Chrome Server:
-                chrome.storage.sync.get(function (result: Config)
-                {
-                    self.Log("Got Data from Chrome Server: ", result);
-
-                    self.EventHandler.CallEvent("onChromeSyncDataReceived", self, result);
-
-                    $.each(self.Config, function (name, oldValue)
-                    {
-                        if (typeof (result[name]) !== "undefined")
-                        {
-                            self.Log("Key: '" + name + "'", oldValue, result[name]);
-
-                            self.Config[name] = result[name];
-                        }
-                    });
-                });
-
-            }, 2000);
-
-            chrome.storage.onChanged.addListener(function (changes, namespace)
-            {
-                if (namespace !== "sync")
-                {
-                    return;
-                }
-
-                self.EventHandler.CallEvent("onChromeSyncChange", self, [changes, namespace]);
-
-                $.each(changes, function (key, storageChange)
-                {
-
-                    //var storageChange = changes[key];
-                    console.log('Storage key "%s" changed. ' +
-                        'Old value was "%s", new value is "%s".',
-                        key,
-                        storageChange.oldValue,
-                        storageChange.newValue);
-
-                    if (self.Config[key] === storageChange.oldValue)
-                    {
-                        self.Config[key] = storageChange.newValue;
-                    }
-                    else if (self.Config[key] !== storageChange.newValue)
-                    {
-                        // Use local Value for UpgradeTags
-                        if (key !== "upgradeTags")
-                        {
-
-                            console.warn("Conflict with Cloud Storage! Use data from Cloud Storage.");
-                            try
-                            {
-                                //localStorage[self.config.storage_key + "_Conflict" + Date.now()] = JSON.stringify(self.config);
-
-                            } catch (e)
-                            {
-
-                            }
-
-                            self.Config[key] = storageChange.newValue;
-
-                        }
-                        else
-                        {
-                            var val = <{ [index: string]: UpgradeTag }>storageChange.newValue;
-                            $.each(val, function (key, val)
-                            {
-                                if (!(key in self.Config.upgradeTags))
-                                {
-                                    self.Config.upgradeTags[key] = val;
-                                }
-                            });
-                        }
-
-                    }
-                });
-            });
-        }
-
 
         // Load all the config Values that are listed in the _config Array at startup
         $.each(defaultConfig, function (name, defaultValue)
@@ -675,15 +493,17 @@ class StoryParser
         });
 
 
-        // Check Upgrade Tags:
-        this.Upgrade.HandleTags();
-
+        /* Register Events that can be used in the Addons: */
+        self.RegisterEvents();
 
 
         if (this.DEBUG)
         {
             console.info("Loading User Script...");
         }
+
+        this.EventHandler.CallEvent(Events.OnLoad, this, null);
+
 
         this.Api.CheckVersion();
 
@@ -711,7 +531,7 @@ class StoryParser
         // Add jQueryUI to the Page:        
         /*var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
         $("head").append(block);
-
+    
         if (typeof ($.ui) === "undefined")
         {
             console.error("Can't include jQuery UI!");
@@ -734,9 +554,11 @@ class StoryParser
         }
 
 
+        //TODO: Refactor {
         // Check if the current Page is a User Specific Page:
         var locationRegEx = new RegExp("\/u\/[0-9]+\/");
         this._inUsersPage = locationRegEx.test(location.href);
+        // }
 
 
         if (this.DEBUG)
@@ -745,7 +567,6 @@ class StoryParser
             console.log("Starts GUI Update");
         }
 
-        this.UpdateGUI();
 
         if (this.DEBUG)
         {
@@ -755,7 +576,7 @@ class StoryParser
 
         window.setTimeout(function ()
         {
-            self.EventHandler.CallEvent("preParapgraphCheck", self, null);
+            self.EventHandler.CallEvent(Events.PreParagraphCheck, self, null);
 
             // Check if a Paragraph is given in the current request:
             var reg = new RegExp(".+#paragraph=([0-9]+)");
@@ -768,14 +589,14 @@ class StoryParser
 
         setTimeout(function ()
         {
-            self.EventHandler.CallEvent("preMessageCheck", self, null);
+            self.EventHandler.CallEvent(Events.PreMessageCheck, self, null);
 
             // Get Messages from Server:  
             if (typeof (self.DataConfig['messages']) === "undefined")
             {
                 self.Api.GetMessages(function (messages)
                 {
-                    self.EventHandler.CallEvent("onMessageGot", self, messages);
+                    self.EventHandler.CallEvent(Events.OnMessageGot, self, messages);
 
                     if ((typeof (messages.Messages) !== "undefined") && (messages.Messages.length > 0))
                     {
@@ -807,561 +628,9 @@ class StoryParser
 
         }, 5000);
 
-        this.EventHandler.CallEvent("postInit", this, null);
+        this.EventHandler.CallEvent(Events.PostInit, this, null);
     }
 
-    /**
-     *   Adds GUI Elements like Menu Link
-     */
-    private UpdateGUI()
-    {
-        this.EventHandler.CallEvent("preGUIUpdate", this, null);
-
-        if (!this.Config.disable_width_change)
-        {
-            // Updates Content_width
-            $('#content_wrapper').css('width', this.Config['content_width']);
-        }
-
-        var table = $(".zui").find("td").first();
-
-        var self = this;
-
-        if (table.length > 0)
-        {
-            if (this.DEBUG)
-            {
-                console.log("Adds User Interface");
-            }
-
-            this.EventHandler.CallEvent("preGUIMenuAppend", this, table);
-
-            // Add User Interface
-            table.append(
-                $('<a></a>').addClass('menu-link').html(self._('Rerun Filter')).attr('href', '#').click(function (e)
-                {
-                    self.ReadAll();
-                    e.preventDefault();
-
-                }).attr('title', self._('Parse the Stories again'))
-            ).append(
-                $('<a></a>').addClass('menu-link').html(self._('Menu')).attr('href', '#').click(function (e)
-                {
-                    self.Gui.Gui();
-                    e.preventDefault();
-
-                }).attr('title', 'Open Config Menu')
-                ).append(
-                $('<a></a>').addClass('menu-link').html(self._('Filter Collection'))
-                    .attr('href', 'http://filter.mrh-development.de')
-                    .attr("target", "_blank")
-                    .attr('title', self._('Open The Filter Collection'))
-                );
-
-            this.EventHandler.CallEvent("postGUIMenuAppend", this, table);
-
-        }
-
-        // Add Messages Menu:
-        this.Log("Add Messages Menu");
-
-        var menulinks = $(".menulink").first();
-
-
-        if (menulinks.length > 0)
-        {
-            this.EventHandler.CallEvent("preGUIMessageMenuAppend", this, menulinks);
-
-            var imageContainer = $("<div></div>")
-                .css("display", "inline-block")
-                .css("margin-left", "10px")
-                .css("height", "100%")
-                .css("border-radius", "5px")
-                .addClass("ffnetMessageContainer")
-                .addClass("ffnetParserContext")
-                .addClass("clickable")
-                .attr("title", self._("Advanced Messaging Features. Sorry, this is not a PM Button :-("))
-                .appendTo(menulinks);
-
-
-            imageContainer.append(
-
-                $("<img></img>")
-                    .attr("src", self.Api.GetUrl("message-white.png"))
-                    .css("width", "20px")
-                    .css("margin-bottom", "4px")
-            );
-
-
-            var radius = 15;
-            var height = 120;
-            var width = 260;
-
-
-            var messageContainer = $("<div></div>")
-                .addClass("ffnet_messageContainer")
-                .appendTo("body");
-
-
-
-
-            var innerContainer = $("<div></div>")
-                .addClass("innerContainer")
-                .appendTo(messageContainer);
-
-            imageContainer.click(function ()
-            {
-                if (messageContainer.is(":hidden"))
-                {
-                    //Set Position of Element:
-                    var pos = imageContainer.position();
-
-                    messageContainer
-                        .css("top", (pos.top + 20) + "px")
-                        .css("left", (pos.left - 100) + "px")
-                        .show();
-
-                    self.Api.GetLiveChatInfo(function (res)
-                    {
-                        if (res.DevInRoom)
-                        {
-                            $(".liveChatButton").addClass("online")
-                                .attr("title", self._('The Dev is currently online.'));
-                        }
-                        else
-                        {
-                            $(".liveChatButton").removeClass("online").removeAttr("title");
-                        }
-                    });
-
-
-                }
-                else
-                {
-                    messageContainer.hide();
-                }
-
-            });
-
-            innerContainer.append(
-                $("<div>" + self._('Message Menu (Script)') + "</div>")
-                    .css("font-weight", "bold")
-                    .css("margin-bottom", "10px")
-            );
-
-            var count = 0;
-
-            if (typeof (this.DataConfig['messages']) !== "undefined")
-            {
-                count = this.DataConfig['messages'].length;
-            }
-
-
-            innerContainer.append(
-                $('<div><span class="ffnet-messageCount">' + count + "</span> " + self._('Message(s)') + "</div>")
-                    .addClass("menuItem")
-                    .click(function ()
-                    {
-                        messageContainer.hide();
-
-                        self.Gui.MessagesGUI();
-
-                    })
-            );
-
-            innerContainer.append(
-                $("<div>" + self._('Give Feedback') + "</div>")
-                    .addClass("menuItem")
-                    .click(function ()
-                    {
-                        messageContainer.hide();
-
-                        self.Gui.FeedbackGUI();
-                    })
-            );
-
-            var liveChatContainer = $("<div>" + self._('Live Chat') + "</div>")
-                .addClass("menuItem liveChatButton")
-                .click(function ()
-                {
-
-                    messageContainer.hide();
-
-                    self.Gui.ToggleLiveChat();
-
-                });
-
-            if (!this.Chat.Available)
-            {
-                liveChatContainer.unbind("click").attr("title", self._("This Feature is not available in your Browser. Sorry!"));
-            }
-
-            innerContainer.append(liveChatContainer);
-
-            innerContainer.append(
-                $("<div>" + self._('Wiki') + "</div>")
-                    .addClass("menuItem")
-                    .click(function ()
-                    {
-                        messageContainer.hide();
-                        window.open("https://github.com/MRH4287/FFNetParser/wiki");
-                    })
-            );
-            //
-
-            this.EventHandler.CallEvent("postGUIMessageMenuAppend", this, menulinks);
-
-            // Message Menu End
-
-            // Story Reminder:
-
-            if (!this.Config.disable_parahraphMenu)
-            {
-                this.EventHandler.CallEvent("preGUIStoryReminderAppend", this, menulinks);
-
-                var sRImageContainer = $("<div></div>")
-                    .css("display", "inline-block")
-                    .css("margin-left", "10px")
-                    .css("height", "100%")
-                    .css("border-radius", "5px")
-                    .addClass("ffnetStoryReminderContainer")
-                    .addClass("clickable")
-                    .attr("title", self._("Saved Story Reminder"))
-                    .appendTo(menulinks);
-
-                sRImageContainer.append(
-
-                    $("<img></img>")
-                        .attr("src", self.Api.GetUrl("notes.png"))
-                        .css("width", "12px")
-                        .css("margin-bottom", "4px")
-                );
-
-
-                sRImageContainer.click(function (event)
-                {
-                    event.preventDefault();
-
-
-                    var table = $('<table class="table table-hover table-responsive table-border"></table>');
-                    table.append("<tr><th>" + self._('ID') + '</th><th>' + self._('Name') + '</th><th>' + self._('Chapter') +
-                        '</th><th>' + self._('Time') + '</th><th>' + self._('Visited') + '</th><th>' + self._('Options') + "</th></tr>");
-
-                    var modal = GUIHandler.CreateBootstrapModal(table, self._("Saved Story Reminder"));
-
-                    $.each(self.Config.storyReminder, function (_, el: StoryReminderData)
-                    {
-                        $("<tr></tr>")
-                            .append(
-                            $("<td></td>").text(el.storyID)
-                            ).append(
-                            $("<td></td>").text(el.name)
-                            ).append(
-                            $("<td></td>").text(el.chapter)
-                            ).append(
-                            $("<td></td>").text((new Date(el.time)).toLocaleString())
-                            ).append(
-                            $("<td></td>").text((el.visited) ? self._("Yes") : self._("No"))
-                            ).append(
-                            $("<td></td>").append(
-                                $('<a href="#">' + self._('Delete') + '</a>').click(function (e)
-                                {
-                                    e.preventDefault();
-                                    if (confirm(self._("Do you really want to delete that element?")))
-                                    {
-                                        delete self.Config.storyReminder[_];
-                                        self.SaveConfig();
-                                        modal.modal('hide');
-                                    }
-
-                                })
-                            )
-                            ).addClass("clickable")
-                            .click(function (e)
-                            {
-                                e.preventDefault();
-
-                                self.Config.storyReminder[_].visited = true;
-                                self.SaveConfig();
-
-                                location.href = el.url;
-                            }).appendTo(table);
-                    });
-
-
-                    GUIHandler.ShowModal(modal);
-                });
-
-                this.EventHandler.CallEvent("postGUIStoryReminderAppend", this, menulinks);
-
-            }
-
-            if (!self.Config.disable_highlighter && !self.Config.disable_highlighter_list)
-            {
-                var hLImageContainer = $("<div></div>")
-                    .css("display", "inline-block")
-                    .css("margin-left", "10px")
-                    .css("height", "100%")
-                    .css("border-radius", "5px")
-                    .addClass("ffnetHighlighterListContainer")
-                    .addClass("clickable")
-                    .attr("title", self._("Highlighter List"))
-                    .appendTo(menulinks);
-
-                hLImageContainer.append(
-
-                    $("<img></img>")
-                        .attr("src", self.Api.GetUrl("highlighter.png"))
-                        .css("width", "12px")
-                        .css("margin-bottom", "4px")
-                );
-
-
-                hLImageContainer.click(function (event)
-                {
-                    event.preventDefault();
-
-                    // Collect Data:
-                    var groups: { [index: string]: string[] } = {};
-
-                    $.each(self.Config.highlighter, function (key: string, data: HighlighterConfig)
-                    {
-                        var prefab = "Custom Highlighter";
-                        if (data.prefab !== null)
-                        {
-                            prefab = data.prefab;
-                        }
-
-                        if (groups[prefab] === undefined)
-                        {
-                            groups[prefab] = [];
-                        }
-
-                        groups[prefab].push(key);
-                    });
-
-                    var contentContainer = $('<div id="ffnet_highlighterGroup" class="panel-group" role="tablist" aria-multiselectable="true"></div>');
-
-                    var modal = GUIHandler.CreateBootstrapModal(contentContainer, self._("Highlighter List"));
-
-                    $.each(groups, function (name: string, elements: string[])
-                    {
-                        var panelBody = $('<div class="panel-body"></div>');
-
-                        var list = $("<ul></ul>").appendTo(panelBody);
-
-                        var image = null;
-                        if (self.Config.highlighterPrefabs[name] !== undefined)
-                        {
-                            var highlighterPrefab = self.Config.highlighterPrefabs[name];
-                            if (highlighterPrefab.image !== undefined && highlighterPrefab.image !== null)
-                            {
-                                image = $("<img></img>").attr("src", highlighterPrefab.image)
-                                    .css("max-height", "16px").css("max-width", "16px")
-                                    .css("margin-right", "10px");
-                            }
-                        }
-
-
-                        var prefabName = name.replace(' ', '_')
-                            .replace('\'', '')
-                            .replace('"', '')
-                            .replace('.', '_')
-                            .replace(',', '_');
-
-                        var panel = $('<div class="panel panel-default"></div>');
-                        panel.append(
-                            $('<div class="panel-heading" role="tab"></div').attr("id", "heading" + prefabName).append(
-                                $('<h4 class="panel-title"></h4').append(
-                                    $('<a role="button" class="collapsed" data-toggle="collapse" data-parent="#ffnet_highlighterGroup" aria-expanded="false"></a>')
-                                        .attr("aria-controls", "collapse" + prefabName)
-                                        .attr("href", "#collapse" + prefabName)
-                                        .append(image).append(
-                                        $("<span></span>").text(name)
-                                        )
-
-                                )
-                            )
-                        ).append(
-                            $('<div class="panel-collapse collapse" role="tabpanel"></div>')
-                                .attr("id", "collapse" + prefabName)
-                                .attr("aria-labelledby", "heading" + prefabName)
-                                .append(panelBody)
-                            );
-
-                        $.each(elements, function (_, value: string)
-                        {
-                            var link = self.Config.highlighter_use_storyID ? "/s/" + value : value;
-                            var aElement = $('<a></a>').attr("href", link).text(value);
-                            var spanElement = $('<span></span>');
-                            list.append(
-                                $('<li></li>').append(
-                                    aElement
-                                ).append(
-                                    spanElement
-                                    )
-                            );
-
-                            self.GetPageContent(link, function (body)
-                            {
-                                var title = body.find("#profile_top > .xcontrast_txt").first().text();
-                                var lastUpdate = body.find("#profile_top > .xcontrast_txt").last().find("[data-xutime]").first().text();
-
-                                spanElement.text(" (Last Updated: " + lastUpdate + ")");
-                                aElement.text(title);
-                            });
-                        });
-
-                        contentContainer.append(panel);
-                    });
-
-                    contentContainer.collapse();
-
-                    GUIHandler.ShowModal(modal);
-                });
-            }
-        }
-        else
-        {
-            if (this.DEBUG)
-            {
-                console.warn("Can't find Element .menulink ", menulinks);
-
-            }
-        }
-
-
-        // Add GUI for "Only Mode":
-        var container = $("#filters > form > .modal-body");
-
-        if (container.length > 0)
-        {
-            this.EventHandler.CallEvent("preGUIOnlyModeAppend", this, container);
-
-            if (this.DEBUG)
-            {
-                console.log('Add GUI for "Only Mode"');
-            }
-
-            var input = $("<select></select>")
-                .attr("title", self._("Display Only Elements that match a specific Filter"))
-                .change(function ()
-                {
-                    var selected = input.children().filter(":selected").attr('value');
-                    if (self.DEBUG)
-                    {
-                        console.info("Display Only - Element Selected: ", selected);
-                    }
-
-                    if (selected !== "off")
-                    {
-                        self.DataConfig["displayOnly"] = selected;
-                    }
-                    else
-                    {
-                        self.DataConfig["displayOnly"] = undefined;
-                    }
-
-                    self.SaveDataStore();
-                    self.ReadAll();
-
-                }).addClass("filter_select");
-
-            var noneEntry = $('<option value="off">' + self._('Display: Everything') + '</option>').appendTo(input);
-
-            if (typeof (this.DataConfig["displayOnly"]) === "undefined")
-            {
-                noneEntry.attr("selected", "selected");
-            }
-
-
-            $.each(this.Config.marker, function (title, info)
-            {
-                var entry = $('<option></option>').attr('value', title).html(title).appendTo(input);
-
-                if ((typeof (self.DataConfig["displayOnly"]) !== "undefined") && (title === self.DataConfig["displayOnly"]))
-                {
-                    entry.attr("selected", "selected");
-                }
-
-            });
-
-
-            container.find("select").not(".filter_select_negative ").last().after(input);
-
-            input.before("&nbsp;");
-
-            this.EventHandler.CallEvent("postGUIOnlyModeAppend", this, container);
-        }
-
-        // Key Control for Page:
-
-        $("body").keydown(function (event)
-        {
-            self.EventHandler.CallEvent("onKeyDown", self, event);
-
-            var container = $("#content_wrapper_inner").find("center").last();
-            var current = container.find("b").first();
-            var url = null;
-
-            if ($(event.target).is("body"))
-            {
-                var element: JQuery;
-                // right
-                if (event.keyCode === 39)
-                {
-                    element = current.next("a");
-                    if (element.length !== 0)
-                    {
-                        url = element.attr("href");
-                    }
-
-                    if (url == null)
-                    {
-                        element = $("body").find('button:contains(Next)').first();
-                        if (element.length !== 0)
-                        {
-                            url = self.GetUrlFromButton(element);
-                        }
-                    }
-
-                }
-                // left
-                else if (event.keyCode === 37)
-                {
-                    element = current.prev("a");
-                    if (element.length !== 0)
-                    {
-                        url = element.attr("href");
-                    }
-
-                    if (url == null)
-                    {
-                        element = $("body").find('button:contains(Prev)').first();
-                        if (element.length !== 0)
-                        {
-                            url = self.GetUrlFromButton(element);
-                        }
-                    }
-
-                }
-
-                if (url !== null)
-                {
-                    if (self.DEBUG)
-                    {
-                        console.log("Changes to Page: ", url);
-                    }
-
-                    location.href = url;
-                }
-            }
-
-        });
-
-        this.EventHandler.CallEvent("postGUIUpdate", this, null);
-
-    }
 
     /**
      *  Initial Read
@@ -1375,7 +644,7 @@ class StoryParser
             return;
         }
 
-        this.EventHandler.CallEvent("preReadList", this, null);
+        this.EventHandler.CallEvent(Events.PreReadList, this, null);
 
         // Wrap Content:
         var wrapper = this.CreatePageWrapper();
@@ -1404,7 +673,7 @@ class StoryParser
 
         }
 
-        this.EventHandler.CallEvent("postReadList", this, null);
+        this.EventHandler.CallEvent(Events.PostReadList, this, null);
 
     }
 
@@ -1434,6 +703,76 @@ class StoryParser
 
     }
 
+    /**
+     * Registers the used Events
+     */
+    private RegisterEvents()
+    {
+        var self = this;
+
+        this.EventHandler.AddEventListener(Events.ForceSaveConfig, (sender, args) =>
+        {
+            if (args !== undefined && args !== null)
+            {
+                self.SaveConfig(Boolean(args));
+            }
+            self.SaveConfig();
+        });
+
+        this.EventHandler.AddEventListener(Events.ForceSaveDataStore, (sender, args) =>
+        {
+            self.SaveDataStore();
+        });
+
+        this.EventHandler.AddEventListener(Events.ForceReadAll, () =>
+        {
+            self.ReadAll();
+        });
+
+        this.EventHandler.AddEventListener(Events.HideElement, (sender, args: HideElementEventArgs) =>
+        {
+            if (self.DEBUG)
+            {
+                console.log("Hide Entry because of Story Config: ", args.Url);
+            }
+
+            self._hiddenElements[args.Url] = args.Reason;
+
+            args.Element.attr("data-hiddenBy", args.Reason);
+
+            args.Element.hide();
+            self._hidden[args.CurrentPage]++;
+        });
+
+        this.EventHandler.AddEventListener(Events.ElementChanged, (sender, args: ElementChangedEventArgs) =>
+        {
+            // Sorting
+            if (typeof (this.Config.sortFunction) !== "undefined" && this.Config.sortFunction !== 'default')
+            {
+                if (typeof (this.SortMap[this.Config.sortFunction]) !== "undefined")
+                {
+                    var sortfunction = this.SortMap[this.Config.sortFunction];
+                    this.SortStories(sortfunction.Function);
+                }
+                else
+                {
+                    console.warn("Unknown SortFunction: ", this.Config.sortFunction);
+                    this.Config.sortFunction = 'default';
+                    this.SaveConfig(false);
+                }
+            }
+
+            self.UpdateList(args.CurrentPage);
+        });
+
+        this.EventHandler.AddEventListener(Events.UpdateElementColor, (sender, args: UpdateElementColorEventArgs) =>
+        {
+            this.UpdateColor(args);
+        });
+    }
+
+
+
 
     /**
      *   Parses the elements in the specified Container
@@ -1446,7 +785,7 @@ class StoryParser
             return;
         }
 
-        this.EventHandler.CallEvent("preRead", this, container);
+        this.EventHandler.CallEvent(Events.PreRead, this, container);
 
         var page = Number(container.attr("data-page"));
 
@@ -1469,7 +808,7 @@ class StoryParser
         {
             var element = $(e);
 
-            self.EventHandler.CallEvent("preElementParse", self, element);
+            self.EventHandler.CallEvent(Events.PreElementParse, self, element);
 
             // Reset Hide:
             element.show();
@@ -1480,7 +819,12 @@ class StoryParser
             var colorMo = self.Config.color_mouse_over;
             var link = element.find('a').first().attr('href');
 
-            var storyInfo = self.GetStoryInfo(link);
+            var getStoryInfoData: RequestGetStoryInfoEventArgs =
+                {
+                    Link: link
+                };
+            var storyInfo = self.EventHandler.RequestResponse<StoryInfo>(Events.RequestGetStoryInfo, self, getStoryInfoData);
+
             var storyName = storyInfo.Name;
 
             var requestQueue: RequestQueueData[] = [];
@@ -1582,7 +926,7 @@ class StoryParser
                         console.log("Ignore Color for ", headline);
                     }
 
-                    var info: StoryInfo = {
+                    var info: EventStoryInfo = {
                         name: storyName,
                         url: link,
                         id: storyInfo.ID,
@@ -1621,52 +965,6 @@ class StoryParser
                 element.find('img').not(".parser-msg").hide();
             }
 
-            // Highlighter:
-
-            if (!self.Config.disable_highlighter)
-            {
-                // Build Context Menu for Storys:
-                var contextMenu = $("<div></div>")
-                    .css("width", "20px")
-                    .css("height", "20px")
-                    .css("float", "right")
-                    .addClass("parser-msg")
-                    .addClass("context-menu")
-                    .append(
-                    $("<img></img>")
-                        .attr("src", self.Api.GetUrl("edit.gif"))
-                        .css("width", "100%")
-                        .css("height", "100%")
-                    );
-
-                // Open GUI
-                contextMenu.click(function ()
-                {
-                    if (self.DEBUG)
-                    {
-                        console.log("Context Menu for ", element, " clicked");
-                    }
-
-
-                    self.Gui.ShowStoryPrefabList({
-                        url: link,
-                        element: element,
-                        name: storyName,
-                        id: storyInfo.ID
-                    });
-
-
-                });
-
-                element.find("div").first().before(contextMenu);
-
-                var highlighterKey = self.Config.highlighter_use_storyID ? storyInfo.ID : link;
-                // Highlighter found:
-                if (typeof (self.Config['highlighter'][highlighterKey]) !== "undefined")
-                {
-                    self.HighlighterCallback(self, self.Config.highlighter[highlighterKey], element, link, page);
-                }
-            }
 
             if (!markerFound)
             {
@@ -1692,7 +990,15 @@ class StoryParser
                 {
                     if (!self.Config.disable_default_coloring)
                     {
-                        self.UpdateColor(element, color, -1, colorMo, -1);
+                        var updateColorData: UpdateElementColorEventArgs =
+                            {
+                                Element: element,
+                                Color: color,
+                                MouseOverColor: colorMo,
+                                ColorPriority: -1,
+                                MouseOverPriority: -1
+                            };
+                        self.EventHandler.CallEvent(Events.UpdateElementColor, self, updateColorData);
                     }
                 }
 
@@ -1708,10 +1014,23 @@ class StoryParser
 
             self.DoParse(requestQueue, page);
 
-            self.EventHandler.CallEvent("postElementParse", self, element);
+
+
+            var data: ElementParseEventArgs = {
+                Url: link,
+                Element: element,
+                Name: storyName,
+                ID: storyInfo.ID,
+                Chapter: storyInfo.Chapter,
+                CurrentPage: page
+            };
+
+            self.EventHandler.CallEvent(Events.PostElementParse, self, data);
         });
 
         self.ManageReadChaptersInfo();
+
+
 
         // Sort Elements:
         if (typeof (this.Config.sortFunction) !== "undefined" && this.Config.sortFunction !== 'default')
@@ -1729,10 +1048,6 @@ class StoryParser
             }
         }
 
-        if (this.DEBUG)
-        {
-            console.info("Current Highlighter Settings: ", this.Config['highlighter']);
-        }
 
         this.UpdateList(page);
 
@@ -1794,42 +1109,12 @@ class StoryParser
 
         }, 1000);
 
-        this.EventHandler.CallEvent("postRead", this, container);
+        this.EventHandler.CallEvent(Events.PostRead, this, container);
     }
 
 
 
-    /**
-     *   Gets the Information of a story from a Link
-     *   @param link Link to story
-     *   @result Name of Story
-     */
-    public GetStoryInfo(link: string): { Chapter: string; Name: string; ID: string }
-    {
-        var data: { Chapter: string; Name: string; ID: string } = { Chapter: null, ID: null, Name: null };
 
-        var storyNameReg = /\/s\/([0-9]+)\/?([0-9]*)\/?(.*)/;
-        var result = storyNameReg.exec(link);
-
-        if ((result != null) && (result.length > 1))
-        {
-            data.ID = result[1];
-            data.Chapter = result[2];
-            data.Name = result[3];
-
-            return data;
-        } else
-        {
-            storyNameReg = /\/[^\/]+\/(.+)/;
-            result = storyNameReg.exec(link);
-            if ((result != null) && (result.length > 1))
-            {
-                data.Name = result[1];
-            }
-
-            return data;
-        }
-    }
 
     /**
      *   Starts Recursive Parsing of stories
@@ -1962,7 +1247,7 @@ class StoryParser
      *   @param elementID The ID of the main Element
      *   @param initiated The Time this Request was initiated
      */
-    private Parse(url: string, markerConfig: MarkerConfig, callback: (storyInfo) => void, i: number, executeNext: () => void, elementID: number, initiated: number)
+    private Parse(url: string, markerConfig: MarkerConfig, callback: (storyInfo: EventStoryInfo) => void, i: number, executeNext: () => void, elementID: number, initiated: number)
     {
 
         if (i >= this.Config.story_search_depth)
@@ -2022,42 +1307,41 @@ class StoryParser
 
             if ((sentence = self.ParseSite(body, markerConfig.keywords, markerConfig.ignore)) != null)
             {
-                var storyInfo = self.GetStoryInfo(url);
+
+                var storyInfoData: RequestGetStoryInfoEventArgs =
+                    {
+                        Link: url
+                    };
+                var storyInfo = self.EventHandler.RequestResponse<StoryInfo>(Events.RequestGetStoryInfo, self, storyInfoData);
                 var storyName = storyInfo.Name;
 
                 callback({
-                    'name': storyName,
-                    'url': url,
-                    'chapter': (i + 1),
-                    'sentence': (self.DEBUG ? ("[" + initiated + "] ") : "") + sentence
+                    id: storyInfo.ID,
+                    name: storyName,
+                    url: url,
+                    chapter: (i + 1),
+                    sentence: (self.DEBUG ? ("[" + initiated + "] ") : "") + sentence
                 });
 
             }
 
             if (sentence == null || markerConfig.keep_searching)
             {
-                //console.log('find next el');
-                var next = body.find('button:contains(Next)').first();
-                //console.log('next: ', next);
+                var eventData: RequestGetLinkToNextChapterEventArgs = {
+                    Body: body,
+                    Url: url,
+                    CurrentChapter: i + 1,
+                    StoryName: storyName
+                };
 
-                if (next.length !== 0)
+                var requestResponse = self.EventHandler.RequestResponse<string>(Events.RequestGetLinkToNextChapter, self, eventData);
+                if (requestResponse === undefined)
                 {
-                    var data = url = self.GetUrlFromButton(next);
-
-                    //console.log('data:', data);
-
-                    if (data != null)
-                    {
-                        self.Parse(data, markerConfig, callback, i + 1, executeNext, elementID, initiated);
-                    }
-                    else
-                    {
-                        executeNext();
-                        return;
-                    }
+                    executeNext();
+                    return;
                 }
-                //console.log('Content not found in: ', url);
 
+                self.Parse(requestResponse, markerConfig, callback, i + 1, executeNext, elementID, initiated);
             }
             else
             {
@@ -2203,9 +1487,9 @@ class StoryParser
      *   @param info The Info to the found element
      *   @param page The Page of this Event
      */
-    private ElementCallback(self: StoryParser, config: MarkerConfig, element: JQuery, textEl: JQuery, headline: string, info: StoryInfo, page: number)
+    private ElementCallback(self: StoryParser, config: MarkerConfig, element: JQuery, textEl: JQuery, headline: string, info: EventStoryInfo, page: number)
     {
-        this.EventHandler.CallEvent("preElementCallback", this, [config, element, textEl, headline, info, page]);
+        this.EventHandler.CallEvent(Events.PreElementCallback, this, [config, element, textEl, headline, info, page]);
 
         var isStory = $(".storytext").length > 0;
         var isStoryText = element.is(".storytext");
@@ -2243,7 +1527,7 @@ class StoryParser
                 window.setTimeout(function ()
                 {
                     element.fadeIn();
-                    self.UpdateListColor();
+                    self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
 
                 }, 100);
 
@@ -2264,7 +1548,7 @@ class StoryParser
                 element.fadeOut();
                 self._hidden[page] += 1;
 
-                self.UpdateListColor();
+                self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
             }
         }
 
@@ -2278,7 +1562,7 @@ class StoryParser
             self._hiddenElements[page][info.url] = "Filter '" + headline + "'";
 
             element.hide();
-            self.UpdateListColor();
+            self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
             self._hidden[page] += 1;
         } else
         {
@@ -2458,238 +1742,33 @@ class StoryParser
                     console.log("[ElementCallback] Change Color of Line: ", element);
                 }
 
-                self.UpdateColor(element, color, priority.color, colorMo, priority.mouseOver);
-            }
-
-
-            // Sorting
-            if (!this.Config.disable_resort_after_filter_match && !isStory && typeof (this.Config.sortFunction) !== "undefined" && this.Config.sortFunction !== 'default')
-            {
-                if (typeof (this.SortMap[this.Config.sortFunction]) !== "undefined")
-                {
-                    var sortfunction = this.SortMap[this.Config.sortFunction];
-                    this.SortStories(sortfunction.Function, element.parent());
-                }
-                else
-                {
-                    console.warn("Unknown SortFunction: ", this.Config.sortFunction);
-                    this.Config.sortFunction = 'default';
-                    this.SaveConfig(false);
-                }
-
-            }
-
-        }
-
-        self.UpdateList(page);
-
-        this.EventHandler.CallEvent("postElementCallback", this, [config, element, textEl, headline, info, page]);
-    }
-
-
-    /**
-     * Callback triggered, if an highlighter was found
-     * @param self The current Instance
-     * @param config Highlighter Config
-     * @param element The Element containing the match
-     * @param link The link that was matched
-     * @param page The Pafe of this Event
-     */
-    private HighlighterCallback(self: StoryParser, config: HighlighterConfig, element: JQuery, link: string, page: number)
-    {
-
-        if (self.DEBUG)
-        {
-            console.info("Highlight Element Found: ", element);
-        }
-
-        this.EventHandler.CallEvent("preHighlighterCallback", this, [config, element, link, page]);
-
-        // Collect Data:
-        var mod: ModificationBase;
-
-        if ((typeof (config.prefab) !== "undefined") && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
-        {
-            if (typeof (self.Config.highlighterPrefabs[config.prefab]) !== "undefined")
-            {
-                mod = self.Config.highlighterPrefabs[config.prefab];
-            }
-            else
-            {
-                console.warn("Found Highlighter for Story '%s' but the refferenced Prefab '%s' was not found!", link, config.prefab);
-                return;
-            }
-        }
-        else if ((typeof (config.custom) !== "undefined") && (config.custom !== null))
-        {
-            mod = config.custom;
-            mod.name = "Custom Highlighter";
-        }
-        else
-        {
-            // This shouldn't be neccessary, because of the Upgrade Handler
-            // But if that fails, we have a extra safety rope :3
-
-            mod = {
-                name: "Legacy-Custom",
-                background: null,
-                color: null,
-                display: !config.hide,
-                ignoreColor: null,
-                image: config.image,
-                mark_chapter: null,
-                mouseOver: null,
-                text_color: null,
-                priority: 1,
-                note: null,
-                customPriority: null,
-                highlight_color: null
-            };
-        }
-
-
-
-        if (!mod.display)
-        {
-            if (self.DEBUG)
-            {
-                console.log("Hide Entry because of Story Config: ", link, mod);
-            }
-            self._hiddenElements[link] = "storyConfig";
-
-            element.attr("data-hiddenBy", "storyConfig");
-
-            element.hide();
-            self._hidden[page]++;
-        }
-        else
-        {
-            var priority: ModififcationPriority;
-            if (mod.priority !== -1)
-            {
-                priority = {
-                    background: mod.priority,
-                    color: mod.priority,
-                    highlight_color: mod.priority,
-                    mouseOver: mod.priority,
-                    text_color: mod.priority
+                var updateColorData: UpdateElementColorEventArgs = {
+                    Element: element,
+                    Color: color,
+                    ColorPriority: priority.color,
+                    MouseOverColor: colorMo,
+                    MouseOverPriority: priority.mouseOver
                 };
-            }
-            else
-            {
-                if ((typeof (mod.customPriority) !== "undefined") && (mod.customPriority !== null))
-                {
-                    priority = mod.customPriority;
-                }
-                else
-                {
-                    console.warn("Custom Priority set for Element. But Config is not defined!", config);
-
-                    priority = {
-                        background: 1,
-                        color: 1,
-                        highlight_color: 1,
-                        mouseOver: 1,
-                        text_color: 1
-                    };
-                }
+                self.EventHandler.CallEvent(Events.UpdateElementColor, self, updateColorData);
             }
 
-            // Suggestion Level
+            var data: ElementChangedEventArgs = {
+                Element: element,
+                Chapter: info.chapter.toString(),
+                CurrentPage: page,
+                ID: info.id,
+                Name: info.name,
+                Url: info.url
+            };
+            self.EventHandler.CallEvent(Events.ElementChanged, self, data);
 
-            // Get the old SuggestionLevel:
-            var suggestionLevel = 1;
-            $.each(priority, (name, data) =>
-            {
-                if (data !== -1)
-                {
-                    suggestionLevel *= data;
-                }
-            });
-
-            if (element.is("[data-suggestionLevel]"))
-            {
-                suggestionLevel = Number(element.attr("data-suggestionLevel")) + suggestionLevel;
-            }
-
-            element.attr("data-suggestionLevel", suggestionLevel);
-
-
-
-            if ((typeof (mod.image) !== "undefined") && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
-            {
-                var img = $("<img></img>").attr("src", mod.image)
-                    .css("width", "20px")
-                    .css("height", "20px")
-                    .css("margin-left", "15px")
-                    .addClass("parser-msg");
-
-                element.find("a").last().after(img);
-            }
-
-            if ((mod.background !== null) && (mod.background !== ""))
-            {
-                this.UpdateAttributeWithPriority(element, "background", priority.background, function ()
-                {
-
-                    element.css('background-image', 'url(' + mod.background + ')')
-                        .css('background-repeat', 'no-repeat')
-                        .css('background-position', 'right');
-                });
-            }
-
-            if (mod.mark_chapter)
-            {
-                element.find('a').first().after(
-                    $("<span class=\"parser-msg\"> <b>{" + mod.name + "}</b></span>")
-                        .attr("title", mod.note)
-                );
-            }
-
-            if (!mod.ignoreColor && mod.text_color !== null)
-            {
-                var textEl = element.find(".z-padtop2");
-                this.UpdateAttributeWithPriority(textEl, "color", priority.text_color, mod.text_color);
-            }
-
-            var color: string = mod.color;
-            var colorMo: string = mod.mouseOver;
-
-
-            if (!mod.ignoreColor)
-            {
-                if (self.DEBUG)
-                {
-                    console.log("[HighlighterCallback] Change Color of Line: ", element);
-                }
-
-                self.UpdateColor(element, color, priority.color, colorMo, priority.mouseOver);
-            }
-
-
-            // Sorting
-            if (typeof (this.Config.sortFunction) !== "undefined" && this.Config.sortFunction !== 'default')
-            {
-                if (typeof (this.SortMap[this.Config.sortFunction]) !== "undefined")
-                {
-                    var sortfunction = this.SortMap[this.Config.sortFunction];
-                    this.SortStories(sortfunction.Function);
-                }
-                else
-                {
-                    console.warn("Unknown SortFunction: ", this.Config.sortFunction);
-                    this.Config.sortFunction = 'default';
-                    this.SaveConfig(false);
-                }
-            }
-
-
-            self.UpdateList(page);
         }
 
-        this.EventHandler.CallEvent("postHighlighterCallback", this, [config, element, link, page]);
-
+        this.EventHandler.CallEvent(Events.PostElementCallback, this, [config, element, textEl, headline, info, page]);
     }
+
+
+
 
 
     /**
@@ -2700,7 +1779,7 @@ class StoryParser
     {
         var wrapper = this._wrapperList[page];
 
-        this.EventHandler.CallEvent("preUpdateList", this, [page, wrapper]);
+        this.EventHandler.CallEvent(Events.PreUpdateList, this, [page, wrapper]);
 
         if (typeof (wrapper) === "undefined")
         {
@@ -2774,10 +1853,15 @@ class StoryParser
 
                     $.each(self._hiddenElements[page], function (key, value)
                     {
+                        var requestData: RequestGetStoryInfoEventArgs = {
+                            Link: key
+                        };
+                        var storyInfo = self.EventHandler.RequestResponse<StoryInfo>(Events.RequestGetStoryInfo, self, requestData);
+
                         table.append(
                             $("<tr></tr>").append(
                                 $("<th></th>").append(
-                                    $("<a></a>").text(self.GetStoryInfo(key).Name)
+                                    $("<a></a>").text(storyInfo.Name)
                                         .attr("href", key)
                                 )
                             )
@@ -2808,64 +1892,31 @@ class StoryParser
             {
                 hiddenByStoryConfig.css("border", "2px solid black").slideDown();
 
-                self.UpdateListColor();
+                self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
                 e.preventDefault();
             }));
         }
 
         wrapper.prepend(list);
 
-        this.EventHandler.CallEvent("postUpdateList", this, [page, wrapper]);
+        this.EventHandler.CallEvent(Events.PostUpdateList, this, [page, wrapper]);
     }
 
-    /**
-     *   Updates the colors of the elements in the story list
-     */
-    private UpdateListColor()
-    {
-        var odd = false;
-        var self = this;
 
-        $(".z-list").filter(':visible').each(function (k, e)
-        {
-            var el = $(e);
-            var link = el.find('a').first().attr('href');
-            var storyInfo = self.GetStoryInfo(link);
-            var storyName = storyInfo.Name;
-            var color = self.Config.color_normal;
-            var colorMo = self.Config.color_mouse_over;
-
-            if (odd)
-            {
-                color = self.Config.color_odd_color;
-                odd = false;
-            } else
-            {
-                odd = true;
-            }
-
-
-            if (!self.Config.disable_default_coloring)
-            {
-                self.UpdateColor(el, color, -1, colorMo, -1);
-            }
-
-        });
-
-
-    }
 
     /**
-     *   Updates the Color of a specifiy Element in the list
-     *   @param element HTML-Instance of found element
-     *   @param color The Color to set the Element to
-     *   @param colorPriority The Priority of the Color
-     *   @param colorMo The color used for the Mouse Over effect
-     *   @param colorMoPriority The priority of the Mouse Over Color 
+     *  Updates the Color of a specifiy Element in the list
+     * @param data Data
      */
-    private UpdateColor(element: JQuery, color: string, colorPriority: number, colorMo: string, colorMoPriority: number)
+    private UpdateColor(data: UpdateElementColorEventArgs)
     {
         //console.log("Update Color called! " + color + ", " + colorMo + ", " + notSetAttr);
+
+        var element = data.Element;
+        var color = data.Color;
+        var colorPriority = data.ColorPriority;
+        var colorMo = data.MouseOverColor;
+        var colorMoPriority = data.MouseOverPriority;
 
         this.UpdateAttributeWithPriority(element, 'color', colorPriority, function ()
         {
@@ -2899,7 +1950,7 @@ class StoryParser
      * @param newPriority The Priority of the new Value
      * @param value The new value OR a callback Function with the result
      */
-    private UpdateAttributeWithPriority(element: JQuery, attribute: string, newPriority: number, value: any)
+    public UpdateAttributeWithPriority(element: JQuery, attribute: string, newPriority: number, value: any)
     {
         var regEx = new RegExp("[ \-\_\.]", "g");
         var attributeName = "data-priority-" + attribute.replace(regEx, "");
@@ -2955,7 +2006,7 @@ class StoryParser
             return;
         }
 
-        this.EventHandler.CallEvent("preReadStory", this, storyElements);
+        this.EventHandler.CallEvent(Events.PreReadStory, this, storyElements);
 
         var self = this;
 
@@ -3028,7 +2079,7 @@ class StoryParser
                         chapter = 0;
                     }
 
-                    var info: StoryInfo = {
+                    var info: EventStoryInfo = {
                         url: self.GetLinkToPageNumber(chapter),
                         chapter: chapter,
                         name: (result !== null && result.length > 3) ? result[3] : "Unknown",
@@ -3057,209 +2108,7 @@ class StoryParser
             handleElement(element);
         });
 
-        this.EventHandler.CallEvent("postReadStory", this, storyElements);
-    }
-
-
-    /**
-    *   Enables the In Story Highlighter (Story View)
-    */
-    public EnableInStoryHighlighter()
-    {
-        if (this.LOAD_INTERNAL)
-        {
-            return;
-        }
-
-        if (this.DEBUG)
-        {
-            console.log("Enable In Story Highlighter");
-        }
-
-        var body = $("body");
-        var field = body.find('#profile_top').first().find("b").first();
-
-        if (field.length === 0)
-        {
-            return;
-        }
-
-        body.find(".parser-msg").remove();
-
-        var contextMenu = $("<div></div>")
-            .css("width", "20px")
-            .css("height", "20px")
-            .css("float", "right")
-            .addClass("parser-msg")
-            .addClass("context-menu")
-            .append(
-            $("<img></img>")
-                .attr("src", this.Api.GetUrl("edit.gif"))
-                .css("width", "100%")
-                .css("height", "100%")
-            );
-
-        var info = this.GetStoryInfo(document.location.href);
-        body.find('#profile_top').attr("data-elementident", info.ID);
-
-        var self = this;
-
-        // Open GUI
-        contextMenu.click(function ()
-        {
-            self.Gui.ShowStoryPrefabList({
-                url: document.location.pathname,
-                element: body.find('#profile_top'),
-                name: field.text(),
-                id: info.ID
-            });
-
-        });
-
-        field.after(contextMenu);
-
-        var highlighterKey = self.Config.highlighter_use_storyID ? info.ID : document.location.pathname;
-        // Highlighter found:
-        if (typeof (this.Config['highlighter'][highlighterKey]) !== "undefined")
-        {
-            if (this.DEBUG)
-            {
-                console.info("Highlight Element Found");
-            }
-
-            var config = this.Config['highlighter'][highlighterKey];
-
-
-            // Collect Data:
-            var mod: ModificationBase;
-
-            if ((typeof (config.prefab) !== "undefined") && (config.prefab !== null) && (config.prefab !== "") && (config.prefab !== " "))
-            {
-                if (typeof (self.Config.highlighterPrefabs[config.prefab]) !== "undefined")
-                {
-                    mod = self.Config.highlighterPrefabs[config.prefab];
-                }
-                else
-                {
-                    console.warn("Found Highlighter for Story '%s' but the refferenced Prefab '%s' was not found!", document.location.pathname, config.prefab);
-                    return;
-                }
-            }
-            else if ((typeof (config.custom) !== "undefined") && (config.custom !== null))
-            {
-                mod = config.custom;
-                mod.name = "Custom Highlighter";
-            }
-            else
-            {
-                // This shouldn't be neccessary, because of the Upgrade Handler
-                // But if that fails, we have a extra safety rope :3
-
-                mod = {
-                    name: "Legacy-Custom",
-                    background: null,
-                    color: null,
-                    display: !config.hide,
-                    ignoreColor: null,
-                    image: config.image,
-                    mark_chapter: null,
-                    mouseOver: null,
-                    text_color: null,
-                    priority: 1,
-                    note: null,
-                    customPriority: null,
-                    highlight_color: null
-                };
-            }
-
-            var priority: ModififcationPriority;
-            if (mod.priority !== -1)
-            {
-                priority = {
-                    background: mod.priority,
-                    color: mod.priority,
-                    highlight_color: mod.priority,
-                    mouseOver: mod.priority,
-                    text_color: mod.priority
-                };
-            }
-            else
-            {
-                if ((typeof (mod.customPriority) !== "undefined") && (mod.customPriority !== null))
-                {
-                    priority = mod.customPriority;
-                }
-                else
-                {
-                    console.warn("Custom Priority set for Element. But Config is not defined!", config);
-
-                    priority = {
-                        background: 1,
-                        color: 1,
-                        highlight_color: 1,
-                        mouseOver: 1,
-                        text_color: 1
-                    };
-                }
-            }
-
-
-            if ((typeof (mod.image) !== "undefined") && (mod.image !== null) && (mod.image !== "") && (mod.image !== " "))
-            {
-                var img = $("<img></img>").attr("src", mod.image)
-                    .css("width", "20px")
-                    .css("height", "20px")
-                    .css("margin-left", "15px")
-                    .addClass("highlight-msg")
-                    .addClass("parser-msg");
-
-                field.after(img);
-            }
-
-            if ((mod.background !== null) && (mod.background !== ""))
-            {
-                this.UpdateAttributeWithPriority(body.find('#profile_top'), "background", priority.background, function ()
-                {
-
-                    body.find('#profile_top').css('background-image', 'url(' + mod.background + ')')
-                        .css('background-repeat', 'no-repeat')
-                        .css('background-position', 'right');
-                });
-            }
-
-            if (mod.mark_chapter)
-            {
-                body.find('#profile_top').find('.icon-mail-1').first().after(
-                    $("<span class=\"parser-msg\"> <b>{" + mod.name + "}</b></span>")
-                        .attr("title", mod.note)
-                );
-            }
-
-
-            if (!mod.ignoreColor && mod.text_color !== null)
-            {
-                var textEl = body.find('#profile_top').children().filter("span").last();
-                this.UpdateAttributeWithPriority(textEl, "color", priority.text_color, mod.text_color);
-            }
-
-            var color: string = mod.color;
-            var colorMo: string = mod.mouseOver;
-
-
-            if (!mod.ignoreColor)
-            {
-                if (self.DEBUG)
-                {
-                    console.log("[HighlighterCallback] Change Color of Line: ", body.find('#profile_top'));
-                }
-
-                self.UpdateColor(body.find('#profile_top'), color, priority.color, colorMo, priority.mouseOver);
-            }
-
-        }
-
-
-
+        this.EventHandler.CallEvent(Events.PostReadStory, this, storyElements);
     }
 
     /**
@@ -3274,6 +2123,7 @@ class StoryParser
     }
 
 
+    //TODO: Remove
     /**
      * Enable the Reading Aid Function
      * @param container The Container to enable the Reading Aid for
@@ -3329,6 +2179,8 @@ class StoryParser
 
         }
 
+
+        //TODO: Move
         if (!this.Config.disable_parahraphMenu)
         {
             if (this.ParagramMenu === null)
@@ -3378,9 +2230,9 @@ class StoryParser
                         return ggt(n, m % n);
                     }
                 };
-
+        
                 var devisor = ggt(chapter, reviews);
-
+        
                 $('<span class="parser-msg"></span>')
                     .text(" - Chapter/Review Ratio: " + (chapter / devisor) + "/" + (reviews / devisor))
                     .appendTo(parent);
@@ -3496,162 +2348,6 @@ class StoryParser
 
 
 
-    /**
-    *   Enables the Pocket Save Feature (Story View)
-    */
-    public EnablePocketSave()
-    {
-        var self = this;
-
-        if (this.LOAD_INTERNAL)
-        {
-            return;
-        }
-
-        var user = this.Config['pocket_user'];
-        var password = this.Config['pocket_password'];
-
-        var body = $("body");
-
-        if ((user == null) || (password == null))
-        {
-            console.log("Disables Pocket Save Function");
-            return;
-        }
-
-        var field = body.find("#profile_top").find("b");
-
-
-        var options = {
-            'all': this._("From this chapter to the End"),
-            '1': this._("One Chapter"),
-            '2': this._("Two Chapters"),
-            '5': this._("Five Chapters"),
-            '10': this._("Ten Chapters")
-        };
-
-        var select = $("<select></select>")
-            .css("margin-left", "20px")
-            .change(function ()
-            {
-                $("#ffnet-pocket-save-button").removeAttr("disabled")
-                    .html(self._("Save To Pocket"));
-
-            });
-
-        $.each(options, function (key, value)
-        {
-            select.append(
-                $("<option></option>")
-                    .text(value)
-                    .attr("value", key)
-            );
-
-        });
-
-
-
-        field.after(
-            $('<button class="btn">' + this._('Save To Pocket') + '</button>')
-                .click(function ()
-                {
-                    var option = select.children().filter(":selected").first().attr("value");
-
-                    self.Log("Selected Option: ", option);
-
-
-                    self.ParsePocket(document.location.pathname, field.text() + ": ", option);
-
-                }).css("margin-left", "10px")
-                .attr("id", "ffnet-pocket-save-button")
-        );
-
-
-
-        field.after(select);
-
-    }
-
-    /**
-    *   Recursive Function for Pocket Saving
-    *   @param url Url of first story
-    *   @param prefix Prefix used for the story
-    *   @param length The max length for the recusion
-    *   @param currentDepth The current depth of the recusion
-    *   @remark Leave the Arguments length and currentDepth away, to achive default behavior
-    */
-    private ParsePocket(url: string, prefix: string, length: any, currentDepth: number = 1)
-    {
-        if (typeof (prefix) === "undefined")
-        {
-            prefix = "";
-        }
-
-        if ((typeof (length) === "undefined") || (length === "all"))
-        {
-            length = 100;
-        }
-
-
-        var user = this.Config['pocket_user'];
-        var password = this.Config['pocket_password'];
-
-
-        if ((user == null) || (password == null))
-        {
-            return;
-        }
-
-        $("#ffnet-pocket-save-button").attr("disabled", "disabled").html("Working ...");
-
-        var self = this;
-
-        var ajaxCallback = function (text)
-        {
-            var body = $(text);
-
-            //var title = prefix + $(body.find('#chap_select')).first().children().filter('[selected="selected"]').html();
-
-            var title = body.find("title").first().text();
-
-            var domainRegex = new RegExp("https?://[^/]+");
-            var domain = domainRegex.exec(location.href)[0];
-
-            $("body").append(
-                $("<img>").attr("src", 'https://readitlaterlist.com/v2/add?username=' + user + '&password=' + password + '&apikey=emIpiQ7cA6fR4u6dr7ga2aXC11dcD58a&url=' + domain + url + '&title=' + title)
-            );
-
-            console.log(url + ' - ' + title + ' - Done');
-
-            var next = body.find('button:contains(Next)').first();
-
-
-            if ((next.length !== 0) && (currentDepth + 1 <= length))
-            {
-                var data = url = self.GetUrlFromButton(next);
-
-                if (data != null)
-                {
-                    setTimeout(function ()
-                    {
-                        self.ParsePocket(data, prefix, length, currentDepth + 1);
-                    }, 500);
-                }
-
-            } else
-            {
-                $("#ffnet-pocket-save-button").attr("disabled", "disabled")
-                    .html("Save done!");
-            }
-
-        };
-
-        $.ajax({
-            url: url,
-            success: ajaxCallback
-        });
-
-    }
 
     // ------- Endless Mode ------
 
@@ -3659,6 +2355,7 @@ class StoryParser
 
     private _endlessRequestsDone = 0;
 
+    //TODO: Remove
     /**
      * Enabled the EndlessMode 
      */
@@ -3847,63 +2544,16 @@ class StoryParser
         }
     }
 
-    public GetLinkToPageNumber(page: number): string
-    {
-        var domainRegex = new RegExp("https?://[^/]+");
-        var domainData = domainRegex.exec(location.href);
-        if (domainData === null || domainData.length === 0)
-        {
-            console.warn("Can't get the current Location. Reason: Domain unknown. Possible Explaination: Loaded locally");
-            return document.location.href;
-        }
-
-        var domain = domainData[0];
-
-        // Regex used to get the Pagenumber
-        var regex = new RegExp("([?|&]p)=[0-9]+");
-        var container = $("center").first().find("a").first();
-
-        if (container.length > 0)
-        {
-            var href = container.attr("href");
-
-            return domain + href.replace(regex, "$1=" + page);
-        }
-        else if ($('button:contains(Next)').length > 0)
-        {
-            var next = $('button:contains(Next)').first();
-
-            var url = this.GetUrlFromButton(next);
-
-            regex = new RegExp("s/([0-9]+)/[0-9]+/");
-
-            return domain + url.replace(regex, "s/$1/" + page + "/");
-        }
-        else
-        {
-            // Try to parse the current Location:
-            regex = new RegExp("s/([0-9]+)/([0-9]+)/");
-            var result = regex.exec(document.location.href);
-
-            if (result.length === 3)
-            {
-                return document.location.href.replace(regex, "s/$1/" + page + "/");
-            }
-            else
-            {
-                console.warn("Can't get Link to Chapter! If this happens often, please report!");
-                return document.location.href;
-            }
-
-        }
-    }
-
+    
     private LoadElementsFromPage(page: number, callback: (data: JQuery) => void)
     {
         var self = this;
 
-        var url = this.GetLinkToPageNumber(page);
-
+        var requestData: RequestGetLinkToPageNumberEventArgs = {
+            Page: page
+        };
+        var url = self.EventHandler.RequestResponse<string>(Events.RequestGetLinkToPageNumber, self, requestData);
+        
         this.GetPageContent(url, function (res)
         {
             var elements = res.find(".z-list");
@@ -3919,7 +2569,10 @@ class StoryParser
     private LoadChapterFromPage(page: number, callback: (page: JQuery) => void)
     {
         var self = this;
-        var url = this.GetLinkToPageNumber(page);
+        var requestData: RequestGetLinkToPageNumberEventArgs = {
+            Page: page
+        };
+        var url = self.EventHandler.RequestResponse<string>(Events.RequestGetLinkToPageNumber, self, requestData);
 
         this.GetPageContent(url, function (res)
         {
@@ -4033,8 +2686,8 @@ class StoryParser
 
                     wrapper.slideDown();
 
-                    self.UpdateListColor();
-
+                    self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
+                    
                     window.setTimeout(function ()
                     {
                         self._endlessRequestPending = false;
@@ -4907,25 +3560,6 @@ class StoryParser
 
     }
 
-    /**
-     *   Gets the URL from a Button
-     *   @param button Button Instance
-     */
-    private GetUrlFromButton(button: JQuery): string
-    {
-        var script = button.attr('onclick');
-        var scriptReg = /self\.location=\'([^']+)\'/;
-        var data = scriptReg.exec(script);
-
-        if ((data != null) && (data.length > 1))
-        {
-            return data[1];
-        }
-        else
-        {
-            return null;
-        }
-    }
 
     /**
      *   Log to the Debug-Console

@@ -1,10 +1,37 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="../_reference.ts" />
 
 class GUIHandler extends ExtentionBaseClass
 {
     public constructor(parser: StoryParser)
     {
         super(parser);
+
+        var self = this;
+        this.EventHandler.AddEventListener(Events.GuiShowMenu, () =>
+        {
+            self.Gui();
+        });
+
+        this.EventHandler.AddEventListener(Events.GuiShowMessageMenu, () =>
+        {
+            self.MessagesGUI();
+        });
+
+        this.EventHandler.AddEventListener(Events.GuiShowFeedbackMenu, () =>
+        {
+            self.FeedbackGUI();
+        });
+
+        this.EventHandler.AddEventListener(Events.GuiToggleLiveChat, () =>
+        {
+            self.ToggleLiveChat();
+        });
+
+        this.EventHandler.AddEventListener(Events.GuiShowStoryPrefabList, (s, args) =>
+        {
+            self.ShowStoryPrefabList(args);
+        });
+
     }
 
     /**
@@ -1547,7 +1574,7 @@ class GUIHandler extends ExtentionBaseClass
     }
 
     // Button Logic:
-    private ButtonLogic = function ()
+    private ButtonLogic()
     {
         var target = $(this).attr("data-target");
 
@@ -1558,7 +1585,7 @@ class GUIHandler extends ExtentionBaseClass
 
     };
 
-    private BackLogic = function ()
+    private BackLogic()
     {
         $(".ffnet_Config_Category:visible").fadeOut(400, function ()
         {
@@ -1568,11 +1595,11 @@ class GUIHandler extends ExtentionBaseClass
 
     // Render SubLogic:
 
-    private GetButton = function (name, target, container)
+    private GetButton(name, target, container)
     {
         return $("<div></div>").addClass("col-md-6").append(
             $('<button class="btn btn-default btn-lg btn-block ffnet_Config_Button"></button>').text(name) // ffnet_Config_Button
-                .attr("data-target", target).click(this.buttonLogic)
+                .attr("data-target", target).click(this.ButtonLogic)
         ).appendTo(container);
     };
 
@@ -3120,7 +3147,7 @@ class GUIHandler extends ExtentionBaseClass
      *   @param storyInfo Infos about the story
      *   @param managePresets Should the option to edit Presets be displayed
      */
-    public ToggleStoryConfig(storyInfo: StoryInfo, managePresets: boolean = false)
+    public ToggleStoryConfig(storyInfo: EventStoryInfo, managePresets: boolean = false)
     {
         var self = this;
 
@@ -3333,12 +3360,12 @@ class GUIHandler extends ExtentionBaseClass
      *   @param storyInfo Infos about the story
      */
 
-    public ShowStoryPrefabList(storyInfo: StoryInfo)
+    public ShowStoryPrefabList(storyInfo: GuiShowStoryPrefabListEventArgs)
     {
         var self = this;
 
         var lastID = Number($(".ffnet-HighlighterContainer").attr("data-elementident"));
-        var currentID = Number(storyInfo.element.attr("data-elementident"));
+        var currentID = Number(storyInfo.Element.attr("data-elementident"));
 
         $(".ffnet-HighlighterContainer").remove();
 
@@ -3349,7 +3376,7 @@ class GUIHandler extends ExtentionBaseClass
 
 
         var container = $('<div class="ffnet-HighlighterContainer"></div>').appendTo($("body"));
-        container.position({ of: storyInfo.element.find(".context-menu"), my: "right top", at: "right bottom", collision: "flip flip" })
+        container.position({ of: storyInfo.Element.find(".context-menu"), my: "right top", at: "right bottom", collision: "flip flip" })
             .attr("data-elementident", currentID);
 
 
@@ -3378,7 +3405,7 @@ class GUIHandler extends ExtentionBaseClass
             this.Config.highlighter[highlighterKey].prefab = name;
 
             this.Parser.SaveConfig();
-            this.Parser.Read(storyInfo.element.parent());
+            this.Parser.Read(storyInfo.Element.parent());
             this.Parser.EnableInStoryHighlighter();
 
         };

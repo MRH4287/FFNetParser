@@ -1,6 +1,6 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="../_reference.ts" />
 
-class ExtentionBaseClass
+abstract class ExtentionBaseClass
 {
     public Parser: StoryParser;
 
@@ -45,14 +45,6 @@ class ExtentionBaseClass
     }
 
     /**
-     * A stored version of the Script is used
-     */
-    get LOAD_INTERNAL()
-    {
-        return this.Parser.LOAD_INTERNAL;
-    }
-
-    /**
      * The Config of the Script
      */
     get Config()
@@ -65,6 +57,11 @@ class ExtentionBaseClass
         return this.Parser.EventHandler;
     }
 
+    get Api()
+    {
+        return this.Parser.Api;
+    }
+
     /** 
      * Config that is only available in this session 
      */
@@ -73,6 +70,18 @@ class ExtentionBaseClass
         return this.Parser.DataConfig;
     }
 
+
+    /**
+     * Updates a property if the Priority if higher or equals to the current Priority
+     * @param element The Target Element for the Manipulation
+     * @param attribute The name of the Attrbute. If value is not a function, this is the name of the CSS Property
+     * @param newPriority The Priority of the new Value
+     * @param value The new value OR a callback Function with the result
+     */
+    public UpdateAttributeWithPriority(element: JQuery, attribute: string, newPriority: number, value: any)
+    {
+        this.Parser.UpdateAttributeWithPriority(element, attribute, newPriority, value);
+    }
 
     /**
      *   Log to the Debug-Console
@@ -104,7 +113,7 @@ class ExtentionBaseClass
      */
     public _(key: string): string
     {
-       return this.Parser._(key);
+        return this.Parser._(key);
     }
 
 

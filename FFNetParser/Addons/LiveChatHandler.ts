@@ -1,10 +1,12 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="../_reference.ts" />
 
 class LiveChatHandler extends ExtentionBaseClass
 {
     public constructor(parser: StoryParser)
     {
         super(parser);
+
+        this.EventHandler.AddRequestEventListener(Events.RequestLiveChatAvailable, (s, i) => this.Available);
     }
 
     private _socket: WebSocket = null;

@@ -1,12 +1,11 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="../_reference.ts" />
 
 /**
  * The Class for the Story Remainer Menu
  */
 class ParagraphMenu
+    extends ExtentionBaseClass
 {
-    private _parser: StoryParser = null;
-
     private _menu: JQuery = null;
     private _button: JQuery = null;
     private _menuElement: JQuery = null;
@@ -15,7 +14,7 @@ class ParagraphMenu
 
     constructor(parser: StoryParser)
     {
-        this._parser = parser;
+        super(parser);
 
         parser.Log("Paragraph Menu loading ...");
 
@@ -79,13 +78,16 @@ class ParagraphMenu
 
                 var paragraphNumber = Number(self._baseElement.attr("data-paragraphNumber"));
 
-                var data = self.GetStoryData();
+                var infoRequest: RequestGetStoryInfoEventArgs = {
+                    Link: location.href
+                };
+                var data = self.EventHandler.RequestResponse<StoryInfo>(Events.RequestGetStoryInfo, self, infoRequest);
 
                 var page = data.Chapter;
                 var url = self._parser.GetLinkToPageNumber(page);
 
 
-                var modal = GUIHandler.CreateBootstrapModal($("<pre></pre>").text(url + "#paragraph=" + paragraphNumber), self._parser._("Link for this Position"));
+                var modal = GUIHandler.CreateBootstrapModal($("<pre></pre>").text(url + "#paragraph=" + paragraphNumber), self._("Link for this Position"));
                 GUIHandler.ShowModal(modal);
 
             });
@@ -152,20 +154,6 @@ class ParagraphMenu
     }
 
 
-    private GetStoryData()
-    {
-        var reg = new RegExp(".+/s/([0-9]+)/(?:([0-9]+)/?)?(?:([^#]+)/?)?");
-
-        var result = reg.exec(location.href);
-
-        var chapter = Number(this._baseElement.parent().attr("data-page"));
-
-        return {
-            "ID": result[1],
-            "Chapter": chapter,
-            "Name": result[3]
-        };
-    }
 
     public SetPosition(base: JQuery)
     {

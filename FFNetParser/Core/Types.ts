@@ -1,4 +1,4 @@
-/// <reference path="_reference.ts" /> 
+/// <reference path="../_reference.ts" />
 
 // ---- Config -----
 
@@ -154,6 +154,13 @@ interface FollowUserData
 
 }
 
+interface StoryInfo
+{
+    Chapter: string;
+    Name: string;
+    ID: string;
+}
+
 // ----- Request Handling -----
 
 interface RequestQueueData
@@ -163,11 +170,11 @@ interface RequestQueueData
     config: MarkerConfig;
     element: JQuery;
     textEl: JQuery;
-    info: StoryInfo;
+    info: EventStoryInfo;
     storyName: string;
 }
 
-interface StoryInfo
+interface EventStoryInfo
 {
     name: string;
     url: string;

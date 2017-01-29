@@ -1,4 +1,4 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="../_reference.ts" /> 
 
 /**
  * Class used for Comunication with Github
@@ -22,6 +22,7 @@ class GithubAPI extends ExtentionBaseClass
     {
         super(parser);
     }
+
 
 
     public Auth(callback? : () => void)

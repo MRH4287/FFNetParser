@@ -1,4 +1,4 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="../_reference.ts" />
 
 class UpgradeHandler extends ExtentionBaseClass
 {
@@ -9,6 +9,12 @@ class UpgradeHandler extends ExtentionBaseClass
         super(parser);
 
         this.InitTags();
+        var self = this;
+
+        this.EventHandler.AddEventListener(Events.OnLoad, () =>
+        {
+            self.HandleTags();
+        });
     }
 
     public InitTags()

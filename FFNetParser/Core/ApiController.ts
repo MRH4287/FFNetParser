@@ -1,4 +1,4 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="../_reference.ts" /> 
 
 class ApiController extends ExtentionBaseClass
 {
@@ -23,6 +23,7 @@ class ApiController extends ExtentionBaseClass
 
         // Check for CORS:
         this._useCors = 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest();
+
     }
 
     /**
@@ -39,7 +40,7 @@ class ApiController extends ExtentionBaseClass
 
         data.command = MessageType[command];
 
-        this.EventHandler.CallEvent("preAPIRequest", this, data);
+        this.EventHandler.CallEvent(Events.PreApiRequest, this, data);
 
         if (this._useCors)
         {
@@ -76,7 +77,7 @@ class ApiController extends ExtentionBaseClass
 
                 var data = result.Data[0].Value;
 
-                self.EventHandler.CallEvent("onAPIResult", this, data);
+                self.EventHandler.CallEvent(Events.OnApiResult, this, data);
 
                 callback(data);
 

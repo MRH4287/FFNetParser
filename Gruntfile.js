@@ -8,28 +8,34 @@ module.exports = function (grunt)
         pkg: grunt.file.readJSON('package.json'),
         manifest: grunt.file.readJSON('manifest.json'),
         banner: '// -- Start Script -- \n' +
-          '/*! <%= manifest.name %> - v<%= manifest.version %> - ' +
-          '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-          ' * Commit-Hash: <%= gitinfo.local.branch.current.SHA %>\n' +
-          //'//# sourceMappingURL=ffnetlist.js.map\n' +
-          '<%= manifest.homepage_url ? " * " + manifest.homepage_url + "\\n" : "" %>' +
-          ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= manifest.author %> \n' +
-          ' * Licensed under MIT \n */\n',
+        '/*! <%= manifest.name %> - v<%= manifest.version %> - ' +
+        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+        ' * Commit-Hash: <%= gitinfo.local.branch.current.SHA %>\n' +
+        //'//# sourceMappingURL=ffnetlist.js.map\n' +
+        '<%= manifest.homepage_url ? " * " + manifest.homepage_url + "\\n" : "" %>' +
+        ' * Copyright (c) <%= grunt.template.today("yyyy") %> <%= manifest.author %> \n' +
+        ' * Licensed under MIT \n */\n',
         // Task configuration.
 
         typescriptFiles:
         [
             'build/userscript.js',
-            'build/ParagraphMenu.js',
-            'build/ExtentionBaseClass.js',
-            'build/GUIHandler.js',
-			'build/Types.js',
-            'build/LiveChatHandler.js',
-            'build/UpgradeHandler.js',
-            'build/EventHandler.js',
-            'build/UserHandler.js',
-            'build/GithubAPI.js',
-			'build/ApiController.js'
+            'build/Core/Types.js',
+            'build/Core/ApiController.js',
+            'build/Core/EventHandler.js',
+            'build/Core/Start.js',
+            'build/Addons/ParagraphMenu.js',
+            'build/Addons/ExtentionBaseClass.js',
+            'build/Addons/GUIHandler.js',   
+            'build/Addons/LiveChatHandler.js',
+            'build/Addons/UpgradeHandler.js',
+            'build/Addons/UserHandler.js',
+            'build/Addons/GithubAPI.js', 
+            'build/Addons/ChromeSyncAddon.js',
+            'build/Addons/AutoUpdateAddon.js',
+            'build/Addons/PocketAddon.js',
+            'build/Addons/HighlighterHandler.js',
+            'build/Const/Events.js'
         ],
         filesToPack:
         [
@@ -41,10 +47,24 @@ module.exports = function (grunt)
             'style.css',
             'logoMain.png',
             'logoDev.png',
-			'FFNetParser/GameEngine/run.js',
-			'FFNetParser/GameEngine/package.min.js',
-			'FFNetParser/GameEngine/astar.js'
+            'FFNetParser/GameEngine/run.js',
+            'FFNetParser/GameEngine/package.min.js',
+            'FFNetParser/GameEngine/astar.js'
         ],
+
+        FFNetaddons: [
+            "GithubAPI",
+            "GUIHandler",
+            "LiveChatHandler",
+            "ParagraphMenu",
+            "UpdateHandler",
+            "UserHandler",
+            "ChromeSyncAddon",
+            "AutoUpdateAddon",
+            "PocketAddon",
+            "HighlighterHandler"
+        ],
+
 
         concat: {
             options:
@@ -66,8 +86,10 @@ module.exports = function (grunt)
                     'lib/jquery-ui.min.js',
                     'lib/bootstrap-colorpicker.min.js',
                     'lib/bootstrap.min.js',
+                    'lib/jquery.signalR-2.2.0.min.js',
                     'build/package.min.js',
-                    'lib/footer.js'
+                    'lib/footer.js',
+                    'build/addons.js'
 
                 ], //<%= pkg.name %>
                 dest: 'ffnetlist.user.js' //<%= pkg.name %>
@@ -80,24 +102,26 @@ module.exports = function (grunt)
                     'lib/jquery-ui.min.js',
                     'lib/bootstrap-colorpicker.min.js',
                     'lib/bootstrap.min.js',
+                    'lib/jquery.signalR-2.2.0.min.js',
                     'build/package.js',
-                    'lib/footer.js'
+                    'lib/footer.js',
+                    'build/addons.js'
 
                 ], //<%= pkg.name %>
                 dest: 'ffnetlist.user.js' //<%= pkg.name %>
             },
             standalone:
-			{
-			    src: [
-					'lib/jquery-1.10.2.js',
-					'lib/jquery-ui.min.js',
-					'lib/bootstrap-colorpicker.min.js',
-					'build/standalone/main.js',
-					'build/standalone/Standalone.js',
+            {
+                src: [
+                    'lib/jquery-1.10.2.js',
+                    'lib/jquery-ui.min.js',
+                    'lib/bootstrap-colorpicker.min.js',
+                    'build/standalone/main.js',
+                    'build/standalone/Standalone.js',
                     'build/standalone/ProgressIndicator.js'
-			    ],
-			    dest: 'build/standalone/Standalone.pack.js'
-			}
+                ],
+                dest: 'build/standalone/Standalone.pack.js'
+            }
 
         },
         uglify: {
@@ -109,11 +133,11 @@ module.exports = function (grunt)
                 dest: 'build/package.min.js'
             },
             standalone:
-			{
-			    src: 'build/standalone/Standalone.pack.js',
-			    dest: 'build/standalone/Standalone.pack.min.js'
+            {
+                src: 'build/standalone/Standalone.pack.js',
+                dest: 'build/standalone/Standalone.pack.min.js'
 
-			}
+            }
         },
         tslint: {
             options: {
@@ -142,14 +166,14 @@ module.exports = function (grunt)
                 options:
                 {
                     patterns: [
-                      {
-                          match: 'VERSION',
-                          replacement: '<%= version %>'
-                      }
+                        {
+                            match: 'VERSION',
+                            replacement: '<%= version %>'
+                        }
                     ]
                 },
                 files: [
-                  { expand: true, flatten: true, src: ['lib/header.js'], dest: 'build/' }
+                    { expand: true, flatten: true, src: ['lib/header.js'], dest: 'build/' }
                 ]
             },
             userscript:
@@ -157,18 +181,18 @@ module.exports = function (grunt)
                 options:
                 {
                     patterns: [
-                      {
-                          match: 'VERSION',
-                          replacement: '<%= version %>'
-                      },
-                      {
-                          match: 'BRANCH',
-                          replacement: '<%= gitinfo.local.branch.current.name %>'
-                      }
+                        {
+                            match: 'VERSION',
+                            replacement: '<%= version %>'
+                        },
+                        {
+                            match: 'BRANCH',
+                            replacement: '<%= gitinfo.local.branch.current.name %>'
+                        }
                     ]
                 },
                 files: [
-                  { expand: true, flatten: true, src: '<%= typescriptFiles %>', dest: 'build/' }
+                    { expand: true, flatten: true, src: '<%= typescriptFiles %>', dest: 'build/' }
                 ]
             }
         },
@@ -242,7 +266,7 @@ module.exports = function (grunt)
                     archive: 'publish.zip'
                 },
                 files: [
-                  { src: '<%= filesToPack %>', dest: '.', filter: 'isFile' }
+                    { src: '<%= filesToPack %>', dest: '.', filter: 'isFile' }
                 ]
             }
         },
@@ -298,20 +322,28 @@ module.exports = function (grunt)
                 src: 'manifest.json',
                 dest: 'manifest.json',
                 fields:
+                {
+                    'version': function (src)
                     {
-                        'version': function (src)
-                        {
-                           return grunt.config.get("version")
-                        }
+                        return grunt.config.get("version")
                     }
+                }
             }
         },
         language:
-            {
-                files: {
-                    src: ['FFNetParser/*.ts']
+        {
+            files: {
+                src: ['FFNetParser/*.ts']
+            }
+        },
+        addons:
+        {
+            ffnet: {
+                options: {
+                    addons: '<%= FFNetaddons %>'
                 }
             }
+        }
     });
 
     // These plugins provide necessary tasks.
@@ -330,57 +362,55 @@ module.exports = function (grunt)
     grunt.loadNpmTasks('grunt-update-json');
 
     grunt.registerTask('compile',
-      [
-          'clean:build',
-          'tslint',
-          'typescript'
-      ]);
+        [
+            'clean:build',
+            'tslint',
+            'typescript'
+        ]);
 
     // Default task.
     grunt.registerTask('default',
-		[
-			'gitinfo',
-			'versionUpdate',
-			'clean:build',
-            'tslint',
-            'typescript',
+        [
+            'gitinfo',
+            'versionUpdate',
+            'compile',
             'replace:header',
             'replace:userscript',
+            'addons:ffnet',
             'concat:userscript',
             'uglify:dist',
             'concat:pack',
             'less',
             'copy:style'
-		]);
+        ]);
 
     grunt.registerTask('big',
-         [
-		    'gitinfo',
-		    'versionUpdate',
-            'clean:build',
-            'tslint',
-            'typescript',
+        [
+            'gitinfo',
+            'versionUpdate',
+            'compile',
             'replace:header',
             'replace:userscript',
+            'addons:ffnet',
             'concat:userscript',
             'concat:big',
             'less',
             'copy:style'
-         ]);
+        ]);
 
     grunt.registerTask('style',
-          [
-             'less',
-             'copy:style'
-          ]);
+        [
+            'less',
+            'copy:style'
+        ]);
 
 
     grunt.registerTask('packageDefault',
-         [
-             'default',
-             'qunit',
-             'compress'
-         ]);
+        [
+            'default',
+            'qunit',
+            'compress'
+        ]);
 
     grunt.registerTask('packageDev',
         [
@@ -397,37 +427,37 @@ module.exports = function (grunt)
 
     grunt.registerTask('standalone',
         [
-			'gitinfo',
-		    'versionUpdate',
+            'gitinfo',
+            'versionUpdate',
             'copy:standalone',
             'copy:standaloneCode',
             'copy:standaloneStyle',
-			'concat:standalone',
-			'uglify:standalone'
+            'concat:standalone',
+            'uglify:standalone'
         ]);
 
 
     grunt.registerTask('jenkinsDev',
-		[
-			'big',
-			'qunit',
-			'copy:manifestBackup',
-			'update_json:manifestDev',
+        [
+            'big',
+            'qunit',
+            'copy:manifestBackup',
+            'update_json:manifestDev',
             'update_json:manifestVersion',
-			'compress',
-			'copy:manifestRestore',
-			'clean:manifestBase',
-			'language',
-			'standalone'
+            'compress',
+            'copy:manifestRestore',
+            'clean:manifestBase',
+            'language',
+            'standalone'
 
-		]);
+        ]);
 
     grunt.registerTask('jenkins',
-		[
-			'packageDefault',
-			'standalone'
+        [
+            'packageDefault',
+            'standalone'
 
-		]);
+        ]);
 
     grunt.registerTask('versionUpdate', function ()
     {
@@ -453,10 +483,10 @@ module.exports = function (grunt)
             console.log("minutes:", minutes);
 
             var versionSuffix = year * 10
-                                + month * 1000
-                                + day * 100
-                                + hour * 10
-                                + minutes;
+                + month * 1000
+                + day * 100
+                + hour * 10
+                + minutes;
             version = version + "." + versionSuffix;
 
             console.log("Set Dev-Version to: ", version);
@@ -483,7 +513,7 @@ module.exports = function (grunt)
     grunt.registerTask('package',
         [
             'gitinfo',
-			'versionUpdate',
+            'versionUpdate',
             'devSwitch'
         ]);
 
@@ -495,6 +525,27 @@ module.exports = function (grunt)
             'big'
         ]);
 
+
+    // Add Addons
+    grunt.registerMultiTask('addons', 'Adds Addon-Initializers', function ()
+    {
+        var options = this.options({
+            output: "build/addons.js",
+            addons: ["GUIHandler"]
+        });
+        var text = "";
+        
+        options.addons.push("Start");
+
+        for (var i in options.addons)
+        {
+            text += "new " + options.addons[i] + "(parser); ";
+        }
+
+
+        grunt.file.write(options.output, text);
+
+    });
 
 
     // Language Implementation
@@ -541,7 +592,7 @@ module.exports = function (grunt)
                         {
                             var el = matches[key].trim();
 
-                            var reg = /_\(["']([^)]+)["']\)/mgi;
+                            reg = /_\(["']([^)]+)["']\)/mgi;
                             var groups = reg.exec(el);
                             var langKey = groups[1];
 

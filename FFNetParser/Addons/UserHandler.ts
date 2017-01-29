@@ -1,4 +1,4 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="../_reference.ts" />
 
 class UserHandler extends ExtentionBaseClass
 {
@@ -27,8 +27,9 @@ class UserHandler extends ExtentionBaseClass
     {
         super(parser);
 
-        this.Parser.EventHandler.AddEventListener("postElementParse", (sender, element) =>
+        this.Parser.EventHandler.AddEventListener(Events.PostElementParse, (sender, data : ElementParseEventArgs) =>
         {
+            var element = data.Element;
             var links = element.find("a");
             var found = false;
             $.each(links, (_, el) =>

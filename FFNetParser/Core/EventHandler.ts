@@ -1,4 +1,4 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="../_reference.ts" />
 
 /**
  * Component used for handling Events
@@ -49,6 +49,19 @@ class EventHandler
     }
 
     /**
+     * Adds an EvemtListener for Requests
+     * @param event The Request to listen to
+     * @param callback The callback that collects the data
+     */
+    public AddRequestEventListener(event: string, callback: (sender: any, input: any) => any)
+    {
+        this.AddEventListener(event, (s, args: { response: any, input: any }) =>
+        {
+            args.response = callback(s, args.input);
+        });
+    }
+
+    /**
      * Calls a specific event
      * @param event The name of the event
      * @param sender The Sender of the event
@@ -80,6 +93,23 @@ class EventHandler
     }
 
     /**
+     * Calls the event with the given name and requests an Answer
+     * @param event The Event that should be called
+     * @param sender The Sender of this Event
+     * @param input The Data that is sent
+     */
+    public RequestResponse<T>(event: string, sender: any, input: any): T
+    {
+        var data: { response: T, input: any } = {
+            response: undefined,
+            input: input
+        };
+        this.CallEvent(event, sender, data);
+        return data.response;
+    }
+
+
+    /**
      * Returns a list of all called Events
      */
     public GetEvents(): string[]
@@ -91,7 +121,7 @@ class EventHandler
      * Check if a specific Event was called allready
      * @param index The name of the Event
      */
-    public ContainesKey(index: string): boolean
+    public ContainsKey(index: string): boolean
     {
         return (this.GetEvents().indexOf(index) !== -1);
     }
@@ -130,7 +160,7 @@ class EventHandler
                 {
                     data.callback(sender, args);
 
-                    self.CallEvent("TaskCreated", self, "Timer - " + name);
+                    self.CallEvent(Events.TaskCreated, self, "Timer - " + name);
 
                     window.setTimeout(triggerEvent, intervall);
                 }
@@ -146,10 +176,10 @@ class EventHandler
                 delete self._timedEvents[name];
             }
 
-            self.CallEvent("TaskDisposed", self, "Timer - " + name);
+            self.CallEvent(Events.TaskDisposed, self, "Timer - " + name);
         };
 
-        self.CallEvent("TaskCreated", self, "Timer - " + name);
+        self.CallEvent(Events.TaskCreated, self, "Timer - " + name);
         window.setTimeout(triggerEvent, intervall);
     }
 
