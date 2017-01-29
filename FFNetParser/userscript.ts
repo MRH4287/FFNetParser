@@ -6,12 +6,12 @@ class StoryParser
      * The DEBUG Option.
      * Can be enabled with a Config option or when a dev Version is used.
      */
-    public DEBUG: boolean = false;
+    public DEBUG: boolean = true;
 
     /**
      * Print all Events to the console.
      */
-    public VERBOSE: boolean = false;
+    public VERBOSE: boolean = true;
 
     /**
      * Do not use a stored Version from the Auto Updater.
@@ -629,6 +629,9 @@ class StoryParser
         }, 5000);
 
         this.EventHandler.CallEvent(Events.PostInit, this, null);
+
+        // ReadList:
+        this.ReadList();
     }
 
 
@@ -638,11 +641,6 @@ class StoryParser
     public ReadList()
     {
         var self = this;
-
-        if (this.LOAD_INTERNAL)
-        {
-            return;
-        }
 
         this.EventHandler.CallEvent(Events.PreReadList, this, null);
 
@@ -2069,22 +2067,28 @@ class StoryParser
 
                 if (found)
                 {
-                    var reg = new RegExp(".+/s/([0-9]+)/(?:([0-9]+)/?)?(?:([^#]+)/?)?");
-
-                    var result = reg.exec(location.href);
-
+                    var storyInfoRequest: RequestGetStoryInfoEventArgs = {
+                        Link: document.location.href
+                    };
+                    var storyInfo = self.EventHandler.RequestResponse<StoryInfo>(Events.RequestGetStoryInfo, self, storyInfoRequest);
+                    
                     var chapter = Number(element.attr("data-page"));
                     if (isNaN(chapter))
                     {
                         chapter = 0;
                     }
 
+                    var linkRequest: RequestGetLinkToPageNumberEventArgs = {
+                        Page: chapter
+                    };
+                    var url = self.EventHandler.RequestResponse<string>(Events.RequestGetLinkToPageNumber, self, linkRequest);
+
                     var info: EventStoryInfo = {
-                        url: self.GetLinkToPageNumber(chapter),
+                        url: url,
                         chapter: chapter,
-                        name: (result !== null && result.length > 3) ? result[3] : "Unknown",
+                        name: storyInfo.Name,
                         element: element,
-                        id: (result !== null && result.length > 1) ? result[1] : "Unknown",
+                        id: storyInfo.ID,
                         sentence: null
                     };
 
@@ -2179,20 +2183,6 @@ class StoryParser
 
         }
 
-
-        //TODO: Move
-        if (!this.Config.disable_parahraphMenu)
-        {
-            if (this.ParagramMenu === null)
-            {
-                // Load the Paragraph Menu
-                this.ParagramMenu = new ParagraphMenu(this);
-            }
-            else
-            {
-                this.ParagramMenu.AddHandler(container);
-            }
-        }
     }
 
 
@@ -2285,8 +2275,11 @@ class StoryParser
         }
         else
         {
-            var info = this.GetStoryInfo(document.location.href);
-
+            var infoRequest: RequestGetStoryInfoEventArgs = {
+                Link: document.location.href
+            };
+            var info = self.EventHandler.RequestResponse<StoryInfo>(Events.RequestGetStoryInfo, self, infoRequest);
+            
             if (info.ID !== null)
             {
                 ids.push(info.ID);
@@ -2544,7 +2537,7 @@ class StoryParser
         }
     }
 
-    
+
     private LoadElementsFromPage(page: number, callback: (data: JQuery) => void)
     {
         var self = this;
@@ -2553,7 +2546,7 @@ class StoryParser
             Page: page
         };
         var url = self.EventHandler.RequestResponse<string>(Events.RequestGetLinkToPageNumber, self, requestData);
-        
+
         this.GetPageContent(url, function (res)
         {
             var elements = res.find(".z-list");
@@ -2687,7 +2680,7 @@ class StoryParser
                     wrapper.slideDown();
 
                     self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
-                    
+
                     window.setTimeout(function ()
                     {
                         self._endlessRequestPending = false;
@@ -2704,7 +2697,10 @@ class StoryParser
                 {
                     e.preventDefault();
 
-                    location.href = self.GetLinkToPageNumber(page);
+                    var request: RequestGetLinkToPageNumberEventArgs = {
+                        Page: page
+                    };
+                    location.href = self.EventHandler.RequestResponse<string>(Events.RequestGetLinkToPageNumber, self, request);
                 });
 
 
@@ -2756,7 +2752,7 @@ class StoryParser
 
             });
 
-            self.UpdateListColor();
+            self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
 
         };
 
@@ -3418,31 +3414,6 @@ class StoryParser
         return list;
     }
 
-
-    // ----- API-Interface ------
-
-
-
-
-
-
-    /**
-     *   Activates Debug Options
-     */
-    public DebugOptions()
-    {
-        if (this.DEBUG)
-        {
-
-
-        }
-    }
-
-
-
-
-
-    // --------------------------
 
     /**
      *   Save Config

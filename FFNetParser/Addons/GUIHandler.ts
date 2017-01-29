@@ -2785,347 +2785,349 @@ class GUIHandler extends ExtentionBaseClass
             // ----------- Github API -------------
 
 
-            panel = $('<div class="panel panel-default"></div>').appendTo(panelMain);
-            panel.append(
-                $('<div class="panel-heading" role="tab" ></div>').append(
-                    $('<h4 class="panel-title"></h4>').append(
-                        $('<a data-toggle="collapse" data-parent="#importPanel" href="#githubInport" aria-expanded="true" aria-controls="collapseOne"></a>').text(
-                            this._("Github Gist")
-                        )
-                    )
-                )
-            );
-
-
-
-            panelContainer = $('<div id="githubInport" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne"></div>').appendTo(panel);
-            var githubContainer = $('<div class="panel-body"></div>').appendTo(panelContainer);
-
-
-            var gistInfo: GistData[] = null;
-            var gistSelect = $('<select style="margin-top:5px; margin-bottom:10px"></select>').prop("disabled", true);
-            var selectedGist: GistData = null;
-
-            var authButton = $('<button class="btn btn-primary">Start</button>')
-                .click(() =>
-                {
-                    this.Parser.GithubAPi.Auth(() =>
-                    {
-                        authButton.text("Success!");
-                        authButton.prop("disabled", true);
-
-                        this.Parser.GithubAPi.GetGists((data) =>
-                        {
-                            gistInfo = data;
-
-                            $.each(gistInfo, (i, el: GistData) =>
-                            {
-                                var option = $("<option></option>")
-                                    .attr("value", el.id)
-                                    .text(el.description + " @" + el.owner);
-
-                                gistSelect.append(option);
-                            });
-
-                            gistChangeCallback();
-                            gistSelect.prop("disabled", false);
-                            createGistButton.prop("disabled", false);
-                            updateOrImportFromGistButton.prop("disabled", false);
-
-                        });
-                    });
-                });
-
-            var infoDescription = $("<td></td>");
-            var infoFiles = $("<td></td>");
-            var infoId = $("<td></td>");
-            var infoOwner = $("<td></td>");
-            var infoPublic = $("<td></td>");
-            var infoUrl = $("<td></td>");
-            var infoValid = $("<td></td>");
-
-            var importButton = $('<button class="btn btn-success">' + this._("Import") + '</button>').prop("disabled", true);
-            var updateButton = $('<button class="btn btn-warn">' + this._("Update") + '</button>').prop("disabled", true);
-            var createButton = $('<button class="btn btn-success">' + this._("Create") + '</button>').prop("disabled", true);
-
-            var gistDataContainer = $("<div></div>")
-                .append(
-                $('<table width="100%" cellpadding="5"></table>').append(
-                    $('<tbody style="font-size:small"></tbody>')
-                        .append($("<tr></tr>")
-                            .append("<th>" + this._('ID') + "</th>")
-                            .append(infoId)
-                        ).append($("<tr></tr>")
-                            .append("<th>" + this._('Description') + "</th>")
-                            .append(infoDescription)
-                        ).append($("<tr></tr>")
-                            .append("<th>" + this._('Owner') + "</th>")
-                            .append(infoOwner)
-                        ).append($("<tr></tr>")
-                            .append("<th>" + this._('Public') + "</th>")
-                            .append(infoPublic)
-                        ).append($("<tr></tr>")
-                            .append("<th>" + this._('Files') + "</th>")
-                            .append(infoFiles)
-                        ).append($("<tr></tr>")
-                            .append("<th>" + this._('Url') + "</th>")
-                            .append(infoUrl)
-                        ).append($("<tr></tr>")
-                            .append("<th>" + this._('Valid') + "</th>")
-                            .append(infoValid)
-                        )
-                )
-                );
-
-            var gistChangeCallback = () =>
-            {
-                var currentID = gistSelect.val();
-
-                var info: GistData = null;
-
-                $.each(gistInfo, (i, el: GistData) =>
-                {
-                    if (el.id.toString() === currentID)
-                    {
-                        info = el;
-                        return;
-                    }
-                });
+            //TODO: FIX ME!!
+
+            //panel = $('<div class="panel panel-default"></div>').appendTo(panelMain);
+            //panel.append(
+            //    $('<div class="panel-heading" role="tab" ></div>').append(
+            //        $('<h4 class="panel-title"></h4>').append(
+            //            $('<a data-toggle="collapse" data-parent="#importPanel" href="#githubInport" aria-expanded="true" aria-controls="collapseOne"></a>').text(
+            //                this._("Github Gist")
+            //            )
+            //        )
+            //    )
+            //);
+
+
+
+            //panelContainer = $('<div id="githubInport" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne"></div>').appendTo(panel);
+            //var githubContainer = $('<div class="panel-body"></div>').appendTo(panelContainer);
+
+
+            //var gistInfo: GistData[] = null;
+            //var gistSelect = $('<select style="margin-top:5px; margin-bottom:10px"></select>').prop("disabled", true);
+            //var selectedGist: GistData = null;
+
+            //var authButton = $('<button class="btn btn-primary">Start</button>')
+            //    .click(() =>
+            //    {
+            //        this.Parser.GithubAPi.Auth(() =>
+            //        {
+            //            authButton.text("Success!");
+            //            authButton.prop("disabled", true);
+
+            //            this.Parser.GithubAPi.GetGists((data) =>
+            //            {
+            //                gistInfo = data;
+
+            //                $.each(gistInfo, (i, el: GistData) =>
+            //                {
+            //                    var option = $("<option></option>")
+            //                        .attr("value", el.id)
+            //                        .text(el.description + " @" + el.owner);
+
+            //                    gistSelect.append(option);
+            //                });
+
+            //                gistChangeCallback();
+            //                gistSelect.prop("disabled", false);
+            //                createGistButton.prop("disabled", false);
+            //                updateOrImportFromGistButton.prop("disabled", false);
+
+            //            });
+            //        });
+            //    });
+
+            //var infoDescription = $("<td></td>");
+            //var infoFiles = $("<td></td>");
+            //var infoId = $("<td></td>");
+            //var infoOwner = $("<td></td>");
+            //var infoPublic = $("<td></td>");
+            //var infoUrl = $("<td></td>");
+            //var infoValid = $("<td></td>");
+
+            //var importButton = $('<button class="btn btn-success">' + this._("Import") + '</button>').prop("disabled", true);
+            //var updateButton = $('<button class="btn btn-warn">' + this._("Update") + '</button>').prop("disabled", true);
+            //var createButton = $('<button class="btn btn-success">' + this._("Create") + '</button>').prop("disabled", true);
+
+            //var gistDataContainer = $("<div></div>")
+            //    .append(
+            //    $('<table width="100%" cellpadding="5"></table>').append(
+            //        $('<tbody style="font-size:small"></tbody>')
+            //            .append($("<tr></tr>")
+            //                .append("<th>" + this._('ID') + "</th>")
+            //                .append(infoId)
+            //            ).append($("<tr></tr>")
+            //                .append("<th>" + this._('Description') + "</th>")
+            //                .append(infoDescription)
+            //            ).append($("<tr></tr>")
+            //                .append("<th>" + this._('Owner') + "</th>")
+            //                .append(infoOwner)
+            //            ).append($("<tr></tr>")
+            //                .append("<th>" + this._('Public') + "</th>")
+            //                .append(infoPublic)
+            //            ).append($("<tr></tr>")
+            //                .append("<th>" + this._('Files') + "</th>")
+            //                .append(infoFiles)
+            //            ).append($("<tr></tr>")
+            //                .append("<th>" + this._('Url') + "</th>")
+            //                .append(infoUrl)
+            //            ).append($("<tr></tr>")
+            //                .append("<th>" + this._('Valid') + "</th>")
+            //                .append(infoValid)
+            //            )
+            //    )
+            //    );
+
+            //var gistChangeCallback = () =>
+            //{
+            //    var currentID = gistSelect.val();
+
+            //    var info: GistData = null;
+
+            //    $.each(gistInfo, (i, el: GistData) =>
+            //    {
+            //        if (el.id.toString() === currentID)
+            //        {
+            //            info = el;
+            //            return;
+            //        }
+            //    });
 
-                if (info === null)
-                {
-                    console.log("Github GUI - Invalid Data!");
-                    return false;
-                }
+            //    if (info === null)
+            //    {
+            //        console.log("Github GUI - Invalid Data!");
+            //        return false;
+            //    }
 
-                selectedGist = info;
+            //    selectedGist = info;
 
-                infoDescription.text(info.description);
-                infoFiles.text(info.files.join(", "));
-                infoId.text(info.id);
-                infoOwner.text(info.owner);
-                infoPublic.text(info.public ? this._("Yes") : this._("No"));
-                infoUrl.html('<a href="https://gist.github.com/' + info.owner + '/' + info.id + '">' + info.url + '</a>');
-                infoValid.text(info.valid ? this._("Yes") : this._("No") + " - " + this._("No file called 'config.json' found!"))
-                    .css("font-weight", info.valid ? "" : "bold");
+            //    infoDescription.text(info.description);
+            //    infoFiles.text(info.files.join(", "));
+            //    infoId.text(info.id);
+            //    infoOwner.text(info.owner);
+            //    infoPublic.text(info.public ? this._("Yes") : this._("No"));
+            //    infoUrl.html('<a href="https://gist.github.com/' + info.owner + '/' + info.id + '">' + info.url + '</a>');
+            //    infoValid.text(info.valid ? this._("Yes") : this._("No") + " - " + this._("No file called 'config.json' found!"))
+            //        .css("font-weight", info.valid ? "" : "bold");
 
-                importButton.prop("disabled", !info.valid);
-                updateButton.prop("disabled", !info.valid);
-            };
+            //    importButton.prop("disabled", !info.valid);
+            //    updateButton.prop("disabled", !info.valid);
+            //};
 
-            gistSelect.change((e) =>
-            {
-                e.preventDefault();
+            //gistSelect.change((e) =>
+            //{
+            //    e.preventDefault();
 
-                gistChangeCallback();
-            });
+            //    gistChangeCallback();
+            //});
 
 
 
 
 
 
-            // ----------- Create New Gist --------------
+            //// ----------- Create New Gist --------------
 
 
-            var newGistContainer: JQuery[] = [];
+            //var newGistContainer: JQuery[] = [];
+
+            //var descriptionInput = $('<input id="githubGistDescription" type="text" value="Fanfiction Story Parser Config"/>');
+            //var isPublicInput = $('<input id="githubGistPublic" type="checkbox">');
 
-            var descriptionInput = $('<input id="githubGistDescription" type="text" value="Fanfiction Story Parser Config"/>');
-            var isPublicInput = $('<input id="githubGistPublic" type="checkbox">');
-
-            newGistContainer.push(
-                $("<tr></tr>")
-                    .append("<th>3. Insert Information</th>")
-                    .append(($("<td></td>").append(
-                        '<label for="githubGistDescription">' + this._('Description') + ': </label>'
-                    ).append(descriptionInput)
-                        .append(
-                        '<label for="githubGistDescription">' + this._('Public') + ': </label>'
-                        ).append(isPublicInput)
-                    ))
-            );
-
-            newGistContainer.push(
-                $("<tr></tr>")
-                    .append("<th>4. Send</th>")
-                    .append(($("<td></td>").append(
-                        $('<button class="btn btn-primary">' + this._('Create Gist') + '</button>').
-                            click((e) =>
-                            {
-                                e.preventDefault();
-
-                                if (confirm("Do you want to save your Config to Github?"))
-                                {
-                                    this.Parser.GithubAPi.CreateNewConfigGist(descriptionInput.val(), isPublicInput.is(":checked"), (data: GistData) =>
-                                    {
-                                        if (confirm("Config Uploaded. Do you want to look at it on Github?"))
-                                        {
-                                            window.open("https://gist.github.com/" + data.owner + "/" + data.id);
-                                        }
-                                    });
-                                }
-
-                            })
-
-                    )
-                    ))
-            );
-
-
-
-
-            // ------------  Import / Update ------------
-
-
-
-            var importUpdateContainer: JQuery[] = [];
-
-            importUpdateContainer.push(
-                $("<tr></tr>")
-                    .append("<th>3. Select Gist</th>")
-                    .append(($("<td></td>").append(gistSelect))
-                    )
-            );
-
-            importUpdateContainer.push(
-                $("<tr></tr>")
-                    .append("<th></th>")
-                    .append($("<td></td>").append(gistDataContainer))
-            );
-
-            importUpdateContainer.push(
-                $("<tr></tr>")
-                    .append("<th>4. Select Option</th>")
-                    .append(
-                    $("<td></td>")
-                        .append(importButton)
-                        .append(updateButton)
-                    )
-            );
-
-
-            importButton.click((e) =>
-            {
-                e.preventDefault();
-
-                if (typeof (selectedGist) !== "undefined" && selectedGist !== null)
-                {
-                    if (confirm("Do you realy want to overwrite your local config with the one from Github? Everything will be lost!"))
-                    {
-                        this.Parser.GithubAPi.GetConfig(selectedGist.id, (externalConfig: string) =>
-                        {
-                            var newConfig = JSON.parse(externalConfig);
-
-                            this.Log("New Config: ", newConfig);
-
-                            this.Parser.Config = newConfig;
-                            this.Parser.SaveConfig(true);
-
-                            alert("Config loaded!");
-                        });
-                    }
-                }
-                else
-                {
-                    alert("Select a Gist from the List first!");
-                }
-
-            });
-
-
-            updateButton.click((e) =>
-            {
-                e.preventDefault();
-
-                if (typeof (selectedGist) !== "undefined" && selectedGist !== null)
-                {
-                    if (confirm("Do you want to save your Config to Github?"))
-                    {
-                        this.Parser.GithubAPi.UpdateConfigGist(selectedGist.id, (data: GistData) =>
-                        {
-                            if (confirm("Config Uploaded. Do you want to look at it on Github?"))
-                            {
-                                window.open("https://gist.github.com/" + data.owner + "/" + data.id);
-                            }
-                        });
-                    }
-                }
-                else
-                {
-                    alert("Select a Gist from the List first!");
-                }
-
-            });
-
-
-            //--------------------------------------------------
-
-            var createGistButton = $('<button class="btn">' + this._('Create new Gist') + '</button>').click((e) =>
-            {
-                e.preventDefault();
-
-                $.each(newGistContainer, (i, el: JQuery) =>
-                {
-                    el.show();
-                });
-
-                $.each(importUpdateContainer, (i, el: JQuery) =>
-                {
-                    el.hide();
-                });
-            }).prop("disabled", true);
-
-            var updateOrImportFromGistButton = $('<button class="btn">' + this._('Update or Import from Gist') + '</button>').click((e) =>
-            {
-                e.preventDefault();
-
-                $.each(newGistContainer, (i, el: JQuery) =>
-                {
-                    el.hide();
-                });
-
-                $.each(importUpdateContainer, (i, el: JQuery) =>
-                {
-                    el.show();
-                });
-            }).prop("disabled", true);
-
-            var tbody = $("<tbody></tbody>")
-                .append(
-                $("<tr></tr>")
-                    .append("<th>1. Authenticate</th>")
-                    .append($("<td></td>").append(authButton))
-                ).append(
-                $("<tr></tr>")
-                    .append("<th>2. Choose Option</th>")
-                    .append($("<td></td>")
-                        .append(
-                        createGistButton
-                        ).append(
-                        updateOrImportFromGistButton
-                        )
-                    )
-                );
-
-            $.each(newGistContainer, (i, el: JQuery) =>
-            {
-                el.hide();
-
-                tbody.append(el);
-            });
-
-            $.each(importUpdateContainer, (i, el: JQuery) =>
-            {
-                el.hide();
-
-                tbody.append(el);
-            });
-
-
-            $('<table width="100%" cellpadding="5" cellspacing="5"></table>').appendTo(githubContainer)
-                .append(
-                tbody
-                );
+            //newGistContainer.push(
+            //    $("<tr></tr>")
+            //        .append("<th>3. Insert Information</th>")
+            //        .append(($("<td></td>").append(
+            //            '<label for="githubGistDescription">' + this._('Description') + ': </label>'
+            //        ).append(descriptionInput)
+            //            .append(
+            //            '<label for="githubGistDescription">' + this._('Public') + ': </label>'
+            //            ).append(isPublicInput)
+            //        ))
+            //);
+
+            //newGistContainer.push(
+            //    $("<tr></tr>")
+            //        .append("<th>4. Send</th>")
+            //        .append(($("<td></td>").append(
+            //            $('<button class="btn btn-primary">' + this._('Create Gist') + '</button>').
+            //                click((e) =>
+            //                {
+            //                    e.preventDefault();
+
+            //                    if (confirm("Do you want to save your Config to Github?"))
+            //                    {
+            //                        this.Parser.GithubAPi.CreateNewConfigGist(descriptionInput.val(), isPublicInput.is(":checked"), (data: GistData) =>
+            //                        {
+            //                            if (confirm("Config Uploaded. Do you want to look at it on Github?"))
+            //                            {
+            //                                window.open("https://gist.github.com/" + data.owner + "/" + data.id);
+            //                            }
+            //                        });
+            //                    }
+
+            //                })
+
+            //        )
+            //        ))
+            //);
+
+
+
+
+            //// ------------  Import / Update ------------
+
+
+
+            //var importUpdateContainer: JQuery[] = [];
+
+            //importUpdateContainer.push(
+            //    $("<tr></tr>")
+            //        .append("<th>3. Select Gist</th>")
+            //        .append(($("<td></td>").append(gistSelect))
+            //        )
+            //);
+
+            //importUpdateContainer.push(
+            //    $("<tr></tr>")
+            //        .append("<th></th>")
+            //        .append($("<td></td>").append(gistDataContainer))
+            //);
+
+            //importUpdateContainer.push(
+            //    $("<tr></tr>")
+            //        .append("<th>4. Select Option</th>")
+            //        .append(
+            //        $("<td></td>")
+            //            .append(importButton)
+            //            .append(updateButton)
+            //        )
+            //);
+
+
+            //importButton.click((e) =>
+            //{
+            //    e.preventDefault();
+
+            //    if (typeof (selectedGist) !== "undefined" && selectedGist !== null)
+            //    {
+            //        if (confirm("Do you realy want to overwrite your local config with the one from Github? Everything will be lost!"))
+            //        {
+            //            this.Parser.GithubAPi.GetConfig(selectedGist.id, (externalConfig: string) =>
+            //            {
+            //                var newConfig = JSON.parse(externalConfig);
+
+            //                this.Log("New Config: ", newConfig);
+
+            //                this.Parser.Config = newConfig;
+            //                this.Parser.SaveConfig(true);
+
+            //                alert("Config loaded!");
+            //            });
+            //        }
+            //    }
+            //    else
+            //    {
+            //        alert("Select a Gist from the List first!");
+            //    }
+
+            //});
+
+
+            //updateButton.click((e) =>
+            //{
+            //    e.preventDefault();
+
+            //    if (typeof (selectedGist) !== "undefined" && selectedGist !== null)
+            //    {
+            //        if (confirm("Do you want to save your Config to Github?"))
+            //        {
+            //            this.Parser.GithubAPi.UpdateConfigGist(selectedGist.id, (data: GistData) =>
+            //            {
+            //                if (confirm("Config Uploaded. Do you want to look at it on Github?"))
+            //                {
+            //                    window.open("https://gist.github.com/" + data.owner + "/" + data.id);
+            //                }
+            //            });
+            //        }
+            //    }
+            //    else
+            //    {
+            //        alert("Select a Gist from the List first!");
+            //    }
+
+            //});
+
+
+            ////--------------------------------------------------
+
+            //var createGistButton = $('<button class="btn">' + this._('Create new Gist') + '</button>').click((e) =>
+            //{
+            //    e.preventDefault();
+
+            //    $.each(newGistContainer, (i, el: JQuery) =>
+            //    {
+            //        el.show();
+            //    });
+
+            //    $.each(importUpdateContainer, (i, el: JQuery) =>
+            //    {
+            //        el.hide();
+            //    });
+            //}).prop("disabled", true);
+
+            //var updateOrImportFromGistButton = $('<button class="btn">' + this._('Update or Import from Gist') + '</button>').click((e) =>
+            //{
+            //    e.preventDefault();
+
+            //    $.each(newGistContainer, (i, el: JQuery) =>
+            //    {
+            //        el.hide();
+            //    });
+
+            //    $.each(importUpdateContainer, (i, el: JQuery) =>
+            //    {
+            //        el.show();
+            //    });
+            //}).prop("disabled", true);
+
+            //var tbody = $("<tbody></tbody>")
+            //    .append(
+            //    $("<tr></tr>")
+            //        .append("<th>1. Authenticate</th>")
+            //        .append($("<td></td>").append(authButton))
+            //    ).append(
+            //    $("<tr></tr>")
+            //        .append("<th>2. Choose Option</th>")
+            //        .append($("<td></td>")
+            //            .append(
+            //            createGistButton
+            //            ).append(
+            //            updateOrImportFromGistButton
+            //            )
+            //        )
+            //    );
+
+            //$.each(newGistContainer, (i, el: JQuery) =>
+            //{
+            //    el.hide();
+
+            //    tbody.append(el);
+            //});
+
+            //$.each(importUpdateContainer, (i, el: JQuery) =>
+            //{
+            //    el.hide();
+
+            //    tbody.append(el);
+            //});
+
+
+            //$('<table width="100%" cellpadding="5" cellspacing="5"></table>').appendTo(githubContainer)
+            //    .append(
+            //    tbody
+            //    );
 
 
 
@@ -3149,209 +3151,211 @@ class GUIHandler extends ExtentionBaseClass
      */
     public ToggleStoryConfig(storyInfo: EventStoryInfo, managePresets: boolean = false)
     {
-        var self = this;
+        //TODO: FIX ME
 
-        if (this._guiContainer == null)
-        {
-            if (this.DEBUG)
-            {
-                console.log("Generate GUI Container");
-            }
+        //var self = this;
 
-            this.GuiCreate();
-        }
+        //if (this._guiContainer == null)
+        //{
+        //    if (this.DEBUG)
+        //    {
+        //        console.log("Generate GUI Container");
+        //    }
 
-        if (this._guiContainer.is(':visible'))
-        {
-            if (this.DEBUG)
-            {
-                console.log("Hide GUI Container");
-            }
+        //    this.GuiCreate();
+        //}
 
-            this.Hide();
+        //if (this._guiContainer.is(':visible'))
+        //{
+        //    if (this.DEBUG)
+        //    {
+        //        console.log("Hide GUI Container");
+        //    }
 
-        } else
-        {
-            if (typeof (storyInfo) === "undefined")
-            {
-                if (this.DEBUG)
-                {
-                    console.warn("toggleStoryConfig: No Parameter given!");
-                }
+        //    this.Hide();
 
-                return;
-            }
+        //} else
+        //{
+        //    if (typeof (storyInfo) === "undefined")
+        //    {
+        //        if (this.DEBUG)
+        //        {
+        //            console.warn("toggleStoryConfig: No Parameter given!");
+        //        }
 
-            if (this.DEBUG)
-            {
-                console.log("Starting Content Generation");
-            }
+        //        return;
+        //    }
 
-            this._guiContainer.html('');
+        //    if (this.DEBUG)
+        //    {
+        //        console.log("Starting Content Generation");
+        //    }
 
-
-            var saveButton = $('<button class="saveButton btn btn-warning">' + self._('Save') + '</button>');
-
-            // Manage Presets:
-
-            var presetElementContainer = $("<div></div>");
-            var presetContainer = $('<div></div>').append(presetElementContainer);
+        //    this._guiContainer.html('');
 
 
-            var customElementContainer = $('<div></div>');
-            var customContainer = $('<div></div>').append(customElementContainer);
+        //    var saveButton = $('<button class="saveButton btn btn-warning">' + self._('Save') + '</button>');
 
-            if (!managePresets)
-            {
-                presetContainer.hide();
-            }
-            else
-            {
-                customContainer.hide();
-            }
+        //    // Manage Presets:
 
-            $('<div class="ffnet-HighlighterHeadline">' + self._('Manage Presets') + '</div>')
-                .click((e) =>
-                {
-                    e.preventDefault();
-
-                    if (presetContainer.is(":visible"))
-                    {
-                        presetContainer.slideUp();
-                        customContainer.slideDown();
-                    }
-                    else
-                    {
-                        presetContainer.slideDown();
-                        customContainer.slideUp();
-                    }
-                })
-                .appendTo(this._guiContainer);
-
-            $.each(this.Config.highlighterPrefabs, (name, el) =>
-            {
-                this.AddHighlighterForm(name, el, presetElementContainer, false, false);
-
-            });
-
-            presetContainer.append(
-                $('<div style="margin-top: 10px; text-align:center"></div>')
-                    .append($('<button class="btn btn-primary">' + self._('Add new Preset') + '</button>').
-                        click((e) =>
-                        {
-                            e.preventDefault();
-
-                            var name = "NewHighlighter-" + (this._addCount++);
-
-                            this.AddHighlighterForm(name,
-                                {
-                                    background: null,
-                                    color: null,
-                                    display: true,
-                                    highlight_color: null,
-                                    ignoreColor: true,
-                                    image: null,
-                                    mark_chapter: false,
-                                    mouseOver: null,
-                                    priority: 1,
-                                    customPriority: null,
-                                    name: name,
-                                    note: null,
-                                    text_color: null
-
-                                },
-                                presetElementContainer, false, true);
+        //    var presetElementContainer = $("<div></div>");
+        //    var presetContainer = $('<div></div>').append(presetElementContainer);
 
 
-                        })
-                    ).append(saveButton.clone())
-            );
+        //    var customElementContainer = $('<div></div>');
+        //    var customContainer = $('<div></div>').append(customElementContainer);
 
-            this._guiContainer.append(presetContainer);
+        //    if (!managePresets)
+        //    {
+        //        presetContainer.hide();
+        //    }
+        //    else
+        //    {
+        //        customContainer.hide();
+        //    }
 
-            $('<div class="ffnet-HighlighterHeadline">' + self._('Custom Config') + '</div>')
-                .click((e) =>
-                {
-                    e.preventDefault();
+        //    $('<div class="ffnet-HighlighterHeadline">' + self._('Manage Presets') + '</div>')
+        //        .click((e) =>
+        //        {
+        //            e.preventDefault();
 
-                    if (!customContainer.is(":visible"))
-                    {
-                        presetContainer.slideUp();
-                        customContainer.slideDown();
-                    }
-                    else
-                    {
-                        presetContainer.slideDown();
-                        customContainer.slideUp();
-                    }
-                })
-                .appendTo(this._guiContainer);
+        //            if (presetContainer.is(":visible"))
+        //            {
+        //                presetContainer.slideUp();
+        //                customContainer.slideDown();
+        //            }
+        //            else
+        //            {
+        //                presetContainer.slideDown();
+        //                customContainer.slideUp();
+        //            }
+        //        })
+        //        .appendTo(this._guiContainer);
 
-            this._guiContainer.append(customContainer);
+        //    $.each(this.Config.highlighterPrefabs, (name, el) =>
+        //    {
+        //        this.AddHighlighterForm(name, el, presetElementContainer, false, false);
 
+        //    });
 
+        //    presetContainer.append(
+        //        $('<div style="margin-top: 10px; text-align:center"></div>')
+        //            .append($('<button class="btn btn-primary">' + self._('Add new Preset') + '</button>').
+        //                click((e) =>
+        //                {
+        //                    e.preventDefault();
 
-            customContainer.append(
-                $('<div style="margin-top: 10px; text-align:center"></div>').append(
-                    saveButton.clone())
-            );
+        //                    var name = "NewHighlighter-" + (this._addCount++);
 
-            var highlighterKey = this.Config.highlighter_use_storyID ? storyInfo.id : storyInfo.url;
+        //                    this.AddHighlighterForm(name,
+        //                        {
+        //                            background: null,
+        //                            color: null,
+        //                            display: true,
+        //                            highlight_color: null,
+        //                            ignoreColor: true,
+        //                            image: null,
+        //                            mark_chapter: false,
+        //                            mouseOver: null,
+        //                            priority: 1,
+        //                            customPriority: null,
+        //                            name: name,
+        //                            note: null,
+        //                            text_color: null
 
-            var usedData: ModificationBase;
-            if (typeof (this.Config.highlighter[highlighterKey]) === "undefined" || this.Config.highlighter[highlighterKey].custom === null)
-            {
-                usedData = {
-                    background: null,
-                    color: null,
-                    display: true,
-                    highlight_color: null,
-                    ignoreColor: true,
-                    image: null,
-                    mark_chapter: false,
-                    priority: 1,
-                    customPriority: null,
-                    mouseOver: null,
-                    name: storyInfo.url,
-                    note: null,
-                    text_color: null
-                };
-
-            }
-            else
-            {
-                usedData = this.Config.highlighter[highlighterKey].custom;
-            }
-
-            this.AddHighlighterForm(highlighterKey, usedData, customElementContainer, true, true);
-
-            if (managePresets)
-            {
-                customContainer.append("<p><strong>" + self._("In order to active the Custom Options, you have to click on the Button 'Custom' in the Drop-down List") + "</strong></p>");
-            }
+        //                        },
+        //                        presetElementContainer, false, true);
 
 
-            this.Log("Display Content");
+        //                })
+        //            ).append(saveButton.clone())
+        //    );
 
-            this.Show();
+        //    this._guiContainer.append(presetContainer);
 
-            window.setTimeout(() =>
-            {
-                $(".saveButton").click((e) =>
-                {
-                    e.preventDefault();
+        //    $('<div class="ffnet-HighlighterHeadline">' + self._('Custom Config') + '</div>')
+        //        .click((e) =>
+        //        {
+        //            e.preventDefault();
 
-                    this.SaveAll();
-                    this.Parser.SaveConfig();
+        //            if (!customContainer.is(":visible"))
+        //            {
+        //                presetContainer.slideUp();
+        //                customContainer.slideDown();
+        //            }
+        //            else
+        //            {
+        //                presetContainer.slideDown();
+        //                customContainer.slideUp();
+        //            }
+        //        })
+        //        .appendTo(this._guiContainer);
 
-                    this._guiContainer.css("position", "absolute");
-                    this.Hide();
-                    this.Parser.ReadAll();
-                    this.Parser.EnableInStoryHighlighter();
+        //    this._guiContainer.append(customContainer);
 
-                });
-            }, 500);
-        }
+
+
+        //    customContainer.append(
+        //        $('<div style="margin-top: 10px; text-align:center"></div>').append(
+        //            saveButton.clone())
+        //    );
+
+        //    var highlighterKey = this.Config.highlighter_use_storyID ? storyInfo.id : storyInfo.url;
+
+        //    var usedData: ModificationBase;
+        //    if (typeof (this.Config.highlighter[highlighterKey]) === "undefined" || this.Config.highlighter[highlighterKey].custom === null)
+        //    {
+        //        usedData = {
+        //            background: null,
+        //            color: null,
+        //            display: true,
+        //            highlight_color: null,
+        //            ignoreColor: true,
+        //            image: null,
+        //            mark_chapter: false,
+        //            priority: 1,
+        //            customPriority: null,
+        //            mouseOver: null,
+        //            name: storyInfo.url,
+        //            note: null,
+        //            text_color: null
+        //        };
+
+        //    }
+        //    else
+        //    {
+        //        usedData = this.Config.highlighter[highlighterKey].custom;
+        //    }
+
+        //    this.AddHighlighterForm(highlighterKey, usedData, customElementContainer, true, true);
+
+        //    if (managePresets)
+        //    {
+        //        customContainer.append("<p><strong>" + self._("In order to active the Custom Options, you have to click on the Button 'Custom' in the Drop-down List") + "</strong></p>");
+        //    }
+
+
+        //    this.Log("Display Content");
+
+        //    this.Show();
+
+        //    window.setTimeout(() =>
+        //    {
+        //        $(".saveButton").click((e) =>
+        //        {
+        //            e.preventDefault();
+
+        //            this.SaveAll();
+        //            this.Parser.SaveConfig();
+
+        //            this._guiContainer.css("position", "absolute");
+        //            this.Hide();
+        //            this.Parser.ReadAll();
+        //            this.Parser.EnableInStoryHighlighter();
+
+        //        });
+        //    }, 500);
+        //}
 
     }
 
@@ -3362,157 +3366,159 @@ class GUIHandler extends ExtentionBaseClass
 
     public ShowStoryPrefabList(storyInfo: GuiShowStoryPrefabListEventArgs)
     {
-        var self = this;
+        //TODO: Fix me!
 
-        var lastID = Number($(".ffnet-HighlighterContainer").attr("data-elementident"));
-        var currentID = Number(storyInfo.Element.attr("data-elementident"));
+        //var self = this;
 
-        $(".ffnet-HighlighterContainer").remove();
+        //var lastID = Number($(".ffnet-HighlighterContainer").attr("data-elementident"));
+        //var currentID = Number(storyInfo.Element.attr("data-elementident"));
 
-        if (lastID === currentID)
-        {
-            return;
-        }
+        //$(".ffnet-HighlighterContainer").remove();
 
-
-        var container = $('<div class="ffnet-HighlighterContainer"></div>').appendTo($("body"));
-        container.position({ of: storyInfo.Element.find(".context-menu"), my: "right top", at: "right bottom", collision: "flip flip" })
-            .attr("data-elementident", currentID);
+        //if (lastID === currentID)
+        //{
+        //    return;
+        //}
 
 
-        var listContainer = $('<div class="ffNet-HighlighterListContainer"></div>').appendTo(container);
+        //var container = $('<div class="ffnet-HighlighterContainer"></div>').appendTo($("body"));
+        //container.position({ of: storyInfo.Element.find(".context-menu"), my: "right top", at: "right bottom", collision: "flip flip" })
+        //    .attr("data-elementident", currentID);
 
 
-        // Add Element:
-
-        var highlighterKey = self.Config.highlighter_use_storyID ? storyInfo.id : storyInfo.url;
-        var selectElement = (name: string) =>
-        {
-            $(".ffnet-HighlighterContainer").remove();
+        //var listContainer = $('<div class="ffNet-HighlighterListContainer"></div>').appendTo(container);
 
 
-            if (typeof (this.Config.highlighter[highlighterKey]) === "undefined")
-            {
-                this.Config.highlighter[highlighterKey] =
-                    {
-                        custom: null,
-                        hide: null,
-                        image: null,
-                        prefab: null
-                    };
-            }
+        //// Add Element:
 
-            this.Config.highlighter[highlighterKey].prefab = name;
-
-            this.Parser.SaveConfig();
-            this.Parser.Read(storyInfo.Element.parent());
-            this.Parser.EnableInStoryHighlighter();
-
-        };
-
-        $.each(this.Config.highlighterPrefabs, (name: string, data: ModificationBase) =>
-        {
-            var element = $('<div class="ffnet-HighlighterListElement"></div>')
-                .append(
-                $('<div class="color"></div>')
-                    .css("background-color", data.highlight_color)
-                )
-                .append(
-                $('<div class="name" ></div >')
-                    .text(name)
-                )
-                .click((e) =>
-                {
-                    e.preventDefault();
-                    selectElement(name);
-                })
-                .appendTo(listContainer);
-
-            if (typeof (this.Config.highlighter[highlighterKey]) !== "undefined" && this.Config.highlighter[highlighterKey].prefab === name)
-            {
-                element.addClass("selected");
-            }
+        //var highlighterKey = self.Config.highlighter_use_storyID ? storyInfo.id : storyInfo.url;
+        //var selectElement = (name: string) =>
+        //{
+        //    $(".ffnet-HighlighterContainer").remove();
 
 
-        });
+        //    if (typeof (this.Config.highlighter[highlighterKey]) === "undefined")
+        //    {
+        //        this.Config.highlighter[highlighterKey] =
+        //            {
+        //                custom: null,
+        //                hide: null,
+        //                image: null,
+        //                prefab: null
+        //            };
+        //    }
 
-        var color = "gray";
+        //    this.Config.highlighter[highlighterKey].prefab = name;
 
-        if (typeof (this.Config.highlighter[highlighterKey]) !== "undefined" &&
-            typeof (this.Config.highlighter[highlighterKey].custom) !== "undefined" &&
-            this.Config.highlighter[highlighterKey].custom !== null)
-        {
-            color = this.Config.highlighter[highlighterKey].custom.highlight_color;
-        }
+        //    this.Parser.SaveConfig();
+        //    this.Parser.Read(storyInfo.Element.parent());
+        //    this.Parser.EnableInStoryHighlighter();
 
-        var customElement = $('<div class="ffnet-HighlighterListElement"></div>').append(
-            $('<div class="color">')
-                .css("background-color", color)
-        )
-            .append($('</div><div class="name">Custom</div>')
-            ).click(function (ev)
-            {
-                ev.preventDefault();
-                $(".ffnet-HighlighterContainer").remove();
+        //};
 
-                if (typeof (self.Config.highlighter[highlighterKey]) !== "undefined")
-                {
-                    self.Config.highlighter[highlighterKey].prefab = "";
-                }
+        //$.each(this.Config.highlighterPrefabs, (name: string, data: ModificationBase) =>
+        //{
+        //    var element = $('<div class="ffnet-HighlighterListElement"></div>')
+        //        .append(
+        //        $('<div class="color"></div>')
+        //            .css("background-color", data.highlight_color)
+        //        )
+        //        .append(
+        //        $('<div class="name" ></div >')
+        //            .text(name)
+        //        )
+        //        .click((e) =>
+        //        {
+        //            e.preventDefault();
+        //            selectElement(name);
+        //        })
+        //        .appendTo(listContainer);
 
-                self.ToggleStoryConfig(storyInfo, false);
-            }).appendTo(listContainer);
-
-        if (typeof (this.Config.highlighter[highlighterKey]) !== "undefined" &&
-            (typeof (this.Config.highlighter[highlighterKey].prefab) === "undefined" || this.Config.highlighter[highlighterKey].prefab === null ||
-                this.Config.highlighter[highlighterKey].prefab === "" || this.Config.highlighter[highlighterKey].prefab === " ") &&
-            typeof (this.Config.highlighter[highlighterKey].custom) !== "undefined" && this.Config.highlighter[highlighterKey].custom !== null)
-        {
-            customElement.addClass("selected");
-        }
-
-
-        $('<div class="ffnet-HighlighterListElement"></div>').append(
-            $('<div class="color">X</div>')
-                .css("background-color", "red")
-                .css("text-align", "center")
-        )
-            .append($('<div class="name" style="top:0px">Reset</div>')
-            ).click(function (ev)
-            {
-                ev.preventDefault();
-                $(".ffnet-HighlighterContainer").remove();
-
-                if (typeof (self.Config.highlighter[highlighterKey]) !== "undefined")
-                {
-                    if (confirm(self._("Do you really want to remove this Highlighter?")))
-                    {
-                        delete self.Config.highlighter[highlighterKey];
-
-                        self.Parser.SaveConfig();
-                        self.Parser.Read(storyInfo.element.parent());
-                        self.Parser.EnableInStoryHighlighter();
-                    }
-                }
-                else
-                {
-                    alert(self._("There is nothing to reset. To close the box, just click on the Edit Icon again"));
-                }
-
-            }).appendTo(listContainer);
+        //    if (typeof (this.Config.highlighter[highlighterKey]) !== "undefined" && this.Config.highlighter[highlighterKey].prefab === name)
+        //    {
+        //        element.addClass("selected");
+        //    }
 
 
+        //});
 
-        listContainer.append("<hr />")
-            .append($('<div class="ffnet-HighlighterListElement" style="padding-top: 5px; text-align:center">' + self._('Customize Settings') + '</div>')
-                .click(function (ev)
-                {
-                    ev.preventDefault();
-                    $(".ffnet-HighlighterContainer").remove();
+        //var color = "gray";
 
-                    self.ToggleStoryConfig(storyInfo, true);
-                })
-            );
+        //if (typeof (this.Config.highlighter[highlighterKey]) !== "undefined" &&
+        //    typeof (this.Config.highlighter[highlighterKey].custom) !== "undefined" &&
+        //    this.Config.highlighter[highlighterKey].custom !== null)
+        //{
+        //    color = this.Config.highlighter[highlighterKey].custom.highlight_color;
+        //}
+
+        //var customElement = $('<div class="ffnet-HighlighterListElement"></div>').append(
+        //    $('<div class="color">')
+        //        .css("background-color", color)
+        //)
+        //    .append($('</div><div class="name">Custom</div>')
+        //    ).click(function (ev)
+        //    {
+        //        ev.preventDefault();
+        //        $(".ffnet-HighlighterContainer").remove();
+
+        //        if (typeof (self.Config.highlighter[highlighterKey]) !== "undefined")
+        //        {
+        //            self.Config.highlighter[highlighterKey].prefab = "";
+        //        }
+
+        //        self.ToggleStoryConfig(storyInfo, false);
+        //    }).appendTo(listContainer);
+
+        //if (typeof (this.Config.highlighter[highlighterKey]) !== "undefined" &&
+        //    (typeof (this.Config.highlighter[highlighterKey].prefab) === "undefined" || this.Config.highlighter[highlighterKey].prefab === null ||
+        //        this.Config.highlighter[highlighterKey].prefab === "" || this.Config.highlighter[highlighterKey].prefab === " ") &&
+        //    typeof (this.Config.highlighter[highlighterKey].custom) !== "undefined" && this.Config.highlighter[highlighterKey].custom !== null)
+        //{
+        //    customElement.addClass("selected");
+        //}
+
+
+        //$('<div class="ffnet-HighlighterListElement"></div>').append(
+        //    $('<div class="color">X</div>')
+        //        .css("background-color", "red")
+        //        .css("text-align", "center")
+        //)
+        //    .append($('<div class="name" style="top:0px">Reset</div>')
+        //    ).click(function (ev)
+        //    {
+        //        ev.preventDefault();
+        //        $(".ffnet-HighlighterContainer").remove();
+
+        //        if (typeof (self.Config.highlighter[highlighterKey]) !== "undefined")
+        //        {
+        //            if (confirm(self._("Do you really want to remove this Highlighter?")))
+        //            {
+        //                delete self.Config.highlighter[highlighterKey];
+
+        //                self.Parser.SaveConfig();
+        //                self.Parser.Read(storyInfo.element.parent());
+        //                self.Parser.EnableInStoryHighlighter();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            alert(self._("There is nothing to reset. To close the box, just click on the Edit Icon again"));
+        //        }
+
+        //    }).appendTo(listContainer);
+
+
+
+        //listContainer.append("<hr />")
+        //    .append($('<div class="ffnet-HighlighterListElement" style="padding-top: 5px; text-align:center">' + self._('Customize Settings') + '</div>')
+        //        .click(function (ev)
+        //        {
+        //            ev.preventDefault();
+        //            $(".ffnet-HighlighterContainer").remove();
+
+        //            self.ToggleStoryConfig(storyInfo, true);
+        //        })
+        //    );
 
 
     }
@@ -4223,169 +4229,170 @@ class GUIHandler extends ExtentionBaseClass
      */
     public ToggleLiveChat()
     {
+        //TODO: Fix me!
 
-        var self = this;
+        //var self = this;
 
-        if (this._guiContainer == null)
-        {
-            if (this.DEBUG)
-            {
-                console.log("Generate GUI Container");
-            }
+        //if (this._guiContainer == null)
+        //{
+        //    if (this.DEBUG)
+        //    {
+        //        console.log("Generate GUI Container");
+        //    }
 
-            this.GuiCreate();
-        }
+        //    this.GuiCreate();
+        //}
 
-        if (this._guiContainer.is(':visible'))
-        {
-            if (this.DEBUG)
-            {
-                console.log("Hide GUI Container");
-            }
+        //if (this._guiContainer.is(':visible'))
+        //{
+        //    if (this.DEBUG)
+        //    {
+        //        console.log("Hide GUI Container");
+        //    }
 
-            this.Hide();
+        //    this.Hide();
 
-        } else
-        {
-            if (!this.Parser.Chat.Available)
-            {
-                alert(self._("This Feature is not enabled in your Browser. Needed: WebSocket"));
-                return;
-            }
-
-
-            if (this.DEBUG)
-            {
-                console.log("Starting Content Generation");
-            }
-
-            this._guiContainer.html('');
-
-            var userList = $('<span>' + self._('Online') + ': (?)</span>')
-                .addClass('ChatUserInfo');
-
-            this._guiContainer.append($('<h2 style="text-align:center: magin-bottom: 10px">' + self._('Live Chat Feature:') + '</h2>').append(userList));
+        //} else
+        //{
+        //    if (!this.Parser.Chat.Available)
+        //    {
+        //        alert(self._("This Feature is not enabled in your Browser. Needed: WebSocket"));
+        //        return;
+        //    }
 
 
-            var chatContainer = $("<div></div>").appendTo(this._guiContainer).hide();
+        //    if (this.DEBUG)
+        //    {
+        //        console.log("Starting Content Generation");
+        //    }
 
-            var connectBox = $("<div></div>").appendTo(this._guiContainer);
-            connectBox.append("<p>" + self._("This Feature allows you to connect to the Live-Chat.") + "<p>")
-                .append("<p>" + self._("If you need help or just want to talk, you are welcome!") + "</p>")
-                .append("<p>" + self._("I can't be online all the time. I am living in Europe, so please have this in mind") + "</p>")
-                .append("<hr /><p>" + self._("The Connection is made using an Encrypted Connection to my Server.") + "</p>")
-                .append('<p><abbr title="irc.esper.net#FanfictionStoryParser">' + self._('Every Message is sent to my IRC-Channel') + '</abbr></p>')
-                .append(
-                $('<div style="text-align:center"></div>').append(
-                    $('<button class="btn btn-primary">' + self._('Connect') + '</button>')
-                        .click(function (e)
-                        {
-                            e.preventDefault();
-                            connectBox.fadeOut(0.5, function ()
-                            {
-                                self.Parser.Chat.Connect();
+        //    this._guiContainer.html('');
 
-                                chatContainer.fadeIn(0.5);
-                            });
+        //    var userList = $('<span>' + self._('Online') + ': (?)</span>')
+        //        .addClass('ChatUserInfo');
 
-                        })
-                )
-                );
+        //    this._guiContainer.append($('<h2 style="text-align:center: magin-bottom: 10px">' + self._('Live Chat Feature:') + '</h2>').append(userList));
 
 
-            var addMessageElement = function (sender, message, time)
-            {
-                var newMeessage = $('<div class="ChatMessage"></div>')
-                    .append($('<div class="Sender"></div>').text(sender))
-                    .append($('<div class="Message"></div>').text(message))
-                    .append($('<div class="Time"></div>').text(time));
+        //    var chatContainer = $("<div></div>").appendTo(this._guiContainer).hide();
 
-                container.append(newMeessage);
+        //    var connectBox = $("<div></div>").appendTo(this._guiContainer);
+        //    connectBox.append("<p>" + self._("This Feature allows you to connect to the Live-Chat.") + "<p>")
+        //        .append("<p>" + self._("If you need help or just want to talk, you are welcome!") + "</p>")
+        //        .append("<p>" + self._("I can't be online all the time. I am living in Europe, so please have this in mind") + "</p>")
+        //        .append("<hr /><p>" + self._("The Connection is made using an Encrypted Connection to my Server.") + "</p>")
+        //        .append('<p><abbr title="irc.esper.net#FanfictionStoryParser">' + self._('Every Message is sent to my IRC-Channel') + '</abbr></p>')
+        //        .append(
+        //        $('<div style="text-align:center"></div>').append(
+        //            $('<button class="btn btn-primary">' + self._('Connect') + '</button>')
+        //                .click(function (e)
+        //                {
+        //                    e.preventDefault();
+        //                    connectBox.fadeOut(0.5, function ()
+        //                    {
+        //                        self.Parser.Chat.Connect();
 
-                container[0].scrollTop = container[0].scrollHeight;
+        //                        chatContainer.fadeIn(0.5);
+        //                    });
 
-            };
-
-
-            var container = $('<div class="ChatMessageContainer"></div>').appendTo(chatContainer);
-            var input = $('<input type="text" />');
-
-            var send = function ()
-            {
-                var text = input.val();
-                input.val("");
-
-                //addMessageElement(self.config.token, text, (new Date()).toLocaleTimeString());
-                self.Parser.Chat.SendChatMessage(text);
-
-            };
-
-            chatContainer.append(container);
-            chatContainer.append(
-                $('<div class="ChatInputContainer"></div>')
-                    .append(input)
-                    .append(
-                    $('<button class="btn btn-primary">' + self._('Send') + '</button>').click(function (e)
-                    {
-                        send();
-                    })
-                    )
-            )
-                .append('<hr/><p style="text-align:center">' + self._('Advanced Features:') + '</p>')
-                .append(
-                $('<button class="btn btn-warning">' + self._('Send Config-Data') + '</button>')
-                    .click(function (e)
-                    {
-                        e.preventDefault();
-
-                        if (confirm(self._("This Option allows you to send your Config-Data to the Server. This helps me to help you :3  Do you REALY want to send this?")))
-                        {
-                            self.Parser.Chat.SendConfigData();
-                        }
-                    })
-                );
-
-            input.keydown(function (e)
-            {
-                if (e.keyCode === 13)
-                {
-                    send();
-                }
-            });
-
-            this.Parser.Chat._onError = function (message)
-            {
-                addMessageElement("System", message, (new Date().toLocaleTimeString()));
-
-            };
+        //                })
+        //        )
+        //        );
 
 
+        //    var addMessageElement = function (sender, message, time)
+        //    {
+        //        var newMeessage = $('<div class="ChatMessage"></div>')
+        //            .append($('<div class="Sender"></div>').text(sender))
+        //            .append($('<div class="Message"></div>').text(message))
+        //            .append($('<div class="Time"></div>').text(time));
 
-            //addMessageElement("System", "Connected to Server", (new Date()).toLocaleTimeString());
+        //        container.append(newMeessage);
 
-            this.Parser.Chat.SetMessageCallback(function (data: WebSocketMessage)
-            {
-                if (data.Type === "Chat")
-                {
-                    addMessageElement(data.Sender, data.Data, (new Date(Number(data.Time)).toLocaleTimeString()));
-                }
+        //        container[0].scrollTop = container[0].scrollHeight;
 
-            });
-
-
-            //addMessageElement("Test", "Das ist ein Test einer längeren Nachticht ... 123 BLUB", "NOW");
+        //    };
 
 
-            this.Log("Display Content");
+        //    var container = $('<div class="ChatMessageContainer"></div>').appendTo(chatContainer);
+        //    var input = $('<input type="text" />');
+
+        //    var send = function ()
+        //    {
+        //        var text = input.val();
+        //        input.val("");
+
+        //        //addMessageElement(self.config.token, text, (new Date()).toLocaleTimeString());
+        //        self.Parser.Chat.SendChatMessage(text);
+
+        //    };
+
+        //    chatContainer.append(container);
+        //    chatContainer.append(
+        //        $('<div class="ChatInputContainer"></div>')
+        //            .append(input)
+        //            .append(
+        //            $('<button class="btn btn-primary">' + self._('Send') + '</button>').click(function (e)
+        //            {
+        //                send();
+        //            })
+        //            )
+        //    )
+        //        .append('<hr/><p style="text-align:center">' + self._('Advanced Features:') + '</p>')
+        //        .append(
+        //        $('<button class="btn btn-warning">' + self._('Send Config-Data') + '</button>')
+        //            .click(function (e)
+        //            {
+        //                e.preventDefault();
+
+        //                if (confirm(self._("This Option allows you to send your Config-Data to the Server. This helps me to help you :3  Do you REALY want to send this?")))
+        //                {
+        //                    self.Parser.Chat.SendConfigData();
+        //                }
+        //            })
+        //        );
+
+        //    input.keydown(function (e)
+        //    {
+        //        if (e.keyCode === 13)
+        //        {
+        //            send();
+        //        }
+        //    });
+
+        //    this.Parser.Chat._onError = function (message)
+        //    {
+        //        addMessageElement("System", message, (new Date().toLocaleTimeString()));
+
+        //    };
 
 
-            this.Show(function ()
-            {
 
-                self.Parser.Chat.Disconnect();
+        //    //addMessageElement("System", "Connected to Server", (new Date()).toLocaleTimeString());
 
-            });
-        }
+        //    this.Parser.Chat.SetMessageCallback(function (data: WebSocketMessage)
+        //    {
+        //        if (data.Type === "Chat")
+        //        {
+        //            addMessageElement(data.Sender, data.Data, (new Date(Number(data.Time)).toLocaleTimeString()));
+        //        }
+
+        //    });
+
+
+        //    //addMessageElement("Test", "Das ist ein Test einer längeren Nachticht ... 123 BLUB", "NOW");
+
+
+        //    this.Log("Display Content");
+
+
+        //    this.Show(function ()
+        //    {
+
+        //        self.Parser.Chat.Disconnect();
+
+        //    });
+        //}
 
 
     }

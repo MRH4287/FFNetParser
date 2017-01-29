@@ -58,9 +58,9 @@ class AutoUpdateAddon extends ExtentionBaseClass
                     self.Config['api_autoIncludeNewVersion'] = false;
                     self.EventHandler.CallEvent(Events.ForceSaveConfig, self, undefined);
                 }
-            });
+            }
+        });
     }
 }
 
 
-}

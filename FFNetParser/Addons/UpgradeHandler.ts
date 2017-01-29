@@ -200,7 +200,10 @@ class UpgradeHandler extends ExtentionBaseClass
             var newData: { [index: string]: HighlighterConfig } = {};
             $.each(self.Parser.Config.highlighter, function (key, value)
             {
-                var info = self.Parser.GetStoryInfo(key);
+                var infoRequest: RequestGetStoryInfoEventArgs = {
+                    Link: key
+                };
+                var info = self.EventHandler.RequestResponse<StoryInfo>(Events.RequestGetStoryInfo, self, infoRequest);
                 if (info.ID in newData)
                 {
                     return;

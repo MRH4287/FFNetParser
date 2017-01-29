@@ -382,27 +382,29 @@ class Standalone
      */
     public RunScript()
     {
-        this._parser = new StoryParser();
-        this._eventHandler = this._parser.EventHandler;
-        this._progress.SetEventHandler(this._eventHandler);
 
-        // Fix Chrome Sync Bug:
-        this._parser.Config.chrome_sync = false;
+        //TODO: FIX ME
+        //this._parser = new StoryParser();
+        //this._eventHandler = this._parser.EventHandler;
+        //this._progress.SetEventHandler(this._eventHandler);
 
-        this.CallEvent("standaloneRunScript", this, null);
+        //// Fix Chrome Sync Bug:
+        //this._parser.Config.chrome_sync = false;
 
-        //this.parser.readList();
-        this._parser.EnablePocketSave();
-        this._parser.EnableInStoryHighlighter();
-        this._parser.EnableReadingAid();
-        this._parser.EnableEndlessMode();
+        //this.CallEvent("standaloneRunScript", this, null);
 
-        this._parser.Api.Initialize();
+        ////this.parser.readList();
+        //this._parser.EnablePocketSave();
+        //this._parser.EnableInStoryHighlighter();
+        //this._parser.EnableReadingAid();
+        //this._parser.EnableEndlessMode();
 
-        this._parser.Api.GetStyles();
-        this.InsertStyle();
+        //this._parser.Api.Initialize();
 
-        this._parser.DebugOptions();
+        //this._parser.Api.GetStyles();
+        //this.InsertStyle();
+
+        //this._parser.DebugOptions();
     }
 
     /**

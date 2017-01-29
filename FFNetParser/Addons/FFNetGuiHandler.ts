@@ -10,8 +10,9 @@ class FFNetGuiHandler extends ExtentionBaseClass
 
         var self = this;
 
-        this.EventHandler.AddEventListener(Events.OnLoad, () =>
+        this.EventHandler.AddEventListener(Events.OnLoad, (s, a) =>
         {
+            console.log("-------------------------------- GUI INIT!!!");
             self.UpdateGUI();
         });
 
@@ -34,10 +35,13 @@ class FFNetGuiHandler extends ExtentionBaseClass
 
         this.EventHandler.AddRequestEventListener(Events.RequestGetStoryInfo, (s, data: RequestGetStoryInfoEventArgs) =>
         {
-            return this.GetStoryInfo(data.Link);
+            return FFNetGuiHandler.GetStoryInfo(data.Link);
         });
 
-        this.EventHandler.AddEventListener(Events.UpdateListColor, this.UpdateListColor);
+        this.EventHandler.AddEventListener(Events.UpdateListColor, (s, e) =>
+        {
+            this.UpdateListColor(s, e);
+        });
     }
 
     /**
@@ -599,9 +603,8 @@ class FFNetGuiHandler extends ExtentionBaseClass
     /**
      *   Gets the Information of a story from a Link
      *   @param link Link to story
-     *   @result Name of Story
      */
-    private GetStoryInfo(link: string): StoryInfo
+    private static GetStoryInfo(link: string): StoryInfo
     {
         var data: { Chapter: string; Name: string; ID: string } = { Chapter: null, ID: null, Name: null };
 
@@ -653,16 +656,17 @@ class FFNetGuiHandler extends ExtentionBaseClass
     /**
     *   Updates the colors of the elements in the story list
     */
-    private UpdateListColor(sender: any, args: any)
+    private UpdateListColor(sender, args: any)
     {
         var odd = false;
         var self = this;
 
-        $(".z-list").filter(':visible').each(function (k, e)
+
+        $(".z-list").filter(':visible').each((k, e) =>
         {
             var el = $(e);
             var link = el.find('a').first().attr('href');
-            var storyInfo = self.GetStoryInfo(link);
+            var storyInfo = FFNetGuiHandler.GetStoryInfo(link);
             var storyName = storyInfo.Name;
             var color = self.Config.color_normal;
             var colorMo = self.Config.color_mouse_over;

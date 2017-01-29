@@ -15,7 +15,10 @@ class HighlighterHandler extends ExtentionBaseClass
                 self.UpdateElement(data);
             });
 
-            this.EnableInStoryHighlighter();
+            self.EventHandler.AddEventListener(Events.OnLoad, () =>
+            {
+                self.EnableInStoryHighlighter();
+            });           
         }
     }
 

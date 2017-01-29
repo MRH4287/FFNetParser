@@ -49,7 +49,7 @@ class EventHandler
     }
 
     /**
-     * Adds an EvemtListener for Requests
+     * Adds an EventListener for Requests
      * @param event The Request to listen to
      * @param callback The callback that collects the data
      */
@@ -67,7 +67,7 @@ class EventHandler
      * @param sender The Sender of the event
      * @param args The Argument of this Event
      */
-    public CallEvent(event: string, sender: any, args: any)
+    public CallEvent(event: string, sender: any, args: any) : boolean
     {
         this.AddEventToList(event);
 
@@ -78,17 +78,33 @@ class EventHandler
             console.log("Event Called: " + event + " - ", { name: event, sender: sender, args: args, heared: !unheared });
         }
 
+        if (this._main.VERBOSE)
+        {
+            console.log("Current Events: ", this._events);
+        }
 
         if (unheared)
         {
-            //console.warn("EventHandler - No Event called '" + event + "' found!");
+            if (this._main.VERBOSE)
+            {
+                console.warn("EventHandler - No Event called '" + event + "' found!");
+            }
 
             return false;
         }
 
+
+
         for (var i = 0; i < this._events[event].callbacks.length; i++)
         {
-            this._events[event].callbacks[i](sender, args);
+            try
+            {
+                this._events[event].callbacks[i](sender, args);
+            }
+            catch (ex)
+            {
+                console.error("Can't execute Event-Callback", event, ex);
+            }
         }
     }
 

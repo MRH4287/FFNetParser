@@ -19,15 +19,17 @@ module.exports = function (grunt)
 
         typescriptFiles:
         [
-            'build/userscript.js',
             'build/Core/Types.js',
+            'build/Const/Events.js',
+            'build/Core/ExtentionBaseClass.js',
+
+            
             'build/Core/ApiController.js',
-            'build/Core/EventHandler.js',
-            'build/Core/Start.js',
+            'build/Core/EventHandler.js',  
             'build/Addons/ParagraphMenu.js',
-            'build/Addons/ExtentionBaseClass.js',
             'build/Addons/GUIHandler.js',   
             'build/Addons/LiveChatHandler.js',
+            'build/Addons/FFNetGuiHandler.js',
             'build/Addons/UpgradeHandler.js',
             'build/Addons/UserHandler.js',
             'build/Addons/GithubAPI.js', 
@@ -35,7 +37,10 @@ module.exports = function (grunt)
             'build/Addons/AutoUpdateAddon.js',
             'build/Addons/PocketAddon.js',
             'build/Addons/HighlighterHandler.js',
-            'build/Const/Events.js'
+            
+            'build/userscript.js',
+            'build/Core/Start.js'
+
         ],
         filesToPack:
         [
@@ -57,12 +62,13 @@ module.exports = function (grunt)
             "GUIHandler",
             "LiveChatHandler",
             "ParagraphMenu",
-            "UpdateHandler",
+            "UpgradeHandler",
             "UserHandler",
             "ChromeSyncAddon",
             "AutoUpdateAddon",
             "PocketAddon",
-            "HighlighterHandler"
+            "HighlighterHandler",
+            "FFNetGuiHandler"
         ],
 
 
@@ -149,7 +155,7 @@ module.exports = function (grunt)
         },
         typescript: {
             base: {
-                src: ['FFNetParser/*.ts', 'FFNetParser/standalone/*.ts'],
+                src: ['FFNetParser/**/*.ts'],
                 dest: 'build',
                 options: {
                     module: 'amd', //or commonjs
