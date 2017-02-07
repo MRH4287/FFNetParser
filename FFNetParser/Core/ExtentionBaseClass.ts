@@ -62,6 +62,11 @@ abstract class ExtentionBaseClass
         return this.Parser.Api;
     }
 
+    get MainElementSelector()
+    {
+        return this.Parser.MainElementSelector;
+    }
+
     /** 
      * Config that is only available in this session 
      */

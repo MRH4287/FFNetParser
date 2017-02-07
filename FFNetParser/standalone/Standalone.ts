@@ -160,7 +160,7 @@ class Standalone
 
             });
 
-            $(".z-list").find("a").each(function (k, el)
+            $(self.MainElementSelector).find("a").each(function (k, el)
             {
                 var element = $(el);
 
@@ -252,7 +252,7 @@ class Standalone
         this.GetPageContent(url,(res) =>
         {
             var result = {
-                Content: res.find(".z-list"),
+                Content: res.find(self.MainElementSelector),
                 Navigation: res.find("center").first()
             };
 

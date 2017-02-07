@@ -164,7 +164,7 @@ class ParagraphMenu
         };
 
         this.Config.storyReminder[data.ID] = element;
-        this.EventHandler.CallEvent(Events.ForceSaveConfig, this, undefined);
+        this.EventHandler.CallEvent(Events.ActionForceSaveConfig, this, undefined);
 
         this.Log("Position Saved!");
     }

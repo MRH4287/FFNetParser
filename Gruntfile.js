@@ -36,6 +36,7 @@ module.exports = function (grunt)
             'build/Addons/ChromeSyncAddon.js',
             'build/Addons/AutoUpdateAddon.js',
             'build/Addons/PocketAddon.js',
+            'build/Addons/EndlessModeHandler.js',
             'build/Addons/HighlighterHandler.js',
             
             'build/userscript.js',
@@ -68,6 +69,7 @@ module.exports = function (grunt)
             "AutoUpdateAddon",
             "PocketAddon",
             "HighlighterHandler",
+            "EndlessModeHandler",
             "FFNetGuiHandler"
         ],
 

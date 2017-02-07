@@ -32,7 +32,7 @@ class AutoUpdateAddon extends ExtentionBaseClass
                         modal.modal('hide');
 
                         self.Config['api_autoIncludeNewVersion'] = true;
-                        self.EventHandler.CallEvent(Events.ForceSaveConfig, self, undefined);
+                        self.EventHandler.CallEvent(Events.ActionForceSaveConfig, self, undefined);
 
                     }));
 
@@ -41,7 +41,7 @@ class AutoUpdateAddon extends ExtentionBaseClass
                         modal.modal('hide');
 
                         self.Config['api_autoIncludeNewVersion'] = false;
-                        self.EventHandler.CallEvent(Events.ForceSaveConfig, self, undefined);
+                        self.EventHandler.CallEvent(Events.ActionForceSaveConfig, self, undefined);
                     }));
 
                     modal = GUIHandler.CreateBootstrapModal($(text), "Fanfiction Story Parser", buttons);
@@ -56,7 +56,7 @@ class AutoUpdateAddon extends ExtentionBaseClass
                 else
                 {
                     self.Config['api_autoIncludeNewVersion'] = false;
-                    self.EventHandler.CallEvent(Events.ForceSaveConfig, self, undefined);
+                    self.EventHandler.CallEvent(Events.ActionForceSaveConfig, self, undefined);
                 }
             }
         });

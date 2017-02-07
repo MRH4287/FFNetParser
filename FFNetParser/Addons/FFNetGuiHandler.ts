@@ -10,9 +10,11 @@ class FFNetGuiHandler extends ExtentionBaseClass
 
         var self = this;
 
+        // This is important :3
+        this.EventHandler.AddRequestEventListener(Events.RequestMainElementSelector, () => ".z-list");
+
         this.EventHandler.AddEventListener(Events.OnLoad, (s, a) =>
         {
-            console.log("-------------------------------- GUI INIT!!!");
             self.UpdateGUI();
         });
 
@@ -38,10 +40,16 @@ class FFNetGuiHandler extends ExtentionBaseClass
             return FFNetGuiHandler.GetStoryInfo(data.Link);
         });
 
-        this.EventHandler.AddEventListener(Events.UpdateListColor, (s, e) =>
+        this.EventHandler.AddEventListener(Events.ActionUpdateListColor, (s, e) =>
         {
             this.UpdateListColor(s, e);
         });
+
+        this.EventHandler.AddRequestEventListener(Events.RequestGetCurrentPage, (s, input) =>
+        {
+            return this.GetCurrentPage();
+        });
+
     }
 
     /**
@@ -74,14 +82,14 @@ class FFNetGuiHandler extends ExtentionBaseClass
             table.append(
                 $('<a></a>').addClass('menu-link').html(self._('Rerun Filter')).attr('href', '#').click(function (e)
                 {
-                    self.EventHandler.CallEvent(Events.ForceReadAll, self, null);
+                    self.EventHandler.CallEvent(Events.ActionForceReadAll, self, null);
                     e.preventDefault();
 
                 }).attr('title', self._('Parse the Stories again'))
             ).append(
                 $('<a></a>').addClass('menu-link').html(self._('Menu')).attr('href', '#').click(function (e)
                 {
-                    self.EventHandler.CallEvent(Events.GuiShowMenu, self, null);
+                    self.EventHandler.CallEvent(Events.ActionGuiShowMenu, self, null);
                     e.preventDefault();
 
                 }).attr('title', 'Open Config Menu')
@@ -196,7 +204,7 @@ class FFNetGuiHandler extends ExtentionBaseClass
                     {
                         messageContainer.hide();
 
-                        self.EventHandler.CallEvent(Events.GuiShowMessageMenu, self, null);
+                        self.EventHandler.CallEvent(Events.ActionGuiShowMessageMenu, self, null);
 
                     })
             );
@@ -208,7 +216,7 @@ class FFNetGuiHandler extends ExtentionBaseClass
                     {
                         messageContainer.hide();
 
-                        self.EventHandler.CallEvent(Events.GuiShowFeedbackMenu, self, null);
+                        self.EventHandler.CallEvent(Events.ActionGuiShowFeedbackMenu, self, null);
                     })
             );
 
@@ -224,7 +232,7 @@ class FFNetGuiHandler extends ExtentionBaseClass
 
                     messageContainer.hide();
 
-                    self.EventHandler.CallEvent(Events.GuiToggleLiveChat, self, null);
+                    self.EventHandler.CallEvent(Events.ActionGuiToggleLiveChat, self, null);
 
                 });
             }
@@ -307,7 +315,7 @@ class FFNetGuiHandler extends ExtentionBaseClass
                                     if (confirm(self._("Do you really want to delete that element?")))
                                     {
                                         delete self.Config.storyReminder[key];
-                                        self.EventHandler.CallEvent(Events.ForceSaveConfig, self, undefined);
+                                        self.EventHandler.CallEvent(Events.ActionForceSaveConfig, self, undefined);
                                         modal.modal('hide');
                                     }
 
@@ -319,7 +327,7 @@ class FFNetGuiHandler extends ExtentionBaseClass
                                 e.preventDefault();
 
                                 self.Config.storyReminder[key].visited = true;
-                                self.EventHandler.CallEvent(Events.ForceSaveConfig, self, undefined);
+                                self.EventHandler.CallEvent(Events.ActionForceSaveConfig, self, undefined);
 
                                 location.href = el.url;
                             }).appendTo(table);
@@ -499,8 +507,8 @@ class FFNetGuiHandler extends ExtentionBaseClass
                         self.DataConfig["displayOnly"] = undefined;
                     }
 
-                    self.EventHandler.CallEvent(Events.ForceSaveDataStore, self, undefined);
-                    self.EventHandler.CallEvent(Events.ForceReadAll, self, undefined);
+                    self.EventHandler.CallEvent(Events.ActionForceSaveDataStore, self, undefined);
+                    self.EventHandler.CallEvent(Events.ActionForceReadAll, self, undefined);
 
                 }).addClass("filter_select");
 
@@ -662,7 +670,7 @@ class FFNetGuiHandler extends ExtentionBaseClass
         var self = this;
 
 
-        $(".z-list").filter(':visible').each((k, e) =>
+        $(self.MainElementSelector).filter(':visible').each((k, e) =>
         {
             var el = $(e);
             var link = el.find('a').first().attr('href');
@@ -690,7 +698,7 @@ class FFNetGuiHandler extends ExtentionBaseClass
                     MouseOverColor: colorMo,
                     MouseOverPriority: -1
                 };
-                self.EventHandler.CallEvent(Events.UpdateElementColor, self, data);
+                self.EventHandler.CallEvent(Events.ActionUpdateElementColor, self, data);
             }
 
         });
@@ -749,5 +757,29 @@ class FFNetGuiHandler extends ExtentionBaseClass
 
         }
     }
+
+    public GetCurrentPage(): number
+    {
+        var pageNumber = $("center > b").first();
+
+        if (pageNumber.length !== 0)
+        {
+            return Number(pageNumber.text());
+        }
+        else
+        {
+            // We are in a Story ....
+            pageNumber = $("#chap_select").children().filter("[selected]");
+
+            var page = Number(pageNumber.attr("value"));
+
+            return (isNaN(page) ? 1 : page);
+        }
+    }
+
+    
+
+
+   
 
 }

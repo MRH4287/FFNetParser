@@ -7,27 +7,27 @@ class GUIHandler extends ExtentionBaseClass
         super(parser);
 
         var self = this;
-        this.EventHandler.AddEventListener(Events.GuiShowMenu, () =>
+        this.EventHandler.AddEventListener(Events.ActionGuiShowMenu, () =>
         {
             self.Gui();
         });
 
-        this.EventHandler.AddEventListener(Events.GuiShowMessageMenu, () =>
+        this.EventHandler.AddEventListener(Events.ActionGuiShowMessageMenu, () =>
         {
             self.MessagesGUI();
         });
 
-        this.EventHandler.AddEventListener(Events.GuiShowFeedbackMenu, () =>
+        this.EventHandler.AddEventListener(Events.ActionGuiShowFeedbackMenu, () =>
         {
             self.FeedbackGUI();
         });
 
-        this.EventHandler.AddEventListener(Events.GuiToggleLiveChat, () =>
+        this.EventHandler.AddEventListener(Events.ActionGuiToggleLiveChat, () =>
         {
             self.ToggleLiveChat();
         });
 
-        this.EventHandler.AddEventListener(Events.GuiShowStoryPrefabList, (s, args) =>
+        this.EventHandler.AddEventListener(Events.ActionGuiShowStoryPrefabList, (s, args) =>
         {
             self.ShowStoryPrefabList(args);
         });

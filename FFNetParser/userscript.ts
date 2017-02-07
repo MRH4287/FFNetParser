@@ -129,6 +129,11 @@ class StoryParser
      */
     public BaseConfig = $.extend({}, this.Config);
 
+    /**
+     *  The Selector of the Main-Elements (example: self.MainElementSelector)
+     */
+    public MainElementSelector: string = undefined;
+
     // ----------------------
 
     /**
@@ -336,6 +341,13 @@ class StoryParser
     public Initialize()
     {
         this.EventHandler.CallEvent(Events.PreInit, this, null);
+
+        this.MainElementSelector = this.EventHandler.RequestResponse<string>(Events.RequestMainElementSelector, this, undefined);
+        if (this.MainElementSelector === undefined)
+        {
+            console.error("Can't get MainElementSelector! Please check installation!");
+            return;
+        }
 
         var self = this;
 
@@ -574,6 +586,10 @@ class StoryParser
         }
 
 
+
+
+
+
         window.setTimeout(function ()
         {
             self.EventHandler.CallEvent(Events.PreParagraphCheck, self, null);
@@ -630,8 +646,7 @@ class StoryParser
 
         this.EventHandler.CallEvent(Events.PostInit, this, null);
 
-        // ReadList:
-        this.ReadList();
+        this.EventHandler.CallEvent(Events.OnPageUpdate, this, {});
     }
 
 
@@ -704,30 +719,31 @@ class StoryParser
     /**
      * Registers the used Events
      */
-    private RegisterEvents()
-    {
+    private RegisterEvents() {
         var self = this;
 
-        this.EventHandler.AddEventListener(Events.ForceSaveConfig, (sender, args) =>
-        {
-            if (args !== undefined && args !== null)
-            {
+        this.EventHandler.AddEventListener(Events.ActionForceSaveConfig, (sender, args) => {
+            if (args !== undefined && args !== null) {
                 self.SaveConfig(Boolean(args));
             }
             self.SaveConfig();
         });
 
-        this.EventHandler.AddEventListener(Events.ForceSaveDataStore, (sender, args) =>
-        {
+        this.EventHandler.AddEventListener(Events.ActionForceSaveDataStore, (sender, args) => {
             self.SaveDataStore();
         });
 
-        this.EventHandler.AddEventListener(Events.ForceReadAll, () =>
+        this.EventHandler.AddEventListener(Events.OnPageUpdate, () => {
+            // ReadList:
+            this.ReadList();
+        });
+
+        this.EventHandler.AddEventListener(Events.ActionForceReadAll, () =>
         {
             self.ReadAll();
         });
 
-        this.EventHandler.AddEventListener(Events.HideElement, (sender, args: HideElementEventArgs) =>
+        this.EventHandler.AddEventListener(Events.ActionHideElement, (sender, args: HideElementEventArgs) =>
         {
             if (self.DEBUG)
             {
@@ -763,7 +779,7 @@ class StoryParser
             self.UpdateList(args.CurrentPage);
         });
 
-        this.EventHandler.AddEventListener(Events.UpdateElementColor, (sender, args: UpdateElementColorEventArgs) =>
+        this.EventHandler.AddEventListener(Events.ActionUpdateElementColor, (sender, args: UpdateElementColorEventArgs) =>
         {
             this.UpdateColor(args);
         });
@@ -789,7 +805,7 @@ class StoryParser
 
         this.Log("Read List for Page: ", page);
 
-        var elements = container.find(".z-list");
+        var elements = container.find(self.MainElementSelector);
 
 
         var odd = false;
@@ -996,7 +1012,7 @@ class StoryParser
                                 ColorPriority: -1,
                                 MouseOverPriority: -1
                             };
-                        self.EventHandler.CallEvent(Events.UpdateElementColor, self, updateColorData);
+                        self.EventHandler.CallEvent(Events.ActionUpdateElementColor, self, updateColorData);
                     }
                 }
 
@@ -1525,7 +1541,7 @@ class StoryParser
                 window.setTimeout(function ()
                 {
                     element.fadeIn();
-                    self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
+                    self.EventHandler.CallEvent(Events.ActionUpdateListColor, self, undefined);
 
                 }, 100);
 
@@ -1546,7 +1562,7 @@ class StoryParser
                 element.fadeOut();
                 self._hidden[page] += 1;
 
-                self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
+                self.EventHandler.CallEvent(Events.ActionUpdateListColor, self, undefined);
             }
         }
 
@@ -1560,7 +1576,7 @@ class StoryParser
             self._hiddenElements[page][info.url] = "Filter '" + headline + "'";
 
             element.hide();
-            self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
+            self.EventHandler.CallEvent(Events.ActionUpdateListColor, self, undefined);
             self._hidden[page] += 1;
         } else
         {
@@ -1747,7 +1763,7 @@ class StoryParser
                     MouseOverColor: colorMo,
                     MouseOverPriority: priority.mouseOver
                 };
-                self.EventHandler.CallEvent(Events.UpdateElementColor, self, updateColorData);
+                self.EventHandler.CallEvent(Events.ActionUpdateElementColor, self, updateColorData);
             }
 
             var data: ElementChangedEventArgs = {
@@ -1890,7 +1906,7 @@ class StoryParser
             {
                 hiddenByStoryConfig.css("border", "2px solid black").slideDown();
 
-                self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
+                self.EventHandler.CallEvent(Events.ActionUpdateListColor, self, undefined);
                 e.preventDefault();
             }));
         }
@@ -2134,6 +2150,7 @@ class StoryParser
      */
     public EnableReadingAid(container: JQuery = null)
     {
+        //EVENT: OnPageUpdate
         if (container === null)
         {
             container = $("body");
@@ -2252,7 +2269,7 @@ class StoryParser
             return;
         }
 
-        var isStory = ($(".z-list").length === 0);
+        var isStory = ($(self.MainElementSelector).length === 0);
 
         var elements = undefined;
         var ids: string[] = [];
@@ -2344,70 +2361,7 @@ class StoryParser
 
     // ------- Endless Mode ------
 
-    private _endlessRequestPending = false;
-
-    private _endlessRequestsDone = 0;
-
-    //TODO: Remove
-    /**
-     * Enabled the EndlessMode 
-     */
-    public EnableEndlessMode()
-    {
-        var self = this;
-
-        if (!this.Config.endless_enable)
-        {
-            return;
-        }
-
-        var isStory = ($(".z-list").length === 0);
-
-        var offset = 500;
-
-        if (typeof (window["scrollY"]) === "undefined")
-        {
-            console.warn("[FFNetParser] EndlessMode disabled. Reason: No Support for Scroll-Events");
-            return;
-        }
-
-
-        window.onscroll = function (ev)
-        {
-
-
-            if ((window.innerHeight + <number>window['scrollY']) >= $(document).height() - offset)
-            {
-                var lastPageContainer: JQuery = null;
-                if (isStory)
-                {
-                    lastPageContainer = $(".storytext").last();
-                }
-                else
-                {
-                    lastPageContainer = $(".ffNetPageWrapper").last();
-                }
-
-                if (lastPageContainer === null || lastPageContainer.length === 0)
-                {
-                    console.log("Error: Can't find Page Container!");
-                    return;
-                }
-
-                var lastPage = Number(lastPageContainer.attr("data-page"));
-                if (isNaN(lastPage))
-                {
-                    console.log("Error parsing Page Number!");
-                    return;
-                }
-
-                self.AppendPageContent(lastPage + 1);
-            }
-        };
-
-
-
-    }
+    
 
 
     /**
@@ -2434,42 +2388,15 @@ class StoryParser
 
     }
 
-    public GetCurrentPage(): number
-    {
-        var pageNumber = $("center > b").first();
-
-        if (pageNumber.length !== 0)
-        {
-            return Number(pageNumber.text());
-        }
-        else
-        {
-            // We are in a Story ....
-            pageNumber = $("#chap_select").children().filter("[selected]");
-
-            var page = Number(pageNumber.attr("value"));
-
-            return (isNaN(page) ? 1 : page);
-        }
-    }
-
-    private CreateWrapper(page: number): JQuery
-    {
-        var wrapper = $("<div></div>").addClass("ffNetPageWrapper")
-            .attr("data-page", page);
-
-        this._wrapperList[page] = wrapper;
-
-        return wrapper;
-    }
-
     private CreatePageWrapper(elements: JQuery = null, currentPage: number = null): JQuery
     {
         // Wrap the current Page into a PageWrapper
 
         if (typeof (currentPage) === "undefined" || currentPage === null)
         {
-            currentPage = this.GetCurrentPage();
+            
+
+            currentPage = this.EventHandler.RequestResponse<number>(Events.RequestGetCurrentPage, this, undefined);
         }
 
         var ignoreUserPage = false;
@@ -2481,7 +2408,7 @@ class StoryParser
 
         if (elements === null || typeof (elements) === "undefined")
         {
-            elements = $(".z-list");
+            elements = $(this.MainElementSelector);
         }
         else
         {
@@ -2502,14 +2429,16 @@ class StoryParser
 
             if (!ignoreUserPage && this._inUsersPage)
             {
-                notWrapped = notWrapped.filter(".mystories");
+                console.info("The Fav-Story parsing is currently not available!");
+                //TODO: FIX ME!
+                //notWrapped = notWrapped.filter(".mystories");
 
-                // Create wrapper for Favs:
-                this.Log("Create Page Wrapper for Favs");
+                //// Create wrapper for Favs:
+                //this.Log("Create Page Wrapper for Favs");
 
-                var favWrapper = this.CreatePageWrapper(elements.filter('.favstories'), 2);
+                //var favWrapper = this.CreatePageWrapper(elements.filter('.favstories'), 2);
 
-                this.Read(favWrapper);
+                //this.Read(favWrapper);
             }
 
             if (notWrapped.length !== 0)
@@ -2537,190 +2466,18 @@ class StoryParser
         }
     }
 
-
-    private LoadElementsFromPage(page: number, callback: (data: JQuery) => void)
+    public CreateWrapper(page: number): JQuery
     {
-        var self = this;
+        var wrapper = $("<div></div>").addClass("ffNetPageWrapper")
+            .attr("data-page", page);
 
-        var requestData: RequestGetLinkToPageNumberEventArgs = {
-            Page: page
-        };
-        var url = self.EventHandler.RequestResponse<string>(Events.RequestGetLinkToPageNumber, self, requestData);
+        this._wrapperList[page] = wrapper;
 
-        this.GetPageContent(url, function (res)
-        {
-            var elements = res.find(".z-list");
-            var wrapper = self.CreateWrapper(page);
-
-            wrapper.append(elements);
-
-            callback(wrapper);
-
-        });
-    }
-
-    private LoadChapterFromPage(page: number, callback: (page: JQuery) => void)
-    {
-        var self = this;
-        var requestData: RequestGetLinkToPageNumberEventArgs = {
-            Page: page
-        };
-        var url = self.EventHandler.RequestResponse<string>(Events.RequestGetLinkToPageNumber, self, requestData);
-
-        this.GetPageContent(url, function (res)
-        {
-            var story = res.find(".storytext").first();
-
-            story.removeAttr("id").attr("data-page", page);
-
-            callback(story);
-        });
-    }
-
-    public AppendPageContent(page: number)
-    {
-        var self = this;
-
-        if (this._endlessRequestPending)
-        {
-            return;
-        }
-
-        this._endlessRequestPending = true;
-
-        var isStroy = ($(".z-list").length === 0);
-
-        this.Log("Appending Page Content. Page: " + page + " - IsStory: ", isStroy);
-
-        var loadingElement = $("<div><center><b>Loading ...</b></center></div>");;
-
-
-
-        this._endlessRequestsDone++;
-        var overLimit = this._endlessRequestsDone > this.Config.endless_forceClickAfter;
-
-        if (!overLimit)
-        {
-
-            if (isStroy)
-            {
-                var lastPage = $(".storytext").last();
-
-                this.Log("LastPage: ", lastPage);
-
-                lastPage.after(loadingElement);
-
-                this.Log("Loading Element added ....");
-
-                this.LoadChapterFromPage(page, function (chapter)
-                {
-                    self.Log("Server Answer Received", chapter);
-
-
-                    loadingElement.remove();
-
-                    // Add Page Name:
-                    chapter.prepend("<hr /><center><b>Page: " + page + "</b></center><hr />");
-
-
-                    chapter.hide();
-
-                    lastPage.after(chapter);
-
-                    if (self.Config.allow_copy)
-                    {
-                        self.Log("Allow Selection of Text");
-                        $(".nocopy").removeClass("nocopy").parent().attr("style", "padding: 0px 0.5em;");
-                    }
-
-                    self.EnableReadingAid(chapter);
-
-                    // Copy Classes and styles from main Container:
-                    chapter.attr("class", $("#storytext").attr("class"))
-                        .attr("style", $("#storytext").attr("style"));
-
-                    chapter.slideDown();
-
-                    self.ReadStory();
-
-                    window.setTimeout(function ()
-                    {
-                        self._endlessRequestPending = false;
-                    }, 1000);
-                });
-
-            }
-            else
-            {
-                var lastWrapper = $(".ffNetPageWrapper").last();
-
-                this.Log("LastWrapper: ", lastWrapper);
-
-                lastWrapper.after(loadingElement);
-
-                this.Log("Loading Element added ....");
-
-                this.LoadElementsFromPage(page, function (wrapper)
-                {
-                    self.Log("Server Answer Received", wrapper);
-
-
-                    loadingElement.remove();
-
-                    // Set new elements as wrapped
-                    wrapper.find(".z-list").attr("data-wrapped", "wrapped");
-
-                    wrapper.hide();
-
-
-                    lastWrapper.after(wrapper);
-
-                    self.Read(wrapper);
-
-                    wrapper.slideDown();
-
-                    self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
-
-                    window.setTimeout(function ()
-                    {
-                        self._endlessRequestPending = false;
-                    }, 1000);
-                });
-            }
-        }
-        else
-        {
-            // Add a Load New Page Button:
-            var button = $('<button class="btn"></button>')
-                .text(this._('Load Next Page'))
-                .click(function (e)
-                {
-                    e.preventDefault();
-
-                    var request: RequestGetLinkToPageNumberEventArgs = {
-                        Page: page
-                    };
-                    location.href = self.EventHandler.RequestResponse<string>(Events.RequestGetLinkToPageNumber, self, request);
-                });
-
-
-            if (isStroy)
-            {
-                $(".storytext").last()
-                    .append("<br /><hr />")
-                    .append($("<center></center").append(button));
-            }
-            else
-            {
-                $(".ffNetPageWrapper").last()
-                    .append("<br /><hr />")
-                    .append($("<center></center").append(button));
-            }
-        }
-
+        return wrapper;
     }
 
 
+  
     // ---- Sort Function -------
 
     public SortStories(sortFunction: (list: JQuery[]) => JQuery[], container?: JQuery)
@@ -2737,7 +2494,7 @@ class StoryParser
 
         var handleElement = function (elementContainer: JQuery)
         {
-            var elements = elementContainer.children().filter(".z-list").detach();
+            var elements = elementContainer.children().filter(self.MainElementSelector).detach();
             var list: JQuery[] = [];
             $.each(elements, (i, el) =>
             {
@@ -2752,7 +2509,7 @@ class StoryParser
 
             });
 
-            self.EventHandler.CallEvent(Events.UpdateListColor, self, undefined);
+            self.EventHandler.CallEvent(Events.ActionUpdateListColor, self, undefined);
 
         };
 

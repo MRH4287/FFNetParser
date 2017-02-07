@@ -106,6 +106,8 @@ class EventHandler
                 console.error("Can't execute Event-Callback", event, ex);
             }
         }
+
+        return true;
     }
 
     /**
@@ -120,7 +122,11 @@ class EventHandler
             response: undefined,
             input: input
         };
-        this.CallEvent(event, sender, data);
+        if (!this.CallEvent(event, sender, data))
+        {
+            console.error("No source for Event '" + event + "' found!");
+        }
+
         return data.response;
     }
 

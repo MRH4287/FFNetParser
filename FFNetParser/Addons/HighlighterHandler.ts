@@ -50,7 +50,7 @@ class HighlighterHandler extends ExtentionBaseClass
                 console.log("Context Menu for ", element, " clicked");
             }
 
-            self.EventHandler.CallEvent(Events.GuiShowStoryPrefabList, self, data);
+            self.EventHandler.CallEvent(Events.ActionGuiShowStoryPrefabList, self, data);
 
         });
 
@@ -138,7 +138,7 @@ class HighlighterHandler extends ExtentionBaseClass
                     Reason: "Highlighter",
                     Url: data.Url
                 };
-            self.EventHandler.CallEvent(Events.HideElement, self, hideData);
+            self.EventHandler.CallEvent(Events.ActionHideElement, self, hideData);
         }
         else
         {
@@ -249,7 +249,7 @@ class HighlighterHandler extends ExtentionBaseClass
                         MouseOverColor: colorMo,
                         MouseOverPriority: priority.mouseOver
                     };
-                self.EventHandler.CallEvent(Events.UpdateElementColor, self, updateColorData);
+                self.EventHandler.CallEvent(Events.ActionUpdateElementColor, self, updateColorData);
 
             }
 
@@ -316,7 +316,7 @@ class HighlighterHandler extends ExtentionBaseClass
                 Chapter: info.Chapter,
                 CurrentPage: 0
             };
-            self.EventHandler.CallEvent(Events.GuiShowStoryPrefabList, self, data);
+            self.EventHandler.CallEvent(Events.ActionGuiShowStoryPrefabList, self, data);
         });
 
         field.after(contextMenu);
@@ -463,7 +463,7 @@ class HighlighterHandler extends ExtentionBaseClass
                     MouseOverColor: colorMo,
                     MouseOverPriority: priority.mouseOver
                 };
-                self.EventHandler.CallEvent(Events.UpdateElementColor, self, updateColorData);
+                self.EventHandler.CallEvent(Events.ActionUpdateElementColor, self, updateColorData);
             }
 
         }

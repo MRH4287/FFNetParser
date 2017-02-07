@@ -53,6 +53,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="Addons\AutoUpdateAddon.ts" />
     <TypeScriptCompile Include="Addons\ChromeSyncAddon.ts" />
+    <TypeScriptCompile Include="Addons\EndlessModeHandler.ts" />
     <TypeScriptCompile Include="Addons\FFNetGuiHandler.ts" />
     <TypeScriptCompile Include="Addons\HighlighterHandler.ts" />
     <TypeScriptCompile Include="Addons\PocketAddon.ts" />
