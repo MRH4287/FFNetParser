@@ -6,6 +6,8 @@ class ApiController extends ExtentionBaseClass
 
     private _useHTTPS: boolean = true;
 
+    private _signalRProxy: any = null;
+
     public constructor(parser: StoryParser)
     {
         super(parser);
@@ -24,6 +26,7 @@ class ApiController extends ExtentionBaseClass
         // Check for CORS:
         this._useCors = 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest();
 
+        this.ConnectToServer();
     }
 
     /**
@@ -54,6 +57,35 @@ class ApiController extends ExtentionBaseClass
         }
     }
 
+    /* SignalR */
+
+    private ConnectToServer()
+    {
+        var base = <any>jQuery;
+
+        base.connection.hub.url = "https://www.mrh-development.de:4123/signalr"
+        var pingHub = base.connection.pingHub;
+        pingHub.client.Pong = (token) =>
+        {
+            console.log("Got SignalR-Response!", token);
+        };
+
+
+        base.connection.hub.error(function (error)
+        {
+            console.log('SignalR error: ' + error)
+        });
+
+        this._signalRProxy = pingHub;
+        base.connection.hub.start().done(() =>
+        {
+            console.info("SinglR-Connection established!");
+        });
+
+    }
+
+
+    /* /SignalR */
 
     private CorsRequest(url: string, data: any, callback: (result: string) => void)
     {

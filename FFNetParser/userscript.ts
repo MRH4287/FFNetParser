@@ -171,11 +171,6 @@ class StoryParser
 
 
     /**
-     * Is the current Page the page of a specific user
-     */
-    private _inUsersPage = false;
-
-    /**
      * The Container for the GUI
      */
     private _guiContainer: JQuery = null;
@@ -540,23 +535,10 @@ class StoryParser
             this.Api.GetLanguage(this.Config.language, undefined, true, true);
         }
 
-        // Add jQueryUI to the Page:        
-        /*var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
-        $("head").append(block);
-    
-        if (typeof ($.ui) === "undefined")
-        {
-            console.error("Can't include jQuery UI!");
-        }*/
 
         // Add jQuery Color Picker to the Page:     
         var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", this.Api.GetUrl("bootstrap-colorpicker.min.css"));
         $("head").append(block);
-
-        /*
-        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://www.mrh-development.de/FanFictionUserScript/Css?branch=" + _BRANCH);
-        $("head").append(block);
-        */
 
         // Check if the current Context is a Chrome Extention, if yes it is loaded over this system:
         if ((typeof (chrome) === "undefined") || (typeof (chrome.runtime) === "undefined"))
@@ -564,13 +546,6 @@ class StoryParser
             // Use this because of the new HTTPS Restrictions ...
             this.Api.GetStyles();
         }
-
-
-        //TODO: Refactor {
-        // Check if the current Page is a User Specific Page:
-        var locationRegEx = new RegExp("\/u\/[0-9]+\/");
-        this._inUsersPage = locationRegEx.test(location.href);
-        // }
 
 
         if (this.DEBUG)
@@ -794,6 +769,7 @@ class StoryParser
      */
     public Read(container: JQuery)
     {
+        var self = this;
         if (this.LOAD_INTERNAL)
         {
             return;
@@ -817,7 +793,6 @@ class StoryParser
         container.find('.parser-msg').remove();
         container.find('[data-color]').removeAttr("data-color");
 
-        var self = this;
         elements.each(function (k, e)
         {
             var element = $(e);
@@ -969,6 +944,7 @@ class StoryParser
 
                 if (self.Config.mark_M_storys)
                 {
+                    //TODO:Change
                     textEl.html(textEl.html().replace('Rated: M', '<b>Rated: M</b>'));
                 }
 
@@ -1090,6 +1066,7 @@ class StoryParser
 
             });
 
+            //TODO: Change
             // Disable Image Hover Effect:
             if (self.Config.disable_image_hover)
             {
@@ -1403,6 +1380,8 @@ class StoryParser
      */
     private ParseSite(body: JQuery, keywords: string[], ignore: string[]): string
     {
+
+        //TODO: Remove
         var storyEl = body.find('.storytext');
 
         //console.log('search in ', storyEl);
@@ -1505,6 +1484,7 @@ class StoryParser
     {
         this.EventHandler.CallEvent(Events.PreElementCallback, this, [config, element, textEl, headline, info, page]);
 
+        //TODO: Remove
         var isStory = $(".storytext").length > 0;
         var isStoryText = element.is(".storytext");
 
@@ -2013,6 +1993,7 @@ class StoryParser
             return;
         }
 
+        //TODO: Remove
         var storyElements = $(".storytext");
         if (storyElements.length < 1)
         {
@@ -2119,6 +2100,7 @@ class StoryParser
             });
         };
 
+        //TODO: Remove
         handleElement($("#profile_top"));
 
         $.each(storyElements.not('[data-parsed]'), function (index, element: JQuery)
@@ -2217,6 +2199,7 @@ class StoryParser
         {
             var reg = new RegExp(".+Chapters: ?([0-9]+).*Reviews: ?([0-9]+).*");
 
+            //TODO: Remove
             var parent = element.find(".z-padtop2").first();
             if (reg.test(parent.text()))
             {
@@ -2276,6 +2259,7 @@ class StoryParser
 
         if (!isStory)
         {
+            //TODO: REMOVE
             elements = $(".z-list[data-storyid]");
 
 
@@ -2335,6 +2319,7 @@ class StoryParser
                 }
                 else
                 {
+                    //TODO: Remove
                     var chapterSelects = $('select[id="chap_select"]');
                     chapterSelects.children().each(function (i, el)
                     {
@@ -2347,6 +2332,7 @@ class StoryParser
 
                     });
 
+                    //TODO: REMOVE
                     var infoContainer = $("#profile_top").find(".xgray");
 
                     infoContainer.html(infoContainer.html().replace("- Words", "- Last Read Chapter: " + lastChapters[id] + " - Words"));
@@ -2388,14 +2374,17 @@ class StoryParser
 
     }
 
-    private CreatePageWrapper(elements: JQuery = null, currentPage: number = null): JQuery
+    /**
+     * Create a new Page-Wrapper
+     * @param elements The Elements to wrap
+     * @param currentPage The current Page-Number
+     */
+    public CreatePageWrapper(elements: JQuery = null, currentPage: number = null): JQuery
     {
         // Wrap the current Page into a PageWrapper
 
         if (typeof (currentPage) === "undefined" || currentPage === null)
         {
-            
-
             currentPage = this.EventHandler.RequestResponse<number>(Events.RequestGetCurrentPage, this, undefined);
         }
 
@@ -2418,8 +2407,7 @@ class StoryParser
 
         if (elements.length !== 0)
         {
-
-            var wrapper = $(".ffNetPageWrapper");
+            var wrapper = $(".ffNetPageWrapper[data-page=\"" + currentPage +"\"]");
             if (wrapper.length === 0)
             {
                 wrapper = this.CreateWrapper(currentPage);
@@ -2427,18 +2415,14 @@ class StoryParser
 
             var notWrapped = elements.filter('[data-wrapped!="wrapped"]');
 
-            if (!ignoreUserPage && this._inUsersPage)
+            var argument = {
+                Elements: notWrapped,
+                IgnoreUserPage: ignoreUserPage
+            };
+
+            if (this.EventHandler.CallEvent(Events.OnPageWrapperCreating, this, argument))
             {
-                console.info("The Fav-Story parsing is currently not available!");
-                //TODO: FIX ME!
-                //notWrapped = notWrapped.filter(".mystories");
-
-                //// Create wrapper for Favs:
-                //this.Log("Create Page Wrapper for Favs");
-
-                //var favWrapper = this.CreatePageWrapper(elements.filter('.favstories'), 2);
-
-                //this.Read(favWrapper);
+                notWrapped = argument.Elements;
             }
 
             if (notWrapped.length !== 0)
@@ -2609,6 +2593,7 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
 
@@ -2621,6 +2606,7 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
 
@@ -2651,6 +2637,7 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
 
@@ -2663,6 +2650,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
 
@@ -2692,6 +2681,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
 
@@ -2704,6 +2695,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
 
@@ -2734,6 +2727,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
 
@@ -2746,6 +2741,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
 
@@ -2776,6 +2773,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
 
@@ -2788,6 +2787,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
 
@@ -2818,6 +2819,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
 
@@ -2830,6 +2833,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
 
@@ -2859,6 +2864,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
 
@@ -2901,6 +2908,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
 
@@ -2913,6 +2922,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
 
@@ -2943,6 +2954,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
 
@@ -2955,6 +2968,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
 
@@ -2985,6 +3000,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
 
@@ -2997,6 +3014,8 @@ class StoryParser
             }
             else
             {
+                //TODO: REMOVE
+
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
 

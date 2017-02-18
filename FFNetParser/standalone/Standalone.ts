@@ -20,6 +20,8 @@ class Standalone
     private _filterModal: JQuery = undefined;
     private _categoryBaseURL: string = undefined;
 
+    private MainElementSelector = ".x-list";
+
     /**
      * The current Instance of the EventHandler
      */
@@ -252,7 +254,7 @@ class Standalone
         this.GetPageContent(url,(res) =>
         {
             var result = {
-                Content: res.find(self.MainElementSelector),
+                Content: res.find(this.MainElementSelector),
                 Navigation: res.find("center").first()
             };
 

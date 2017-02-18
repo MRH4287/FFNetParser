@@ -138,10 +138,6 @@ var StoryParser = (function () {
          */
         this.DataConfig = {};
         /**
-         * Is the current Page the page of a specific user
-         */
-        this._inUsersPage = false;
-        /**
          * The Container for the GUI
          */
         this._guiContainer = null;
@@ -389,31 +385,14 @@ var StoryParser = (function () {
             // Get the new Language from the Server:
             this.Api.GetLanguage(this.Config.language, undefined, true, true);
         }
-        // Add jQueryUI to the Page:        
-        /*var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css");
-        $("head").append(block);
-    
-        if (typeof ($.ui) === "undefined")
-        {
-            console.error("Can't include jQuery UI!");
-        }*/
         // Add jQuery Color Picker to the Page:     
         var block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", this.Api.GetUrl("bootstrap-colorpicker.min.css"));
         $("head").append(block);
-        /*
-        block = $('<link  rel="stylesheet" type="text/css"></link>').attr("href", "http://www.mrh-development.de/FanFictionUserScript/Css?branch=" + _BRANCH);
-        $("head").append(block);
-        */
         // Check if the current Context is a Chrome Extention, if yes it is loaded over this system:
         if ((typeof (chrome) === "undefined") || (typeof (chrome.runtime) === "undefined")) {
             // Use this because of the new HTTPS Restrictions ...
             this.Api.GetStyles();
         }
-        //TODO: Refactor {
-        // Check if the current Page is a User Specific Page:
-        var locationRegEx = new RegExp("\/u\/[0-9]+\/");
-        this._inUsersPage = locationRegEx.test(location.href);
-        // }
         if (this.DEBUG) {
             console.log("Pre GUI Update done.");
             console.log("Starts GUI Update");
@@ -556,6 +535,7 @@ var StoryParser = (function () {
      *   @param container The PageWrapper for the Elements
      */
     StoryParser.prototype.Read = function (container) {
+        var self = this;
         if (this.LOAD_INTERNAL) {
             return;
         }
@@ -570,7 +550,6 @@ var StoryParser = (function () {
         this._hiddenElements[page] = {};
         container.find('.parser-msg').remove();
         container.find('[data-color]').removeAttr("data-color");
-        var self = this;
         elements.each(function (k, e) {
             var element = $(e);
             self.EventHandler.CallEvent(Events.PreElementParse, self, element);
@@ -1590,6 +1569,11 @@ var StoryParser = (function () {
             callback(data);
         });
     };
+    /**
+     * Create a new Page-Wrapper
+     * @param elements The Elements to wrap
+     * @param currentPage The current Page-Number
+     */
     StoryParser.prototype.CreatePageWrapper = function (elements, currentPage) {
         // Wrap the current Page into a PageWrapper
         if (elements === void 0) { elements = null; }
@@ -1609,13 +1593,17 @@ var StoryParser = (function () {
             ignoreUserPage = true;
         }
         if (elements.length !== 0) {
-            var wrapper = $(".ffNetPageWrapper");
+            var wrapper = $(".ffNetPageWrapper[data-page=\"" + currentPage + "\"]");
             if (wrapper.length === 0) {
                 wrapper = this.CreateWrapper(currentPage);
             }
             var notWrapped = elements.filter('[data-wrapped!="wrapped"]');
-            if (!ignoreUserPage && this._inUsersPage) {
-                console.info("The Fav-Story parsing is currently not available!");
+            var argument = {
+                Elements: notWrapped,
+                IgnoreUserPage: ignoreUserPage
+            };
+            if (this.EventHandler.CallEvent(Events.OnPageWrapperCreating, this, argument)) {
+                notWrapped = argument.Elements;
             }
             if (notWrapped.length !== 0) {
                 if (this.DEBUG) {

@@ -114,6 +114,21 @@
      */
     public static OnConfigLoad = "onConfigLoad";
 
+    /**
+     * Called when a new Page-Wrapper is generated.
+     * Argument: {
+     *  Elements: {JQuery} Elements that are going to be wrapped
+     *  IgnoreUserPage: {boolean} Should a User-Page be ignored
+     *  CurrentPage: {number} Current Page
+     * }
+     */
+    public static OnPageWrapperCreating = "onPageWrapperCreating";
+
+    /**
+     * 
+     */
+    public static OnStoryPageWrapperCreating = "onStoryPageWrapperCreating";
+
     /*************************** API  ***********************/
 
     /**

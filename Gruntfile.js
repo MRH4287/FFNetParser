@@ -29,7 +29,7 @@ module.exports = function (grunt)
             'build/Addons/ParagraphMenu.js',
             'build/Addons/GUIHandler.js',   
             'build/Addons/LiveChatHandler.js',
-            'build/Addons/FFNetGuiHandler.js',
+            'build/Addons/FFNetHandler.js',
             'build/Addons/UpgradeHandler.js',
             'build/Addons/UserHandler.js',
             'build/Addons/GithubAPI.js', 
@@ -70,7 +70,7 @@ module.exports = function (grunt)
             "PocketAddon",
             "HighlighterHandler",
             "EndlessModeHandler",
-            "FFNetGuiHandler"
+            "FFNetHandler"
         ],
 
 
@@ -95,6 +95,7 @@ module.exports = function (grunt)
                     'lib/bootstrap-colorpicker.min.js',
                     'lib/bootstrap.min.js',
                     'lib/jquery.signalR-2.2.0.min.js',
+                    'FFNetParser/Interface/HubsConfig.js',
                     'build/package.min.js',
                     'lib/footer.js',
                     'build/addons.js'
@@ -111,6 +112,7 @@ module.exports = function (grunt)
                     'lib/bootstrap-colorpicker.min.js',
                     'lib/bootstrap.min.js',
                     'lib/jquery.signalR-2.2.0.min.js',
+                    'FFNetParser/Interface/HubsConfig.js',
                     'build/package.js',
                     'lib/footer.js',
                     'build/addons.js'

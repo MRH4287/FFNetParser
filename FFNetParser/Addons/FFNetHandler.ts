@@ -1,8 +1,13 @@
 ﻿/// <reference path="../_reference.ts" />
 
-class FFNetGuiHandler extends ExtentionBaseClass
+class FFNetHandler extends ExtentionBaseClass
 {
-    private _registeredTags: { [index: string]: { ifNotExist?: (self: UpgradeHandler) => void; ifExist?: (self: UpgradeHandler) => void } } = {};
+
+    /**
+     * Is the current Page the page of a specific user
+     */
+    private _inUsersPage = false;
+
 
     public constructor(parser: StoryParser)
     {
@@ -16,6 +21,10 @@ class FFNetGuiHandler extends ExtentionBaseClass
         this.EventHandler.AddEventListener(Events.OnLoad, (s, a) =>
         {
             self.UpdateGUI();
+
+            // Check if the current Page is a User Specific Page:
+            var locationRegEx = new RegExp("\/u\/[0-9]+\/");
+            self._inUsersPage = locationRegEx.test(location.href);
         });
 
         this.EventHandler.AddRequestEventListener(Events.RequestGetLinkToNextChapter, (sender, data: RequestGetLinkToNextChapterEventArgs) =>
@@ -37,7 +46,7 @@ class FFNetGuiHandler extends ExtentionBaseClass
 
         this.EventHandler.AddRequestEventListener(Events.RequestGetStoryInfo, (s, data: RequestGetStoryInfoEventArgs) =>
         {
-            return FFNetGuiHandler.GetStoryInfo(data.Link);
+            return FFNetHandler.GetStoryInfo(data.Link);
         });
 
         this.EventHandler.AddEventListener(Events.ActionUpdateListColor, (s, e) =>
@@ -48,6 +57,22 @@ class FFNetGuiHandler extends ExtentionBaseClass
         this.EventHandler.AddRequestEventListener(Events.RequestGetCurrentPage, (s, input) =>
         {
             return this.GetCurrentPage();
+        });
+
+        this.EventHandler.AddEventListener(Events.OnPageWrapperCreating, (s, args:
+            { Elements: JQuery, IgnoreUserPage: boolean, CurrentPage: number }) =>
+        {
+            if (!args.IgnoreUserPage && this._inUsersPage)
+            {
+                args.Elements = args.Elements.filter(".mystories");
+
+                // Create wrapper for Favs:
+                this.Log("Create Page Wrapper for Favs");
+
+                var favWrapper = this.Parser.CreatePageWrapper(args.Elements.filter('.favstories'), 2);
+
+                this.Parser.Read(favWrapper);
+            }
         });
 
     }
@@ -674,7 +699,7 @@ class FFNetGuiHandler extends ExtentionBaseClass
         {
             var el = $(e);
             var link = el.find('a').first().attr('href');
-            var storyInfo = FFNetGuiHandler.GetStoryInfo(link);
+            var storyInfo = FFNetHandler.GetStoryInfo(link);
             var storyName = storyInfo.Name;
             var color = self.Config.color_normal;
             var colorMo = self.Config.color_mouse_over;
@@ -777,9 +802,9 @@ class FFNetGuiHandler extends ExtentionBaseClass
         }
     }
 
-    
 
 
-   
+
+
 
 }
