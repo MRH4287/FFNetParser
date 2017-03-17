@@ -651,6 +651,7 @@ var StoryParser = (function () {
                     requestQueue.push(parseData);
                 }
                 if (self.Config.mark_M_storys) {
+                    //TODO:Change
                     textEl.html(textEl.html().replace('Rated: M', '<b>Rated: M</b>'));
                 }
             });
@@ -727,6 +728,7 @@ var StoryParser = (function () {
                     $(this).css('background-color', color);
                 });
             });
+            //TODO: Change
             // Disable Image Hover Effect:
             if (self.Config.disable_image_hover) {
                 if ($(".disableImageHoverClass").length === 0) {
@@ -936,6 +938,7 @@ var StoryParser = (function () {
      *   @result Matching Sentence or null
      */
     StoryParser.prototype.ParseSite = function (body, keywords, ignore) {
+        //TODO: Remove
         var storyEl = body.find('.storytext');
         //console.log('search in ', storyEl);
         var self = this;
@@ -1002,6 +1005,7 @@ var StoryParser = (function () {
      */
     StoryParser.prototype.ElementCallback = function (self, config, element, textEl, headline, info, page) {
         this.EventHandler.CallEvent(Events.PreElementCallback, this, [config, element, textEl, headline, info, page]);
+        //TODO: Remove
         var isStory = $(".storytext").length > 0;
         var isStoryText = element.is(".storytext");
         var foundWhere = info.chapter;
@@ -1324,6 +1328,7 @@ var StoryParser = (function () {
         if (this.Config.disable_inStory_parsing) {
             return;
         }
+        //TODO: Remove
         var storyElements = $(".storytext");
         if (storyElements.length < 1) {
             // We are not in a Story ...
@@ -1394,6 +1399,7 @@ var StoryParser = (function () {
                 }
             });
         };
+        //TODO: Remove
         handleElement($("#profile_top"));
         $.each(storyElements.not('[data-parsed]'), function (index, element) {
             element = $(element);
@@ -1457,6 +1463,7 @@ var StoryParser = (function () {
         element.attr("data-chapterReviewRatio", 0);
         if (this.Config.enable_chapter_review_ratio) {
             var reg = new RegExp(".+Chapters: ?([0-9]+).*Reviews: ?([0-9]+).*");
+            //TODO: Remove
             var parent = element.find(".z-padtop2").first();
             if (reg.test(parent.text())) {
                 var result = reg.exec(parent.text());
@@ -1502,6 +1509,7 @@ var StoryParser = (function () {
         var elements = undefined;
         var ids = [];
         if (!isStory) {
+            //TODO: REMOVE
             elements = $(".z-list[data-storyid]");
             var idELMap = {};
             elements.each(function (i, el) {
@@ -1540,6 +1548,7 @@ var StoryParser = (function () {
                     }
                 }
                 else {
+                    //TODO: Remove
                     var chapterSelects = $('select[id="chap_select"]');
                     chapterSelects.children().each(function (i, el) {
                         var element = $(el);
@@ -1547,6 +1556,7 @@ var StoryParser = (function () {
                             element.text(self.Config.reading_info_ChapterMarker.replace("{Name}", element.text()));
                         }
                     });
+                    //TODO: REMOVE
                     var infoContainer = $("#profile_top").find(".xgray");
                     infoContainer.html(infoContainer.html().replace("- Words", "- Last Read Chapter: " + lastChapters[id] + " - Words"));
                 }
@@ -1705,6 +1715,7 @@ var StoryParser = (function () {
                 numA = Number(a.attr("data-chapterCount"));
             }
             else {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
                 a.attr("data-chapterCount", numA);
@@ -1713,6 +1724,7 @@ var StoryParser = (function () {
                 numB = Number(b.attr("data-chapterCount"));
             }
             else {
+                //TODO: REMOVE
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
                 b.attr("data-chapterCount", numB);
@@ -1732,6 +1744,7 @@ var StoryParser = (function () {
                 numA = Number(a.attr("data-chapterCount"));
             }
             else {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
                 a.attr("data-chapterCount", numA);
@@ -1740,6 +1753,7 @@ var StoryParser = (function () {
                 numB = Number(b.attr("data-chapterCount"));
             }
             else {
+                //TODO: REMOVE
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
                 b.attr("data-chapterCount", numB);
@@ -1759,6 +1773,7 @@ var StoryParser = (function () {
                 numA = Number(a.attr("data-wordCount"));
             }
             else {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
                 a.attr("data-wordCount", numA);
@@ -1767,6 +1782,7 @@ var StoryParser = (function () {
                 numB = Number(b.attr("data-wordCount"));
             }
             else {
+                //TODO: REMOVE
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
                 b.attr("data-wordCount", numB);
@@ -1786,6 +1802,7 @@ var StoryParser = (function () {
                 numA = Number(a.attr("data-wordCount"));
             }
             else {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
                 a.attr("data-wordCount", numA);
@@ -1794,6 +1811,7 @@ var StoryParser = (function () {
                 numB = Number(b.attr("data-wordCount"));
             }
             else {
+                //TODO: REMOVE
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
                 b.attr("data-wordCount", numB);
@@ -1813,6 +1831,7 @@ var StoryParser = (function () {
                 numA = Number(a.attr("data-follows"));
             }
             else {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
                 a.attr("data-follows", numA);
@@ -1821,6 +1840,7 @@ var StoryParser = (function () {
                 numB = Number(b.attr("data-follows"));
             }
             else {
+                //TODO: REMOVE
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
                 b.attr("data-follows", numB);
@@ -1840,6 +1860,7 @@ var StoryParser = (function () {
                 numA = Number(a.attr("data-follows"));
             }
             else {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
                 a.attr("data-follows", numA);
@@ -1848,6 +1869,7 @@ var StoryParser = (function () {
                 numB = Number(b.attr("data-follows"));
             }
             else {
+                //TODO: REMOVE
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
                 b.attr("data-follows", numB);
@@ -1867,6 +1889,7 @@ var StoryParser = (function () {
                 numA = Number(a.attr("data-favs"));
             }
             else {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
                 a.attr("data-favs", numA);
@@ -1894,6 +1917,7 @@ var StoryParser = (function () {
                 numA = Number(a.attr("data-favs"));
             }
             else {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
                 a.attr("data-favs", numA);
@@ -1902,6 +1926,7 @@ var StoryParser = (function () {
                 numB = Number(b.attr("data-favs"));
             }
             else {
+                //TODO: REMOVE
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
                 b.attr("data-favs", numB);
@@ -1921,6 +1946,7 @@ var StoryParser = (function () {
                 numA = Number(a.attr("data-reviews"));
             }
             else {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
                 a.attr("data-reviews", numA);
@@ -1929,6 +1955,7 @@ var StoryParser = (function () {
                 numB = Number(b.attr("data-reviews"));
             }
             else {
+                //TODO: REMOVE
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
                 b.attr("data-reviews", numB);
@@ -1948,6 +1975,7 @@ var StoryParser = (function () {
                 numA = Number(a.attr("data-reviews"));
             }
             else {
+                //TODO: REMOVE
                 var dataA = regex.exec(a.find(".z-indent").html());
                 numA = (dataA === null) ? 0 : Number(dataA[1].replace(".", "").replace(",", ""));
                 a.attr("data-reviews", numA);
@@ -1956,6 +1984,7 @@ var StoryParser = (function () {
                 numB = Number(b.attr("data-reviews"));
             }
             else {
+                //TODO: REMOVE
                 var dataB = regex.exec(b.find(".z-indent").html());
                 numB = (dataB === null) ? 0 : Number(dataB[1].replace(".", "").replace(",", ""));
                 b.attr("data-reviews", numB);
@@ -2239,3 +2268,4 @@ var StoryParser = (function () {
     };
     return StoryParser;
 }());
+//# sourceMappingURL=userscript.js.map

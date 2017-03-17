@@ -294,3 +294,10 @@ interface GistData
 
 }
 
+interface ApiResponse
+{
+    Reponse: any;
+    Error: string;
+    Status: string;
+    MessageID: string;
+}

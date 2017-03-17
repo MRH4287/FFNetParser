@@ -119,6 +119,7 @@ class EndlessModeHandler extends ExtentionBaseClass
 
                     lastPage.after(chapter);
 
+                    // TODO: Remove
                     if (self.Config.allow_copy)
                     {
                         self.Log("Allow Selection of Text");

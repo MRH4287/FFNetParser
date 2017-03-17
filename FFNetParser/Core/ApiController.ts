@@ -2,29 +2,34 @@
 
 class ApiController extends ExtentionBaseClass
 {
-    private _useCors: boolean = true;
+    // Dictionary with structure: Hub -> Methode -> MessageID -> Callback
+    private _requestData: {
+        [index: string]: {
+            [index: string]: { [index: string]: (response: any) => void }
+        }
+    } = {};
 
-    private _useHTTPS: boolean = true;
+    private _initialized: boolean = false;
 
-    private _signalRProxy: any = null;
+    private _requestQueue : (() => void )[] = [];
+
+    //private _useCors: boolean = true;
+
+    //private _useHTTPS: boolean = true;
+
 
     public constructor(parser: StoryParser)
     {
         super(parser);
     }
 
-    get UseCors()
-    {
-        return this._useCors;
-    }
-
     public Initialize()
     {
-        // Check if we use HTTPS
-        this._useHTTPS = this.Config.api_url.toLowerCase().indexOf("https") !== -1;
+        //// Check if we use HTTPS
+        //this._useHTTPS = this.Config.api_url.toLowerCase().indexOf("https") !== -1;
 
-        // Check for CORS:
-        this._useCors = 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest();
+        //// Check for CORS:
+        //this._useCors = 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest();
 
         this.ConnectToServer();
     }
@@ -34,56 +39,224 @@ class ApiController extends ExtentionBaseClass
      *   @param data Request Options
      *   @param callback Function executed after result was found
      */
-    public Request(command: MessageType, data: any, callback: (result: string) => void)
-    {
-        var url = this.Config.api_url;
-        var apiLookupKey = this.Config.api_lookupKey;
-        var timeout = this.Config.api_timeout;
-        var retries = this.Config.api_retries;
+    //public Request(command: MessageType, data: any, callback: (result: string) => void)
+    //{
+    //    var url = this.Config.api_url;
+    //    var apiLookupKey = this.Config.api_lookupKey;
+    //    var timeout = this.Config.api_timeout;
+    //    var retries = this.Config.api_retries;
 
-        data.command = MessageType[command];
+    //    data.command = MessageType[command];
 
-        this.EventHandler.CallEvent(Events.PreApiRequest, this, data);
+    //    this.EventHandler.CallEvent(Events.PreApiRequest, this, data);
 
-        if (this._useCors)
-        {
-            this.CorsRequest(url, data, callback);
-        }
-        else
-        {
-            console.warn("Your Browser doesn't support CORS. You are using the deprecated API-Feature. This feature will be removed in later releases");
-            
-            this.JsonPRequest(url, data, apiLookupKey, timeout, retries, callback);
-        }
-    }
+    //    if (this._useCors)
+    //    {
+    //        this.CorsRequest(url, data, callback);
+    //    }
+    //    else
+    //    {
+    //        console.warn("Your Browser doesn't support CORS. You are using the deprecated API-Feature. This feature will be removed in later releases");
+
+    //        this.JsonPRequest(url, data, apiLookupKey, timeout, retries, callback);
+    //    }
+    //}
 
     /* SignalR */
 
     private ConnectToServer()
     {
-        var base = <any>jQuery;
+        $.connection.hub.url = this.Config.api_url;
 
-        base.connection.hub.url = "https://www.mrh-development.de:4123/signalr"
-        var pingHub = base.connection.pingHub;
-        pingHub.client.Pong = (token) =>
-        {
-            console.log("Got SignalR-Response!", token);
-        };
+        this.RegisterHubResponseHandler();
 
-
-        base.connection.hub.error(function (error)
+        $.connection.hub.error(function (error)
         {
             console.log('SignalR error: ' + error)
         });
 
-        this._signalRProxy = pingHub;
-        base.connection.hub.start().done(() =>
+        $.connection.hub.start().done(() =>
         {
+            this._initialized = true;
             console.info("SinglR-Connection established!");
+
+            if (this._requestQueue.length > 0)
+            {
+                $.each(this._requestQueue, (_, callback) =>
+                {
+                    callback();
+                });
+            }
+
         });
 
     }
 
+    private RegisterHubResponseHandler()
+    {
+        var self = this;
+        $.each($.connection, function (hubName, hub)
+        {
+            if (hub.server === undefined)
+            {
+                return;
+            }
+
+            $.each(hub.server, function (name: string, impl)
+            {
+                name = name.charAt(0).toUpperCase() + name.slice(1);
+
+                hub.client[name] = (json) =>
+                {
+                    self.Response(hubName, name, JSON.parse(json));
+                };
+
+                if (self.DEBUG)
+                {
+                    console.log("Register SignalR-Methode:", hubName, name);
+                }
+            });
+        });
+
+
+        //// PingHub
+        //$.connection["pingHub"].client.Pong = (data) =>
+        //{
+        //    this.Response("pingHub", "Pong", data);
+        //};
+
+
+    }
+
+    public Request(hub: string, methode: string, args: any[], response: (response: any) => void, timeout: number = 5000)
+    {
+        var doRequest: () => void = () =>
+        {
+            // Make the first character lowerCase
+            hub = hub.charAt(0).toLowerCase() + hub.slice(1);
+
+            if (hub.substring(hub.length - 3) !== "Hub")
+            {
+                console.warn("Hub name does not end with 'Hub'", hub);
+            }
+
+            // Get free MessageID:
+            if (this._requestData[hub] === undefined)
+            {
+                this._requestData[hub] = {};
+            }
+
+            // Make the first character lowerCase
+            methode = methode.charAt(0).toLowerCase() + methode.slice(1);
+
+            if (this._requestData[hub][methode] == undefined)
+            {
+                this._requestData[hub][methode] = {};
+            }
+
+            var id = "";
+            do
+            {
+                id = "req_" + Math.floor(Math.random() * 1000);
+            } while (this._requestData[hub][methode][id] !== undefined)
+
+            // Check if the methode is available:
+            var hubInfo = $.connection[hub];
+            if (hubInfo === undefined)
+            {
+                throw "Hub '" + hub + "' Not found!";
+            }
+
+            var methodeInfo = hubInfo.server[methode]
+            if (methodeInfo === undefined)
+            {
+                throw "Methode '" + methode + "' not found on Hub '" + hub + "'!";
+            }
+
+            // Register Callback:
+            this._requestData[hub][methode][id] = response;
+
+            if (args === undefined)
+            {
+                args = [];
+            }
+
+            args.push(id);
+
+            // Make API-Call:
+            methodeInfo.apply(this, args);
+
+            var self = this;
+            // Wait ...
+            window.setTimeout(function ()
+            {
+                if (self._requestData[hub][id] !== undefined)
+                {
+                    console.warn("API-Request Timeout!", hub, id);
+                    self._requestData[hub][methode][id](null);
+                    delete self._requestData[hub][methode][id];
+                }
+            }, timeout);
+        };
+
+        if (this._initialized)
+        {
+            doRequest();
+        }
+        else
+        {
+            this._requestQueue.push(doRequest);
+        }
+    }
+
+    private Response(hub: string, methode: string, data: ApiResponse)
+    {
+        // Make the first character lowerCase
+        hub = hub.charAt(0).toLowerCase() + hub.slice(1);
+
+        // Make the first character lowerCase
+        methode = methode.charAt(0).toLowerCase() + methode.slice(1);
+
+        if (data === undefined || data === null)
+        {
+            console.warn("Invalid API-Reponse", hub, methode);
+            return;
+        }
+
+        if (data.Status === "Error")
+        {
+            console.warn("API Error:", hub, methode, data);
+            return;
+        }
+
+        if (this._requestData[hub] === undefined)
+        {
+            console.warn("Got API-Response, but no pending Request for Hub", hub, data);
+            return;
+        }
+
+        if (this._requestData[hub][methode] === undefined)
+        {
+            console.warn("Got API-Response, but no pending Request for Methode", hub, methode, data);
+            return;
+        }
+
+        var messageID = data.MessageID;
+        if (this._requestData[hub][methode][messageID] === undefined)
+        {
+            console.warn("Got API-Response, but no pending Request for MessageId", hub, methode, messageID, data);
+            return;
+        }
+
+        try
+        {
+            this._requestData[hub][methode][messageID](data.Reponse);
+        }
+        finally
+        {
+            delete this._requestData[hub][methode][messageID];
+        }
+    }
 
     /* /SignalR */
 
@@ -224,7 +397,8 @@ class ApiController extends ExtentionBaseClass
 
             var self = this;
 
-            this.Request(MessageType.getVersion, { data: requestData }, function (res)
+            //this.Request(MessageType.getVersion, { data: requestData }, function (res)
+            this.Request("VersionHub", "GetVersion", [requestData], (res) =>
             {
                 if (!self.Config.api_checkForUpdates)
                 {
@@ -299,7 +473,8 @@ class ApiController extends ExtentionBaseClass
         {
             this.Log("Load Styles from Remote Server ...");
 
-            this.Request(MessageType.getStyles, { data: this.BRANCH }, function (styles)
+            //this.Request(MessageType.getStyles, { data: this.BRANCH }, function (styles)
+            this.Request("System", "GetStyles", [], (styles) => 
             {
                 self.DataConfig["styles"] = styles;
 
@@ -322,36 +497,37 @@ class ApiController extends ExtentionBaseClass
 
         var self = this;
 
-        this.Request(MessageType.liveChatInfo,
+        //this.Request(MessageType.liveChatInfo,
+        //    {
+        //        data: this.BRANCH
+        //    },
+        //    function (res)
+        this.Request("ChatHub", "LiveChatInfo", [], (res) =>
+        {
+            if (self.DEBUG)
             {
-                data: this.BRANCH
-            },
-            function (res)
+                self.Log("Got Live-Chat Info Response from Server: ", res);
+            }
+
+            try
             {
-                if (self.DEBUG)
+                var data = <{ Users: string[]; WebUsers: string[]; DevInRoom: boolean; }>JSON.parse(res);
+
+                if (typeof (callback) !== "undefined")
                 {
-                    self.Log("Got Live-Chat Info Response from Server: ", res);
+                    callback(data);
+                }
+                else
+                {
+                    console.log(data);
                 }
 
-                try
-                {
-                    var data = <{ Users: string[]; WebUsers: string[]; DevInRoom: boolean; }>JSON.parse(res);
+            } catch (e)
+            {
+                console.warn("Error in Function: 'api_getLiveChatInfo': ", e);
+            }
 
-                    if (typeof (callback) !== "undefined")
-                    {
-                        callback(data);
-                    }
-                    else
-                    {
-                        console.log(data);
-                    }
-
-                } catch (e)
-                {
-                    console.warn("Error in Function: 'api_getLiveChatInfo': ", e);
-                }
-
-            });
+        });
     }
 
     /**
@@ -366,7 +542,8 @@ class ApiController extends ExtentionBaseClass
         }
 
         var self = this;
-        this.Request(MessageType.getLanguageList, { data: this.BRANCH }, function (res)
+        //this.Request(MessageType.getLanguageList, { data: this.BRANCH }, function (res)
+        this.Request("LanguageHub", "GetLanguageList", [], (res) =>
         {
             var result = <LanguageData[]>JSON.parse(res);
 
@@ -429,7 +606,8 @@ class ApiController extends ExtentionBaseClass
         }
 
         var self = this;
-        this.Request(MessageType.getLanguage, { data: languageCode }, function (res)
+        //this.Request(MessageType.getLanguage, { data: languageCode }, function (res)
+        this.Request("LanguageHub", "GetLanguage", [languageCode], (res) =>
         {
             var result = <LanguageData>JSON.parse(res);
 
@@ -486,7 +664,8 @@ class ApiController extends ExtentionBaseClass
             }
 
             var self = this;
-            this.Request(MessageType.getCurrent, { data: this.BRANCH }, function (res)
+            //this.Request(MessageType.getCurrent, { data: this.BRANCH }, function (res)
+            this.Request("VersionHub", "GetCurrent", [this.BRANCH], (res) =>
             {
                 //console.log("Script: ", res);
 
@@ -507,12 +686,13 @@ class ApiController extends ExtentionBaseClass
      */
     public GetMessages(callback: (result: any) => void)
     {
-        var data = {
-            Token: this.Config.token,
-            Version: this.VERSION
-        };
+        //var data = {
+        //    Token: this.Config.token,
+        //    Version: this.VERSION
+        //};
 
-        this.Request(MessageType.getMessages, { data: JSON.stringify(data) }, function (result)
+        //this.Request(MessageType.getMessages, { data: JSON.stringify(data) }, function (result)
+        this.Request("MessageHub", "GetMessages", [this.Config.token], (result) =>
         {
             var response = JSON.parse(result);
 
@@ -536,9 +716,8 @@ class ApiController extends ExtentionBaseClass
         $(".ffnet-messageCount").text("0");
 
 
-        this.Request(MessageType.readMessages, { data: this.Config.token }, function (result)
-        {
-        });
+        //this.Request(MessageType.readMessages, { data: this.Config.token }, function (result)
+        this.Request("MessageHub", "SetAsRead", [this.Config.token], (res) => { });
 
     }
 
@@ -617,10 +796,11 @@ class ApiController extends ExtentionBaseClass
             return;
         }
 
-        this.Request(MessageType.getStoryInfo,
-            {
-                data: JSON.stringify(request)
-            },
+        //this.Request(MessageType.getStoryInfo,
+        //    {
+        //        data: JSON.stringify(request)
+        //    },
+        this.Request("StoryHub", "GetStoryInfo", [this.Config.token, storyIDs],
             function (res)
             {
                 var data = <{
@@ -650,15 +830,7 @@ class ApiController extends ExtentionBaseClass
 
     public GetUrl(path: string): string
     {
-        if (this._useHTTPS)
-        {
-            return "https://www.mrh-development.de/FanFictionUserScript/SSLProxy/?url=" + path;
-        }
-        else
-        {
-            return "http://private.mrh-development.de/ff/" + path;
-        }
-
+        return "https://www.mrh-development.de/static/ff/" + path;
     }
 
 

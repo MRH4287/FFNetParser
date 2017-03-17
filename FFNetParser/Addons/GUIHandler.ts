@@ -485,7 +485,7 @@ class GUIHandler extends ExtentionBaseClass
                                         Branch: self.BRANCH
                                     };
 
-                                    self.Parser.Api.Request(MessageType.postFeedback, { data: JSON.stringify(data) }, function () { });
+                                    self.Parser.Api.Request("MessageHub", "PostFeedback", [self.Config.token, "EasterEgg", "EasterEgg found!", "Easter Egg", {}], function () { });
                                 }
                             })
                             .attr('title', "Hello!");
@@ -751,7 +751,7 @@ class GUIHandler extends ExtentionBaseClass
                             ).append(
                                 $('<button class="btn btn-default">Local</button>').click(function ()
                                 {
-                                    $('#fflist-api_url').val("http://localhost:49990/FanFictionUserScript");
+                                    $('#fflist-api_url').val("https://www.mrh-development.de:88/signalr");
                                 })
                                 )
                             );
@@ -1429,7 +1429,7 @@ class GUIHandler extends ExtentionBaseClass
                 {
                     $(".modal").detach().appendTo("#ffnetParserContext").
                         show();
-                    
+
                 }
             }
         }, 300);
@@ -1959,7 +1959,7 @@ class GUIHandler extends ExtentionBaseClass
                                 })
                         );
                     }
-                },              
+                },
                 {
                     name: 'name',
                     type: GUIElementType.Input,
@@ -4490,10 +4490,21 @@ class GUIHandler extends ExtentionBaseClass
                     Branch: self.BRANCH
                 };
 
+                var sysInfo = {
+                    Browser: window.navigator.userAgent,
+                    Version: self.VERSION,
+                    Branch: self.BRANCH,
+                    Nested: self.Parser.LOAD_INTERNAL,
+                    SessionStorage: sessionStorage,
+                    LocalStorage: localStorage,
+                    Parser: self,
+                    Url: document.location
+                }
 
-                self.Parser.Api.Request(MessageType.postFeedback, { data: JSON.stringify(data) }, function () { });
-
-                alert("Message sent ...");
+                self.Parser.Api.Request("MessageHub", "PostFeedback", [self.Config.token, inputTitle.val(), inputMessage.val(), inputType.val(), sysInfo], function ()
+                {
+                    alert("Message sent ...");
+                });
 
                 modal.modal("hide");
             }));

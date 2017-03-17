@@ -30,6 +30,7 @@ module.exports = function (grunt)
             'build/Addons/GUIHandler.js',   
             'build/Addons/LiveChatHandler.js',
             'build/Addons/FFNetHandler.js',
+            'build/Addons/AO3Handler.js',
             'build/Addons/UpgradeHandler.js',
             'build/Addons/UserHandler.js',
             'build/Addons/GithubAPI.js', 
@@ -73,6 +74,10 @@ module.exports = function (grunt)
             "FFNetHandler"
         ],
 
+        AOOOaddons: [
+            "GUIHandler",
+            "AO3Handler"
+        ],
 
         concat: {
             options:
@@ -119,6 +124,40 @@ module.exports = function (grunt)
 
                 ], //<%= pkg.name %>
                 dest: 'ffnetlist.user.js' //<%= pkg.name %>
+            },
+            packAo:
+            {
+                src: [
+                    'build/headerAO3.js',
+                    'lib/jquery-1.10.2.js',
+                    'lib/jquery-ui.min.js',
+                    'lib/bootstrap-colorpicker.min.js',
+                    'lib/bootstrap.min.js',
+                    'lib/jquery.signalR-2.2.0.min.js',
+                    'FFNetParser/Interface/HubsConfig.js',
+                    'build/package.min.js',
+                    'lib/footer.js',
+                    'build/addons.js'
+
+                ], //<%= pkg.name %>
+                dest: 'ffnetlist.ao3.user.js' //<%= pkg.name %>
+            },
+            bigAo:
+            {
+                src: [
+                    'build/header.js',
+                    'lib/jquery-1.10.2.js',
+                    'lib/jquery-ui.min.js',
+                    'lib/bootstrap-colorpicker.min.js',
+                    'lib/bootstrap.min.js',
+                    'lib/jquery.signalR-2.2.0.min.js',
+                    'FFNetParser/Interface/HubsConfig.js',
+                    'build/package.js',
+                    'lib/footer.js',
+                    'build/addons.js'
+
+                ], //<%= pkg.name %>
+                dest: 'ffnetlist.ao3.user.js' //<%= pkg.name %>
             },
             standalone:
             {
@@ -184,6 +223,21 @@ module.exports = function (grunt)
                 },
                 files: [
                     { expand: true, flatten: true, src: ['lib/header.js'], dest: 'build/' }
+                ]
+            },
+            headerAO3:
+            {
+                options:
+                {
+                    patterns: [
+                        {
+                            match: 'VERSION',
+                            replacement: '<%= version %>'
+                        }
+                    ]
+                },
+                files: [
+                    { expand: true, flatten: true, src: ['lib/headerAO3.js'], dest: 'build/' }
                 ]
             },
             userscript:
@@ -352,7 +406,12 @@ module.exports = function (grunt)
                 options: {
                     addons: '<%= FFNetaddons %>'
                 }
-            }
+            },
+            aooo: {
+                options: {
+                    addons: '<%= AOOOaddons %>'
+                } 
+            }   
         }
     });
 
@@ -406,6 +465,36 @@ module.exports = function (grunt)
             'concat:big',
             'less',
             'copy:style'
+        ]);
+
+    grunt.registerTask('ao',
+        [
+            'gitinfo',
+            'versionUpdate',
+            'compile',
+            'replace:headerAO3',
+            'replace:userscript',
+            'addons:aooo',
+            'concat:userscript',
+            'uglify:dist',
+            'concat:packAo',
+            'less',
+            'copy:style'
+        ]);
+
+    grunt.registerTask('aoBig',
+        [
+            'gitinfo',
+            'versionUpdate',
+            'compile',
+            'replace:headerAO3',
+            'replace:userscript',
+            'addons:aooo',
+            'concat:userscript',
+            'concat:bigAo',
+            'less',
+            'copy:style'
+
         ]);
 
     grunt.registerTask('style',

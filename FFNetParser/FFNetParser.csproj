@@ -51,6 +51,7 @@
     <None Include="standalone\standaloneMap.json" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="Addons\AO3Handler.ts" />
     <TypeScriptCompile Include="Addons\AutoUpdateAddon.ts" />
     <TypeScriptCompile Include="Addons\ChromeSyncAddon.ts" />
     <TypeScriptCompile Include="Addons\EndlessModeHandler.ts" />
@@ -68,6 +69,7 @@
     <TypeScriptCompile Include="Addons\GUIHandler.ts" />
     <TypeScriptCompile Include="Addons\LiveChatHandler.ts" />
     <TypeScriptCompile Include="Addons\ParagraphMenu.ts" />
+    <TypeScriptCompile Include="Definitions\signalR.d.ts" />
     <TypeScriptCompile Include="standalone\ProgressIndicator.ts" />
     <TypeScriptCompile Include="standalone\Standalone.ts" />
     <TypeScriptCompile Include="Core\Types.ts" />
@@ -81,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="includeTemplate.js" />
+    <Content Include="Interface\HubsConfig.js" />
     <Content Include="standalone\categories.html" />
     <Content Include="standalone\elements.html" />
     <Content Include="standalone\Server.js" />

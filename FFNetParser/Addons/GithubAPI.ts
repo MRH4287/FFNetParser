@@ -27,12 +27,12 @@ class GithubAPI extends ExtentionBaseClass
 
     public Auth(callback? : () => void)
     {
-        if (!this.Parser.Api.UseCors)
-        {
-            console.error("CORS has to be active for this Feature to work!");
+        //if (!this.Parser.Api.UseCors)
+        //{
+        //    console.error("CORS has to be active for this Feature to work!");
 
-            return;
-        }
+        //    return;
+        //}
 
         window.open(this.Parser.Config.api_github_requestStart_url + "?token=" + this.Config.token);
 

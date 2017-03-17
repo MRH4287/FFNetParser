@@ -3,6 +3,7 @@
 /// <reference path="Definitions/jqueryui.d.ts" />
 /// <reference path="Definitions/chrome.d.ts" />
 /// <reference path="Definitions/bootstrap.d.ts" />
+/// <reference path="Definitions/signalR.d.ts" />
 
 /// <reference path="userscript.ts" />
 
@@ -18,4 +19,3 @@
 /// <reference path="Addons/UpgradeHandler.ts" />
 /// <reference path="Addons/GithubAPI.ts" />
 /// <reference path="Addons/UserHandler.ts" />
-
