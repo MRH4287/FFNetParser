@@ -39,6 +39,22 @@ class ParagraphMenu
             }
         });
 
+        this.EventHandler.AddEventListener(Events.PostInit, (s, a) =>
+        {
+            window.setTimeout(function ()
+            {
+                self.EventHandler.CallEvent(Events.PreParagraphCheck, self, null);
+
+                // Check if a Paragraph is given in the current request:
+                var reg = new RegExp(".+#paragraph=([0-9]+)");
+                if (reg.test(location.href))
+                {
+                    var match = reg.exec(location.href);
+                    self.GoToParagraphID(Number(match[1]));
+                }
+            }, 1000);
+        });
+
     }
 
     /**

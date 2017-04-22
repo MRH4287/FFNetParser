@@ -276,11 +276,10 @@ var StoryParser = (function () {
             }
             isNested = true;
             if (typeof (localStorage["ffnet-Script-VersionID"]) !== "undefined") {
-                var newVersionID = Number(localStorage["ffnet-Script-VersionID"]);
-                var currentID = this.GetVersionId(this.VERSION);
-                this.Log("Current Version ID: ", currentID);
-                this.Log("Cached Version ID: ", newVersionID);
-                if (newVersionID > currentID) {
+                var newVersion = localStorage["ffnet-Script-VersionID"];
+                this.Log("Current Version: ", this.VERSION);
+                this.Log("Cached Version: ", newVersion);
+                if (this.IsRemoteVersionHigher(this.VERSION, newVersion)) {
                     this.Log("New Version in Storage found ...");
                 }
                 else {
@@ -325,7 +324,7 @@ var StoryParser = (function () {
         else {
             try {
                 // Load Version Infos into the Local Storage:
-                localStorage["ffnet-Script-VersionID"] = this.GetVersionId(this.VERSION);
+                localStorage["ffnet-Script-VersionID"] = this.VERSION;
             }
             catch (e) {
                 console.error("Can't save Version id: ", e);
@@ -371,6 +370,7 @@ var StoryParser = (function () {
             console.info("Loading User Script...");
         }
         this.EventHandler.CallEvent(Events.OnLoad, this, null);
+        this.Api.SendStatus();
         this.Api.CheckVersion();
         if (this.DEBUG) {
             console.log("Update Check done.");
@@ -400,30 +400,22 @@ var StoryParser = (function () {
         if (this.DEBUG) {
             console.log("GUI Update done.");
         }
-        window.setTimeout(function () {
-            self.EventHandler.CallEvent(Events.PreParagraphCheck, self, null);
-            // Check if a Paragraph is given in the current request:
-            var reg = new RegExp(".+#paragraph=([0-9]+)");
-            if (reg.test(location.href)) {
-                var match = reg.exec(location.href);
-                self.GoToParagraphID(Number(match[1]));
-            }
-        }, 1000);
+        //TODO: Move
         setTimeout(function () {
             self.EventHandler.CallEvent(Events.PreMessageCheck, self, null);
             // Get Messages from Server:  
             if (typeof (self.DataConfig['messages']) === "undefined") {
                 self.Api.GetMessages(function (messages) {
                     self.EventHandler.CallEvent(Events.OnMessageGot, self, messages);
-                    if ((typeof (messages.Messages) !== "undefined") && (messages.Messages.length > 0)) {
+                    if ((typeof (messages) !== "undefined") && (messages.length > 0)) {
                         // New Messages:
-                        self.DataConfig['messages'] = messages.Messages;
+                        self.DataConfig['messages'] = messages;
                         // Update Icon:
                         //$(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
                         //$(".ffnetMessageContainer").css("background-color", "red");
                         $(".ffnetMessageContainer").find(".badge").remove();
                         $(".ffnetMessageContainer").append($('<div class="badge ffnet-messageCount"></div>'));
-                        $('.ffnet-messageCount').text(messages.Messages.length);
+                        $('.ffnet-messageCount').text(messages.length);
                         self.SaveDataStore();
                     }
                 });
@@ -2238,18 +2230,30 @@ var StoryParser = (function () {
             self.VERBOSE = false;
         }, time);
     };
-    /**
-     *   Gets the Version Ident Number
-     *   @param name Name of the Version
-     *   @result Version Ident Number
-     */
-    StoryParser.prototype.GetVersionId = function (name) {
-        var parts = name.split(".");
-        var version = 0;
-        for (var i = 0; i < parts.length; i++) {
-            version += Number(parts[i]) * Math.pow(100, (parts.length - i - 1));
+    StoryParser.prototype.IsRemoteVersionHigher = function (my, other) {
+        if (my === undefined || other === undefined) {
+            return false;
         }
-        return version;
+        var myParts = my.split(".");
+        var otherParts = other.split(".");
+        var result = undefined;
+        $.each(myParts, function (index, versionPart) {
+            if (result !== undefined) {
+                return;
+            }
+            var myNumPart = Number(versionPart);
+            var otherNumPart = Number(other[index]);
+            if (myNumPart < otherNumPart) {
+                result = true;
+            }
+            else if (myNumPart > otherNumPart) {
+                result = false;
+            }
+        });
+        if (result === undefined) {
+            result = otherParts.length > myParts.length;
+        }
+        return result;
     };
     // ---------- Localization
     /**

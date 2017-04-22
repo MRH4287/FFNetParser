@@ -359,13 +359,12 @@ class StoryParser
 
             if (typeof (localStorage["ffnet-Script-VersionID"]) !== "undefined")
             {
-                var newVersionID = Number(localStorage["ffnet-Script-VersionID"]);
-                var currentID = this.GetVersionId(this.VERSION);
+                var newVersion = localStorage["ffnet-Script-VersionID"];
+ 
+                this.Log("Current Version: ", this.VERSION);
+                this.Log("Cached Version: ", newVersion);
 
-                this.Log("Current Version ID: ", currentID);
-                this.Log("Cached Version ID: ", newVersionID);
-
-                if (newVersionID > currentID)
+                if (this.IsRemoteVersionHigher(this.VERSION, newVersion))
                 {
                     this.Log("New Version in Storage found ...");
                 }
@@ -438,7 +437,7 @@ class StoryParser
             try
             {
                 // Load Version Infos into the Local Storage:
-                localStorage["ffnet-Script-VersionID"] = this.GetVersionId(this.VERSION);
+                localStorage["ffnet-Script-VersionID"] = this.VERSION;
             }
             catch (e)
             {
@@ -512,6 +511,8 @@ class StoryParser
         this.EventHandler.CallEvent(Events.OnLoad, this, null);
 
 
+        this.Api.SendStatus();
+
         this.Api.CheckVersion();
 
         if (this.DEBUG)
@@ -561,23 +562,7 @@ class StoryParser
         }
 
 
-
-
-
-
-        window.setTimeout(function ()
-        {
-            self.EventHandler.CallEvent(Events.PreParagraphCheck, self, null);
-
-            // Check if a Paragraph is given in the current request:
-            var reg = new RegExp(".+#paragraph=([0-9]+)");
-            if (reg.test(location.href))
-            {
-                var match = reg.exec(location.href);
-                self.GoToParagraphID(Number(match[1]));
-            }
-        }, 1000);
-
+        //TODO: Move
         setTimeout(function ()
         {
             self.EventHandler.CallEvent(Events.PreMessageCheck, self, null);
@@ -589,10 +574,10 @@ class StoryParser
                 {
                     self.EventHandler.CallEvent(Events.OnMessageGot, self, messages);
 
-                    if ((typeof (messages.Messages) !== "undefined") && (messages.Messages.length > 0))
+                    if ((typeof (messages) !== "undefined") && (messages.length > 0))
                     {
                         // New Messages:
-                        self.DataConfig['messages'] = messages.Messages;
+                        self.DataConfig['messages'] = messages;
 
                         // Update Icon:
                         //$(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
@@ -600,7 +585,7 @@ class StoryParser
                         $(".ffnetMessageContainer").find(".badge").remove();
                         $(".ffnetMessageContainer").append($('<div class="badge ffnet-messageCount"></div>'));
 
-                        $('.ffnet-messageCount').text(messages.Messages.length);
+                        $('.ffnet-messageCount').text(messages.length);
 
                         self.SaveDataStore();
                     }
@@ -694,21 +679,26 @@ class StoryParser
     /**
      * Registers the used Events
      */
-    private RegisterEvents() {
+    private RegisterEvents()
+    {
         var self = this;
 
-        this.EventHandler.AddEventListener(Events.ActionForceSaveConfig, (sender, args) => {
-            if (args !== undefined && args !== null) {
+        this.EventHandler.AddEventListener(Events.ActionForceSaveConfig, (sender, args) =>
+        {
+            if (args !== undefined && args !== null)
+            {
                 self.SaveConfig(Boolean(args));
             }
             self.SaveConfig();
         });
 
-        this.EventHandler.AddEventListener(Events.ActionForceSaveDataStore, (sender, args) => {
+        this.EventHandler.AddEventListener(Events.ActionForceSaveDataStore, (sender, args) =>
+        {
             self.SaveDataStore();
         });
 
-        this.EventHandler.AddEventListener(Events.OnPageUpdate, () => {
+        this.EventHandler.AddEventListener(Events.OnPageUpdate, () =>
+        {
             // ReadList:
             this.ReadList();
         });
@@ -2068,7 +2058,7 @@ class StoryParser
                         Link: document.location.href
                     };
                     var storyInfo = self.EventHandler.RequestResponse<StoryInfo>(Events.RequestGetStoryInfo, self, storyInfoRequest);
-                    
+
                     var chapter = Number(element.attr("data-page"));
                     if (isNaN(chapter))
                     {
@@ -2280,7 +2270,7 @@ class StoryParser
                 Link: document.location.href
             };
             var info = self.EventHandler.RequestResponse<StoryInfo>(Events.RequestGetStoryInfo, self, infoRequest);
-            
+
             if (info.ID !== null)
             {
                 ids.push(info.ID);
@@ -2347,7 +2337,7 @@ class StoryParser
 
     // ------- Endless Mode ------
 
-    
+
 
 
     /**
@@ -2407,7 +2397,7 @@ class StoryParser
 
         if (elements.length !== 0)
         {
-            var wrapper = $(".ffNetPageWrapper[data-page=\"" + currentPage +"\"]");
+            var wrapper = $(".ffNetPageWrapper[data-page=\"" + currentPage + "\"]");
             if (wrapper.length === 0)
             {
                 wrapper = this.CreateWrapper(currentPage);
@@ -2461,7 +2451,7 @@ class StoryParser
     }
 
 
-  
+
     // ---- Sort Function -------
 
     public SortStories(sortFunction: (list: JQuery[]) => JQuery[], container?: JQuery)
@@ -3386,23 +3376,45 @@ class StoryParser
     }
 
 
-    /**
-     *   Gets the Version Ident Number
-     *   @param name Name of the Version
-     *   @result Version Ident Number
-     */
-    public GetVersionId(name: string): number
+    public IsRemoteVersionHigher(my: string, other: string): boolean
     {
-        var parts = name.split(".");
-        var version = 0;
-
-        for (var i = 0; i < parts.length; i++)
+        if (my === undefined || other === undefined)
         {
-            version += Number(parts[i]) * Math.pow(100, (parts.length - i - 1));
+            return false;
         }
 
-        return version;
+        var myParts = my.split(".");
+        var otherParts = other.split(".");
+
+        var result = undefined;
+        $.each(myParts, (index, versionPart) =>
+        {
+            if (result !== undefined)
+            {
+                return;
+            }
+
+            var myNumPart = Number(versionPart);
+            var otherNumPart = Number(other[index]);
+
+            if (myNumPart < otherNumPart)
+            {
+                result = true;
+            }
+            else if (myNumPart > otherNumPart)
+            {
+                result = false;
+            }
+        });
+
+        if (result === undefined)
+        {
+            result = otherParts.length > myParts.length;
+        }
+
+        return result;
     }
+
 
     // ---------- Localization
 

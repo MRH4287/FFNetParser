@@ -296,7 +296,7 @@ interface GistData
 
 interface ApiResponse
 {
-    Reponse: any;
+    Response: any;
     Error: string;
     Status: string;
     MessageID: string;

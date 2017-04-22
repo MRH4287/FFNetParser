@@ -150,6 +150,10 @@
         proxies['statusHub'] = this.createHubProxy('statusHub');
         proxies['statusHub'].client = {};
         proxies['statusHub'].server = {
+            reportException: function (message, url, line, column, error, messageId)
+            {
+                return proxies['statusHub'].invoke.apply(proxies['statusHub'], $.merge(["ReportException"], $.makeArray(arguments)));
+            }
         };
 
         proxies['storyHub'] = this.createHubProxy('storyHub');

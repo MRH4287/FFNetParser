@@ -11,11 +11,7 @@ class ApiController extends ExtentionBaseClass
 
     private _initialized: boolean = false;
 
-    private _requestQueue : (() => void )[] = [];
-
-    //private _useCors: boolean = true;
-
-    //private _useHTTPS: boolean = true;
+    private _requestQueue: (() => void)[] = [];
 
 
     public constructor(parser: StoryParser)
@@ -25,42 +21,32 @@ class ApiController extends ExtentionBaseClass
 
     public Initialize()
     {
-        //// Check if we use HTTPS
-        //this._useHTTPS = this.Config.api_url.toLowerCase().indexOf("https") !== -1;
-
-        //// Check for CORS:
-        //this._useCors = 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest();
-
         this.ConnectToServer();
+
+        try
+        {
+            var self = this;
+            var org = window.onerror;
+            window.onerror = function (msg, url, line, col, error)
+            {
+                try
+                {
+                    self.SendException(msg, url, String(line), String(col), JSON.stringify(error));
+                }
+                catch (ex)
+                {
+                }
+
+                if (org !== undefined)
+                {
+                    org(msg, url, line, col, error);
+                }
+            };
+        }
+        catch (ex)
+        {
+        }
     }
-
-    /**
-     *   Generic API-Request
-     *   @param data Request Options
-     *   @param callback Function executed after result was found
-     */
-    //public Request(command: MessageType, data: any, callback: (result: string) => void)
-    //{
-    //    var url = this.Config.api_url;
-    //    var apiLookupKey = this.Config.api_lookupKey;
-    //    var timeout = this.Config.api_timeout;
-    //    var retries = this.Config.api_retries;
-
-    //    data.command = MessageType[command];
-
-    //    this.EventHandler.CallEvent(Events.PreApiRequest, this, data);
-
-    //    if (this._useCors)
-    //    {
-    //        this.CorsRequest(url, data, callback);
-    //    }
-    //    else
-    //    {
-    //        console.warn("Your Browser doesn't support CORS. You are using the deprecated API-Feature. This feature will be removed in later releases");
-
-    //        this.JsonPRequest(url, data, apiLookupKey, timeout, retries, callback);
-    //    }
-    //}
 
     /* SignalR */
 
@@ -86,6 +72,8 @@ class ApiController extends ExtentionBaseClass
                 {
                     callback();
                 });
+
+                this._requestQueue = [];
             }
 
         });
@@ -106,9 +94,9 @@ class ApiController extends ExtentionBaseClass
             {
                 name = name.charAt(0).toUpperCase() + name.slice(1);
 
-                hub.client[name] = (json) =>
+                hub.client[name] = (data) =>
                 {
-                    self.Response(hubName, name, JSON.parse(json));
+                    self.Response(hubName, name, data);
                 };
 
                 if (self.DEBUG)
@@ -209,6 +197,7 @@ class ApiController extends ExtentionBaseClass
         }
     }
 
+
     private Response(hub: string, methode: string, data: ApiResponse)
     {
         // Make the first character lowerCase
@@ -248,9 +237,11 @@ class ApiController extends ExtentionBaseClass
             return;
         }
 
+        console.log("Got API-Message: ", data);
+
         try
         {
-            this._requestData[hub][methode][messageID](data.Reponse);
+            this._requestData[hub][methode][messageID](data.Response);
         }
         finally
         {
@@ -260,169 +251,95 @@ class ApiController extends ExtentionBaseClass
 
     /* /SignalR */
 
-    private CorsRequest(url: string, data: any, callback: (result: string) => void)
+    /**
+     * Report an Exception
+     * @param message The Error-Message
+     * @param url The Location of the Error
+     * @param line The Line of the Error
+     * @param column The Column of the Error
+     * @param error The Error-Object
+     */
+    public SendException(message: string, url: string, line: string, column: string, error: string)
     {
-        var self = this;
+        var sysInfo = this.GetSystemInformation();
 
-        data.CORS = true;
-
-        $.ajax({
-            type: 'GET',
-            url: url,
-            async: true,
-            contentType: "application/json",
-            dataType: 'json',
-            crossDomain: true,
-            data: data,
-            cache: false
-        })
-            .done(function (result)
-            {
-                self.Log("Got Result from Server: ", result);
-
-                var data = result.Data[0].Value;
-
-                self.EventHandler.CallEvent(Events.OnApiResult, this, data);
-
-                callback(data);
-
-            })
-            .fail(function (state)
-            {
-                console.error("[FFNet-Parser] Error while fetching Result from Server: ", state);
-            });
-
-    }
-
-    private JsonPRequest(url: string, data: any, apiLookupKey: string, timeout: Number, retries: Number, callback: (result: string) => void)
-    {
-        var self = this;
-
-        var messageID = Math.random().toString().split(".")[1];
-        data.adress = apiLookupKey + messageID;
-
-        $.ajax({
-            type: 'GET',
-            url: url,
-            async: false,
-            contentType: "application/json",
-            dataType: 'jsonp',
-            data: data,
-            cache: false
-        });
-
-
-
-        var tries = 0;
-
-        var checkFunction = function ()
+        try
         {
-            if (self.DEBUG)
-            {
-                console.log("API_Request - CheckFor Result");
-            }
+            this.Request("StatusHub", "ReportException", [message, url, line, column, error, sysInfo], (r) => { });
+        }
+        catch (ex)
+        {
+        }
+    }
 
-            if (tries >= retries)
-            {
-                if (self.DEBUG)
+    /**
+     * Sends Status Information
+     * @param page The current Page
+     */
+    public SendStatus(page: string = undefined)
+    {
+        if (!this.Config.api_checkForUpdates && !this.Config.enable_read_chapter_info)
+        {
+            return
+        }
+
+        try
+        {
+            var info =
                 {
-                    console.log("API_Request - To many tries, abort for ", data);
-                }
+                    Version: this.VERSION,
+                    Token: this.Config.token,
+                    Nested: (typeof (sessionStorage["ffnet-mutex"]) !== "undefined") ? true : false,
+                    Branch: this.BRANCH,
+                    Page: page || window.location.href,
+                    Browser: window.navigator.userAgent,
+                    Language: this.Config.language
+                };
 
-                return;
-            }
+            this.Request("StatusHub", "Notify", [info], (r) => { });
 
-            if ((typeof (sessionStorage[apiLookupKey + messageID]) !== "undefined") &&
-                (sessionStorage[apiLookupKey + messageID] !== "null") &&
-                sessionStorage[apiLookupKey + messageID] !== "undefined" &&
-                sessionStorage[apiLookupKey + messageID] !== null &&
-                sessionStorage[apiLookupKey + messageID] !== "")
+        }
+        catch (ex)
+        {
+            this.SendException("Can't send Status", "APIController", "", "", ex);
+
+            if (this.DEBUG)
             {
-                if (self.DEBUG)
-                {
-                    //console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
-                }
-
-                var result = sessionStorage[apiLookupKey + messageID];
-
-                // Clear last Result
-                delete sessionStorage[apiLookupKey + messageID];
-
-                this.eventHandler.callEvent("onAPIResult", this, result);
-
-                callback(result);
-
-            } else
-            {
-                if (self.DEBUG)
-                {
-                    console.log("API_Request - No Result found, Retry");
-                }
-                tries++;
-                window.setTimeout(checkFunction, timeout);
+                console.log("Can't send status Information ...", ex);
             }
-        };
-
-        window.setTimeout(checkFunction, timeout);
+        }
     }
 
 
+    /**
+     * Collect SystemInformation
+     */
+    public GetSystemInformation()
+    {
+        var sysInfo = {
+            Browser: window.navigator.userAgent,
+            Version: this.VERSION,
+            Branch: this.BRANCH,
+            Nested: this.Parser.LOAD_INTERNAL,
+            SessionStorage: sessionStorage,
+            LocalStorage: localStorage,
+            Parser: self,
+            Url: document.location
+        }
 
+        return sysInfo;
+    }
 
     /**
     *   Checks the current Version
     */
     public CheckVersion()
     {
-        if ((this.Config.api_checkForUpdates || this.Config.enable_read_chapter_info))
+        if (this.Config.api_checkForUpdates && (typeof (chrome) === "undefined" || typeof (chrome.runtime) === "undefined"))
         {
-            var statisticData =
-                {
-                    Version: this.VERSION,
-                    Token: this.Config.token,
-                    Nested: (typeof (sessionStorage["ffnet-mutex"]) !== "undefined") ? true : false,
-                    Branch: this.BRANCH,
-                    Page: window.location.href,
-                    Chrome: (typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined"),
-                    Language: this.Config.language
-                };
-
-            if (this.DEBUG && this.Config.api_checkForUpdates)
-            {
-                console.info("Check for Updates ...");
-                console.log("Sending Statistic Data: ", statisticData);
-            }
-
-            var requestData = JSON.stringify(statisticData);
-
             var self = this;
-
-            //this.Request(MessageType.getVersion, { data: requestData }, function (res)
-            this.Request("VersionHub", "GetVersion", [requestData], (res) =>
+            this.Request("VersionHub", "GetVersion", [], (version) =>
             {
-                if (!self.Config.api_checkForUpdates)
-                {
-                    // This is needed.
-                    // If the Update System is deactivated, but the Read Chapter Info Function is activated.
-                    // In that case, the Update Info is ignored.
-
-                    return;
-                }
-
-                if ((typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined"))
-                {
-                    self.Log("Ignore Update Info on Chrome Devices");
-
-                    return;
-                }
-
-                if (self.DEBUG)
-                {
-                    console.log("Version Received: ", res);
-                }
-
-                var version = JSON.parse(res);
-
                 if (self.DEBUG)
                 {
                     console.log("Version Info Recieved: ", version);
@@ -502,17 +419,15 @@ class ApiController extends ExtentionBaseClass
         //        data: this.BRANCH
         //    },
         //    function (res)
-        this.Request("ChatHub", "LiveChatInfo", [], (res) =>
+        this.Request("ChatHub", "LiveChatInfo", [], (data: { Users: string[]; WebUsers: string[]; DevInRoom: boolean; }) =>
         {
             if (self.DEBUG)
             {
-                self.Log("Got Live-Chat Info Response from Server: ", res);
+                self.Log("Got Live-Chat Info Response from Server: ", data);
             }
 
             try
             {
-                var data = <{ Users: string[]; WebUsers: string[]; DevInRoom: boolean; }>JSON.parse(res);
-
                 if (typeof (callback) !== "undefined")
                 {
                     callback(data);
@@ -543,10 +458,8 @@ class ApiController extends ExtentionBaseClass
 
         var self = this;
         //this.Request(MessageType.getLanguageList, { data: this.BRANCH }, function (res)
-        this.Request("LanguageHub", "GetLanguageList", [], (res) =>
+        this.Request("LanguageHub", "GetLanguageList", [], (result: LanguageData[]) =>
         {
-            var result = <LanguageData[]>JSON.parse(res);
-
             self.Log("Got Language List:", result);
 
             if (typeof (callback) !== "undefined")
@@ -607,10 +520,8 @@ class ApiController extends ExtentionBaseClass
 
         var self = this;
         //this.Request(MessageType.getLanguage, { data: languageCode }, function (res)
-        this.Request("LanguageHub", "GetLanguage", [languageCode], (res) =>
+        this.Request("LanguageHub", "GetLanguage", [languageCode], (result: LanguageData) =>
         {
-            var result = <LanguageData>JSON.parse(res);
-
             self.Log("Got Language: ", result);
 
             if (typeof (callback) !== "undefined")
@@ -692,9 +603,8 @@ class ApiController extends ExtentionBaseClass
         //};
 
         //this.Request(MessageType.getMessages, { data: JSON.stringify(data) }, function (result)
-        this.Request("MessageHub", "GetMessages", [this.Config.token], (result) =>
+        this.Request("MessageHub", "GetMessages", [this.Config.token], (response) =>
         {
-            var response = JSON.parse(result);
 
             callback(response);
 
@@ -801,14 +711,13 @@ class ApiController extends ExtentionBaseClass
         //        data: JSON.stringify(request)
         //    },
         this.Request("StoryHub", "GetStoryInfo", [this.Config.token, storyIDs],
-            function (res)
+            function (data: {
+                Data: { Key: string; Value: number[] }[];
+                LastChapter: {
+                    Key: string; Value: string;
+                }
+            })
             {
-                var data = <{
-                    Data: { Key: string; Value: number[] }[];
-                    LastChapter: {
-                        Key: string; Value: string;
-                    }
-                }>JSON.parse(res);
                 var result: { [index: string]: number[] } = {};
                 var lastChapter: { [index: string]: number } = {};
 

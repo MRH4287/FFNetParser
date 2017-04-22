@@ -4481,27 +4481,7 @@ class GUIHandler extends ExtentionBaseClass
         buttons.push($('<button class="btn btn-primary"></button>').text(self._("Send"))
             .click(() =>
             {
-                var data = {
-                    Token: self.Config.token,
-                    Type: inputType.val(),
-                    Title: inputTitle.val(),
-                    Message: inputMessage.val(),
-                    Version: self.VERSION,
-                    Branch: self.BRANCH
-                };
-
-                var sysInfo = {
-                    Browser: window.navigator.userAgent,
-                    Version: self.VERSION,
-                    Branch: self.BRANCH,
-                    Nested: self.Parser.LOAD_INTERNAL,
-                    SessionStorage: sessionStorage,
-                    LocalStorage: localStorage,
-                    Parser: self,
-                    Url: document.location
-                }
-
-                self.Parser.Api.Request("MessageHub", "PostFeedback", [self.Config.token, inputTitle.val(), inputMessage.val(), inputType.val(), sysInfo], function ()
+                self.Parser.Api.Request("MessageHub", "PostFeedback", [self.Config.token, inputTitle.val(), inputMessage.val(), inputType.val(), self.Parser.Api.GetSystemInformation()], function ()
                 {
                     alert("Message sent ...");
                 });
