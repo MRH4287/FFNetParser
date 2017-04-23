@@ -54,12 +54,14 @@
     <TypeScriptCompile Include="Addons\AO3Handler.ts" />
     <TypeScriptCompile Include="Addons\AutoUpdateAddon.ts" />
     <TypeScriptCompile Include="Addons\ChromeSyncAddon.ts" />
+    <TypeScriptCompile Include="Addons\DebugHandler.ts" />
     <TypeScriptCompile Include="Addons\EndlessModeHandler.ts" />
     <TypeScriptCompile Include="Addons\FFNetHandler.ts" />
     <TypeScriptCompile Include="Addons\HighlighterHandler.ts" />
     <TypeScriptCompile Include="Addons\PocketAddon.ts" />
     <TypeScriptCompile Include="Core\Start.ts" />
     <TypeScriptCompile Include="Core\ApiController.ts" />
+    <TypeScriptCompile Include="Definitions\appInsight.d.ts" />
     <TypeScriptCompile Include="Definitions\bootstrap.d.ts" />
     <TypeScriptCompile Include="Definitions\chrome.d.ts" />
     <TypeScriptCompile Include="Const\Events.ts" />

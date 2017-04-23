@@ -58,7 +58,7 @@ class ApiController extends ExtentionBaseClass
 
         $.connection.hub.error(function (error)
         {
-            console.log('SignalR error: ' + error)
+            console.log('SignalR error: ' + error);
         });
 
         $.connection.hub.start().done(() =>
@@ -137,7 +137,7 @@ class ApiController extends ExtentionBaseClass
             // Make the first character lowerCase
             methode = methode.charAt(0).toLowerCase() + methode.slice(1);
 
-            if (this._requestData[hub][methode] == undefined)
+            if (this._requestData[hub][methode] === undefined)
             {
                 this._requestData[hub][methode] = {};
             }
@@ -146,7 +146,7 @@ class ApiController extends ExtentionBaseClass
             do
             {
                 id = "req_" + Math.floor(Math.random() * 1000);
-            } while (this._requestData[hub][methode][id] !== undefined)
+            } while (this._requestData[hub][methode][id] !== undefined);
 
             // Check if the methode is available:
             var hubInfo = $.connection[hub];
@@ -155,7 +155,7 @@ class ApiController extends ExtentionBaseClass
                 throw "Hub '" + hub + "' Not found!";
             }
 
-            var methodeInfo = hubInfo.server[methode]
+            var methodeInfo = hubInfo.server[methode];
             if (methodeInfo === undefined)
             {
                 throw "Methode '" + methode + "' not found on Hub '" + hub + "'!";
@@ -280,7 +280,7 @@ class ApiController extends ExtentionBaseClass
     {
         if (!this.Config.api_checkForUpdates && !this.Config.enable_read_chapter_info)
         {
-            return
+            return;
         }
 
         try
@@ -325,7 +325,7 @@ class ApiController extends ExtentionBaseClass
             LocalStorage: localStorage,
             Parser: self,
             Url: document.location
-        }
+        };
 
         return sysInfo;
     }
@@ -346,10 +346,7 @@ class ApiController extends ExtentionBaseClass
                     console.log("Current Version: ", self.VERSION);
                 }
 
-                var versionID = self.Parser.GetVersionId(self.VERSION);
-                var removeVersionID = self.Parser.GetVersionId(version.version);
-
-                if (removeVersionID > versionID)
+                if (self.Parser.IsRemoteVersionHigher(self.VERSION, version.version))
                 {
                     if (!self.Config.api_autoIncludeNewVersion)
                     {

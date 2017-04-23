@@ -206,4 +206,17 @@ class ParagraphMenu
         this._menu.css("top", top + "px").css("left", left + "px");
 
     }
+
+
+    /**
+    *   Go to a specific Paragraph on the page
+    *   @param id Paragraph Number
+    */
+    private GoToParagraphID(id)
+    {
+        $($("p")[id]).before('<a name="goto" id="gotoMarker"></a>');
+        location.href = '#goto';
+        $("#gotoMarker").remove();
+    }
+
 }

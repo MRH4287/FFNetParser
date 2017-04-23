@@ -1,4 +1,4 @@
-﻿/*!
+/*!
  * ASP.NET SignalR JavaScript Library v2.2.1
  * http://signalr.net/
  *
@@ -150,7 +150,12 @@
         proxies['statusHub'] = this.createHubProxy('statusHub');
         proxies['statusHub'].client = {};
         proxies['statusHub'].server = {
-            reportException: function (message, url, line, column, error, messageId)
+            notify: function (sysinfo, messageId)
+            {
+                return proxies['statusHub'].invoke.apply(proxies['statusHub'], $.merge(["Notify"], $.makeArray(arguments)));
+            },
+
+            reportException: function (message, url, line, column, error, sysInfo, messageId)
             {
                 return proxies['statusHub'].invoke.apply(proxies['statusHub'], $.merge(["ReportException"], $.makeArray(arguments)));
             }
@@ -182,7 +187,7 @@
                 return proxies['versionHub'].invoke.apply(proxies['versionHub'], $.merge(["GetCurrent"], $.makeArray(arguments)));
             },
 
-            getVersion: function (data, messageID)
+            getVersion: function (messageID)
             {
                 return proxies['versionHub'].invoke.apply(proxies['versionHub'], $.merge(["GetVersion"], $.makeArray(arguments)));
             }

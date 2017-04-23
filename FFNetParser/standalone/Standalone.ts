@@ -145,7 +145,7 @@ class Standalone
             {
                 var element = $(el);
 
-                if (element.attr("href")[0] == "/")
+                if (element.attr("href")[0] === "/")
                 {
                     element.attr("data-href", element.attr("href"));
                     element.attr("href", self._basePath + element.attr("href"));
@@ -166,7 +166,7 @@ class Standalone
             {
                 var element = $(el);
 
-                if (element.attr("href")[0] == "/")
+                if (element.attr("href")[0] === "/")
                 {
                     element.click((e) =>
                     {
@@ -351,11 +351,14 @@ class Standalone
      */
     private ZeroAppend(compare, prepend: string): string
     {
-        if (compare != undefined && compare > 0)
+        if (compare !== undefined && compare > 0)
         {
             return prepend + compare;
         }
-        else return '';
+        else
+        {
+            return '';
+        }
     }
 
 

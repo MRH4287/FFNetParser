@@ -4,6 +4,7 @@
 /// <reference path="Definitions/chrome.d.ts" />
 /// <reference path="Definitions/bootstrap.d.ts" />
 /// <reference path="Definitions/signalR.d.ts" />
+/// <reference path="Definitions/appInsight.d.ts" />
 
 /// <reference path="userscript.ts" />
 

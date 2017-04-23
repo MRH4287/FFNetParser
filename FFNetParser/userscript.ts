@@ -2103,17 +2103,6 @@ class StoryParser
         this.EventHandler.CallEvent(Events.PostReadStory, this, storyElements);
     }
 
-    /**
-    *   Go to a specific Paragraph on the page
-    *   @param id Paragraph Number
-    */
-    private GoToParagraphID(id)
-    {
-        $($("p")[id]).before('<a name="goto" id="gotoMarker"></a>');
-        location.href = '#goto';
-        $("#gotoMarker").remove();
-    }
-
 
     //TODO: Remove
     /**
@@ -2237,6 +2226,8 @@ class StoryParser
      */
     private ManageReadChaptersInfo(overwrite: boolean = false)
     {
+        var self = this;
+
         if (!overwrite && this.Config.enable_read_chapter_info === false)
         {
             return;
@@ -2281,7 +2272,6 @@ class StoryParser
             }
         }
 
-        var self = this;
 
         this.Api.GetReadChapters(ids, function (result, lastChapters)
         {

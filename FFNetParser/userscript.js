@@ -1399,15 +1399,6 @@ var StoryParser = (function () {
         });
         this.EventHandler.CallEvent(Events.PostReadStory, this, storyElements);
     };
-    /**
-    *   Go to a specific Paragraph on the page
-    *   @param id Paragraph Number
-    */
-    StoryParser.prototype.GoToParagraphID = function (id) {
-        $($("p")[id]).before('<a name="goto" id="gotoMarker"></a>');
-        location.href = '#goto';
-        $("#gotoMarker").remove();
-    };
     //TODO: Remove
     /**
      * Enable the Reading Aid Function
@@ -1494,6 +1485,7 @@ var StoryParser = (function () {
      */
     StoryParser.prototype.ManageReadChaptersInfo = function (overwrite) {
         if (overwrite === void 0) { overwrite = false; }
+        var self = this;
         if (!overwrite && this.Config.enable_read_chapter_info === false) {
             return;
         }
@@ -1523,7 +1515,6 @@ var StoryParser = (function () {
                 return;
             }
         }
-        var self = this;
         this.Api.GetReadChapters(ids, function (result, lastChapters) {
             $.each(result, function (id, chapters) {
                 if (!isStory) {

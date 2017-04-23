@@ -312,7 +312,7 @@ interface RequestGetLinkToNextChapterEventArgs
 
 interface RequestGetLinkToPageNumberEventArgs
 {
-    Page: number
+    Page: number;
 };
 
 interface RequestGetStoryInfoEventArgs
@@ -326,7 +326,7 @@ interface ElementParseEventArgs
 }
 
 interface OnPageUpdateEventArgs {
-    Container?: JQuery
+    Container?: JQuery;
 }
 
 interface HideElementEventArgs

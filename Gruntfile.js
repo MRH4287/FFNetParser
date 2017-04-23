@@ -39,6 +39,7 @@ module.exports = function (grunt)
             'build/Addons/PocketAddon.js',
             'build/Addons/EndlessModeHandler.js',
             'build/Addons/HighlighterHandler.js',
+            'build/Addons/DebugHandler.js',
             
             'build/userscript.js',
             'build/Core/Start.js'
@@ -71,12 +72,14 @@ module.exports = function (grunt)
             "PocketAddon",
             "HighlighterHandler",
             "EndlessModeHandler",
-            "FFNetHandler"
+            "FFNetHandler",
+            "DebugHandler"
         ],
 
         AOOOaddons: [
             "GUIHandler",
-            "AO3Handler"
+            "AO3Handler",
+            "DebugHandler"
         ],
 
         concat: {
@@ -193,7 +196,7 @@ module.exports = function (grunt)
                 configuration: grunt.file.readJSON("tslint.json")
             },
             files: {
-                src: ['FFNetParser/*.ts', '!FFNetParser/*.d.ts']
+                src: ['FFNetParser/**/*.ts', '!FFNetParser/**/*.d.ts']
             }
         },
         typescript: {
