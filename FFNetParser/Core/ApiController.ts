@@ -612,7 +612,7 @@ class ApiController extends ExtentionBaseClass
     /**
      *   Tell the remote Server, that all new messages have been read
      */
-    public MarkMessages()
+    public MarkMessages(ids: number[])
     {
         delete this.DataConfig['messages'];
         this.Parser.SaveDataStore();
@@ -624,7 +624,7 @@ class ApiController extends ExtentionBaseClass
 
 
         //this.Request(MessageType.readMessages, { data: this.Config.token }, function (result)
-        this.Request("MessageHub", "SetAsRead", [this.Config.token], (res) => { });
+        this.Request("MessageHub", "SetAsRead", [this.Config.token, ids], (res) => { });
 
     }
 

@@ -4410,8 +4410,7 @@ class GUIHandler extends ExtentionBaseClass
 
         if (typeof (localMessages) !== "undefined")
         {
-            this.Parser.Api.MarkMessages();
-
+            var ids : number[] = [];
             $.each(localMessages, function (k, el)
             {
                 messages.append(
@@ -4423,7 +4422,11 @@ class GUIHandler extends ExtentionBaseClass
                         .html(el.Content)
                     )
                     .append("<hr />");
+
+                ids.push(el.ID);
             });
+
+            this.Parser.Api.MarkMessages(ids);
         }
 
         var modal = GUIHandler.CreateBootstrapModal(messages, this._('Messages:'));
