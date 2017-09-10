@@ -6,6 +6,11 @@ class EndlessModeHandler extends ExtentionBaseClass
     public constructor(parser: StoryParser)
     {
         super(parser);
+
+        this.EventHandler.AddEventListener(Events.PostInit, () =>
+        {
+            this.EnableEndlessMode();
+        });
     }
 
     private _endlessRequestPending = false;

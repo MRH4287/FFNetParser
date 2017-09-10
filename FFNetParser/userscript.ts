@@ -11,7 +11,7 @@ class StoryParser
     /**
      * Print all Events to the console.
      */
-    public VERBOSE: boolean = true;
+    public VERBOSE: boolean = false;
 
     /**
      * Do not use a stored Version from the Auto Updater.
@@ -549,19 +549,6 @@ class StoryParser
         }
 
 
-        if (this.DEBUG)
-        {
-            console.log("Pre GUI Update done.");
-            console.log("Starts GUI Update");
-        }
-
-
-        if (this.DEBUG)
-        {
-            console.log("GUI Update done.");
-        }
-
-
         //TODO: Move
         setTimeout(function ()
         {
@@ -749,9 +736,6 @@ class StoryParser
             this.UpdateColor(args);
         });
     }
-
-
-
 
     /**
      *   Parses the elements in the specified Container
@@ -981,8 +965,6 @@ class StoryParser
                         self.EventHandler.CallEvent(Events.ActionUpdateElementColor, self, updateColorData);
                     }
                 }
-
-
             }
 
             // Add Anchor:
@@ -993,8 +975,6 @@ class StoryParser
 
 
             self.DoParse(requestQueue, page);
-
-
 
             var data: ElementParseEventArgs = {
                 Url: link,

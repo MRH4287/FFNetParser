@@ -9,7 +9,7 @@ var StoryParser = (function () {
         /**
          * Print all Events to the console.
          */
-        this.VERBOSE = true;
+        this.VERBOSE = false;
         /**
          * Do not use a stored Version from the Auto Updater.
          */
@@ -392,13 +392,6 @@ var StoryParser = (function () {
         if ((typeof (chrome) === "undefined") || (typeof (chrome.runtime) === "undefined")) {
             // Use this because of the new HTTPS Restrictions ...
             this.Api.GetStyles();
-        }
-        if (this.DEBUG) {
-            console.log("Pre GUI Update done.");
-            console.log("Starts GUI Update");
-        }
-        if (this.DEBUG) {
-            console.log("GUI Update done.");
         }
         //TODO: Move
         setTimeout(function () {
