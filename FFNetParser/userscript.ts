@@ -988,23 +988,33 @@ class StoryParser
                     })
             );
 
-            var liveChatContainer = $("<div>" + self._('Live Chat') + "</div>")
-                .addClass("menuItem liveChatButton")
-                .click(function ()
-                {
+            //var liveChatContainer = $("<div>" + self._('Live Chat') + "</div>")
+            //    .addClass("menuItem liveChatButton")
+            //    .click(function ()
+            //    {
 
-                    messageContainer.hide();
+            //        messageContainer.hide();
 
-                    self.GUI.toggleLiveChat();
+            //        self.GUI.toggleLiveChat();
 
-                });
+            //    });
 
-            if (!this.chat.Available)
-            {
-                liveChatContainer.unbind("click").attr("title", self._("This Feature is not available in your Browser. Sorry!"));
-            }
+            //if (!this.chat.Available)
+            //{
+            //    liveChatContainer.unbind("click").attr("title", self._("This Feature is not available in your Browser. Sorry!"));
+            //}
 
-            innerContainer.append(liveChatContainer);
+            //innerContainer.append(liveChatContainer);
+
+            innerContainer.append(
+                $("<div>" + self._('Discord') + "</div>")
+                    .addClass("menuItem")
+                    .click(function ()
+                    {
+                        messageContainer.hide();
+                        window.open("https://discord.gg/bwwqCH3");
+                    })
+            );
 
             innerContainer.append(
                 $("<div>" + self._('Wiki') + "</div>")
