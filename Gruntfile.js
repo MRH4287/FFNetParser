@@ -102,8 +102,8 @@ module.exports = function (grunt)
                     'lib/jquery-ui.min.js',
                     'lib/bootstrap-colorpicker.min.js',
                     'lib/bootstrap.min.js',
-                    'lib/jquery.signalR-2.2.0.min.js',
-                    'FFNetParser/Interface/HubsConfig.js',
+                    'lib/socketio-2.0.3.js',
+                    //'FFNetParser/Interface/HubsConfig.js',
                     'build/package.min.js',
                     'lib/footer.js',
                     'build/addons.js'
@@ -119,8 +119,8 @@ module.exports = function (grunt)
                     'lib/jquery-ui.min.js',
                     'lib/bootstrap-colorpicker.min.js',
                     'lib/bootstrap.min.js',
-                    'lib/jquery.signalR-2.2.0.min.js',
-                    'FFNetParser/Interface/HubsConfig.js',
+                    'lib/socketio-2.0.3.js',
+                    //'FFNetParser/Interface/HubsConfig.js',
                     'build/package.js',
                     'lib/footer.js',
                     'build/addons.js'
@@ -136,8 +136,8 @@ module.exports = function (grunt)
                     'lib/jquery-ui.min.js',
                     'lib/bootstrap-colorpicker.min.js',
                     'lib/bootstrap.min.js',
-                    'lib/jquery.signalR-2.2.0.min.js',
-                    'FFNetParser/Interface/HubsConfig.js',
+                    'lib/socketio-2.0.3.js',
+                    //'FFNetParser/Interface/HubsConfig.js',
                     'build/package.min.js',
                     'lib/footer.js',
                     'build/addons.js'
@@ -153,8 +153,8 @@ module.exports = function (grunt)
                     'lib/jquery-ui.min.js',
                     'lib/bootstrap-colorpicker.min.js',
                     'lib/bootstrap.min.js',
-                    'lib/jquery.signalR-2.2.0.min.js',
-                    'FFNetParser/Interface/HubsConfig.js',
+                    'lib/socketio-2.0.3.js',
+                    //'FFNetParser/Interface/HubsConfig.js',
                     'build/package.js',
                     'lib/footer.js',
                     'build/addons.js'

@@ -13,7 +13,8 @@
                 "http://www.fanfiction.net/*",
                 "http://www.fictionpress.com/*",
                 "https://www.fanfiction.net/*",
-                "https://www.fictionpress.com/*"
+                "https://www.fictionpress.com/*",
+				"http://ffnet.local/*"
             ]
         }
     ],

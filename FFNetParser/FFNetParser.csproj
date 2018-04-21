@@ -72,6 +72,7 @@
     <TypeScriptCompile Include="Addons\LiveChatHandler.ts" />
     <TypeScriptCompile Include="Addons\ParagraphMenu.ts" />
     <TypeScriptCompile Include="Definitions\signalR.d.ts" />
+    <TypeScriptCompile Include="Definitions\socket.io.d.ts" />
     <TypeScriptCompile Include="standalone\ProgressIndicator.ts" />
     <TypeScriptCompile Include="standalone\Standalone.ts" />
     <TypeScriptCompile Include="Core\Types.ts" />

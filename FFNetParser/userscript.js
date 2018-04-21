@@ -311,6 +311,7 @@ var StoryParser = (function () {
                 try {
                     /*! jshint ignore:start */
                     eval(data.script);
+                    /*! jshint ignore:end */
                 }
                 catch (e) {
                     console.error("Invalid Local Script! Deleting");
