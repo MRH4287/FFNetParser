@@ -214,25 +214,25 @@ class GUIHandler extends ExtentionBaseClass
         });
 
         var availableLanguages: { name: string; id: string; }[] = [];
-        if (this.parser.availableLanguges !== null)
-        {
-            $.each(this.parser.availableLanguges, function (__, lang: LanguageData)
-            {
-                availableLanguages.push({
-                    id: lang.LanguageCode,
-                    name: lang.Name
-                });
+        //if (this.parser.availableLanguges !== null)
+        //{
+        //    $.each(this.parser.availableLanguges, function (__, lang: LanguageData)
+        //    {
+        //        availableLanguages.push({
+        //            id: lang.LanguageCode,
+        //            name: lang.Name
+        //        });
 
-            });
+        //    });
 
-        }
-        else
-        {
+        //}
+        //else
+        //{
             availableLanguages.push({
                 id: "en",
-                name: "Data not availble!"
+                name: "English"
             });
-        }
+        //}
 
 
         var storyData = this.registerGUI("config-story", this.config,
@@ -356,26 +356,26 @@ class GUIHandler extends ExtentionBaseClass
                     label: self._("General"),
                     value: undefined
                 },
-                {
-                    name: 'language',
-                    type: GUIElementType.Combobox,
-                    label: self._('Language'),
-                    value: function () { return self.config.language; },
-                    values: availableLanguages,
-                    customOptions: function (element: JQuery)
-                    {
-                        element.change(function ()
-                        {
-                            var selected = element.val();
+                //{
+                //    name: 'language',
+                //    type: GUIElementType.Combobox,
+                //    label: self._('Language'),
+                //    value: function () { return self.config.language; },
+                //    values: availableLanguages,
+                //    customOptions: function (element: JQuery)
+                //    {
+                //        element.change(function ()
+                //        {
+                //            var selected = element.val();
 
-                            if (selected !== self.config.language)
-                            {
-                                self.parser.api_getLanguage(selected, undefined, true, true);
-                            }
+                //            if (selected !== self.config.language)
+                //            {
+                //                self.parser.api_getLanguage(selected, undefined, true, true);
+                //            }
 
-                        });
-                    }
-                },
+                //        });
+                //    }
+                //},
                 {
                     name: 'content_width',
                     type: GUIElementType.Input,
@@ -447,19 +447,19 @@ class GUIHandler extends ExtentionBaseClass
                                     $('<script></script>').attr("src", chrome.extension.getURL('FFNetParser/GameEngine/run.js')).appendTo($("head"));
                                 }, 500);
 
-                                if (self.config.token !== "MRH")
-                                {
-                                    var data = {
-                                        Token: self.config.token,
-                                        Type: "EasterEgg",
-                                        Title: "EasterEgg",
-                                        Message: "EasterEgg found!",
-                                        Version: self.VERSION,
-                                        Branch: self.BRANCH
-                                    };
+                                //if (self.config.token !== "MRH")
+                                //{
+                                //    var data = {
+                                //        Token: self.config.token,
+                                //        Type: "EasterEgg",
+                                //        Title: "EasterEgg",
+                                //        Message: "EasterEgg found!",
+                                //        Version: self.VERSION,
+                                //        Branch: self.BRANCH
+                                //    };
 
-                                    self.parser.apiRequest({ command: "postFeedback", data: JSON.stringify(data) }, function () { });
-                                }
+                                //   // self.parser.apiRequest({ command: "postFeedback", data: JSON.stringify(data) }, function () { });
+                                //}
                             })
                             .attr('title', "Hello!");
                     }
@@ -1506,14 +1506,14 @@ class GUIHandler extends ExtentionBaseClass
                 }
             }));
 
-        buttons.push(
-            $('<button type="button" class="btn btn-default">Support Me</button>').click((e) =>
-            {
-                if (confirm(this._('If you want to support my work, you can do that on Patreon. Open Patreon page?')))
-                {
-                    window.open("https://www.patreon.com/Invocate");
-                }
-            }));
+        //buttons.push(
+        //    $('<button type="button" class="btn btn-default">Support Me</button>').click((e) =>
+        //    {
+        //        if (confirm(this._('If you want to support my work, you can do that on Patreon. Open Patreon page?')))
+        //        {
+        //            window.open("https://www.patreon.com/Invocate");
+        //        }
+        //    }));
 
 
         buttons.push(
@@ -2741,7 +2741,7 @@ class GUIHandler extends ExtentionBaseClass
             );
 
 
-            // ----------- Github API -------------
+            //// ----------- Github API -------------
 
 
             panel = $('<div class="panel panel-default"></div>').appendTo(panelMain);
@@ -3085,12 +3085,6 @@ class GUIHandler extends ExtentionBaseClass
                 .append(
                 tbody
                 );
-
-
-
-
-
-
 
 
             // --- Call the Accordion Script ---
@@ -4177,177 +4171,177 @@ class GUIHandler extends ExtentionBaseClass
     }
 
 
-    /**
-     *   Open or closes the GUI for the Live Chat
-     */
-    public toggleLiveChat()
-    {
+    ///**
+    // *   Open or closes the GUI for the Live Chat
+    // */
+    //public toggleLiveChat()
+    //{
 
-        var self = this;
+    //    var self = this;
 
-        if (this.guiContainer == null)
-        {
-            if (this.DEBUG)
-            {
-                console.log("Generate GUI Container");
-            }
+    //    if (this.guiContainer == null)
+    //    {
+    //        if (this.DEBUG)
+    //        {
+    //            console.log("Generate GUI Container");
+    //        }
 
-            this.gui_create();
-        }
+    //        this.gui_create();
+    //    }
 
-        if (this.guiContainer.is(':visible'))
-        {
-            if (this.DEBUG)
-            {
-                console.log("Hide GUI Container");
-            }
+    //    if (this.guiContainer.is(':visible'))
+    //    {
+    //        if (this.DEBUG)
+    //        {
+    //            console.log("Hide GUI Container");
+    //        }
 
-            this.gui_hide();
+    //        this.gui_hide();
 
-        } else
-        {
-            if (!this.parser.chat.Available)
-            {
-                alert(self._("This Feature is not enabled in your Browser. Needed: WebSocket"));
-                return;
-            }
-
-
-            if (this.DEBUG)
-            {
-                console.log("Starting Content Generation");
-            }
-
-            this.guiContainer.html('');
-
-            var userList = $('<span>' + self._('Online') + ': (?)</span>')
-                .addClass('ChatUserInfo');
-
-            this.guiContainer.append($('<h2 style="text-align:center: magin-bottom: 10px">' + self._('Live Chat Feature:') + '</h2>').append(userList));
+    //    } else
+    //    {
+    //        if (!this.parser.chat.Available)
+    //        {
+    //            alert(self._("This Feature is not enabled in your Browser. Needed: WebSocket"));
+    //            return;
+    //        }
 
 
-            var chatContainer = $("<div></div>").appendTo(this.guiContainer).hide();
+    //        if (this.DEBUG)
+    //        {
+    //            console.log("Starting Content Generation");
+    //        }
 
-            var connectBox = $("<div></div>").appendTo(this.guiContainer);
-            connectBox.append("<p>" + self._("This Feature allows you to connect to the Live-Chat.") + "<p>")
-                .append("<p>" + self._("If you need help or just want to talk, you are welcome!") + "</p>")
-                .append("<p>" + self._("I can't be online all the time. I am living in Europe, so please have this in mind") + "</p>")
-                .append("<hr /><p>" + self._("The Connection is made using an Encrypted Connection to my Server.") + "</p>")
-                .append('<p><abbr title="irc.esper.net#FanfictionStoryParser">' + self._('Every Message is sent to my IRC-Channel') + '</abbr></p>')
-                .append(
-                $('<div style="text-align:center"></div>').append(
-                    $('<button class="btn btn-primary">' + self._('Connect') + '</button>')
-                        .click(function (e)
-                        {
-                            e.preventDefault();
-                            connectBox.fadeOut(0.5, function ()
-                            {
-                                self.parser.chat.connect();
+    //        this.guiContainer.html('');
 
-                                chatContainer.fadeIn(0.5);
-                            });
+    //        var userList = $('<span>' + self._('Online') + ': (?)</span>')
+    //            .addClass('ChatUserInfo');
 
-                        })
-                )
-                );
+    //        this.guiContainer.append($('<h2 style="text-align:center: magin-bottom: 10px">' + self._('Live Chat Feature:') + '</h2>').append(userList));
 
 
-            var addMessageElement = function (sender, message, time)
-            {
-                var newMeessage = $('<div class="ChatMessage"></div>')
-                    .append($('<div class="Sender"></div>').text(sender))
-                    .append($('<div class="Message"></div>').text(message))
-                    .append($('<div class="Time"></div>').text(time));
+    //        var chatContainer = $("<div></div>").appendTo(this.guiContainer).hide();
 
-                container.append(newMeessage);
+    //        var connectBox = $("<div></div>").appendTo(this.guiContainer);
+    //        connectBox.append("<p>" + self._("This Feature allows you to connect to the Live-Chat.") + "<p>")
+    //            .append("<p>" + self._("If you need help or just want to talk, you are welcome!") + "</p>")
+    //            .append("<p>" + self._("I can't be online all the time. I am living in Europe, so please have this in mind") + "</p>")
+    //            .append("<hr /><p>" + self._("The Connection is made using an Encrypted Connection to my Server.") + "</p>")
+    //            .append('<p><abbr title="irc.esper.net#FanfictionStoryParser">' + self._('Every Message is sent to my IRC-Channel') + '</abbr></p>')
+    //            .append(
+    //            $('<div style="text-align:center"></div>').append(
+    //                $('<button class="btn btn-primary">' + self._('Connect') + '</button>')
+    //                    .click(function (e)
+    //                    {
+    //                        e.preventDefault();
+    //                        connectBox.fadeOut(0.5, function ()
+    //                        {
+    //                            self.parser.chat.connect();
 
-                container[0].scrollTop = container[0].scrollHeight;
+    //                            chatContainer.fadeIn(0.5);
+    //                        });
 
-            };
-
-
-            var container = $('<div class="ChatMessageContainer"></div>').appendTo(chatContainer);
-            var input = $('<input type="text" />');
-
-            var send = function ()
-            {
-                var text = input.val();
-                input.val("");
-
-                //addMessageElement(self.config.token, text, (new Date()).toLocaleTimeString());
-                self.parser.chat.sendChatMessage(text);
-
-            };
-
-            chatContainer.append(container);
-            chatContainer.append(
-                $('<div class="ChatInputContainer"></div>')
-                    .append(input)
-                    .append(
-                    $('<button class="btn btn-primary">' + self._('Send') + '</button>').click(function (e)
-                    {
-                        send();
-                    })
-                    )
-            )
-                .append('<hr/><p style="text-align:center">' + self._('Advanced Features:') + '</p>')
-                .append(
-                $('<button class="btn btn-warning">' + self._('Send Config-Data') + '</button>')
-                    .click(function (e)
-                    {
-                        e.preventDefault();
-
-                        if (confirm(self._("This Option allows you to send your Config-Data to the Server. This helps me to help you :3  Do you REALY want to send this?")))
-                        {
-                            self.parser.chat.sendConfigData();
-                        }
-                    })
-                );
-
-            input.keydown(function (e)
-            {
-                if (e.keyCode === 13)
-                {
-                    send();
-                }
-            });
-
-            this.parser.chat.onError = function (message)
-            {
-                addMessageElement("System", message, (new Date().toLocaleTimeString()));
-
-            };
+    //                    })
+    //            )
+    //            );
 
 
+    //        var addMessageElement = function (sender, message, time)
+    //        {
+    //            var newMeessage = $('<div class="ChatMessage"></div>')
+    //                .append($('<div class="Sender"></div>').text(sender))
+    //                .append($('<div class="Message"></div>').text(message))
+    //                .append($('<div class="Time"></div>').text(time));
 
-            //addMessageElement("System", "Connected to Server", (new Date()).toLocaleTimeString());
+    //            container.append(newMeessage);
 
-            this.parser.chat.setMessageCallback(function (data: WebSocketMessage)
-            {
-                if (data.Type === "Chat")
-                {
-                    addMessageElement(data.Sender, data.Data, (new Date(Number(data.Time)).toLocaleTimeString()));
-                }
+    //            container[0].scrollTop = container[0].scrollHeight;
 
-            });
-
-
-            //addMessageElement("Test", "Das ist ein Test einer längeren Nachticht ... 123 BLUB", "NOW");
+    //        };
 
 
-            this.log("Display Content");
+    //        var container = $('<div class="ChatMessageContainer"></div>').appendTo(chatContainer);
+    //        var input = $('<input type="text" />');
+
+    //        var send = function ()
+    //        {
+    //            var text = input.val();
+    //            input.val("");
+
+    //            //addMessageElement(self.config.token, text, (new Date()).toLocaleTimeString());
+    //            self.parser.chat.sendChatMessage(text);
+
+    //        };
+
+    //        chatContainer.append(container);
+    //        chatContainer.append(
+    //            $('<div class="ChatInputContainer"></div>')
+    //                .append(input)
+    //                .append(
+    //                $('<button class="btn btn-primary">' + self._('Send') + '</button>').click(function (e)
+    //                {
+    //                    send();
+    //                })
+    //                )
+    //        )
+    //            .append('<hr/><p style="text-align:center">' + self._('Advanced Features:') + '</p>')
+    //            .append(
+    //            $('<button class="btn btn-warning">' + self._('Send Config-Data') + '</button>')
+    //                .click(function (e)
+    //                {
+    //                    e.preventDefault();
+
+    //                    if (confirm(self._("This Option allows you to send your Config-Data to the Server. This helps me to help you :3  Do you REALY want to send this?")))
+    //                    {
+    //                        self.parser.chat.sendConfigData();
+    //                    }
+    //                })
+    //            );
+
+    //        input.keydown(function (e)
+    //        {
+    //            if (e.keyCode === 13)
+    //            {
+    //                send();
+    //            }
+    //        });
+
+    //        this.parser.chat.onError = function (message)
+    //        {
+    //            addMessageElement("System", message, (new Date().toLocaleTimeString()));
+
+    //        };
 
 
-            this.gui_show(function ()
-            {
 
-                self.parser.chat.disconnect();
+    //        //addMessageElement("System", "Connected to Server", (new Date()).toLocaleTimeString());
 
-            });
-        }
+    //        this.parser.chat.setMessageCallback(function (data: WebSocketMessage)
+    //        {
+    //            if (data.Type === "Chat")
+    //            {
+    //                addMessageElement(data.Sender, data.Data, (new Date(Number(data.Time)).toLocaleTimeString()));
+    //            }
+
+    //        });
 
 
-    }
+    //        //addMessageElement("Test", "Das ist ein Test einer längeren Nachticht ... 123 BLUB", "NOW");
+
+
+    //        this.log("Display Content");
+
+
+    //        this.gui_show(function ()
+    //        {
+
+    //            self.parser.chat.disconnect();
+
+    //        });
+    //    }
+
+
+    //}
 
 
 
@@ -4467,73 +4461,76 @@ class GUIHandler extends ExtentionBaseClass
      */
     public feedbackGUI()
     {
-        var self = this;
-        var types = [self._("Bug"), self._("Feature Request"), self._("Question"), self._("Other")];
 
-        var inputType = $('<select id="feedbackType" class="form-control"></select>');
-        $.each(types, function (_, type)
-        {
-            $("<option></option>").text(type)
-                .appendTo(inputType);
-        });
+        return;
 
-        var inputTitle = $('<input id="feedbackTitle" type="text" class="form-control" required />');
-        var inputMessage = $('<textarea id="feedbackMessage" rows="5" class="form-control" required></textarea>'); // style="width:90%; height: 100px;"
+        //var self = this;
+        //var types = [self._("Bug"), self._("Feature Request"), self._("Question"), self._("Other")];
 
+        //var inputType = $('<select id="feedbackType" class="form-control"></select>');
+        //$.each(types, function (_, type)
+        //{
+        //    $("<option></option>").text(type)
+        //        .appendTo(inputType);
+        //});
 
-        var element = $('<div></div>')
-            .append(
-            $("<h2></h2>").text(self._('Feedback'))
-            )
-            .append(
-            $('<div class="form-group"></div>')
-                .append(
-                $('<label for="feedbackType"></label').text(self._('Type'))
-                )
-                .append(inputType)
-            )
-            .append(
-            $('<div class="form-group"></div>')
-                .append(
-                $('<label for="feedbackTitle"></label').text(self._('Title'))
-                )
-                .append(inputTitle)
-            )
-            .append(
-            $('<div class="form-group"></div>')
-                .append(
-                $('<label for="feedbackMessage"></label').text(self._('Message'))
-                )
-                .append(inputMessage)
-                .append($('<p></p>').text(self._('Please write English OR German!')))
-            );
-
-        var buttons: JQuery[] = [];
-
-        buttons.push($('<button class="btn btn-primary"></button>').text(self._("Send"))
-            .click(() =>
-            {
-                var data = {
-                    Token: self.config.token,
-                    Type: inputType.val(),
-                    Title: inputTitle.val(),
-                    Message: inputMessage.val(),
-                    Version: self.VERSION,
-                    Branch: self.BRANCH
-                };
+        //var inputTitle = $('<input id="feedbackTitle" type="text" class="form-control" required />');
+        //var inputMessage = $('<textarea id="feedbackMessage" rows="5" class="form-control" required></textarea>'); // style="width:90%; height: 100px;"
 
 
-                self.parser.apiRequest({ command: "postFeedback", data: JSON.stringify(data) }, function () { });
+        //var element = $('<div></div>')
+        //    .append(
+        //    $("<h2></h2>").text(self._('Feedback'))
+        //    )
+        //    .append(
+        //    $('<div class="form-group"></div>')
+        //        .append(
+        //        $('<label for="feedbackType"></label').text(self._('Type'))
+        //        )
+        //        .append(inputType)
+        //    )
+        //    .append(
+        //    $('<div class="form-group"></div>')
+        //        .append(
+        //        $('<label for="feedbackTitle"></label').text(self._('Title'))
+        //        )
+        //        .append(inputTitle)
+        //    )
+        //    .append(
+        //    $('<div class="form-group"></div>')
+        //        .append(
+        //        $('<label for="feedbackMessage"></label').text(self._('Message'))
+        //        )
+        //        .append(inputMessage)
+        //        .append($('<p></p>').text(self._('Please write English OR German!')))
+        //    );
 
-                alert("Message sent ...");
+        //var buttons: JQuery[] = [];
 
-                modal.modal("hide");
-            }));
+        //buttons.push($('<button class="btn btn-primary"></button>').text(self._("Send"))
+        //    .click(() =>
+        //    {
+        //        var data = {
+        //            Token: self.config.token,
+        //            Type: inputType.val(),
+        //            Title: inputTitle.val(),
+        //            Message: inputMessage.val(),
+        //            Version: self.VERSION,
+        //            Branch: self.BRANCH
+        //        };
 
-        buttons.push($('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'));
 
-        var modal = GUIHandler.createBootstrapModal(element, self._("Feedback"), buttons);
-        GUIHandler.showModal(modal);
+        //        self.parser.apiRequest({ command: "postFeedback", data: JSON.stringify(data) }, function () { });
+
+        //        alert("Message sent ...");
+
+        //        modal.modal("hide");
+        //    }));
+
+        //buttons.push($('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'));
+
+        //var modal = GUIHandler.createBootstrapModal(element, self._("Feedback"), buttons);
+        //GUIHandler.showModal(modal);
     }
 
 

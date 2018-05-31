@@ -5,7 +5,6 @@
 interface Config
 {
     story_search_depth: number;
-    /* Yeah those names are wrong, but i don't want to make a rewrite Function Method to fix that ... */
     mark_M_storys: boolean;
     hide_non_english_storys: boolean;
     allow_copy: boolean;
@@ -35,6 +34,7 @@ interface Config
     endless_forceClickAfter: number;    // Show a "Next Page" button after X pages
 
     // API:
+    api_enabled: boolean;
     pocket_user: string;
     pocket_password: string;
     api_url: string;

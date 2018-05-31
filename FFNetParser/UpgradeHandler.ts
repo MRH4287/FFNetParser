@@ -19,6 +19,16 @@ class UpgradeHandler extends ExtentionBaseClass
         }
         var self = this;
 
+        // Update 5.4.9 - API
+        this.registerTag("filter_keep_searching", function ()
+        {
+            self.config.api_enabled = false;
+
+            self.parser.save_config();
+
+            return true;
+        });
+
         // Update 5.2.4 - Adds Keep Searching to the Filter Config
         this.registerTag("filter_keep_searching", function ()
         {

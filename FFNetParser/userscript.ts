@@ -110,6 +110,7 @@ class StoryParser
         endless_forceClickAfter: 5,    // Show a "Next Page" button after X pages
 
         // API:
+        api_enabled: false,
         pocket_user: null,
         pocket_password: null,
         api_url: "https://www.mrh-development.de/FanFictionUserScript",
@@ -774,46 +775,46 @@ class StoryParser
             }
         }, 1000);
 
-        setTimeout(function ()
-        {
-            self.eventHandler.callEvent("preMessageCheck", self, null);
+        //setTimeout(function ()
+        //{
+        //    self.eventHandler.callEvent("preMessageCheck", self, null);
 
-            // Get Messages from Server:  
-            if (typeof (self.dataConfig['messages']) === "undefined")
-            {
-                self.api_GetMessages(function (messages)
-                {
-                    self.eventHandler.callEvent("onMessageGot", self, messages);
+        //    // Get Messages from Server:  
+        //    if (typeof (self.dataConfig['messages']) === "undefined")
+        //    {
+        //        self.api_GetMessages(function (messages)
+        //        {
+        //            self.eventHandler.callEvent("onMessageGot", self, messages);
 
-                    if ((typeof (messages.Messages) !== "undefined") && (messages.Messages.length > 0))
-                    {
-                        // New Messages:
-                        self.dataConfig['messages'] = messages.Messages;
+        //            if ((typeof (messages.Messages) !== "undefined") && (messages.Messages.length > 0))
+        //            {
+        //                // New Messages:
+        //                self.dataConfig['messages'] = messages.Messages;
 
-                        // Update Icon:
-                        //$(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
-                        //$(".ffnetMessageContainer").css("background-color", "red");
-                        $(".ffnetMessageContainer").find(".badge").remove();
-                        $(".ffnetMessageContainer").append($('<div class="badge ffnet-messageCount"></div>'));
+        //                // Update Icon:
+        //                //$(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
+        //                //$(".ffnetMessageContainer").css("background-color", "red");
+        //                $(".ffnetMessageContainer").find(".badge").remove();
+        //                $(".ffnetMessageContainer").append($('<div class="badge ffnet-messageCount"></div>'));
 
-                        $('.ffnet-messageCount').text(messages.Messages.length);
+        //                $('.ffnet-messageCount').text(messages.Messages.length);
 
-                        self.save_dataStore();
-                    }
-                });
+        //                self.save_dataStore();
+        //            }
+        //        });
 
-            }
-            else
-            {
-                // Update Icon:
-                //$(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
-                $(".ffnetMessageContainer").find(".badge").remove();
-                $(".ffnetMessageContainer").append($('<div class="badge ffnet-messageCount"></div>'));
+        //    }
+        //    else
+        //    {
+        //        // Update Icon:
+        //        //$(".ffnetMessageContainer img").attr("src", self.getUrl("message_new-white.png"));
+        //        $(".ffnetMessageContainer").find(".badge").remove();
+        //        $(".ffnetMessageContainer").append($('<div class="badge ffnet-messageCount"></div>'));
 
-                $('.ffnet-messageCount').text(self.dataConfig['messages'].length);
-            }
+        //        $('.ffnet-messageCount').text(self.dataConfig['messages'].length);
+        //    }
 
-        }, 5000);
+        //}, 5000);
 
         this.eventHandler.callEvent("postInit", this, null);
     }
@@ -869,10 +870,6 @@ class StoryParser
             this.eventHandler.callEvent("postGUIMenuAppend", this, table);
 
         }
-
-        // Add Messages Menu:
-        this.log("Add Messages Menu");
-
         var menulinks = $(".menulink").first();
 
 
@@ -929,18 +926,18 @@ class StoryParser
                         .css("left", (pos.left - 100) + "px")
                         .show();
 
-                    self.api_getLiveChatInfo(function (res)
-                    {
-                        if (res.DevInRoom)
-                        {
-                            $(".liveChatButton").addClass("online")
-                                .attr("title", self._('The Dev is currently online.'));
-                        }
-                        else
-                        {
-                            $(".liveChatButton").removeClass("online").removeAttr("title");
-                        }
-                    });
+                    //self.api_getLiveChatInfo(function (res)
+                    //{
+                    //    if (res.DevInRoom)
+                    //    {
+                    //        $(".liveChatButton").addClass("online")
+                    //            .attr("title", self._('The Dev is currently online.'));
+                    //    }
+                    //    else
+                    //    {
+                    //        $(".liveChatButton").removeClass("online").removeAttr("title");
+                    //    }
+                    //});
 
 
                 }
@@ -965,17 +962,17 @@ class StoryParser
             }
 
 
-            innerContainer.append(
-                $('<div><span class="ffnet-messageCount">' + count + "</span> " + self._('Message(s)') + "</div>")
-                    .addClass("menuItem")
-                    .click(function ()
-                    {
-                        messageContainer.hide();
+            //innerContainer.append(
+            //    $('<div><span class="ffnet-messageCount">' + count + "</span> " + self._('Message(s)') + "</div>")
+            //        .addClass("menuItem")
+            //        .click(function ()
+            //        {
+            //            messageContainer.hide();
 
-                        self.GUI.messagesGUI();
+            //            self.GUI.messagesGUI();
 
-                    })
-            );
+            //        })
+            //);
 
             innerContainer.append(
                 $("<div>" + self._('Give Feedback') + "</div>")
@@ -984,7 +981,8 @@ class StoryParser
                     {
                         messageContainer.hide();
 
-                        self.GUI.feedbackGUI();
+                        //self.GUI.feedbackGUI();
+                        alert('Please send me an email to dev' + '@mrh-development.de');
                     })
             );
 
@@ -4791,106 +4789,110 @@ class StoryParser
 
         var self = this;
 
-        if (this.useCORS)
-        {
-            data.CORS = true;
+        callback(null);
+        return;
+        // BREAK
 
-            $.ajax({
-                type: 'GET',
-                url: url,
-                async: true,
-                contentType: "application/json",
-                dataType: 'json',
-                crossDomain: true,
-                data: data,
-                cache: false
-            })
-                .done(function (result)
-                {
-                    self.log("Got Result from Server: ", result);
+        //if (this.useCORS)
+        //{
+        //    data.CORS = true;
 
-                    var data = result.Data[0].Value;
+        //    $.ajax({
+        //        type: 'GET',
+        //        url: url,
+        //        async: true,
+        //        contentType: "application/json",
+        //        dataType: 'json',
+        //        crossDomain: true,
+        //        data: data,
+        //        cache: false
+        //    })
+        //        .done(function (result)
+        //        {
+        //            self.log("Got Result from Server: ", result);
 
-                    self.eventHandler.callEvent("onAPIResult", this, data);
+        //            var data = result.Data[0].Value;
 
-                    callback(data);
+        //            self.eventHandler.callEvent("onAPIResult", this, data);
 
-                })
-                .fail(function (state)
-                {
-                    console.error("[FFNet-Parser] Error while fetching Result from Server: ", state);
-                });
+        //            callback(data);
 
-        }
-        else
-        {
-            var messageID = Math.random().toString().split(".")[1];
-            data.adress = apiLookupKey + messageID;
+        //        })
+        //        .fail(function (state)
+        //        {
+        //            console.error("[FFNet-Parser] Error while fetching Result from Server: ", state);
+        //        });
 
-            $.ajax({
-                type: 'GET',
-                url: url,
-                async: false,
-                contentType: "application/json",
-                dataType: 'jsonp',
-                data: data,
-                cache: false
-            });
+        //}
+        //else
+        //{
+        //    var messageID = Math.random().toString().split(".")[1];
+        //    data.adress = apiLookupKey + messageID;
+
+        //    $.ajax({
+        //        type: 'GET',
+        //        url: url,
+        //        async: false,
+        //        contentType: "application/json",
+        //        dataType: 'jsonp',
+        //        data: data,
+        //        cache: false
+        //    });
 
 
 
-            var tries = 0;
+        //    var tries = 0;
 
-            var checkFunction = function ()
-            {
-                if (self.DEBUG)
-                {
-                    console.log("API_Request - CheckFor Result");
-                }
+        //    var checkFunction = function ()
+        //    {
+        //        if (self.DEBUG)
+        //        {
+        //            console.log("API_Request - CheckFor Result");
+        //        }
 
-                if (tries >= retrys)
-                {
-                    if (self.DEBUG)
-                    {
-                        console.log("API_Request - To many tries, abort for ", data);
-                    }
+        //        if (tries >= retrys)
+        //        {
+        //            if (self.DEBUG)
+        //            {
+        //                console.log("API_Request - To many tries, abort for ", data);
+        //            }
 
-                    return;
-                }
+        //            return;
+        //        }
 
-                if ((typeof (sessionStorage[apiLookupKey + messageID]) !== "undefined") &&
-                    (sessionStorage[apiLookupKey + messageID] !== "null") &&
-                    sessionStorage[apiLookupKey + messageID] !== "undefined" &&
-                    sessionStorage[apiLookupKey + messageID] !== null &&
-                    sessionStorage[apiLookupKey + messageID] !== "")
-                {
-                    if (self.DEBUG)
-                    {
-                        //console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
-                    }
+        //        if ((typeof (sessionStorage[apiLookupKey + messageID]) !== "undefined") &&
+        //            (sessionStorage[apiLookupKey + messageID] !== "null") &&
+        //            sessionStorage[apiLookupKey + messageID] !== "undefined" &&
+        //            sessionStorage[apiLookupKey + messageID] !== null &&
+        //            sessionStorage[apiLookupKey + messageID] !== "")
+        //        {
+        //            if (self.DEBUG)
+        //            {
+        //                //console.log("API_Request - Result found, exec callback - ", sessionStorage[apiLookupKey]);
+        //            }
 
-                    var result = sessionStorage[apiLookupKey + messageID];
+        //            var result = sessionStorage[apiLookupKey + messageID];
 
-                    // Clear last Result
-                    delete sessionStorage[apiLookupKey + messageID];
+        //            // Clear last Result
+        //            delete sessionStorage[apiLookupKey + messageID];
 
-                    this.eventHandler.callEvent("onAPIResult", this, result);
+        //            this.eventHandler.callEvent("onAPIResult", this, result);
 
-                    callback(result);
+        //            callback(result);
 
-                } else
-                {
-                    if (self.DEBUG)
-                    {
-                        console.log("API_Request - No Result found, Retry");
-                    }
-                    tries++;
-                    window.setTimeout(checkFunction, timeout);
-                }
-            };
+        //        } else
+        //        {
+        //            if (self.DEBUG)
+        //            {
+        //                console.log("API_Request - No Result found, Retry");
+        //            }
+        //            tries++;
+        //            window.setTimeout(checkFunction, timeout);
+        //        }
+        //    };
 
-            window.setTimeout(checkFunction, timeout);
-        }
+        //    window.setTimeout(checkFunction, timeout);
+        //}
     }
 
     /**
@@ -4898,82 +4900,84 @@ class StoryParser
      */
     public api_checkVersion()
     {
-        if ((this.config.api_checkForUpdates || this.config.enable_read_chapter_info))
-        {
-            var statisticData =
-                {
-                    Version: this.VERSION,
-                    Token: this.config.token,
-                    Nested: (typeof (sessionStorage["ffnet-mutex"]) !== "undefined") ? true : false,
-                    Branch: this.BRANCH,
-                    Page: window.location.href,
-                    Chrome: (typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined"),
-                    Language: this.config.language
-                };
+        return;
 
-            if (this.DEBUG && this.config.api_checkForUpdates)
-            {
-                console.info("Check for Updates ...");
-                console.log("Sending Statistic Data: ", statisticData);
-            }
+        //if ((this.config.api_checkForUpdates || this.config.enable_read_chapter_info))
+        //{
+        //    var statisticData =
+        //        {
+        //            Version: this.VERSION,
+        //            Token: this.config.token,
+        //            Nested: (typeof (sessionStorage["ffnet-mutex"]) !== "undefined") ? true : false,
+        //            Branch: this.BRANCH,
+        //            Page: window.location.href,
+        //            Chrome: (typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined"),
+        //            Language: this.config.language
+        //        };
 
-            var requestData = JSON.stringify(statisticData);
+        //    if (this.DEBUG && this.config.api_checkForUpdates)
+        //    {
+        //        console.info("Check for Updates ...");
+        //        console.log("Sending Statistic Data: ", statisticData);
+        //    }
 
-            var self = this;
+        //    var requestData = JSON.stringify(statisticData);
 
-            this.apiRequest({ command: "getVersion", data: requestData }, function (res)
-            {
-                if (!self.config.api_checkForUpdates)
-                {
-                    // This is needed.
-                    // If the Update System is deactivated, but the Read Chapter Info Function is activated.
-                    // In that case, the Update Info is ignored.
+        //    var self = this;
 
-                    return;
-                }
+        //    this.apiRequest({ command: "getVersion", data: requestData }, function (res)
+        //    {
+        //        if (!self.config.api_checkForUpdates)
+        //        {
+        //            // This is needed.
+        //            // If the Update System is deactivated, but the Read Chapter Info Function is activated.
+        //            // In that case, the Update Info is ignored.
 
-                if ((typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined"))
-                {
-                    self.log("Ignore Update Info on Chrome Devices");
+        //            return;
+        //        }
 
-                    return;
-                }
+        //        if ((typeof (chrome) !== "undefined") && (typeof (chrome.runtime) !== "undefined"))
+        //        {
+        //            self.log("Ignore Update Info on Chrome Devices");
 
-                if (self.DEBUG)
-                {
-                    console.log("Version Received: ", res);
-                }
+        //            return;
+        //        }
 
-                var version = JSON.parse(res);
+        //        if (self.DEBUG)
+        //        {
+        //            console.log("Version Received: ", res);
+        //        }
 
-                if (self.DEBUG)
-                {
-                    console.log("Version Info Recieved: ", version);
-                    console.log("Current Version: ", self.VERSION);
-                }
+        //        var version = JSON.parse(res);
 
-                var versionID = self.getVersionId(self.VERSION);
-                var removeVersionID = self.getVersionId(version.version);
+        //        if (self.DEBUG)
+        //        {
+        //            console.log("Version Info Recieved: ", version);
+        //            console.log("Current Version: ", self.VERSION);
+        //        }
 
-                if (removeVersionID > versionID)
-                {
-                    if (!self.config.api_autoIncludeNewVersion)
-                    {
-                        $(".menulink").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser (" + version.version + ")]");
-                    }
-                    else
-                    {
-                        self.api_updateScript();
-                    }
-                }
-                else
-                {
-                    self.log("No new Version found ...");
-                }
+        //        var versionID = self.getVersionId(self.VERSION);
+        //        var removeVersionID = self.getVersionId(version.version);
 
-            });
+        //        if (removeVersionID > versionID)
+        //        {
+        //            if (!self.config.api_autoIncludeNewVersion)
+        //            {
+        //                $(".menulink").append(" [Notice: There is a newer Version of the Fanfiction.net Story Parser (" + version.version + ")]");
+        //            }
+        //            else
+        //            {
+        //                self.api_updateScript();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            self.log("No new Version found ...");
+        //        }
 
-        }
+        //    });
+
+        //}
     }
 
     /**
@@ -4981,32 +4985,34 @@ class StoryParser
      */
     public api_getStyles()
     {
-        var self = this;
-        var insertStyles = function (style)
-        {
-            self.log("Insert Styles ...");
+        return;
 
-            var cssElement = $('<style id="ffnetParser-CSS" type="text/css"></style>').html(style);
+        //var self = this;
+        //var insertStyles = function (style)
+        //{
+        //    self.log("Insert Styles ...");
 
-            $("head").append(cssElement);
+        //    var cssElement = $('<style id="ffnetParser-CSS" type="text/css"></style>').html(style);
 
-        };
+        //    $("head").append(cssElement);
 
-        if (typeof (this.dataConfig["styles"]) === "undefined")
-        {
-            this.log("Load Styles from Remote Server ...");
+        //};
 
-            this.apiRequest({ command: "getStyles", data: this.BRANCH }, function (styles)
-            {
-                self.dataConfig["styles"] = styles;
+        //if (typeof (this.dataConfig["styles"]) === "undefined")
+        //{
+        //    this.log("Load Styles from Remote Server ...");
 
-                insertStyles(styles);
-            });
-        }
-        else
-        {
-            insertStyles(this.dataConfig["styles"]);
-        }
+        //    this.apiRequest({ command: "getStyles", data: this.BRANCH }, function (styles)
+        //    {
+        //        self.dataConfig["styles"] = styles;
+
+        //        insertStyles(styles);
+        //    });
+        //}
+        //else
+        //{
+        //    insertStyles(this.dataConfig["styles"]);
+        //}
 
     }
 
@@ -5018,39 +5024,44 @@ class StoryParser
             console.log("Requesting Live-Chat Info ....");
         }
 
-        var self = this;
+        if (!!callback)
+        {
+            callback({ Users: [], WebUsers: [], DevInRoom: false });
+        }
 
-        this.apiRequest(
-            {
-                command: "liveChatInfo",
-                data: this.BRANCH
-            },
-            function (res)
-            {
-                if (self.DEBUG)
-                {
-                    self.log("Got Live-Chat Info Response from Server: ", res);
-                }
+        //var self = this;
 
-                try
-                {
-                    var data = <{ Users: string[]; WebUsers: string[]; DevInRoom: boolean; }>JSON.parse(res);
+        //this.apiRequest(
+        //    {
+        //        command: "liveChatInfo",
+        //        data: this.BRANCH
+        //    },
+        //    function (res)
+        //    {
+        //        if (self.DEBUG)
+        //        {
+        //            self.log("Got Live-Chat Info Response from Server: ", res);
+        //        }
 
-                    if (typeof (callback) !== "undefined")
-                    {
-                        callback(data);
-                    }
-                    else
-                    {
-                        console.log(data);
-                    }
+        //        try
+        //        {
+        //            var data = <{ Users: string[]; WebUsers: string[]; DevInRoom: boolean; }>JSON.parse(res);
 
-                } catch (e)
-                {
-                    console.warn("Error in Function: 'api_getLiveChatInfo': ", e);
-                }
+        //            if (typeof (callback) !== "undefined")
+        //            {
+        //                callback(data);
+        //            }
+        //            else
+        //            {
+        //                console.log(data);
+        //            }
 
-            });
+        //        } catch (e)
+        //        {
+        //            console.warn("Error in Function: 'api_getLiveChatInfo': ", e);
+        //        }
+
+        //    });
 
     }
 
@@ -5066,19 +5077,24 @@ class StoryParser
             console.log("Requesting Language List from Server");
         }
 
-        var self = this;
-        this.apiRequest({ command: "getLanguageList", data: this.BRANCH }, function (res)
+        if (!!callback)
         {
-            var result = <LanguageData[]>JSON.parse(res);
+            callback([]);
+        }
 
-            self.log("Got Language List:", result);
+        //var self = this;
+        //this.apiRequest({ command: "getLanguageList", data: this.BRANCH }, function (res)
+        //{
+        //    var result = <LanguageData[]>JSON.parse(res);
 
-            if (typeof (callback) !== "undefined")
-            {
-                callback(result);
-            }
+        //    self.log("Got Language List:", result);
 
-        });
+        //    if (typeof (callback) !== "undefined")
+        //    {
+        //        callback(result);
+        //    }
+
+        //});
     }
 
     /**
@@ -5094,6 +5110,7 @@ class StoryParser
         {
             console.info("Language Check for: ", languageCode);
         }
+
 
         if (languageCode === this.config.language)
         {
@@ -5129,48 +5146,53 @@ class StoryParser
             console.log("Requesting Language from Server", languageCode);
         }
 
-        var self = this;
-        this.apiRequest({ command: "getLanguage", data: languageCode }, function (res)
+        if (!!callback)
         {
-            var result = <LanguageData>JSON.parse(res);
+            callback(null);
+        }
 
-            self.log("Got Language: ", result);
+        //var self = this;
+        //this.apiRequest({ command: "getLanguage", data: languageCode }, function (res)
+        //{
+        //    var result = <LanguageData>JSON.parse(res);
 
-            if (typeof (callback) !== "undefined")
-            {
-                callback(result);
-            }
+        //    self.log("Got Language: ", result);
 
-
-            if (apply === true)
-            {
-                var data: { [index: string]: string } = {};
-
-                $.each(result.Values, function (_, el: { Key: string; Value: string; })
-                {
-                    data[el.Key] = el.Value;
-                });
-
-                self.currentLanguage = data;
-            }
-
-            if (save === true)
-            {
-                self.dataConfig["language"] = data;
-
-                self.log("Save Language-Data to Cache");
-
-                self.save_dataStore();
-            }
-            else if (typeof (self.dataConfig["language"]) !== "undefined")
-            {
-                delete self.dataConfig["language"];
-
-                self.save_dataStore();
-            }
+        //    if (typeof (callback) !== "undefined")
+        //    {
+        //        callback(result);
+        //    }
 
 
-        });
+        //    if (apply === true)
+        //    {
+        //        var data: { [index: string]: string } = {};
+
+        //        $.each(result.Values, function (_, el: { Key: string; Value: string; })
+        //        {
+        //            data[el.Key] = el.Value;
+        //        });
+
+        //        self.currentLanguage = data;
+        //    }
+
+        //    if (save === true)
+        //    {
+        //        self.dataConfig["language"] = data;
+
+        //        self.log("Save Language-Data to Cache");
+
+        //        self.save_dataStore();
+        //    }
+        //    else if (typeof (self.dataConfig["language"]) !== "undefined")
+        //    {
+        //        delete self.dataConfig["language"];
+
+        //        self.save_dataStore();
+        //    }
+
+
+        //});
     }
 
 
@@ -5179,27 +5201,29 @@ class StoryParser
      */
     public api_updateScript()
     {
-        if (this.config.api_autoIncludeNewVersion)
-        {
-            if (this.DEBUG)
-            {
-                console.log("Loading new Version from Server");
-            }
 
-            var self = this;
-            this.apiRequest({ command: "getCurrent", data: this.BRANCH }, function (res)
-            {
-                //console.log("Script: ", res);
+        return;
+        //if (this.config.api_autoIncludeNewVersion)
+        //{
+        //    if (this.DEBUG)
+        //    {
+        //        console.log("Loading new Version from Server");
+        //    }
 
-                self.saveToMemory(localStorage, "ffnet-Script", { script: res });
+        //    var self = this;
+        //    this.apiRequest({ command: "getCurrent", data: this.BRANCH }, function (res)
+        //    {
+        //        //console.log("Script: ", res);
 
-                if (self.DEBUG)
-                {
-                    console.log("New Version Recieved");
-                }
+        //        self.saveToMemory(localStorage, "ffnet-Script", { script: res });
 
-            });
-        }
+        //        if (self.DEBUG)
+        //        {
+        //            console.log("New Version Recieved");
+        //        }
+
+        //    });
+        //}
     }
 
     /**
@@ -5209,15 +5233,17 @@ class StoryParser
      */
     public api_sendMarker(data: any, callback?: (result: any) => void)
     {
-        this.apiRequest({ command: "sendFilter", data: JSON.stringify(data) }, function (result)
-        {
+        return;
 
-            if (typeof (callback) === "function")
-            {
-                callback(JSON.parse(result));
-            }
+        //this.apiRequest({ command: "sendFilter", data: JSON.stringify(data) }, function (result)
+        //{
 
-        });
+        //    if (typeof (callback) === "function")
+        //    {
+        //        callback(JSON.parse(result));
+        //    }
+
+        //});
 
 
     }
@@ -5427,34 +5453,36 @@ class StoryParser
      */
     public api_getMarker(marker: string[], callback: (result: { Error: boolean; Marker: any[]; Revision: number }) => void)
     {
-        this.log("Get Marker from Server: ", marker);
+        return;
 
-        if (marker.length === 0)
-        {
-            callback({
-                Error: false,
-                Marker: [],
-                Revision: 0
-            });
+        //this.log("Get Marker from Server: ", marker);
 
-            return;
-        }
+        //if (marker.length === 0)
+        //{
+        //    callback({
+        //        Error: false,
+        //        Marker: [],
+        //        Revision: 0
+        //    });
 
-        var data =
-            {
-                User: this.config.token,
-                Marker: marker
-            };
+        //    return;
+        //}
 
-        this.apiRequest({ command: "getFilter", data: JSON.stringify(data) }, function (result)
-        {
+        //var data =
+        //    {
+        //        User: this.config.token,
+        //        Marker: marker
+        //    };
 
-            if (typeof (callback) === "function")
-            {
-                callback(JSON.parse(result));
-            }
+        //this.apiRequest({ command: "getFilter", data: JSON.stringify(data) }, function (result)
+        //{
 
-        });
+        //    if (typeof (callback) === "function")
+        //    {
+        //        callback(JSON.parse(result));
+        //    }
+
+        //});
 
 
     }
@@ -5553,18 +5581,21 @@ class StoryParser
      */
     public api_GetMessages(callback: (result: any) => void)
     {
-        var data = {
-            Token: this.config.token,
-            Version: this.VERSION
-        };
+        callback({ Messages: [] });
+        return;
 
-        this.apiRequest({ command: "getMessages", data: JSON.stringify(data) }, function (result)
-        {
-            var response = JSON.parse(result);
+        //var data = {
+        //    Token: this.config.token,
+        //    Version: this.VERSION
+        //};
 
-            callback(response);
+        //this.apiRequest({ command: "getMessages", data: JSON.stringify(data) }, function (result)
+        //{
+        //    var response = JSON.parse(result);
 
-        });
+        //    callback(response);
+
+        //});
 
     }
 
@@ -5582,9 +5613,9 @@ class StoryParser
         $(".ffnet-messageCount").text("0");
 
 
-        this.apiRequest({ command: "readMessages", data: this.config.token }, function (result)
-        {
-        });
+        //this.apiRequest({ command: "readMessages", data: this.config.token }, function (result)
+        //{
+        //});
 
     }
 
@@ -5663,34 +5694,34 @@ class StoryParser
             return;
         }
 
-        this.apiRequest(
-            {
-                command: "getStoryInfo",
-                data: JSON.stringify(request)
-            },
-            function (res)
-            {
-                var data = <{
-                    Data: { Key: string; Value: number[] }[];
-                    LastChapter: {
-                        Key: string; Value: string;
-                    }
-                }>JSON.parse(res);
-                var result: { [index: string]: number[] } = {};
-                var lastChapter: { [index: string]: number } = {};
+        //this.apiRequest(
+        //    {
+        //        command: "getStoryInfo",
+        //        data: JSON.stringify(request)
+        //    },
+        //    function (res)
+        //    {
+        //        var data = <{
+        //            Data: { Key: string; Value: number[] }[];
+        //            LastChapter: {
+        //                Key: string; Value: string;
+        //            }
+        //        }>JSON.parse(res);
+        //        var result: { [index: string]: number[] } = {};
+        //        var lastChapter: { [index: string]: number } = {};
 
-                $.each(data.Data, function (i, line)
-                {
-                    result[line.Key] = line.Value;
-                });
+        //        $.each(data.Data, function (i, line)
+        //        {
+        //            result[line.Key] = line.Value;
+        //        });
 
-                $.each(data.LastChapter, function (i, line)
-                {
-                    lastChapter[line.Key] = line.Value;
-                });
+        //        $.each(data.LastChapter, function (i, line)
+        //        {
+        //            lastChapter[line.Key] = line.Value;
+        //        });
 
-                callback(result, lastChapter);
-            });
+        //        callback(result, lastChapter);
+        //    });
 
 
     }
@@ -5740,6 +5771,51 @@ class StoryParser
     }
 
 
+    public apiCall(call: () => void)
+    {
+        if (this.config.api_enabled)
+        {
+            call();
+            return;
+        }
+
+
+        var text = "<div><b>API-Access Required</b><br />";
+        text += "If you want to use this feature, you need to access my API.<br />";
+        text += "This Service might collect personal Information like:<br />";
+        text += "<ul><li>Username</li><li>IP-Adress</li><li>Visited Pages (only this site)</li></ul>";
+        text += "The Service doesn't know you and it doesn't want to. But having those information, it might ";
+        text += "be possible to construct who you are.<br />";
+        text += "Those information won't be shared, sold or otherwise published.<br />";
+
+        text += "Do you want to enable the API?<br /></div>";
+
+        var buttons = [];
+        var modal: JQuery;
+
+        buttons.push($('<button class="btn btn-primary">Enable API</button>').click(() =>
+        {
+            modal.modal('hide');
+
+            this.config.api_enabled = true;
+            this.save_config();
+
+            call();
+        }));
+
+        buttons.push($('<button class="btn btn-default">Keep Disabled</button>').click(() =>
+        {
+            modal.modal('hide');
+
+            this.config.api_enabled = false;
+            this.save_config();
+
+        }));
+
+        modal = GUIHandler.createBootstrapModal($(text), "Fanfiction Story Parser", buttons);
+
+        GUIHandler.showModal(modal);
+    }
 
 
 
