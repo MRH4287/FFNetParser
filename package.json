@@ -4,20 +4,22 @@
   },
   "devDependencies": {
     "grunt": "",
-	"grunt-lib-phantomjs": "",
     "grunt-contrib-clean": "",
     "grunt-contrib-compress": "",
-    "grunt-contrib-concat": "",
-    "grunt-contrib-copy": "",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-less": "",
     "grunt-contrib-qunit": "",
     "grunt-contrib-uglify": "",
     "grunt-exec": "",
-    "grunt-gitinfo": "",
-    "grunt-replace": "",
+    "grunt-gitinfo": "^0.1.8",
+    "grunt-lib-phantomjs": "",
+    "grunt-replace": "^1.0.1",
+    "grunt-ts": "^6.0.0-beta.22",
     "grunt-tslint": "",
-    "grunt-typescript": "",
-    "grunt-update-json": "",
-	"tslint": ""
+    "grunt-typescript": "^0.8.0",
+    "grunt-update-json": "^0.2.2",
+    "tslint": "^5.15.0",
+    "typescript": "^3.4.1"
   }
 }

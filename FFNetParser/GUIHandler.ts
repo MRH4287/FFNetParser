@@ -434,7 +434,7 @@ class GUIHandler extends ExtentionBaseClass
                     },
                     customElement: function ()
                     {
-                        return $('<button><img src="https://www.mrh-development.de/FanFictionUserScript/SSLProxy/?url=graphics/animations/pichu/stand-down/stand-down.png"/></button>')
+                        return $('<button><img src="https://private.mrh-development.de/ff/graphics/animations/pichu/stand-down/stand-down.png"/></button>')
                             .click(function ()
                             {
                                 self.gui_hide();

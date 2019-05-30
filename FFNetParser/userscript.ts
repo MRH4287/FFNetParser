@@ -3951,7 +3951,7 @@ class StoryParser
 
         this.log("Appending Page Content. Page: " + page + " - IsStory: ", isStroy);
 
-        var loadingElement = $("<div><center><b>Loading ...</b></center></div>");;
+        var loadingElement = $("<div><center><b>Loading ...</b></center></div>");
 
 
 
@@ -5746,15 +5746,7 @@ class StoryParser
 
     public getUrl(path: string): string
     {
-        if (this.useHTTPS)
-        {
-            return "https://www.mrh-development.de/FanFictionUserScript/SSLProxy/?url=" + path;
-        }
-        else
-        {
-            return "http://private.mrh-development.de/ff/" + path;
-        }
-
+         return "https://private.mrh-development.de/ff/" + path;
     }
 
 
