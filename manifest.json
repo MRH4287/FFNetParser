@@ -2,7 +2,7 @@
     "name": "Fanfiction.net Story Parser",
     "description": "Improves the Fanfiction.net and Fictionpress.com Storylist by adding Filter Options. (+ Many more)",
     "version": "5.4.10",
-    "manifest_version": 2,
+    "manifest_version": 3,
     "author": "Manuel Holzhauser",
     "homepage_url": "http://www.mrh-development.de",
     "content_scripts": [
@@ -10,22 +10,26 @@
             "js": [ "ffnetlist.user.js" ],
             "css": [ "style.css" ],
             "matches": [
-                "http://www.fanfiction.net/*",
-                "http://www.fictionpress.com/*",
-                "https://www.fanfiction.net/*",
-                "https://www.fictionpress.com/*"
+				"*://*.fanfiction.net/*",
+				"*://*.fictionpress.com/*"
             ]
         }
     ],
     "icons": {
         "128": "logoMain.png"
     },
-    "web_accessible_resources": [
-        "jquery-1.10.2.min.map",
-        "ffnetlist.js.map",
-        "style.css",
-        "FFNetParser/*"
-    ],
+    "web_accessible_resources": [{
+        "resources": [
+			"jquery-1.10.2.min.map",
+			"ffnetlist.js.map",
+			"style.css",
+			"FFNetParser/*"
+		],
+		"matches": [
+			"*://*.fanfiction.net/*",
+			"*://*.fictionpress.com/*"
+		]
+    }],
     "externally_connectable": {
         "matches": [ "*://*.fanfiction.net/*", "*://*.fictionpress.com/*" ]
     },

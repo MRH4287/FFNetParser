@@ -439,12 +439,12 @@ class GUIHandler extends ExtentionBaseClass
                             {
                                 self.gui_hide();
 
-                                $('<script></script>').attr("src", chrome.extension.getURL('FFNetParser/GameEngine/package.min.js')).appendTo($("head"));
-                                $('<script></script>').attr("src", chrome.extension.getURL('FFNetParser/GameEngine/astar.js')).appendTo($("head"));
+                                $('<script></script>').attr("src", chrome.runtime.getURL('FFNetParser/GameEngine/package.min.js')).appendTo($("head"));
+                                $('<script></script>').attr("src", chrome.runtime.getURL('FFNetParser/GameEngine/astar.js')).appendTo($("head"));
 
                                 window.setTimeout(function ()
                                 {
-                                    $('<script></script>').attr("src", chrome.extension.getURL('FFNetParser/GameEngine/run.js')).appendTo($("head"));
+                                    $('<script></script>').attr("src", chrome.runtime.getURL('FFNetParser/GameEngine/run.js')).appendTo($("head"));
                                 }, 500);
 
                                 //if (self.config.token !== "MRH")
@@ -1203,7 +1203,7 @@ class GUIHandler extends ExtentionBaseClass
 
                     $('<span class="input-group-addon"><i></i></span>').appendTo(element);
 
-                    element.colorpicker();
+                    // element.colorpicker();
 
                     if (typeof (data.result) === "undefined")
                     {
