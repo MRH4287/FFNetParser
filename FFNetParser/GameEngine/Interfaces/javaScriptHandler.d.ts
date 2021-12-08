@@ -9,5 +9,5 @@ declare class JavaScriptHandler {
     public include(path: string, appendBasePath?: boolean): void;
     private run(script);
     public playSound(path: string): void;
-    public playerPosition : Coordinate;
+    public playerPosition: Coordinate;
 }

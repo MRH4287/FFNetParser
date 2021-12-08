@@ -1,208 +1,180 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="_reference.ts" />
 
 /**
  * Class used for Comunication with Github
  */
-class GithubAPI extends ExtentionBaseClass
-{
+class GithubAPI extends ExtentionBaseClass {
     private code: string;
-    private attempt: number  = 0;
+    private attempt: number = 0;
     private MAX_ATTEMPTS = 30;
 
     /**
      * Is the User Authenticated
      */
-    get Authenticated()
-    {
-        return typeof(this.code) !== "undefined" && this.code !== null;
+    get Authenticated() {
+        return typeof this.code !== 'undefined' && this.code !== null;
     }
 
-   
-    public constructor(parser: StoryParser)
-    {
+    public constructor(parser: StoryParser) {
         super(parser);
     }
 
-
-    public Auth(callback? : () => void)
-    {
-        this.parser.apiCall(() =>
-        {
-
-            if (!this.parser.useCORS)
-            {
-                console.error("CORS has to be active for this Feature to work!");
+    public Auth(callback?: () => void) {
+        this.parser.apiCall(() => {
+            if (!this.parser.useCORS) {
+                console.error(
+                    'CORS has to be active for this Feature to work!'
+                );
 
                 return;
             }
 
-            window.open(this.parser.config.api_github_requestStart_url + "?token=" + this.config.token);
+            window.open(
+                this.parser.config.api_github_requestStart_url +
+                    '?token=' +
+                    this.config.token
+            );
 
             this.attempt = 0;
 
-            this.beginCheck(() =>
-            {
-                this.log("Successfully Authenticated!");
-                if (typeof (callback) !== "undefined")
-                {
+            this.beginCheck(() => {
+                this.log('Successfully Authenticated!');
+                if (typeof callback !== 'undefined') {
                     callback();
                 }
             });
-
         });
     }
 
-    public GetGists(callback: (data: GistData[]) => void)
-    {
-        this.parser.apiCall(() =>
-        {
-
-            if (typeof (this.code) === "undefined" || this.code === null)
-            {
-                console.error("Github API - Not Authenticated!");
+    public GetGists(callback: (data: GistData[]) => void) {
+        this.parser.apiCall(() => {
+            if (typeof this.code === 'undefined' || this.code === null) {
+                console.error('Github API - Not Authenticated!');
                 return;
-            }
-            else
-            {
-                this.api_call("Gists",
+            } else {
+                this.api_call(
+                    'Gists',
                     {
                         token: this.config.token,
-                        code: this.code
+                        code: this.code,
                     },
-                    (data: GistData[]) =>
-                    {
+                    (data: GistData[]) => {
                         callback(data);
-                    });
+                    }
+                );
             }
-
         });
     }
 
-    public GetConfig(id: string, callback : (data: string) => void )
-    {
-        this.parser.apiCall(() =>
-        {
-
-            if (typeof (this.code) === "undefined" || this.code === null)
-            {
-                console.error("Github API - Not Authenticated!");
+    public GetConfig(id: string, callback: (data: string) => void) {
+        this.parser.apiCall(() => {
+            if (typeof this.code === 'undefined' || this.code === null) {
+                console.error('Github API - Not Authenticated!');
                 return;
             }
 
-            this.api_call("Config",
+            this.api_call(
+                'Config',
                 {
                     token: this.config.token,
                     code: this.code,
-                    id: id
+                    id: id,
                 },
-                (data: string) =>
-                {
+                (data: string) => {
                     callback(data);
-                });
-
+                }
+            );
         });
     }
 
-    public CreateNewConfigGist(description: string, isPublic: boolean, callback: (data: GistData) => void )
-    {
-        this.parser.apiCall(() =>
-        {
-
-            if (typeof (this.code) === "undefined" || this.code === null)
-            {
-                console.error("Github API - Not Authenticated!");
+    public CreateNewConfigGist(
+        description: string,
+        isPublic: boolean,
+        callback: (data: GistData) => void
+    ) {
+        this.parser.apiCall(() => {
+            if (typeof this.code === 'undefined' || this.code === null) {
+                console.error('Github API - Not Authenticated!');
                 return;
             }
 
-            this.api_call("Gist",
+            this.api_call(
+                'Gist',
                 JSON.stringify({
                     token: this.config.token,
                     code: this.code,
                     description: description,
                     isPublic: isPublic,
-                    content: JSON.stringify(this.config, null, "\t")
-                }), function (data: GistData)
-                {
+                    content: JSON.stringify(this.config, null, '\t'),
+                }),
+                function (data: GistData) {
                     callback(data);
                 },
-                "POST");
-
+                'POST'
+            );
         });
     }
 
-    public UpdateConfigGist(id: string, callback: (data: GistData) => void)
-    {
-        this.parser.apiCall(() =>
-        {
-
-            if (typeof (this.code) === "undefined" || this.code === null)
-            {
-                console.error("Github API - Not Authenticated!");
+    public UpdateConfigGist(id: string, callback: (data: GistData) => void) {
+        this.parser.apiCall(() => {
+            if (typeof this.code === 'undefined' || this.code === null) {
+                console.error('Github API - Not Authenticated!');
                 return;
             }
 
-            this.api_call("Gist",
+            this.api_call(
+                'Gist',
                 JSON.stringify({
                     token: this.config.token,
                     code: this.code,
                     id: id,
-                    content: JSON.stringify(this.config, null, "\t")
-                }), function (data: GistData)
-                {
+                    content: JSON.stringify(this.config, null, '\t'),
+                }),
+                function (data: GistData) {
                     callback(data);
                 },
-                "PATCH");
-
+                'PATCH'
+            );
         });
     }
 
-
-    private beginCheck(callback: () => void)
-    {
-        this.parser.apiCall(() =>
-        {
-
+    private beginCheck(callback: () => void) {
+        this.parser.apiCall(() => {
             var self = this;
 
-            this.api_call("Status", { token: self.config.token }, (data) =>
-            {
-                if (data !== null && data !== "null")
-                {
+            this.api_call('Status', { token: self.config.token }, (data) => {
+                if (data !== null && data !== 'null') {
                     this.code = data;
 
-                    this.log("Got Code from Server. Attempts: ", this.attempt);
+                    this.log('Got Code from Server. Attempts: ', this.attempt);
 
                     callback();
                     return;
-                }
-                else
-                {
-                    if (this.attempt > this.MAX_ATTEMPTS)
-                    {
-                        console.error("Github API - Max Attempt Count reached! Abort!");
+                } else {
+                    if (this.attempt > this.MAX_ATTEMPTS) {
+                        console.error(
+                            'Github API - Max Attempt Count reached! Abort!'
+                        );
                         return;
-                    }
-                    else
-                    {
+                    } else {
                         this.attempt = this.attempt + 1;
 
-                        window.setTimeout(() =>
-                        {
+                        window.setTimeout(() => {
                             self.beginCheck(callback);
                         }, 1000);
-
                     }
                 }
-
             });
-
         });
     }
 
-
-    private api_call(address: string, data: {}, callback: (data: any) => void, method: string = "GET")
-    {
-        var url = this.parser.config.api_github_url + "/" + address;
+    private api_call(
+        address: string,
+        data: {},
+        callback: (data: any) => void,
+        method: string = 'GET'
+    ) {
+        var url = this.parser.config.api_github_url + '/' + address;
 
         var self = this;
 
@@ -210,22 +182,22 @@ class GithubAPI extends ExtentionBaseClass
             type: method,
             url: url,
             async: true,
-            contentType: "application/json",
+            contentType: 'application/json',
             dataType: 'json',
             crossDomain: true,
             data: data,
-            cache: false
+            cache: false,
         })
-            .done(function (result)
-            {
-                self.log("Github API - Got Result from Server: ", result);
+            .done(function (result) {
+                self.log('Github API - Got Result from Server: ', result);
 
                 callback(result);
-
             })
-            .fail(function (state)
-            {
-                console.error("Github API - Error while fetching Result from Server: ", state);
+            .fail(function (state) {
+                console.error(
+                    'Github API - Error while fetching Result from Server: ',
+                    state
+                );
             });
     }
 }

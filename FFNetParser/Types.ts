@@ -1,16 +1,14 @@
-/// <reference path="_reference.ts" /> 
+/// <reference path="_reference.ts" />
 
 // ---- Config -----
 
-interface Config
-{
+interface Config {
     story_search_depth: number;
     mark_M_storys: boolean;
     hide_non_english_storys: boolean;
     allow_copy: boolean;
     language: string;
     sortFunction: string;
-
 
     // Layout:
     color_normal: string;
@@ -30,8 +28,8 @@ interface Config
     readingHelp_color: string;
 
     // Endless Mode:
-    endless_enable: boolean;            // Is the Endless Mode Enabled
-    endless_forceClickAfter: number;    // Show a "Next Page" button after X pages
+    endless_enable: boolean; // Is the Endless Mode Enabled
+    endless_forceClickAfter: number; // Show a "Next Page" button after X pages
 
     // API:
     api_enabled: boolean;
@@ -73,12 +71,9 @@ interface Config
     storyReminder: { [index: string]: StoryReminderData };
 
     upgradeTags: { [index: string]: UpgradeTag };
-
 }
 
-
-interface MarkerConfig extends ModificationBase
-{
+interface MarkerConfig extends ModificationBase {
     ignore: string[];
     keywords: string[];
     mention_in_headline: boolean;
@@ -88,8 +83,7 @@ interface MarkerConfig extends ModificationBase
     revision?: number;
 }
 
-interface ModificationBase
-{
+interface ModificationBase {
     name: string;
     display: boolean;
     color: string;
@@ -105,8 +99,7 @@ interface ModificationBase
     customPriority: ModififcationPriority;
 }
 
-interface ModififcationPriority
-{
+interface ModififcationPriority {
     color: number;
     mouseOver: number;
     text_color: number;
@@ -114,8 +107,7 @@ interface ModififcationPriority
     background: number;
 }
 
-interface StoryReminderData
-{
+interface StoryReminderData {
     name: string;
     storyID: string;
     chapter: number;
@@ -125,21 +117,18 @@ interface StoryReminderData
     url: string;
 }
 
-interface HighlighterConfig
-{
+interface HighlighterConfig {
     image: string;
     hide: boolean;
     prefab?: string;
     custom?: ModificationBase;
 }
 
-interface UpgradeTag
-{
+interface UpgradeTag {
     lastRun: number;
 }
 
-interface FollowUserData
-{
+interface FollowUserData {
     ID: number;
     Name: string;
 
@@ -150,13 +139,11 @@ interface FollowUserData
 
     FollowStories: boolean;
     FollowFavs: boolean;
-
 }
 
 // ----- Request Handling -----
 
-interface RequestQueueData
-{
+interface RequestQueueData {
     url: string;
     headline: string;
     config: MarkerConfig;
@@ -166,8 +153,7 @@ interface RequestQueueData
     storyName: string;
 }
 
-interface StoryInfo
-{
+interface StoryInfo {
     name: string;
     url: string;
     id: string;
@@ -177,24 +163,27 @@ interface StoryInfo
     element?: JQuery;
 }
 
-interface EventData
-{
-    callbacks:
-    {
+interface EventData {
+    callbacks: {
         (sender: any, arguments: any): void;
     }[];
 }
 
-
 // -----  GUI Elements --------
 
-enum GUIElementType
-{
-    Input, Button, Checkbox, Combobox, Text, Color, PanelStart, PanelEnd, Custom
+enum GUIElementType {
+    Input,
+    Button,
+    Checkbox,
+    Combobox,
+    Text,
+    Color,
+    PanelStart,
+    PanelEnd,
+    Custom,
 }
 
-interface GUIElement
-{
+interface GUIElement {
     name: string;
     type: GUIElementType;
     label: string;
@@ -213,8 +202,7 @@ interface GUIElement
     advancedOnly?: boolean;
 }
 
-interface GUIData
-{
+interface GUIData {
     name: string;
     collection: any;
     guiData: GUIElement[];
@@ -223,8 +211,7 @@ interface GUIData
     sticky: boolean;
 }
 
-interface GUICategory
-{
+interface GUICategory {
     name: string;
     title: string;
     instance?: JQuery;
@@ -233,8 +220,7 @@ interface GUICategory
 
 // ------- API Functions -------
 
-interface WebSocketMessage
-{
+interface WebSocketMessage {
     Type: string;
     Data: string;
     Sender: string;
@@ -242,30 +228,25 @@ interface WebSocketMessage
     Version: string;
 }
 
-interface LanguageData
-{
+interface LanguageData {
     LanguageCode: string;
     Name: string;
     LastModified?: number;
     LastModifiedBy?: string;
-    Values?: { Key: string; Value: string; }[];
+    Values?: { Key: string; Value: string }[];
 }
 
-interface SortFunctionDefinition
-{
+interface SortFunctionDefinition {
     Name: string;
     Function: (element: JQuery[]) => JQuery[];
 }
 
-interface GistData
-{
+interface GistData {
     id: string;
     url: string;
     description: string;
-    "public": boolean;
+    public: boolean;
     valid: boolean;
     owner: string;
     files: string[];
-
 }
-

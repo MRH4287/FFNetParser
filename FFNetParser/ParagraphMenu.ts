@@ -1,10 +1,9 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="_reference.ts" />
 
 /**
  * The Class for the Story Remainer Menu
  */
-class ParagraphMenu
-{
+class ParagraphMenu {
     private parser: StoryParser = null;
 
     private menu: JQuery = null;
@@ -13,109 +12,105 @@ class ParagraphMenu
 
     private baseElement: JQuery = null;
 
-    constructor(parser: StoryParser)
-    {
+    constructor(parser: StoryParser) {
         this.parser = parser;
 
-        parser.log("Paragraph Menu loading ...");
+        parser.log('Paragraph Menu loading ...');
 
         var self = this;
-        $("window").resize(function ()
-        {
-            if (self.baseElement !== null)
-            {
+        $('window').resize(function () {
+            if (self.baseElement !== null) {
                 self.setPosition(self.baseElement);
             }
-
         });
 
         // Add Logic to the Paragraph Elements on the Page:
-        this.addHandler($("body"));
-
+        this.addHandler($('body'));
     }
 
     /**
      * Adds EventHandler to the Paragraph Elements of the Page
      * @param container The element, that contains the Paragraphs
      */
-    public addHandler(container: JQuery)
-    {
+    public addHandler(container: JQuery) {
         var self = this;
         var i = 0;
 
-        container.find("p").each(function ()
-        {
+        container.find('p').each(function () {
             var el = $(this);
-            el.mouseover(function ()
-            {
+            el.mouseover(function () {
                 self.setPosition($(this));
             });
 
-            el.attr("data-paragraphNumber", i++);
+            el.attr('data-paragraphNumber', i++);
         });
     }
 
-
-    private buildMenu()
-    {
+    private buildMenu() {
         var self = this;
 
-        this.menu = $('<div class="paragraphMenu"></div>').appendTo($("body"));
-        this.button = $('<div class="button">' + self.parser._('Menu') + ' ▼</div>').appendTo(this.menu);
-        this.menuElement = $("<ul></ul>").appendTo(this.menu);
+        this.menu = $('<div class="paragraphMenu"></div>').appendTo($('body'));
+        this.button = $(
+            '<div class="button">' + self.parser._('Menu') + ' ▼</div>'
+        ).appendTo(this.menu);
+        this.menuElement = $('<ul></ul>').appendTo(this.menu);
 
-        $("<li>" + self.parser._('Save Position') + "</li>").appendTo(this.menuElement).click(function ()
-        {
-            self.menuElement.fadeOut();
+        $('<li>' + self.parser._('Save Position') + '</li>')
+            .appendTo(this.menuElement)
+            .click(function () {
+                self.menuElement.fadeOut();
 
-            self.saveStoryPosition();
-        });
+                self.saveStoryPosition();
+            });
 
-        $("<li>" + self.parser._('Get Link to this Position') + "</li>").appendTo(this.menuElement)
-            .click(function (event)
-            {
+        $('<li>' + self.parser._('Get Link to this Position') + '</li>')
+            .appendTo(this.menuElement)
+            .click(function (event) {
                 event.preventDefault();
                 self.menuElement.fadeOut();
 
-                var paragraphNumber = Number(self.baseElement.attr("data-paragraphNumber"));
+                var paragraphNumber = Number(
+                    self.baseElement.attr('data-paragraphNumber')
+                );
 
                 var data = self.getStoryData();
 
                 var page = data.Chapter;
                 var url = self.parser.getLinkToPageNumber(page);
 
-
-                var modal = GUIHandler.createBootstrapModal($("<pre></pre>").text(url + "#paragraph=" + paragraphNumber), self.parser._("Link for this Position"));
+                var modal = GUIHandler.createBootstrapModal(
+                    $('<pre></pre>').text(
+                        url + '#paragraph=' + paragraphNumber
+                    ),
+                    self.parser._('Link for this Position')
+                );
                 GUIHandler.showModal(modal);
-
             });
 
-
         // Add Click Logic Here :3
-        this.button.click(function ()
-        {
+        this.button.click(function () {
             self.menuElement.fadeIn();
         });
 
-        this.menu.mouseleave(function ()
-        {
+        this.menu.mouseleave(function () {
             self.menuElement.fadeOut();
         });
 
-        this.menu.mouseenter(function ()
-        {
-            self.button.addClass("active");
-        }).mouseleave(function ()
-            {
-                self.button.removeClass("active");
+        this.menu
+            .mouseenter(function () {
+                self.button.addClass('active');
+            })
+            .mouseleave(function () {
+                self.button.removeClass('active');
             });
 
-        this.parser.log("Paragraph Menu Container built");
+        this.parser.log('Paragraph Menu Container built');
     }
 
-    private saveStoryPosition()
-    {
-        var paragraphNumber = Number(this.baseElement.attr("data-paragraphNumber"));
+    private saveStoryPosition() {
+        var paragraphNumber = Number(
+            this.baseElement.attr('data-paragraphNumber')
+        );
 
         var data = this.getStoryData();
 
@@ -127,10 +122,14 @@ class ParagraphMenu
 
         var storyID = data.ID;
 
-        if (typeof (this.parser.config.storyReminder[storyID]) !== "undefined")
-        {
-            if (!confirm(this.parser._('There is already a reminder for this StoryID. Overwrite?')))
-            {
+        if (typeof this.parser.config.storyReminder[storyID] !== 'undefined') {
+            if (
+                !confirm(
+                    this.parser._(
+                        'There is already a reminder for this StoryID. Overwrite?'
+                    )
+                )
+            ) {
                 return;
             }
         }
@@ -142,37 +141,33 @@ class ParagraphMenu
             paragraphID: paragraphNumber,
             time: Date.now(),
             visited: false,
-            url: url + "#paragraph=" + paragraphNumber
+            url: url + '#paragraph=' + paragraphNumber,
         };
 
         this.parser.config.storyReminder[data.ID] = element;
         this.parser.save_config();
 
-        this.parser.log("Position Saved!");
+        this.parser.log('Position Saved!');
     }
 
-
-    private getStoryData()
-    {
-        var reg = new RegExp(".+/s/([0-9]+)/(?:([0-9]+)/?)?(?:([^#]+)/?)?");
+    private getStoryData() {
+        var reg = new RegExp('.+/s/([0-9]+)/(?:([0-9]+)/?)?(?:([^#]+)/?)?');
 
         var result = reg.exec(location.href);
 
-        var chapter = Number(this.baseElement.parent().attr("data-page"));
+        var chapter = Number(this.baseElement.parent().attr('data-page'));
 
         return {
-            "ID": result[1],
-            "Chapter": chapter,
-            "Name": result[3]
+            ID: result[1],
+            Chapter: chapter,
+            Name: result[3],
         };
     }
 
-    public setPosition(base: JQuery)
-    {
+    public setPosition(base: JQuery) {
         this.baseElement = base;
 
-        if (this.menu === null)
-        {
+        if (this.menu === null) {
             this.buildMenu();
         }
 
@@ -180,12 +175,11 @@ class ParagraphMenu
         var width = this.button.width();
         var height = this.button.height();
 
-        var top = (basePosition.top - height);
-        var left = (basePosition.left + base.width() - width);
+        var top = basePosition.top - height;
+        var left = basePosition.left + base.width() - width;
 
         //this.parser.log("Set Position of Menu to: Top: " + top + " Left: " + left);
 
-        this.menu.css("top", top + "px").css("left", left + "px");
-
+        this.menu.css('top', top + 'px').css('left', left + 'px');
     }
 }

@@ -18,7 +18,11 @@ declare class MultiplayerHandler {
     private id;
     private username;
     private usernameTable;
-    constructor(gameHandler: GameHandler, serverAdress: string, username: string);
+    constructor(
+        gameHandler: GameHandler,
+        serverAdress: string,
+        username: string
+    );
     public init(): void;
     public connect(): void;
     public sendChatMessage(message: string): void;

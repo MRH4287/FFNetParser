@@ -1,166 +1,249 @@
-        @font-face {
-            font-family: 'fontello';
-            src: url('https://www.fanfiction.net/cors/fontello-f1bf7dee/font/fontello.eot?57225533');
-            src: url('https://www.fanfiction.net/cors/fontello-f1bf7dee/font/fontello.eot?57225533#iefix') format('embedded-opentype'),url('https://www.fanfiction.net/cors/fontello-f1bf7dee/font/fontello.woff?57225533') format('woff'),url('https://www.fanfiction.net/cors/fontello-f1bf7dee/font/fontello.ttf?57225533') format('truetype'),url('https://www.fanfiction.net/cors/fontello-f1bf7dee/font/fontello.svg?57225533#fontello') format('svg');
-            font-weight: normal;
-            font-style: normal;
-        }
+@font-face {
+    font-family: 'fontello';
+    src: url('https://www.fanfiction.net/cors/fontello-f1bf7dee/font/fontello.eot?57225533');
+    src: url('https://www.fanfiction.net/cors/fontello-f1bf7dee/font/fontello.eot?57225533#iefix')
+            format('embedded-opentype'),
+        url('https://www.fanfiction.net/cors/fontello-f1bf7dee/font/fontello.woff?57225533')
+            format('woff'),
+        url('https://www.fanfiction.net/cors/fontello-f1bf7dee/font/fontello.ttf?57225533')
+            format('truetype'),
+        url('https://www.fanfiction.net/cors/fontello-f1bf7dee/font/fontello.svg?57225533#fontello')
+            format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
 
-        [class^="icon-"]:before, [class*=" icon-"]:before {
-            font-family: "fontello";
-            font-style: normal;
-            font-weight: normal;
-            speak: none;
-            display: inline-block;
-            text-decoration: inherit;
-            width: 1em;
-            margin-right: .2em;
-            text-align: center;
-            font-variant: normal;
-            text-transform: none;
-            line-height: 1em;
-            margin-left: .2em;
-        }
+[class^='icon-']:before,
+[class*=' icon-']:before {
+    font-family: 'fontello';
+    font-style: normal;
+    font-weight: normal;
+    speak: none;
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: 0.2em;
+    text-align: center;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1em;
+    margin-left: 0.2em;
+}
 
-        .z-list {
-            padding-bottom: 6px;
-            padding-top: 4px;
-        }
+.z-list {
+    padding-bottom: 6px;
+    padding-top: 4px;
+}
 
-        .z-indent {
-            padding-left: 22px;
-        }
+.z-indent {
+    padding-left: 22px;
+}
 
-        .z-padtop {
-            padding-top: 4px;
-        }
+.z-padtop {
+    padding-top: 4px;
+}
 
-        .z-padtop2 {
-            padding-top: 1px;
-        }
+.z-padtop2 {
+    padding-top: 1px;
+}
 
-        .z-high {
-            background: -moz-linear-gradient(top,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1%,rgba(0,0,0,0.01) 54%,rgba(0,0,0,0) 63%);
-            background: -webkit-gradient(linear,left top,left bottom,color-stop(0,rgba(0,0,0,0.05)),color-stop(1%,rgba(0,0,0,0.05)),color-stop(54%,rgba(0,0,0,0.01)),color-stop(63%,rgba(0,0,0,0)));
-            background: -webkit-linear-gradient(top,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1%,rgba(0,0,0,0.01) 54%,rgba(0,0,0,0) 63%);
-            background: -o-linear-gradient(top,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1%,rgba(0,0,0,0.01) 54%,rgba(0,0,0,0) 63%);
-            background: -ms-linear-gradient(top,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1%,rgba(0,0,0,0.01) 54%,rgba(0,0,0,0) 63%);
-            background: linear-gradient(to bottom,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1%,rgba(0,0,0,0.01) 54%,rgba(0,0,0,0) 63%);
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0d000000',endColorstr='#00000000',GradientType=0);
-        }
+.z-high {
+    background: -moz-linear-gradient(
+        top,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1%,
+        rgba(0, 0, 0, 0.01) 54%,
+        rgba(0, 0, 0, 0) 63%
+    );
+    background: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, rgba(0, 0, 0, 0.05)),
+        color-stop(1%, rgba(0, 0, 0, 0.05)),
+        color-stop(54%, rgba(0, 0, 0, 0.01)),
+        color-stop(63%, rgba(0, 0, 0, 0))
+    );
+    background: -webkit-linear-gradient(
+        top,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1%,
+        rgba(0, 0, 0, 0.01) 54%,
+        rgba(0, 0, 0, 0) 63%
+    );
+    background: -o-linear-gradient(
+        top,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1%,
+        rgba(0, 0, 0, 0.01) 54%,
+        rgba(0, 0, 0, 0) 63%
+    );
+    background: -ms-linear-gradient(
+        top,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1%,
+        rgba(0, 0, 0, 0.01) 54%,
+        rgba(0, 0, 0, 0) 63%
+    );
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1%,
+        rgba(0, 0, 0, 0.01) 54%,
+        rgba(0, 0, 0, 0) 63%
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0d000000',endColorstr='#00000000',GradientType=0);
+}
 
-        .zpointer {
-            cursor: pointer;
-        }
+.zpointer {
+    cursor: pointer;
+}
 
-        div > .zhover:hover {
-            background: -moz-linear-gradient(top,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1%,rgba(0,0,0,0.01) 54%,rgba(0,0,0,0) 63%);
-            background: -webkit-gradient(linear,left top,left bottom,color-stop(0,rgba(0,0,0,0.05)),color-stop(1%,rgba(0,0,0,0.05)),color-stop(54%,rgba(0,0,0,0.01)),color-stop(63%,rgba(0,0,0,0)));
-            background: -webkit-linear-gradient(top,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1%,rgba(0,0,0,0.01) 54%,rgba(0,0,0,0) 63%);
-            background: -o-linear-gradient(top,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1%,rgba(0,0,0,0.01) 54%,rgba(0,0,0,0) 63%);
-            background: -ms-linear-gradient(top,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1%,rgba(0,0,0,0.01) 54%,rgba(0,0,0,0) 63%);
-            background: linear-gradient(to bottom,rgba(0,0,0,0.05) 0,rgba(0,0,0,0.05) 1%,rgba(0,0,0,0.01) 54%,rgba(0,0,0,0) 63%);
-            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0d000000',endColorstr='#00000000',GradientType=0);
-        }
+div > .zhover:hover {
+    background: -moz-linear-gradient(
+        top,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1%,
+        rgba(0, 0, 0, 0.01) 54%,
+        rgba(0, 0, 0, 0) 63%
+    );
+    background: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, rgba(0, 0, 0, 0.05)),
+        color-stop(1%, rgba(0, 0, 0, 0.05)),
+        color-stop(54%, rgba(0, 0, 0, 0.01)),
+        color-stop(63%, rgba(0, 0, 0, 0))
+    );
+    background: -webkit-linear-gradient(
+        top,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1%,
+        rgba(0, 0, 0, 0.01) 54%,
+        rgba(0, 0, 0, 0) 63%
+    );
+    background: -o-linear-gradient(
+        top,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1%,
+        rgba(0, 0, 0, 0.01) 54%,
+        rgba(0, 0, 0, 0) 63%
+    );
+    background: -ms-linear-gradient(
+        top,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1%,
+        rgba(0, 0, 0, 0.01) 54%,
+        rgba(0, 0, 0, 0) 63%
+    );
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1%,
+        rgba(0, 0, 0, 0.01) 54%,
+        rgba(0, 0, 0, 0) 63%
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0d000000',endColorstr='#00000000',GradientType=0);
+}
 
-        .zhide {
-            display: none;
-        }
+.zhide {
+    display: none;
+}
 
-        .zmenu {
-            border-bottom: 1px solid #cdcdcd;
-            background-color: #f6f7ee;
-        }
+.zmenu {
+    border-bottom: 1px solid #cdcdcd;
+    background-color: #f6f7ee;
+}
 
-        .zui {
-            background: #f6f7ee;
-            margin: 0;
-            letter-spacing: .5px;
-        }
+.zui {
+    background: #f6f7ee;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
 
-            .zui a {
-                color: black;
-                text-decoration: none;
-                padding: .4em 1.6em .4em 0;
-                border-bottom: 0;
-            }
+.zui a {
+    color: black;
+    text-decoration: none;
+    padding: 0.4em 1.6em 0.4em 0;
+    border-bottom: 0;
+}
 
-                .zui a:hover {
-                    text-decoration: underline;
-                }
+.zui a:hover {
+    text-decoration: underline;
+}
 
-        label.verror {
-            float: none;
-            color: red;
-            vertical-align: middle;
-            display: none;
-        }
+label.verror {
+    float: none;
+    color: red;
+    vertical-align: middle;
+    display: none;
+}
 
-        .zbutton a {
-            background-color: #f5f5f5;
-            border: 1px solid #aaa;
-            border-top: 1px solid #ccc;
-            border-left: 1px solid #ccc;
-            line-height: 130%;
-            text-decoration: none;
-            font-weight: bold;
-            color: #565656;
-            padding: 5px 10px 6px 10px;
-            cursor: pointer;
-        }
+.zbutton a {
+    background-color: #f5f5f5;
+    border: 1px solid #aaa;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    line-height: 130%;
+    text-decoration: none;
+    font-weight: bold;
+    color: #565656;
+    padding: 5px 10px 6px 10px;
+    cursor: pointer;
+}
 
-            .zbutton a:hover {
-                background-color: #dff4ff;
-                border: 1px solid #c2e1ef;
-                color: #369;
-            }
+.zbutton a:hover {
+    background-color: #dff4ff;
+    border: 1px solid #c2e1ef;
+    color: #369;
+}
 
-            .zbutton a:active {
-                background-color: #6299c5;
-                border: 1px solid #6299c5;
-                color: #fff;
-            }
+.zbutton a:active {
+    background-color: #6299c5;
+    border: 1px solid #6299c5;
+    color: #fff;
+}
 
-            .zbutton a.positive {
-                color: #529214;
-            }
+.zbutton a.positive {
+    color: #529214;
+}
 
-                .zbutton a.positive:hover {
-                    background-color: #e6efc2;
-                    border: 1px solid #c6d880;
-                    color: #529214;
-                }
+.zbutton a.positive:hover {
+    background-color: #e6efc2;
+    border: 1px solid #c6d880;
+    color: #529214;
+}
 
-                .zbutton a.positive:active {
-                    background-color: #529214;
-                    border: 1px solid #529214;
-                    color: #fff;
-                }
+.zbutton a.positive:active {
+    background-color: #529214;
+    border: 1px solid #529214;
+    color: #fff;
+}
 
+.icon-chevron-right:before {
+    content: '\e816';
+}
 
-        .icon-chevron-right:before {
-            content: '\e816';
-        }
+.reviews {
+    color: #f50;
+    text-decoration: none;
+    font-style: italic;
+}
 
+a.reviews {
+    color: #f50;
+    text-decoration: none;
+    font-style: italic;
+}
 
-        .reviews {
-            color: #f50;
-            text-decoration: none;
-            font-style: italic;
-        }
+a.visited.reviews {
+    color: #f50;
+    text-decoration: none;
+    font-style: italic;
+}
 
-        a.reviews {
-            color: #f50;
-            text-decoration: none;
-            font-style: italic;
-        }
-
-        a.visited.reviews {
-            color: #f50;
-            text-decoration: none;
-            font-style: italic;
-        }
-
-        .xgray, .gray {
-            color: #686868;
-        }
+.xgray,
+.gray {
+    color: #686868;
+}

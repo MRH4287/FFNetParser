@@ -21,10 +21,25 @@ declare class PlayerManager {
         action: number;
     };
     private keysDown;
-    constructor(gameHandler: GameHandler, animationHandler: AnimationHandler, playerModel?: string);
-    public initMove(direction: WalkDirection, initialCall?: boolean, callback?: () => any, resetAnimation?: boolean): void;
+    constructor(
+        gameHandler: GameHandler,
+        animationHandler: AnimationHandler,
+        playerModel?: string
+    );
+    public initMove(
+        direction: WalkDirection,
+        initialCall?: boolean,
+        callback?: () => any,
+        resetAnimation?: boolean
+    ): void;
     private moveFinishedCallback(resetAnimation?);
-    private positionUpdateStep(self, direction, offsetPerUpdate, intervall, callback?);
+    private positionUpdateStep(
+        self,
+        direction,
+        offsetPerUpdate,
+        intervall,
+        callback?
+    );
     public init(playerModel?: string): void;
     public movePlayerToSpawn(): void;
     public resetPlayerModel(): void;

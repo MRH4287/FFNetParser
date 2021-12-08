@@ -7,32 +7,28 @@
     "homepage_url": "http://www.mrh-development.de",
     "content_scripts": [
         {
-            "js": [ "ffnetlist.user.js" ],
-            "css": [ "style.css" ],
-            "matches": [
-				"*://*.fanfiction.net/*",
-				"*://*.fictionpress.com/*"
-            ]
+            "js": ["ffnetlist.user.js"],
+            "css": ["style.css"],
+            "matches": ["*://*.fanfiction.net/*", "*://*.fictionpress.com/*"]
         }
     ],
     "icons": {
         "128": "logoMain.png"
     },
-    "web_accessible_resources": [{
-        "resources": [
-			"jquery-1.10.2.min.map",
-			"ffnetlist.js.map",
-			"style.css",
-			"FFNetParser/*"
-		],
-		"matches": [
-			"*://*.fanfiction.net/*",
-			"*://*.fictionpress.com/*"
-		]
-    }],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "jquery-1.10.2.min.map",
+                "ffnetlist.js.map",
+                "style.css",
+                "FFNetParser/*"
+            ],
+            "matches": ["*://*.fanfiction.net/*", "*://*.fictionpress.com/*"]
+        }
+    ],
     "externally_connectable": {
-        "matches": [ "*://*.fanfiction.net/*", "*://*.fictionpress.com/*" ]
+        "matches": ["*://*.fanfiction.net/*", "*://*.fictionpress.com/*"]
     },
-    "permissions": [ "storage" ],
+    "permissions": ["storage"],
     "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCNP3t27YLSzjzlVeSssd1C9IRqzZ5y67YQaGe10U1p5/CRgUDfwaEfFWqxGP24hxExlnpelQmIxcmTlKL6iw99Wr7ftPxUe6NGzw/wiDMOBo8+259ZffLjBrr3tt5TnmVui+S90t8H+Lqe/qwBT3ZArlk5gwo0ZVSQU6tP567B0QIDAQAB"
 }

@@ -77,7 +77,11 @@ declare class GameHandler {
     public getTilesByFlagName(Flag: string): Tile[];
     public execVerbose(data: () => void): void;
     public activateVerbose(time?: number): void;
-    public getFile(url: string, callback?: (any: any) => void, dataType?: string): any;
+    public getFile(
+        url: string,
+        callback?: (any: any) => void,
+        dataType?: string
+    ): any;
     public log(message?: any, ...optionalParams: any[]): void;
     public info(message?: any, ...optionalParams: any[]): void;
     public warn(message?: any, ...optionalParams: any[]): void;

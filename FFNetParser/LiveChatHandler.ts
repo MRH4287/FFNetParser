@@ -1,9 +1,7 @@
-﻿/// <reference path="_reference.ts" /> 
+﻿/// <reference path="_reference.ts" />
 
-class LiveChatHandler extends ExtentionBaseClass
-{
-    public constructor(parser: StoryParser)
-    {
+class LiveChatHandler extends ExtentionBaseClass {
+    public constructor(parser: StoryParser) {
         super(parser);
     }
 
@@ -11,18 +9,13 @@ class LiveChatHandler extends ExtentionBaseClass
 
     private connected: boolean = false;
 
-    private nicks: string[] = [
-        "Mew",
-        "Pichufan",
-        "Invocate"
-    ];
+    private nicks: string[] = ['Mew', 'Pichufan', 'Invocate'];
 
-    private messageCallback: (data: WebSocketMessage) => void = function (e) { };
+    private messageCallback: (data: WebSocketMessage) => void = function (e) {};
 
     public onError: (message: string) => void;
 
-    public connect()
-    {
+    public connect() {
         var self = this;
 
         var address = this.config.api_webSocketServerAddress;
@@ -32,202 +25,158 @@ class LiveChatHandler extends ExtentionBaseClass
         //var address = "ws://127.0.0.1:8182";
 
         this.socket = new WebSocket(address);
-        this.socket.onopen = function (e)
-        {
+        this.socket.onopen = function (e) {
             self.connected = true;
 
             self.sendJoinedMessage();
 
-            if (typeof (self.messageCallback) !== "undefined")
-            {
+            if (typeof self.messageCallback !== 'undefined') {
                 var message: WebSocketMessage = {
-                    Data: self._("Connected to Server"),
-                    Sender: "System",
+                    Data: self._('Connected to Server'),
+                    Sender: 'System',
                     Time: Date.now().toString(),
-                    Type: "Chat",
-                    Version: self.VERSION
+                    Type: 'Chat',
+                    Version: self.VERSION,
                 };
-
 
                 self.messageCallback(message);
 
                 self.updateUserList();
             }
-
         };
 
-        this.socket.onmessage = function (data)
-        {
+        this.socket.onmessage = function (data) {
             self.onMessage(data, self);
         };
-        this.socket.onerror = function (ev)
-        {
-            self.parser.log("Error with the Socket Connection!", ev);
+        this.socket.onerror = function (ev) {
+            self.parser.log('Error with the Socket Connection!', ev);
 
-            if (typeof (self.onError) !== "undefined")
-            {
-                self.onError(self._("Error with the Socket Connection! Please reload the page and try again!"));
-            } 
-
+            if (typeof self.onError !== 'undefined') {
+                self.onError(
+                    self._(
+                        'Error with the Socket Connection! Please reload the page and try again!'
+                    )
+                );
+            }
         };
-
     }
 
-    public updateUserList()
-    {
-        if (this.connected && ($('.ChatUserInfo').length > 0))
-        {
+    public updateUserList() {
+        if (this.connected && $('.ChatUserInfo').length > 0) {
             var self = this;
-            this.parser.api_getLiveChatInfo(function (res)
-            {
+            this.parser.api_getLiveChatInfo(function (res) {
                 var count = res.Users.length + res.WebUsers.length;
 
                 var users: string[] = [];
 
-                $.each(res.Users, function (i, userName)
-                {
+                $.each(res.Users, function (i, userName) {
                     users.push(userName);
                 });
 
-                $.each(res.WebUsers, function (i, userName)
-                {
+                $.each(res.WebUsers, function (i, userName) {
                     users.push('[Web] ' + userName);
                 });
 
-                $('.ChatUserInfo').text(self._('Online') + ': (' + count + ')')
-                    .attr("title", users.join(', '));
+                $('.ChatUserInfo')
+                    .text(self._('Online') + ': (' + count + ')')
+                    .attr('title', users.join(', '));
 
-                window.setTimeout(function ()
-                {
+                window.setTimeout(function () {
                     self.updateUserList();
                 }, 10000);
             });
-
-
-
         }
-
     }
 
-    public disconnect()
-    {
-        if (this.socket !== null && this.socket !== undefined)
-        {
+    public disconnect() {
+        if (this.socket !== null && this.socket !== undefined) {
             this.socket.close();
         }
     }
 
-    public get Available()
-    {
-        return ("WebSocket" in window);
+    public get Available() {
+        return 'WebSocket' in window;
     }
 
-
-    private sendJoinedMessage()
-    {
-        var data: WebSocketMessage =
-            {
-                Data: "",
-                Sender: this.config.token,
-                Time: Date.now().toString(),
-                Type: "Joined",
-                Version: this.VERSION
-            };
+    private sendJoinedMessage() {
+        var data: WebSocketMessage = {
+            Data: '',
+            Sender: this.config.token,
+            Time: Date.now().toString(),
+            Type: 'Joined',
+            Version: this.VERSION,
+        };
         this.send(data);
     }
 
-    private send(data: WebSocketMessage)
-    {
-        if (this.socket.readyState === WebSocket.OPEN)
-        {
+    private send(data: WebSocketMessage) {
+        if (this.socket.readyState === WebSocket.OPEN) {
             this.socket.send(JSON.stringify(data));
-        }
-        else
-        {
+        } else {
             this.connected = false;
         }
     }
 
-    private onMessage(data: any, self: LiveChatHandler)
-    {
-        try
-        {
+    private onMessage(data: any, self: LiveChatHandler) {
+        try {
             var message = <WebSocketMessage>JSON.parse(data.data);
 
             self.log(message);
 
-            if (typeof (self.messageCallback) !== "undefined")
-            {
-                if (this.nicks.indexOf(message.Sender) !== -1)
-                {
-                    message.Sender = message.Sender + " [Dev]";
+            if (typeof self.messageCallback !== 'undefined') {
+                if (this.nicks.indexOf(message.Sender) !== -1) {
+                    message.Sender = message.Sender + ' [Dev]';
                 }
 
                 self.messageCallback(message);
-            }
-            else
-            {
+            } else {
                 self.parser.log(self.messageCallback);
-                self.parser.log("Message Callback is undefined ....");
-
+                self.parser.log('Message Callback is undefined ....');
             }
-        }
-        catch (ex)
-        {
-            if (typeof (self.parser.log) !== "undefined")
-            {
-                self.parser.log("Error while parsing Message: ", ex);
-            }
-            else
-            {
-                console.error("Error while parsing Message: ", ex);
+        } catch (ex) {
+            if (typeof self.parser.log !== 'undefined') {
+                self.parser.log('Error while parsing Message: ', ex);
+            } else {
+                console.error('Error while parsing Message: ', ex);
             }
         }
     }
 
-    public sendChatMessage(message: string)
-    {
-        var data: WebSocketMessage =
-            {
-                Data: message,
-                Sender: this.config.token,
-                Time: Date.now().toString(),
-                Type: "Chat",
-                Version: this.VERSION
-            };
+    public sendChatMessage(message: string) {
+        var data: WebSocketMessage = {
+            Data: message,
+            Sender: this.config.token,
+            Time: Date.now().toString(),
+            Type: 'Chat',
+            Version: this.VERSION,
+        };
 
         this.send(data);
     }
 
-    public sendConfigData()
-    {
-        var data: WebSocketMessage =
-            {
-                Data: JSON.stringify(this.config),
-                Sender: this.config.token,
-                Time: Date.now().toString(),
-                Type: "Config",
-                Version: this.VERSION
-            };
+    public sendConfigData() {
+        var data: WebSocketMessage = {
+            Data: JSON.stringify(this.config),
+            Sender: this.config.token,
+            Time: Date.now().toString(),
+            Type: 'Config',
+            Version: this.VERSION,
+        };
 
         this.send(data);
 
         var message: WebSocketMessage = {
-            Data: this._("Config-Data sent to Server"),
-            Sender: "System",
-            Type: "Chat",
+            Data: this._('Config-Data sent to Server'),
+            Sender: 'System',
+            Type: 'Chat',
             Time: Date.now().toString(),
-            Version: this.VERSION
+            Version: this.VERSION,
         };
 
         this.messageCallback(message);
-
     }
 
-
-    public setMessageCallback(data: (e: WebSocketMessage) => void)
-    {
+    public setMessageCallback(data: (e: WebSocketMessage) => void) {
         this.messageCallback = data;
     }
-
 }

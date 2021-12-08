@@ -3,7 +3,6 @@
 /// <reference path="jqueryui.d.ts" />
 /// <reference path="userscript.ts" />
 var Loader = (function () {
-    function Loader() {
-    }
+    function Loader() {}
     return Loader;
 })();

@@ -3,9 +3,7 @@
 // Definitions by: Jeffery Grajkowski <https://github.com/pushplay/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-
-interface JQueryColorpickerOptions
-{
+interface JQueryColorpickerOptions {
     alpha?: boolean;
     altAlpha?: boolean;
     altField?: string;
@@ -26,7 +24,7 @@ interface JQueryColorpickerOptions
     hsv?: boolean;
     inline?: boolean;
     inlineFrame?: boolean;
-    layout?: { [part: string]: number[]; };
+    layout?: { [part: string]: number[] };
     limit?: string;
     modal?: boolean;
     mode?: string;
@@ -47,53 +45,54 @@ interface JQueryColorpickerOptions
     title?: string;
 }
 
-interface JQueryColorpickerStatic
-{
-    limits: { [name: string]: (color: any) => void; };
-    parsers: { [name: string]: (color: any) => any; };
-    parts: { [name: string]: (inst: any) => any; };
-    partslists: { [name: string]: string[]; };
-    regional: { [key: string]: string; };
-    swatches: { [swatch: string]: { [name: string]: JQueryColorpickerStatic.RGB; }; };
-    writers: { [name: string]: (color: any, that: any) => any; };
-    Color: { new (r?: number, g?: number, b?: number, a?: number): JQueryColorpickerStatic.Color; };
+interface JQueryColorpickerStatic {
+    limits: { [name: string]: (color: any) => void };
+    parsers: { [name: string]: (color: any) => any };
+    parts: { [name: string]: (inst: any) => any };
+    partslists: { [name: string]: string[] };
+    regional: { [key: string]: string };
+    swatches: {
+        [swatch: string]: { [name: string]: JQueryColorpickerStatic.RGB };
+    };
+    writers: { [name: string]: (color: any, that: any) => any };
+    Color: {
+        new (
+            r?: number,
+            g?: number,
+            b?: number,
+            a?: number
+        ): JQueryColorpickerStatic.Color;
+    };
 }
 
-declare module JQueryColorpickerStatic
-{
-    export interface CMYK
-    {
+declare module JQueryColorpickerStatic {
+    export interface CMYK {
         c: number;
         m: number;
         y: number;
         k: number;
     }
-    export interface HSL
-    {
+    export interface HSL {
         h: number;
         s: number;
         l: number;
     }
-    export interface HSV
-    {
+    export interface HSV {
         h: number;
         s: number;
         v: number;
     }
-    export interface LAB
-    {
+    export interface LAB {
         l: number;
         a: number;
         b: number;
     }
-    export interface RGB
-    {
+    export interface RGB {
         r: number;
         g: number;
         b: number;
     }
-    export interface Color
-    {
+    export interface Color {
         set: boolean;
         copy(): Color;
         distance(color: Color): number;
@@ -141,26 +140,23 @@ declare module JQueryColorpickerStatic
     }
 }
 
-interface JQueryColorpickerInstance
-{
+interface JQueryColorpickerInstance {
     close(): void;
     destroy(): void;
     open(): void;
     setColor(color: any): void;
 }
 
-interface JQueryStatic
-{
+interface JQueryStatic {
     colorpicker: JQueryColorpickerStatic;
 }
 
-interface JQuery
-{
+interface JQuery {
     colorpicker(options?: JQueryColorpickerOptions): JQuery;
     colorpicker(method: string): JQuery;
     colorpicker(method: string, param: any): JQuery;
-    colorpicker(method: "close"): JQuery;
-    colorpicker(method: "destroy"): JQuery;
-    colorpicker(method: "open"): JQuery;
-    colorpicker(method: "setColor", color: any): JQuery;
-} 
+    colorpicker(method: 'close'): JQuery;
+    colorpicker(method: 'destroy'): JQuery;
+    colorpicker(method: 'open'): JQuery;
+    colorpicker(method: 'setColor', color: any): JQuery;
+}

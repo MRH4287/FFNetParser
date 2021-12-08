@@ -3,32 +3,27 @@
 // Definitions by: Boris Yankov <https://github.com/borisyankov/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-
 /// <reference path="jquery.d.ts"/>
 
-interface ModalOptions
-{
+interface ModalOptions {
     backdrop?: boolean;
     keyboard?: boolean;
     show?: boolean;
     remote?: string;
 }
 
-interface ModalOptionsBackdropString
-{
+interface ModalOptionsBackdropString {
     backdrop?: string; // for "static"
     keyboard?: boolean;
     show?: boolean;
     remote?: string;
 }
 
-interface ScrollSpyOptions
-{
+interface ScrollSpyOptions {
     offset?: number;
 }
 
-interface TooltipOptions
-{
+interface TooltipOptions {
     animation?: boolean;
     html?: boolean;
     placement?: any;
@@ -39,8 +34,7 @@ interface TooltipOptions
     container?: any;
 }
 
-interface PopoverOptions
-{
+interface PopoverOptions {
     animation?: boolean;
     html?: boolean;
     placement?: any;
@@ -52,20 +46,17 @@ interface PopoverOptions
     container?: any;
 }
 
-interface CollapseOptions
-{
+interface CollapseOptions {
     parent?: any;
     toggle?: boolean;
 }
 
-interface CarouselOptions
-{
+interface CarouselOptions {
     interval?: number;
     pause?: string;
 }
 
-interface TypeaheadOptions
-{
+interface TypeaheadOptions {
     source?: any;
     items?: number;
     minLength?: number;
@@ -75,13 +66,11 @@ interface TypeaheadOptions
     highlighter?: (item: any) => string;
 }
 
-interface AffixOptions
-{
+interface AffixOptions {
     offset?: any;
 }
 
-interface JQuery
-{
+interface JQuery {
     modal(options?: ModalOptions): JQuery;
     modal(options?: ModalOptionsBackdropString): JQuery;
     modal(command: string): JQuery;
@@ -118,5 +107,4 @@ interface JQuery
     affix(options?: AffixOptions): JQuery;
 }
 
-declare module "bootstrap" {
-}
+declare module 'bootstrap' {}
