@@ -8,7 +8,6 @@
 /// <reference path="Types.ts" />
 /// <reference path="ParagraphMenu.ts" />
 /// <reference path="GUIHandler.ts" />
-/// <reference path="LiveChatHandler.ts" />
 /// <reference path="ExtentionBaseClass.ts" />
 /// <reference path="UpgradeHandler.ts" />
 /// <reference path="GithubAPI.ts" />

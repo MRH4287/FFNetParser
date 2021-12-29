@@ -22,7 +22,6 @@ module.exports = function (grunt) {
             'build/ExtentionBaseClass.js',
             'build/GUIHandler.js',
             'build/Types.js',
-            'build/LiveChatHandler.js',
             'build/UpgradeHandler.js',
             'build/EventHandler.js',
             'build/UserHandler.js',
@@ -75,17 +74,6 @@ module.exports = function (grunt) {
                 ], //<%= pkg.name %>
                 dest: 'ffnetlist.user.js', //<%= pkg.name %>
             },
-            standalone: {
-                src: [
-                    'lib/jquery-1.10.2.js',
-                    'lib/jquery-ui.min.js',
-                    'lib/bootstrap-colorpicker.min.js',
-                    'build/standalone/main.js',
-                    'build/standalone/Standalone.js',
-                    'build/standalone/ProgressIndicator.js',
-                ],
-                dest: 'build/standalone/Standalone.pack.js',
-            },
         },
         uglify: {
             options: {
@@ -94,10 +82,6 @@ module.exports = function (grunt) {
             dist: {
                 src: 'build/package.js', //'<%= concat.dist.dest %>',
                 dest: 'build/package.min.js',
-            },
-            standalone: {
-                src: 'build/standalone/Standalone.pack.js',
-                dest: 'build/standalone/Standalone.pack.min.js',
             },
         },
         tslint: {
@@ -110,7 +94,7 @@ module.exports = function (grunt) {
         },
         typescript: {
             base: {
-                src: ['FFNetParser/*.ts', 'FFNetParser/standalone/*.ts'],
+                src: ['FFNetParser/*.ts'],
                 dest: 'build',
                 options: {
                     module: 'amd', //or commonjs
@@ -181,21 +165,6 @@ module.exports = function (grunt) {
                 src: '<%= filesToPack %>',
                 dest: 'Chrome',
             },
-            standalone: {
-                src: 'FFNetParser/standalone/*.html',
-                dest: 'build/standalone/',
-                flatten: true,
-                expand: true,
-                filter: 'isFile',
-            },
-            standaloneCode: {
-                src: 'build/package.js',
-                dest: 'build/standalone/main.js',
-            },
-            standaloneStyle: {
-                src: 'build/style.css',
-                dest: 'build/standalone/style.css',
-            },
             manifestBackup: {
                 src: 'manifest.json',
                 dest: 'manifestBase.json',
@@ -212,7 +181,6 @@ module.exports = function (grunt) {
                 },
                 files: {
                     'build/style.css': 'style.less',
-                    'build/standalone/ffnetStyle.css': 'ffnetStyle.less',
                 },
             },
         },
@@ -340,16 +308,6 @@ module.exports = function (grunt) {
         'language',
     ]);
 
-    grunt.registerTask('standalone', [
-        'gitinfo',
-        'versionUpdate',
-        'copy:standalone',
-        'copy:standaloneCode',
-        'copy:standaloneStyle',
-        'concat:standalone',
-        'uglify:standalone',
-    ]);
-
     grunt.registerTask('jenkinsDev', [
         'big',
         'qunit',
@@ -360,10 +318,9 @@ module.exports = function (grunt) {
         'copy:manifestRestore',
         'clean:manifestBase',
         'language',
-        'standalone',
     ]);
 
-    grunt.registerTask('jenkins', ['packageDefault', 'standalone']);
+    grunt.registerTask('jenkins', ['packageDefault']);
 
     grunt.registerTask('versionUpdate', function () {
         var manifest = grunt.config.get('manifest');
