@@ -49,7 +49,7 @@ QUnit.test('Story-Headline', function (assert)
 
     assert.equal(container.length, 1, "The Headline Container has to be there.");
 
-    var expect = '<div><b>Page: 1</b></div><b>Test-Data:</b> 1 <b>Test-Data2:</b> 1  <i>All hidden elements:</i> <u title=\"Show the reasons for hiding\" class=\"clickable\">1</u><div><u>Test-Data: </u><ul><li><span><a href=\"#\"></a> - 0</span><a href=\"#null\">#</a></li></ul></div>';
+    var expect = '<div><b>Page: 1</b></div><b>Test-Data:</b> 1 <b>Test-Data2:</b> 1  <i>All hidden elements:</i> <u title=\"Show the reasons for hiding\" class=\"clickable\">1</u><div><u class=\"clickable\">Test-Data (1):</u><ul><li><span><a href=\"#\"></a> - 0</span><a href=\"#null\">#</a></li></ul></div>';
     assert.equal(container.html(), expect, "The Content of the Headline Container has to match");
 
 });

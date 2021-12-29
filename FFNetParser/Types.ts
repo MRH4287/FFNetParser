@@ -21,6 +21,7 @@ interface Config {
     enable_chapter_review_ratio: boolean;
     enable_read_chapter_info: boolean;
     reading_info_ChapterMarker: string;
+    print_story_hidden: boolean;
 
     // Reading Aid:
     readingHelp_enabled: boolean;

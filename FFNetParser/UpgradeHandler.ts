@@ -199,6 +199,14 @@ class UpgradeHandler extends ExtentionBaseClass {
 
             return true;
         });
+
+        this.registerTag('print_story_hidden', function() {
+            self.config.print_story_hidden = false;
+
+            self.parser.save_config();
+
+            return true;
+        });
     }
 
     public handleTags() {

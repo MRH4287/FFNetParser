@@ -89,6 +89,7 @@ class StoryParser {
         enable_chapter_review_ratio: false,
         enable_read_chapter_info: false,
         reading_info_ChapterMarker: '[R] {Name}',
+        print_story_hidden: false,
 
         // Reading Help:
         readingHelp_enabled: false,
@@ -2753,7 +2754,9 @@ class StoryParser {
 
         $.each(this.eList[page], function (headline, elements) {
             if (self.config.marker[headline].print_story) {
-                headlineContainer.append('<u>' + headline + ': </u>');
+                const headlineEl = $(`<u>${headline} (${elements.length}):</u>`);
+                headlineEl.addClass('clickable');
+                headlineContainer.append(headlineEl);
 
                 var eUl = $('<ul></ul>');
 
@@ -2777,6 +2780,17 @@ class StoryParser {
                 });
 
                 headlineContainer.append(eUl);
+                headlineEl.click(() => {
+                    if (eUl.is(':visible')) {
+                        eUl.hide();
+                    } else {
+                        eUl.show();
+                    }
+                });
+
+                if (!!self.config.print_story_hidden) {
+                    eUl.hide();
+                }
             }
 
             if (self.config.marker[headline].mention_in_headline) {
