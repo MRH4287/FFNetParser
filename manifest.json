@@ -26,9 +26,6 @@
             "matches": ["*://*.fanfiction.net/*", "*://*.fictionpress.com/*"]
         }
     ],
-    "externally_connectable": {
-        "matches": ["*://*.fanfiction.net/*", "*://*.fictionpress.com/*"]
-    },
     "permissions": ["storage"],
     "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCNP3t27YLSzjzlVeSssd1C9IRqzZ5y67YQaGe10U1p5/CRgUDfwaEfFWqxGP24hxExlnpelQmIxcmTlKL6iw99Wr7ftPxUe6NGzw/wiDMOBo8+259ZffLjBrr3tt5TnmVui+S90t8H+Lqe/qwBT3ZArlk5gwo0ZVSQU6tP567B0QIDAQAB"
 }
